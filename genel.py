@@ -154,16 +154,7 @@ def prettystring(miktarlar, birim=None):
         elif isinstance(miktar, str):
             temp = convert2pq(miktar)[0]
             if birim is not None:
-                # print(coef(birim))
-                # print(birim)
-                # print(miktar)
-                # print(type(birim))
-                # print(type(miktar))
-                # print(type(coef(birim)))
-                # print(type(miktar * coef(birim)))
-                # temp = pq.Quantity(miktar * coef(birim), birim)
                 temp = pq.Quantity(temp * coef(birim), birim)
-                # print("tuncay")
                 dims = birim
                 liste.append((formatstring.format(float(temp.magnitude)) + " " + dims).strip())
             else:
@@ -218,12 +209,17 @@ def convert2pq(sayilar, defaultunits=[]):
         #print "sss ",i, " ",sayi
         if isinstance(sayi, pq.Quantity):
             sonuc = sayi
-        elif isinstance(sayi, (float, np.ndarray, int)):
+            sonuclar.append(float(sonuc.simplified.magnitude)) 
+        elif isinstance(sayi, (float, np.ndarray, int, list)):
             # unit = ""
             # if len(defaultunits) > 0:
                 # unit = defaultunits[i]
             # sonuc=pq.Quantity(float(sayi), unit) 
-            sonuc=pq.Quantity(float(sayi), defaultunits[i]) 
+            print(sayi)
+            print(np.array(sayi))
+            print(np.shape(np.array(sayi)))
+            sonuc=pq.Quantity(np.array(sayi), defaultunits[i]) 
+            sonuclar.append(sonuc.simplified.magnitude) 
         else:
             sayi = sayi.split("=")[-1].strip()        
             #match = convert2pq.regex.search(sayi) 
@@ -243,7 +239,7 @@ def convert2pq(sayilar, defaultunits=[]):
                 sonuc = pq.Quantity(float(number), unit)
             else:
                 sonuc = None
-        sonuclar.append(float(sonuc.simplified.magnitude)) 
+            sonuclar.append(float(sonuc.simplified.magnitude)) 
     convert2pq.sonuc = deepcopy(sonuclar)
     convert2pq.sayilar = deepcopy(sayilar)
     convert2pq.defaultunits=deepcopy(defaultunits)
@@ -394,7 +390,6 @@ if __name__ == "__main__":
     print(convert2pq([[10.0, 36.2], "10 inch"], ["mil", "m"]))
     a = np.array([12.1, 45.3])
     print(prettystring(a, birim=""))
-    from Components import *
 
    # arg = ["12.1", "34.2", "23.4"]
    # arg = [np.array([12.1, 15.2, 18.3]), "34.2", "23.4"]

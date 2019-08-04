@@ -2,9 +2,6 @@
 """
 Network Parameters
 """
-from __future__ import print_function
-from __future__ import division
-
 from builtins import range
 import numpy as np
 import operator as op
@@ -174,6 +171,7 @@ def SeriesNetworks(networks):
 def Snormalize(S, Zold, Znew):
     """
     Zold,  Znew port_sayisi uzunlugunda dizilerdir
+    Pseudo-Wave icin
     """
     ps = len(Zold)
     A = np.matrix(np.zeros((ps, ps)), dtype = complex)
