@@ -1,0 +1,418 @@
+#-*-coding:utf-8-*-
+"""
+General methods
+"""
+
+import quantities as pq
+import numpy as np
+import re
+import collections
+import cProfile
+from copy import deepcopy
+
+Np2dB = 8.68589 # guc kaybi icin alpha'dan' dB/m'ye donusum katsayisi (20.0*log10(e))
+                # alpha'nin birimi 1/m (Neper)'dir
+globsep = ";"
+globsep2 = ":"  # empedans degerlerini ayirmak icin
+### New Units For Quantities Library
+pq.mH = pq.millihenry = pq.UnitQuantity('millihenry', pq.H / 1000, symbol='mH')
+pq.uH = pq.microhenry = pq.UnitQuantity('microhenry', pq.H / 1e6, symbol='uH')
+pq.nH = pq.nanohenry = pq.UnitQuantity('nanohenry', pq.H / 1e9, symbol='nH')
+pq.pH = pq.picohenry = pq.UnitQuantity('picohenry', pq.H / 1e12, symbol='pH')
+
+pq.mF = pq.millifarad = pq.UnitQuantity('millifarad', pq.F / 1000, symbol='mF')
+pq.uF = pq.microfarad = pq.UnitQuantity('microfarad', pq.F / 1e6, symbol='uF')
+pq.nF = pq.nanofarad = pq.UnitQuantity('nanofarad', pq.F / 1e9, symbol='nF')
+pq.pF = pq.picofarad = pq.UnitQuantity('picofarad', pq.F / 1e12, symbol='pF')
+
+pq.microinch = pq.UnitQuantity('microinch', pq.inch / 1e6, symbol='microinch')
+
+pq.dB = pq.UnitQuantity('dB', pq.dimensionless, symbol='dB')
+
+try:
+    basestring
+except NameError:
+    basestring = str
+    
+try:
+    unicode
+except NameError:
+    unicode = bytes
+
+def do_cprofile(func):
+    # """ Bu fonksiyon istenen fonksiyona profiling yapmayi saglayan decoratordur
+        # ornek kullanim:
+        # @do_cprofile
+        # def expensive_function():
+            # for x in get_number():
+                # i = x ^ x ^ x
+            # return 'some result!'
+
+        #sperform profiling
+        # result = expensive_function()  
+        
+        # Referans: https://zapier.com/engineering/profiling-python-boss/
+    # """
+    def profiled_func(*args, **kwargs):
+        profile = cProfile.Profile()
+        try:
+            profile.enable()
+            result = func(*args, **kwargs)
+            profile.disable()
+            return result
+        finally:
+            profile.print_stats()
+    return profiled_func  
+
+# Line Profiler ile profiling
+
+# Kullanim:
+# @do_profile(follow=[get_number])
+# def expensive_function():
+    # for x in get_number():
+        # i = x ^ x ^ x
+    # return 'some result!'
+# Handy tip: Just decorate your test function and pass the problem function in the follow argument!
+# Referans: https://zapier.com/engineering/profiling-python-boss/
+
+try:
+    from line_profiler import LineProfiler
+
+    def do_profile(follow=[]):
+        def inner(func):
+            def profiled_func(*args, **kwargs):
+                try:
+                    profiler = LineProfiler()
+                    profiler.add_function(func)
+                    for f in follow:
+                        profiler.add_function(f)
+                    profiler.enable_by_count()
+                    return func(*args, **kwargs)
+                finally:
+                    profiler.print_stats()
+            return profiled_func
+        return inner
+
+except ImportError:
+    def do_profile(follow=[]):
+        "Helpful if you accidentally leave in production!"
+        def inner(func):
+            def nothing(*args, **kwargs):
+                return func(*args, **kwargs)
+            return nothing
+        return inner
+
+def printall(isimler, args):
+    k = isimler.split(",")
+    for i in range(len(args)):
+        print(k[i] + " = " + str(args[i]))
+
+def prettystring(miktarlar, birim=None):
+    formatstring = '{:3.7e}'
+    if len(np.shape(miktarlar)) == 0:
+        miktarlar = [miktarlar]
+    liste = []
+    for i in range(len(miktarlar)):
+        miktar = miktarlar[i]
+        if (np.fabs(float(miktar))==np.inf):
+            liste.append(str(miktar))
+            continue
+        if isinstance(miktar, pq.Quantity):
+            if birim == "SI":
+                miktar = miktar.simplified
+                dims = miktar.dimensionality.string
+                miktar = miktar.magnitude
+            elif birim == "dBm":
+                temp = miktar.simplified.magnitude
+                miktar = 10.0 * np.log10(temp * 1000.0)
+                dims = birim
+            elif birim is not None:
+                miktar.units = birim
+                miktar = miktar.magnitude
+                dims = birim
+            else:
+                miktar = miktar.magnitude
+                dims = miktar.dimensionality.string
+            if dims == "dimensionless":
+                dims = ""
+            liste.append((formatstring.format(float(miktar)) + " " + dims).strip())
+        elif isinstance(miktar, (float, int, np.ndarray)):
+            miktar = float(miktar)
+            if birim == "dBm":
+                miktar = 10.0 * np.log10(miktar * 1000.0)
+                dims = birim
+            elif birim is not None:
+                miktar = pq.Quantity(miktar * coef(birim), birim).magnitude
+                dims = birim
+            else:
+                dims = ""
+            if dims == "dimensionless":
+                dims = ""
+            miktar = float(miktar)
+            # print "miktar= ",miktar,type(miktar)
+            liste.append((formatstring.format(miktar) + " " + dims).strip())
+        elif isinstance(miktar, str):
+            temp = convert2pq(miktar)[0]
+            if birim is not None:
+                # print(coef(birim))
+                # print(birim)
+                # print(miktar)
+                # print(type(birim))
+                # print(type(miktar))
+                # print(type(coef(birim)))
+                # print(type(miktar * coef(birim)))
+                # temp = pq.Quantity(miktar * coef(birim), birim)
+                temp = pq.Quantity(temp * coef(birim), birim)
+                # print("tuncay")
+                dims = birim
+                liste.append((formatstring.format(float(temp.magnitude)) + " " + dims).strip())
+            else:
+                liste.append(miktar)
+    return globsep.join(liste)
+
+def coef(birim):
+    """ SI'dan Birim'e cevirmek icin katsayi """
+    temp = pq.Quantity(1.0, birim)
+    return (temp.magnitude) / (temp.simplified.magnitude)
+
+def convert2pq(sayilar, defaultunits=[]):
+    """
+    Method to convert a string or string list to float after unit conversion to SI
+    Units are extracted from strings. 
+    If there is not a unit in string, unit is taken from defaultunits
+    """
+    
+    number = ""
+    # unit = ""
+    if len(defaultunits)==0:
+        defaultunits=[""]*len(sayilar)    
+    sonuc = []  
+       
+    if not hasattr(convert2pq, "sayilar"):   # make sayilar static variable  
+        convert2pq.sayilar = deepcopy(sayilar)
+        convert2pq.defaultunits=deepcopy(defaultunits)
+    elif (convert2pq.sayilar == sayilar) and convert2pq.defaultunits == defaultunits:
+        return convert2pq.sonuc   
+
+    if isinstance(sayilar, (float,int)):
+        return [float(sayilar)]
+    if isinstance(sayilar, str):
+        sayilar = [sayilar]  
+               
+#    if not hasattr(convert2pq, "regex"):   
+         # make regex static variable, did not provide any performance advantage
+#        # pattern for matching real numbers
+#        pattern = r"([+\-]?)(\d+(\.\d*)?|\d*\.\d+)([eE][+\-]?\d+)?\s*(\D+\S*)?"
+#        convert2pq.regex = re.compile(pattern) 
+        
+    sonuclar = []    
+        
+    for i in range(len(sayilar)):
+        sayi = sayilar[i] 
+        try:
+          if (sayi == convert2pq.sayilar[i]) and (convert2pq.units[i]):
+              sonuclar.append(convert2pq.sonuc[i])
+              continue
+        except:
+            pass
+        #print "sss ",i, " ",sayi
+        if isinstance(sayi, pq.Quantity):
+            sonuc = sayi
+        elif isinstance(sayi, (float, np.ndarray, int)):
+            # unit = ""
+            # if len(defaultunits) > 0:
+                # unit = defaultunits[i]
+            # sonuc=pq.Quantity(float(sayi), unit) 
+            sonuc=pq.Quantity(float(sayi), defaultunits[i]) 
+        else:
+            sayi = sayi.split("=")[-1].strip()        
+            #match = convert2pq.regex.search(sayi) 
+            match = re.search(r"([+\-]?)(\d+(\.\d*)?|\d*\.\d+)([eE][+\-]?\d+)?\s*(\D+\S*)?",sayi)
+            number = ""
+            unit = ""
+            if match is not None:
+                for k in [1, 2, 4]:
+                    if match.group(k) is not None:
+                        number = number + str(match.group(k))
+                unit = str(match.group(5))
+                if unit == "None":
+                    # unit = ""
+                    # if len(defaultunits) > 0:
+                        # unit = defaultunits[i]
+                    unit = defaultunits[i]
+                sonuc = pq.Quantity(float(number), unit)
+            else:
+                sonuc = None
+        sonuclar.append(float(sonuc.simplified.magnitude)) 
+    convert2pq.sonuc = deepcopy(sonuclar)
+    convert2pq.sayilar = deepcopy(sayilar)
+    convert2pq.defaultunits=deepcopy(defaultunits)
+    return convert2pq.sonuc
+
+def flatten(x):
+    """Flatten (an irregular) list of lists"""
+    result = []
+    for el in x:
+        if hasattr(el, "__iter__") and not isinstance(el, basestring):
+            result.extend(flatten(el))
+        else:
+            result.append(el)
+    return result
+
+def flatten2(l):
+    """Flatten (an irregular) list of lists (yield version of flatten)"""
+    for el in l:
+        if isinstance(el, collections.Iterable) and not isinstance(el, basestring):
+            for sub in flatten2(el):
+                yield sub
+        else:
+            yield el
+
+def smooth(x, window_len=11, window='hanning'):
+    """smooth the data using a window with requested size.
+    
+    This method is based on the convolution of a scaled window with the signal.
+    The signal is prepared by introducing reflected copies of the signal 
+    (with the window size) in both ends so that transient parts are minimized
+    in the begining and end part of the output signal.    
+    input:
+        x: the input signal 
+        window_len: the dimension of the smoothing window; should be an odd integer
+        window: the type of window from 'flat', 'hanning', 'hamming', 'bartlett', 'blackman'
+            flat window will produce a moving average smoothing.
+    output:
+        the smoothed signal        
+    example:
+    t=linspace(-2,2,0.1)
+    x=sin(t)+randn(len(t))*0.1
+    y=smooth(x)    
+    see also:     
+    numpy.hanning, numpy.hamming, numpy.bartlett, numpy.blackman, numpy.convolve
+    scipy.signal.lfilter
+ 
+    TODO: the window parameter could be the window itself if an array instead of a string   
+    """
+
+    import numpy as np
+
+    if x.ndim != 1:
+        raise ValueError("smooth only accepts 1 dimension arrays.")
+    if x.size < window_len:
+        raise ValueError("Input vector needs to be bigger than window size.")
+    if window_len < 3:
+        return x
+    if not window in ['flat', 'hanning', 'hamming', 'bartlett', 'blackman']:
+        raise ValueError("Window is on of 'flat', 'hanning', 'hamming', 'bartlett', 'blackman'")
+    s = np.r_[2 * x[0] - x[window_len:1:-1], x, 2 * x[-1] - x[-1:-window_len:-1]]
+    if window == 'flat':  #moving average
+        w = ones(window_len, 'd')
+    else:
+        w = eval('np.' + window + '(window_len)')
+    y = np.convolve(w / w.sum(), s, mode='valid')
+    return y[window_len - 1:-window_len + 1]
+
+
+    
+from numpy import NaN, Inf, arange, isscalar, asarray, array
+
+def peakdet(v, delta, x = None):
+    """
+    Converted from MATLAB script at http://billauer.co.il/peakdet.html
+    
+    Returns two arrays
+    
+    function [maxtab, mintab]=peakdet(v, delta, x)
+    %PEAKDET Detect peaks in a vector
+    %        [MAXTAB, MINTAB] = PEAKDET(V, DELTA) finds the local
+    %        maxima and minima ("peaks") in the vector V.
+    %        MAXTAB and MINTAB consists of two columns. Column 1
+    %        contains indices in V, and column 2 the found values.
+    %      
+    %        With [MAXTAB, MINTAB] = PEAKDET(V, DELTA, X) the indices
+    %        in MAXTAB and MINTAB are replaced with the corresponding
+    %        X-values.
+    %
+    %        A point is considered a maximum peak if it has the maximal
+    %        value, and was preceded (to the left) by a value lower by
+    %        DELTA.
+    
+    % Eli Billauer, 3.4.05 (Explicitly not copyrighted).
+    % This function is released to the public domain; Any use is allowed.
+    
+    """
+    maxtab = []
+    mintab = []
+       
+    if x is None:
+        x = arange(len(v))
+    
+    v = asarray(v)
+    
+    if len(v) != len(x):
+        sys.exit('Input vectors v and x must have same length')
+    
+    if not isscalar(delta):
+        sys.exit('Input argument delta must be a scalar')
+    
+    if delta <= 0:
+        sys.exit('Input argument delta must be positive')
+    
+    mn, mx = Inf, -Inf
+    mnpos, mxpos = NaN, NaN
+    
+    lookformax = True
+    
+    for i in arange(len(v)):
+        this = v[i]
+        if this > mx:
+            mx = this
+            mxpos = x[i]
+        if this < mn:
+            mn = this
+            mnpos = x[i]
+        
+        if lookformax:
+            if this < mx-delta:
+                maxtab.append((mxpos, mx))
+                mn = this
+                mnpos = x[i]
+                lookformax = False
+        else:
+            if this > mn+delta:
+                mintab.append((mnpos, mn))
+                mx = this
+                mxpos = x[i]
+                lookformax = True
+
+    return array(maxtab), array(mintab)
+
+
+if __name__ == "__main__":
+    print(convert2pq("10mil"))
+    print(convert2pq(["10", "10 inch"], ["m", "m"]))
+    print(convert2pq([10.0, "10 inch"]))
+    print(convert2pq([[10.0, 36.2], "10 inch"], ["mil", "m"]))
+    a = np.array([12.1, 45.3])
+    print(prettystring(a, birim=""))
+    from Components import *
+
+   # arg = ["12.1", "34.2", "23.4"]
+   # arg = [np.array([12.1, 15.2, 18.3]), "34.2", "23.4"]
+   # arg1 = Tee_Attenuator_Analysis(arg, ["ohm", "ohm", "ohm", "", "", "", "", ""])  
+    # import time
+    # time.clock()
+    # for i in np.linspace(10,50,10000):
+        # # convert2pq([i,"20","1","0","0","0","0","0","0","0","0"],[])            
+        # convert2pq([i,"20"],[])            
+    # print time.clock()       
+    # for i in range(10,50,1000):
+        # convert2pq_eski([10,"20","1","0","0","0","0","0","0","0","0"],[]) 
+
+    # print convert2pq([10.0], defaultunits=["GHz"])    
+    # print convert2pq([10.0], defaultunits=["GHz"])    
+    # print convert2pq([10.0], defaultunits=["Hz"])    
+    # print convert2pq([10.0], defaultunits=["MHz"])    
+    # print convert2pq([100.0], defaultunits=["MHz"])   
+    pass
+
+    
