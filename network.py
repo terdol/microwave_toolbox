@@ -184,3 +184,29 @@ def Snormalize(S, Zold, Znew):
         gamma[i, i] = ri                
         A[i, i] = csqrt(z.real/imp_yeni[i].real) * abs(imp_yeni[i]/z) * 2 * z/(imp_yeni[i] + z)   
     return A.I * (S - gamma) * (np.matrix(np.eye(ps)) - gamma * S).I * A
+    
+def Snormalize_(S, Zold, Znew):
+    """
+    Zold,  Znew port_sayisi uzunlugunda dizilerdir
+    Power-Wave icin
+    Reference: Article, “Multiport conversions between S, Z, Y, h, ABCD, and T parameters”
+    """
+    ps = len(Zold)
+    A = np.matrix(np.zeros((ps, ps)), dtype = complex)
+    gamma = np.matrix(np.zeros((ps, ps)), dtype = complex)
+    imp_yeni = []
+    for i in range(ps):
+        imp_yeni.append(Znew[i])
+        z = Zold[i]
+        gamma[i, i] = ((imp_yeni[i] - z)/(imp_yeni[i] + z.conj()))          
+        A[i, i] = 2*csqrt(z.real)*csqrt(imp_yeni[i].real) /(imp_yeni[i].conj() + z)   
+    return A.I * (S - gamma.conj()) * (np.matrix(np.eye(ps)) - gamma * S).I * A.conj()
+    
+def S_deembed(S, phase):
+    """
+    S-parameter deembedding 
+    S is numpy.matrix NxN
+    phase, deembedding phase for each port. Positive phase is deembedding into the circuit
+    """
+    PhaseMatrix=np.matrix(np.diag(phase))    
+    return PhaseMatrix*S*PhaseMatrix

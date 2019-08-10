@@ -66,11 +66,8 @@ def L_StraightRoundWire(arg, defaultunits=[]):
     if len(defaultunits) == 0:
         defaultunits = [""] * len(arg) * 2
     arg = arg[:5]
-    print("defaultunits= ", defaultunits)
-    print("arg= ",arg)
     newargs = convert2pq(arg, defaultunits)
     d, l, f, mur, sigma = tuple(newargs)
-    print("dlf",d,l,f)
     d = d * 100
     l = l * 100
     x = d * pi * csqrt(2 * mur * mu0 * f / sigma)
@@ -817,33 +814,20 @@ def Shorten90DegreeLine(arg, defaultunits=[]):
     arg.append(prettystring(cap, defaultunits[4]))
     return arg
 
-def Z_WG_TE10_PV(er, a, b, freq):
+def Z_WG_TE10(er, a, b, freq, formulation=1):
     kc = (pi/ a)
     k = 2 * pi * freq * csqrt(er) / co
     beta = csqrt(k * k - kc * kc)
-    imp = csqrt(mu0 / eps0 / er) * k / beta * 2. * b / a
-    return imp
-    
-def Z_WG_TE10_VI(er, a, b, freq):
-    kc = (pi/ a)
-    k = 2 * pi * freq * csqrt(er) / co
-    beta = csqrt(k * k - kc * kc)
-    imp = csqrt(mu0 / eps0 / er) * k / beta * pi * b / 2. / a
-    return imp
-
-def Z_WG_TE10_PI(er, a, b, freq):
-    kc = (pi/ a)
-    k = 2 * pi * freq * csqrt(er) / co
-    beta = csqrt(k * k - kc * kc)
-    imp = csqrt(mu0 / eps0 / er) * k / beta * pi**2 * b / 8. / a
+    if formulation==1:  # Power-Voltage
+        imp = csqrt(mu0 / eps0 / er) * k / beta * 2. * b / a
+    elif formulation==2:  # Voltage-Current
+        imp = csqrt(mu0 / eps0 / er) * k / beta * pi * b / 2. / a
+    elif formulation==3:  # Power-Current
+        imp = csqrt(mu0 / eps0 / er) * k / beta * pi**2 * b / 8. / a
+    elif formulation==4:  # Wave Impedance, E/H
+        imp = csqrt(mu0 / eps0 / er) * k / beta
     return imp
 
-def Z_WG_TE10_EH(er, a, b, freq):
-    kc = (pi/ a)
-    k = 2 * pi * freq * csqrt(er) / co
-    beta = csqrt(k * k - kc * kc)
-    imp = csqrt(mu0 / eps0 / er) * k / beta
-    return imp    
     
 def HomogeneousRectWaveguideParameters_TE(arg, defaultunits=[]):
     """ Homogeneous Rectangular Waveguide Parameters
@@ -880,7 +864,7 @@ def HomogeneousRectWaveguideParameters_TE(arg, defaultunits=[]):
     k = 2 * pi * freq * csqrt(er) / co
     beta = csqrt(k * k - kc * kc)
     eta = (eta0/ csqrt(er))
-    imp_te = Z_WG_TE10_PV(er, a, b, freq)
+    imp_te = Z_WG_TE10(er, a, b, freq)
     Rs = 1.0 / sigma / skin_depth
 
     # if (n==0):
@@ -1086,7 +1070,7 @@ def EvanescentWGEquivalent(arg, defaultunits=[]):
     a, b, er, length, frek = tuple(newargs)
     lcutoff = 2 * a
     wavelength = co / sqrt(er) / frek
-    Xo = abs(Z_WG_TE10_PV(er, a, b, frek))
+    Xo = abs(Z_WG_TE10(er, a, b, frek))
     gamma = 2. * pi / wavelength * csqrt(((wavelength/ lcutoff)) ** 2.0 - 1.)
     Xs1 = Xo * sinh(gamma * length)
     Xs2 = Xo * tanh(gamma * length / 2.0)
@@ -1106,7 +1090,7 @@ def EWG_ABCD(a, b, er, length, frek):
     # Zo=jXo
     lcutoff = 2 * a
     wavelength = co / sqrt(er) / frek
-    Xo = abs(Z_WG_TE10_PV(er, a, b, frek))
+    Xo = abs(Z_WG_TE10(er, a, b, frek))
     gamma = 2. * pi / wavelength * csqrt(((wavelength/ lcutoff)) ** 2.0 - 1.)
     Xs1 = Xo * sinh(gamma * length)
     Xs2 = Xo * tanh(gamma * length / 2.0)
@@ -1127,7 +1111,7 @@ def EWG_inv(a, b, er, length, frek):
     # Zo=jXo
     lcutoff = 2 * a
     wavelength = co / sqrt(er) / frek
-    Xo = abs(Z_WG_TE10_PV(er, a, b, frek))
+    Xo = abs(Z_WG_TE10(er, a, b, frek))
     gamma = 2. * pi / wavelength * csqrt(((wavelength/ lcutoff)) ** 2.0 - 1.)
     Xs1 = Xo * sinh(gamma * length)
     Xs2 = Xo * tanh(gamma * length / 2.0)
