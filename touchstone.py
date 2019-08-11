@@ -213,14 +213,6 @@ class spfile(object):
 
     def snp2smp(self,ports):
         """
-        m: frequency index
-        smatrix: S-Parameter matrix at m in np.matrix format
-        """
-        c=np.shape(smatrix)[0]
-        smatrix.shape=1,c*c
-        self.sdata[m,:]=np.array(smatrix)[0]
-
-        """
         This method changes the port numbering of the network
         port j of new network corresponds to ports[j] in old network
         """
@@ -321,7 +313,6 @@ class spfile(object):
         self.sdata=sdata
         self.FrequencyPoints=np.array(lfrekans)
         self.nokta_sayisi=b
-        print(self.empedans)
         return 1
 
     def Ffunc(self,imp):
@@ -433,6 +424,16 @@ class spfile(object):
             T=ABCD2T(abcd,[50.0+0j,50.0+0j])
             eigs,eigv=linalg.eig(T)
             print(self.FrequencyPoints[i],eigs)
+
+    def Inverse2Port(self):
+        """ Take inverse of 2-port data for de-embedding purposes
+        """
+        self.changeRefImpedance(50.0)
+        ns=len(self.FrequencyPoints)
+        for i in range(ns):
+            smatrix=np.matrix(self.sdata[i,:]).reshape(2,2)
+            sm = t2s(s2t(smatrix).I)
+            self.sdata[i,:] = sm.reshape(4)
 
     def S2ABCD(self,port1=1,port2=2):
         """ S-Matrix to ABCD matrix conversion between 2 chosen ports. Other ports are terminated with reference impedances
@@ -818,6 +819,71 @@ class spfile(object):
     def getfrequencylist(self):
         return self.FrequencyPoints
 
+    def Connect2Ports(self,k,m):
+        """port-m is connected to port-k of this circuit 
+        Reference: QUCS technical.pdf, S-parameters in CAE programs, p.29
+        """
+        k,m=min(k,m),max(k,m)
+        ps=self.port_sayisi
+        sdata=np.ones((self.nokta_sayisi,(ps-2)**2),dtype=complex)
+        for i in range(1,ps-1):
+            ii=i+(i>=k)+(i>=(m-1))
+            for j in range(1,ps-1):
+                jj=j+(j>=k)+(j>=(m-1))
+                index = (ps-2)*(i-1)+(j-1)
+                temp = S(k,jj)*S(ii,m)*(1-S(m,k))+S(m,jj)*S(ii,k)*(1-S(k,m))+S(k,jj)*S(m,m)*S(ii,k)+S(m,jj)*S(k,k)*S(ii,m)
+                temp = S(ii,jj) + temp/((1-S(m,k))*(1-S(k,m))-S(k,k)*S(m,m))
+                sdata[:,index] = temp
+        empedans = self.empedans[:k-1]+self.empedans[k:m-1]+self.empedans[m:]
+        self.empedans = empedans
+        self.port_sayisi = ps-2
+        self.sdata = sdata        
+
+    def ConnectNetwork1Conn(self,EX,k,m):
+        """ port-m of EX circuit is connected to port-k of this circuit 
+        Reference: QUCS technical.pdf, S-parameters in CAE programs, p.29
+        """
+        EX.changeRefImpedance(50.0)
+        changeRefImpedance(50.0)
+        EX.ChangeFrequencyPoints(self.FrequencyPoints)
+        ps1=self.port_sayisi
+        ps2=EX.port_sayisi
+        ps=ps1+ps2-2
+        sdata=np.ones((len(self.FrequencyPoints),ps**2),dtype=complex)
+        
+        for i in range(1,ps1):
+            ii=i+(i>(k-1))
+            for j in range(1,ps1):
+                jj=j+(j>(k-1))
+                index = column_of_data(i,j)
+                sdata[:,index] = S(ii,jj)+S(k,jj)*EX.S(m,m)*S(ii,k)/(1.0-S(k,k)*EX.S(m,m))
+        for i in range(1,ps2):
+            ii=i+(i>(m-1))
+            for j in range(1,ps1):
+                jj=j+(j>(k-1))
+                i = i+ps1-1
+                index = column_of_data(i,j)
+                sdata[:,index] = S(m,jj) * EX.S(ii,m) / (1.0 - S(k,k) * EX.S(m,m))
+        for i in range(1,ps1):
+            ii=i+(i>(k-1))
+            for j in range(1,ps2):
+                jj=j+(j>(m-1))
+                j = j+ps1-1
+                index = column_of_data(i,j)
+                sdata[:,index] = S(m,jj) * EX.S(ii,k) / (1.0 - S(m,m) * EX.S(k,k))
+        for i in range(1,ps2):
+            ii=i+(i>(m-1))
+            i = i+ps1-1
+            for j in range(1,ps2):
+                jj=j+ (j>(m-1))
+                j = j+ps1-1
+                index = column_of_data(i,j)
+                sdata[:,index] = EX.S(ii,jj)+EX.S(m,jj)*S(k,k)*EX.S(ii,m)/(1.0-EX.S(m,m)*S(k,k))
+        self.port_sayisi=ps
+        empedans=self.empedans[:k-1]+self.empedans[k:]+EX.empedans[:m-1]+EX.empedans[m:]
+        self.empedans = empedans
+        self.sdata = sdata
+    
     def PortRemapping(self,ports):
         """
         This method changes the port numbering of the network
@@ -982,10 +1048,12 @@ class spfile(object):
             ynew[t-1]=-(uphase[t-1]-uphase[t-2])/(frekanslar[t-1]-frekanslar[t-2])/360.0
 
         return ynew
-    def S(self,i=1,j=1,format="DB"):
+    def S(self,i=1,j=1,format="COMPLEX"):
         return self.data_array(format,"S",i,j)
-    def Z(self,i=1,j=1,format="DB"):
+    def Z(self,i=1,j=1,format="COMPLEX"):
         return self.data_array(format,"Z",i,j)
+    def Y(self,i=1,j=1,format="COMPLEX"):
+        return self.data_array(format,"Y",i,j)
     def SetFrequencyPoints(self,frekanslar):
         self.FrequencyPoints=frekanslar
         self.nokta_sayisi=len(self.FrequencyPoints)
