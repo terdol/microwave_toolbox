@@ -7,13 +7,13 @@ import numpy as np
 import operator as op
 from numpy.lib.scimath import sqrt as csqrt
 from functools import reduce
-#ABCD parameters
-def shZ(Z): 
+
+def shunt_z(Z): 
     """
     ABCD parameters of shunt impedance
     """
     return np.matrix([[1., 0], [(1./Z), 1.]])
-def seZ(Z): 
+def series_z(Z): 
     """
     ABCD parameters of series impedance
     """
@@ -48,55 +48,64 @@ def t_network(Zs1, Zp, Zs2):
     ABCD parameters of Tee network
     """
     return np.matrix([[1 + Zs1/Zp, Zs1 + Zs2 + Zs1 * Zs2/Zp], [1./Zp, 1. + Zs2/Zp]])
-def p_network(Zp1, Zs, Zp2): 
+def pi_network(Zp1, Zs, Zp2): 
     """
     ABCD parameters of Pi network
     """
     return np.matrix([[1 + Zs/Zp2, Zs], [1./Zp1 + 1./Zp2 + Zs/Zp1/Zp2, 1 + Zs/Zp1]])
     
-def ABCD2Y(M): 
+def abcd2y(M): 
     """
-    ABCD parameters to Y - Parameters Conversion
+    ABCD parameters to Y - Parameters conversion
     """
     a, b, c, d = M[0, 0], M[0, 1], M[1, 0], M[1, 1]
-    if b == 0:
-        print("Undefined Y Parameter")
-        return
     return np.matrix([[d/b, (b * c - a * d)/b], [ -1./b, a/b]])
     
-def Y2ABCD(M): 
+def y2abcd(M): 
     """
-    Y-Parameters to ABCD parameters Conversion
+    Y-Parameters to ABCD parameters conversion
     """
     y11, y12, y21, y22 = M[0, 0], M[0, 1], M[1, 0], M[1, 1]
-    if y21 == 0:
-        print("Undefined Y Parameter")
-        return
     return np.matrix([[ -y22/y21,  -1./y21], [(y12 * y21 - y11 * y22)/y21,  -y11/y21]])
-    
-def ABCD2Z(M): 
+
+def t2s(M): 
     """
-    ABCD parameters to Z - Parameters Conversion
+    Transfer scattering parameters to S-Parameters conversion
+    According to definition [b1,a1]=T.[a2,b2]
+    Ref: https://en.wikipedia.org/wiki/Scattering_parameters#Scattering_transfer_parameters
+    """
+    t11, t12, t21, t22 = M[0, 0], M[0, 1], M[1, 0], M[1, 1]
+    delta=t11*t22-t12*t21
+    return np.matrix([[ t12/t22,  delta/t22], [1./t22,  -t21/t22]])
+
+def s2t(M): 
+    """
+    S-Parameters to Transfer scattering parameters conversion
+    According to definition [b1,a1]=T.[a2,b2]
+    Ref: https://en.wikipedia.org/wiki/Scattering_parameters#Scattering_transfer_parameters
+    """
+    s11, s12, s21, s22 = M[0, 0], M[0, 1], M[1, 0], M[1, 1]
+    delta=s11*s22-s12*s21
+    return np.matrix([[ -delta/s21,  s11/s21], [-s22/s21,  1./s21]])
+    
+def abcd2z(M): 
+    """
+    ABCD parameters to Z - Parameters conversion
     """
     a, b, c, d = M[0, 0], M[0, 1], M[1, 0], M[1, 1]
-    if c == 0:
-        print("Undefined Z Parameter")
-        return
     return np.matrix([[a/c, ( - b * c + a * d)/c], [1./c, d/c]])
     
-def Z2ABCD(M): 
+def z2abcd(M): 
     """
-    Z - Parameters to ABCD parameters Conversion
+    Z - Parameters to ABCD parameters conversion
     """
     z11, z12, z21, z22 = M[0, 0], M[0, 1], M[1, 0], M[1, 1]
-    if z21 == 0:
-        print("Undefined Y Parameter")
-        return
     return np.matrix([[z11/z21, (z11 * z22 - z21 * z12)/z21], [1./z21, z22/z21]])
     
-def ABCD2S(M, Zo): 
+def abcd2s(M, Zo=50.0): 
     """
-    ABCD parameters to S - Parameters Conversion
+    ABCD parameters to S - Parameters conversion
+    Valid for real Zo value
     """
     a, b, c, d = M[0, 0], M[0, 1], M[1, 0], M[1, 1]
     s11 = ((a + b/Zo - c * Zo - d)/(a + b/Zo + c * Zo + d))
@@ -105,70 +114,65 @@ def ABCD2S(M, Zo):
     s22 = (( - a + b/Zo - c * Zo + d)/(a + b/Zo + c * Zo + d))
     return np.matrix([[s11, s12], [s21, s22]])
 
-def S2ABCD(M, Z): 
+def s2abcd(M, Z=[50.0, 50.0]): 
     """
-    ABCD parameters to S-Parameters Conversion
+    S-Parameters to ABCD parameters conversion
+    Valid for real Z values
+    Z: reference impedance list [Z1, Z2]
     """
     Zo1, Zo2 = tuple(Z)
     s11, s12, s21, s22 = M[0, 0], M[0, 1], M[1, 0], M[1, 1]
-    a = ((Zo1.conjugate() + s11 * Zo1) * (1. - s22) + s12 * s21 * Zo1)/(2. * s21 * csqrt(Zo1.real * Zo2.real))
-    b = ((Zo1.conjugate() + s11 * Zo1) * (Zo2.conjugate() + s22 * Zo2) - s12 * s21 * Zo1 * Zo2)/(2. * s21 * csqrt(Zo1.real * Zo2.real))
-    c = ((1. - s11) * (1. - s22) - s12 * s21)/(2. * s21 * csqrt(Zo1.real * Zo2.real))
-    d = ((1. - s11) * (Zo2.conjugate() + s22 * Zo2) + s12 * s21 * Zo2)/(2. * s21 * csqrt(Zo1.real * Zo2.real))
+    a = ((Zo1 + s11 * Zo1) * (1. - s22) + s12 * s21 * Zo1)/(2. * s21 * csqrt(Zo1 * Zo2))
+    b = ((Zo1 + s11 * Zo1) * (Zo2 + s22 * Zo2) - s12 * s21 * Zo1 * Zo2)/(2. * s21 * csqrt(Zo1 * Zo2))
+    c = ((1. - s11) * (1. - s22) - s12 * s21)/(2. * s21 * csqrt(Zo1 * Zo2))
+    d = ((1. - s11) * (Zo2 + s22 * Zo2) + s12 * s21 * Zo2)/(2. * s21 * csqrt(Zo1 * Zo2))
     return np.matrix([[a, b], [c, d]])    
-    
-def ABCD2T(M, Z): 
+
+def abcd2t(M, Zo=50.0): 
     """
-    ABCD parameters to T - Parameters Conversion
+    ABCD parameters to T - Parameters conversion
+
+    ABCD: [V1 I1]=ABCD*[V2 -I2]
+    Pseudo-Wave or Power-Wave? Don't use.
     """
-    Zo1, Zo2 = tuple(Z)
-    a, b, c, d = M[0, 0], M[0, 1], M[1, 0], M[1, 1]
-    t11 = (a * Zo2 + b + c * Zo1 * Zo2 + d * Zo1)/2./csqrt(Zo1.real * Zo2.real)
-    t21 = (a * Zo2 + b + c * Zo1.conjugate() * Zo2 - d * Zo1.conjugate())/2./csqrt(Zo1.real * Zo2.real)
-    t12 = (a * Zo2.conjugate() - b + c * Zo1 * Zo2.conjugate() - d * Zo1)/2./csqrt(Zo1.real * Zo2.real)
-    t22 = (a * Zo2.conjugate() - b - c * Zo1.conjugate() * Zo2.conjugate() + d * Zo1.conjugate())/2./csqrt(Zo1.real * Zo2.real)
-    return np.matrix([[t11, t12], [t21, t22]])
+    X = abcd2s(M, Zo)
+    return s2t(M)
     
-def ABCD_ChangePorts(M): 
+def abcd_change_ports(M): 
     """
     Switching ports of ABCD parameters 
     """
     M = M.I
     np.matrix([[M[0, 0],  - M[0, 1]], [ - M[1, 0], M[1, 1]]])
 
-def T2ABCD(M, Z): 
+def t2abcd(M, Z=[50.0,50.0]): 
     """
-    T-parameters to ABCD parameters Conversion
+    T-parameters to ABCD parameters conversion
     """
-    Zo1, Zo2 = tuple(Z)
-    t11, t12, t21, t22 = M[0, 0], M[0, 1], M[1, 0], M[1, 1]
-    c = (t11 + t12 - t21 - t22)/2./csqrt(Zo1.real * Zo2.real)
-    d = (Zo2.conjugate() * (t11 - t21) - Zo2 * (t12 - t22))/2./csqrt(Zo1.real * Zo2.real)
-    a = (Zo1.conjugate() * (t11 + t12) + Zo1 * (t21 + t22))/2./csqrt(Zo1.real * Zo2.real)
-    b = (Zo2.conjugate() * (t11 * Zo1.conjugate() + t21 * Zo1) - Zo2 * (t12 * Zo1.conjugate() + t22 * Zo1))/2./csqrt(Zo1.real * Zo2.real)
-    return np.matrix([[a, b], [c, d]])
-    
-def CascadeNetworks(networks): 
+    X = t2s(M)
+    return s2abcd(X, Z)
+
+def cascade_networks(networks): 
     """
     Cascading 2-port Networks,  input and output is ABCD matrices of networks
     """
     return reduce(op.mul, networks)
 
-def ParallelNetworks(networks):
+def parallel_networks(networks):
     """
     Paralleling 2-port Networks,  input and output  is ABCD matrices of networks
     """
-    ymatrices = [ABCD2Y(M) for M in networks]
-    return Y2ABCD(reduce(op.add, ymatrices))
+    ymatrices = [abcd2y(M) for M in networks]
+    return y2abcd(reduce(op.add, ymatrices))
 
-def SeriesNetworks(networks):
+def series_networks(networks):
     """
     Series Connection of Networks (reference pins of 1. network is connected to alive pins of 2. network),  input and output  is ABCD matrices of networks
     """
-    zmatrices = [ABCD2Z(M) for M in networks]
-    return Z2ABCD(reduce(op.add, zmatrices))
+    zmatrices = [abcd2z(M) for M in networks]
+    return z2abcd(reduce(op.add, zmatrices))
 
-def Snormalize(S, Zold, Znew):
+def s_normalize_pseudo(S, Zold, Znew):
     """
     Zold,  Znew port_sayisi uzunlugunda dizilerdir
     Pseudo-Wave icin
@@ -185,7 +189,7 @@ def Snormalize(S, Zold, Znew):
         A[i, i] = csqrt(z.real/imp_yeni[i].real) * abs(imp_yeni[i]/z) * 2 * z/(imp_yeni[i] + z)   
     return A.I * (S - gamma) * (np.matrix(np.eye(ps)) - gamma * S).I * A
     
-def Snormalize_(S, Zold, Znew):
+def s_normalize_power(S, Zold, Znew):
     """
     Zold,  Znew port_sayisi uzunlugunda dizilerdir
     Power-Wave icin
@@ -202,11 +206,11 @@ def Snormalize_(S, Zold, Znew):
         A[i, i] = 2*csqrt(z.real)*csqrt(imp_yeni[i].real) /(imp_yeni[i].conj() + z)   
     return A.I * (S - gamma.conj()) * (np.matrix(np.eye(ps)) - gamma * S).I * A.conj()
     
-def S_deembed(S, phase):
+def s_phase_deembed(S, phase):
     """
     S-parameter deembedding 
     S is numpy.matrix NxN
-    phase, deembedding phase for each port. Positive phase is deembedding into the circuit
+    phase, deembedding phase for each port in radian. Positive phase is deembedding into the circuit
     """
-    PhaseMatrix=np.matrix(np.diag(phase))    
+    PhaseMatrix=np.exp(1j*np.matrix(np.diag(phase)))   
     return PhaseMatrix*S*PhaseMatrix
