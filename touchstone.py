@@ -250,13 +250,13 @@ class spfile(object):
         ext=dosya_adi.split(".")[-1]
         if ext[-1].lower()=="p":
             try:
-                ps=self.port_sayisi=int(ext[-2])
+                ps=self.port_sayisi=int("".join(ext[1:-1]))
             except:
                 print("Error determining port number\n")
                 return
         else: # for port numbers between 10-99 for which the extension is .s23 for example
             try:
-                ps=self.port_sayisi=int(ext[-2])*10+int(ext[-1])
+                ps=self.port_sayisi=int("".join(ext[1:]))
             except:
                 print("Error determining port number\n")
                 return
@@ -336,7 +336,6 @@ class spfile(object):
         # if (self.YZ_OK==0 and (input=="Y" or input=="Z")):
             # print("Since Y and Z are not calculated before, input cannot be Y or Z")
             # return
-        print(self.empedans)
         imp=self.prepare_ref_impedance_array(self.empedans)
         impT=imp.T
         ps=self.port_sayisi
@@ -583,7 +582,7 @@ class spfile(object):
 
     def prepare_ref_impedance_array(self,imparray):
         """   Turns reference impedance array which is composed of numbers,arrays, functions and 1-ports to numerical array which
-        is composed of numbers and arrays. It is made sure that abs(Re(Z))>0.
+        is composed of numbers and arrays. It is made sure that Re(Z)=!0.
         """
         newarray=[]
         for i in range(self.port_sayisi):
@@ -591,7 +590,7 @@ class spfile(object):
                 newarray.append([x+(x.real==0)*1e-8 for x in imparray[i].data_array(format="COMPLEX",syz="Z",i=1,j=1, frekanslar=self.FrequencyPoints) ])
             elif inspect.isfunction(imparray[i]):
                 newarray.append([x+(x.real==0)*1e-8 for x in imparray[i](self.FrequencyPoints)])
-            elif isinstance(imparray[i],(float,complex)):
+            elif isinstance(imparray[i],(float,complex,int)):
                 newarray.append(np.ones(len(self.FrequencyPoints))*(imparray[i]+(imparray[i].real==0)*1e-8))
         return np.array(newarray)
 
@@ -823,8 +822,10 @@ class spfile(object):
         return self.FrequencyPoints
 
     def connect_2_ports_list(self,conns):
-        """Short circuit some of the ports together. Ports that will be connected are given as tuples in list conn
+        """Short circuit ports together one-to-one. Short circuited ports are removed. 
+        Ports that will be connected are given as tuples in list conn
         i.e. conn=[(p1,p2),(p3,p4),..]
+        The order of remaining ports is kept.
         Reference: QUCS technical.pdf, S-parameters in CAE programs, p.29
         """
         for i in range(len(conns)):
@@ -835,7 +836,7 @@ class spfile(object):
                 conns[j][1]=conns[j][1]-(conns[j][1]>k)-(conns[j][1]>m)
     
     def connect_2_ports(self,k,m):
-        """port-m is connected to port-k 
+        """port-m is connected to port-k and both ports are removed
         Reference: QUCS technical.pdf, S-parameters in CAE programs, p.29
         """
         k,m=min(k,m),max(k,m)
@@ -857,6 +858,7 @@ class spfile(object):
 
     def connect_network_1_conn(self,EX,k,m):
         """ port-m of EX circuit is connected to port-k of this circuit 
+        Remaining ports of EX are added to the port list of this circuit in order.
         Reference: QUCS technical.pdf, S-parameters in CAE programs, p.29
         """
         EX.change_ref_impedance(50.0)
