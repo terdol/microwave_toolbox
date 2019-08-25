@@ -120,6 +120,7 @@ class spfile(object):
         self.ydata=[]
         self.zdata=[]
         self.abcddata=[]
+        self.portnames={}
         self.YZ_OK=0
         self.ABCD_OK=0
         self.formulation=1  # 1: "power-wave"
@@ -129,9 +130,11 @@ class spfile(object):
         if not dosya=="":
             self.dosyaoku(dosya,satiratla)
         else:
-            self.empedans=[50.0]
+            self.empedans=[50.0]*portsayisi
             self.normalized=1 # normalized to 50 ohm if 1
             self.sdata=np.zeros((noktasayisi,portsayisi**2),complex)
+            for i in range(ps):
+                self.portnames[i+1]=""
             self.FrequencyPoints=np.zeros(noktasayisi,float)
             self.port_sayisi=portsayisi
             self.nokta_sayisi=noktasayisi
@@ -260,16 +263,26 @@ class spfile(object):
             except:
                 print("Error determining port number\n")
                 return
-
+        for i in range(ps):
+            self.portnames[i+1]=""
         try:
             f=open(dosya_adi,'r');
         except:
             print("Error opening the file: "+dosya_adi+"\n")
             return  0
-        lines=f.readlines()[satiratla:]
+        linesread=f.readlines()[satiratla:]
         lsonuc=[]
+        lines=[]
         lfrekans=[]
-        lines=[x.split("!")[0].strip() for x in lines if (len(x.strip())>0)]
+        pat="\!\s+Port\[(\d+)\]\s+=\s+(.+)"
+        for x in linesread:
+            matchObj = re.match(pat,x)
+            if matchObj:
+                self.portnames[ matchObj.group(1) ] = matchObj.group(2)
+            elif len(x.strip())>0:
+                lines.append(x.split("!")[0].strip())
+                
+        #lines=[x.split("!")[0].strip() for x in lines if (len(x.strip())>0)]
         lines=[x for x in lines if len(x)>0]
         # bu durumda ilk satir # ile baslamali.
         x=lines[0]
