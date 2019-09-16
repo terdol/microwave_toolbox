@@ -266,7 +266,7 @@ class spfile(object):
         for i in range(ps):
             self.portnames[i+1]=""
         try:
-            f=open(dosya_adi,'r');
+            f=open(dosya_adi,'r')
         except:
             print("Error opening the file: "+dosya_adi+"\n")
             return  0
@@ -278,13 +278,13 @@ class spfile(object):
         for x in linesread:
             matchObj = re.match(pat,x)
             if matchObj:
-                self.portnames[ matchObj.group(1) ] = matchObj.group(2)
+                self.portnames[ int(matchObj.group(1)) ] = matchObj.group(2)
             elif len(x.strip())>0:
                 lines.append(x.split("!")[0].strip())
                 
         #lines=[x.split("!")[0].strip() for x in lines if (len(x.strip())>0)]
         lines=[x for x in lines if len(x)>0]
-        # bu durumda ilk satir # ile baslamali.
+        # bu durumda ilk satir (lines[0]) # ile baslamali.
         x=lines[0]
         self.format,self.frekans_birimi,empedans=formatoku(x)
         self.empedans=np.ones(ps,dtype=complex)*empedans
@@ -1132,8 +1132,6 @@ def formatoku(cumle):
     else:
         empedans=50.0
     return format,frekans,empedans
-def grafik(p1,p2,stil):
-    plot(p1,p2,stil,hold='True')
 
 if __name__ == '__main__':
     aa=spfile()
