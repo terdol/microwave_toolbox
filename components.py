@@ -11,7 +11,7 @@ from scipy.integrate import quad
 from scipy.misc import factorial
 import re
 import os
-from filters import *
+# from filters import *
 from network import *
 # import numpy as np
 from numpy import round, zeros, ones, sin, cos, shape, array, log, log10, exp
@@ -21,7 +21,7 @@ from numpy import max as npmax
 from numpy import sum as npsum
 from genel import *
 from numpy.lib.scimath import sqrt as csqrt #this works with negative real numbers unlike numpy.sqrt
-from TransmissionLines import *
+from transmission_lines import *
 import visvis
 
 def Zo_eeff_WireOnGroundedSubstrate(arg, defaultunits=[]):
