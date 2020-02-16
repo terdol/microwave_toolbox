@@ -15,43 +15,6 @@ import inspect
 
 
 fcoef={"HZ":1.0, "KHZ":1e3, "MHZ":1e6, "GHZ":1e9}
-
-
-def tukey_window(alpha,N):
-    """
-    Tukey window (also known as "tapered cosine window")
-    """
-    sonuc=[]
-    for i in range(N):
-        if (i<=alpha*(N-1.0)/2.0):
-            sonuc.append(0.5*(1.0+cos(pi*(2.0*i/alpha/(N-1.0)-1.0))))
-        elif (i<=(N-1)*(1.0-alpha/2.0)):
-            sonuc.append(1.0)
-        elif (i<=(N-1)):
-            sonuc.append(0.5*(1.0+cos(pi*(2.0*i/alpha/(N-1.0)-2.0/alpha+1.0))))
-    return sonuc
-
-def gaussian_window(sigma,N):
-    """
-    Gaussian window
-    sigma should be smaller than or equal to 0.5
-
-    Ref: Wikipedia
-    """
-    sonuc=[]
-    for i in range(N):
-        sonuc.append(exp(-0.5*((i-(N-1.0)/2.0)/(sigma*(N-1.0)/2.0))**2))
-    return sonuc
-    
-def cmp(x, y):
-    """
-    Replacement for built-in function cmp that was removed in Python 3
-
-    Compare the two objects x and y and return an integer according to
-    the outcome. The return value is negative if x < y, zero if x == y
-    and strictly positive if x > y.
-    """
-    return int(x > y) - int(x < y)
     
 def generate_multiport_spfile(conffile="", outputfilename=""):
     """
@@ -1048,10 +1011,24 @@ class spfile(object):
         return self
 
     def data_array(self,format="DB",syz="S",i=1,j=1, frekanslar=[],ref=None, DCInt=0,DCValue=(0.0,0.0),smoothing=0, InterpolationConstant=0):
-        """
-        Returns a data array
+        """Returns a data array
         -For VSWR calculation j is ignored and only i is used.
-        """
+        
+        Keyword Arguments:
+            format {str} -- [description] (default: {"DB"})
+            syz {str} -- [description] (default: {"S"})
+            i {int} -- [description] (default: {1})
+            j {int} -- [description] (default: {1})
+            frekanslar {list} -- [description] (default: {[]})
+            ref {[type]} -- [description] (default: {None})
+            DCInt {int} -- [description] (default: {0})
+            DCValue {tuple} -- [description] (default: {(0.0,0.0)})
+            smoothing {int} -- [description] (default: {0})
+            InterpolationConstant {int} -- [description] (default: {0})
+        
+        Returns:
+            [type] -- [description]
+        """  
         #DCValue in (dB,deg), aci bilgisi +/- durumlarini kurtarmak icin.
         if format=="K":
             return self.stability_factor_K(frekanslar,i,j)

@@ -29,6 +29,42 @@ pq.microinch = pq.UnitQuantity('microinch', pq.inch / 1e6, symbol='microinch')
 
 pq.dB = pq.UnitQuantity('dB', pq.dimensionless, symbol='dB')
 
+def tukey_window(alpha,N):
+    """
+    Tukey window (also known as "tapered cosine window")
+    """
+    sonuc=[]
+    for i in range(N):
+        if (i<=alpha*(N-1.0)/2.0):
+            sonuc.append(0.5*(1.0+cos(pi*(2.0*i/alpha/(N-1.0)-1.0))))
+        elif (i<=(N-1)*(1.0-alpha/2.0)):
+            sonuc.append(1.0)
+        elif (i<=(N-1)):
+            sonuc.append(0.5*(1.0+cos(pi*(2.0*i/alpha/(N-1.0)-2.0/alpha+1.0))))
+    return sonuc
+
+def gaussian_window(sigma,N):
+    """
+    Gaussian window
+    sigma should be smaller than or equal to 0.5
+
+    Ref: Wikipedia
+    """
+    sonuc=[]
+    for i in range(N):
+        sonuc.append(exp(-0.5*((i-(N-1.0)/2.0)/(sigma*(N-1.0)/2.0))**2))
+    return sonuc
+    
+def cmp(x, y):
+    """
+    Replacement for built-in function cmp that was removed in Python 3
+
+    Compare the two objects x and y and return an integer according to
+    the outcome. The return value is negative if x < y, zero if x == y
+    and strictly positive if x > y.
+    """
+    return int(x > y) - int(x < y)
+
 try:
     basestring
 except NameError:
