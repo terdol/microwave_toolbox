@@ -1,8 +1,5 @@
 #-*-coding:utf-8-*-
-from __future__ import print_function
-from __future__ import division
-from builtins import range
-# from past.utils import old_div
+
 from constants import *
 import sys
 # from scipy import *
@@ -1171,7 +1168,7 @@ def Z_eeff_inverted_suspended_stripline_0(w, t, h, b, er, freq):
     Z = (Zo/csqrt(eeff))
     return (Z, eeff)
 
-def Z_eeff_suspended_stripline(w, t, h, hu, hl, er, freq):
+def Z_eeff_suspended_microstripline(w, t, h, hl, er, freq):
     # Model for Shielded Suspended Substrate Microstrip Line.pdf, Level 1
     # hu: ustteki hava boslugu
     # hl: alttaki hava boslugu
@@ -1179,8 +1176,6 @@ def Z_eeff_suspended_stripline(w, t, h, hu, hl, er, freq):
     # Over the range 0.5<=w/hl<=10, 0.05<=h/hl<=1.5, and er<=20 the accuracy
     # of these model equations (in reproducting the exact theoretical data) is generally
     # better than 0.6 percent.
-    # hu = hl = (b-h)/2.0
-    # pdf dokumani aldatici, hu hic kullanilmiyor, sonsuz kabul ediliyor.
     f1 = 1. - (1.0/ csqrt(er))
     f = log(er)
     d33 = (-35.2531 + 601.0291*f - 643.0814*f**2 + 161.2689*f**3) * 1e-9
@@ -1210,8 +1205,8 @@ def Z_eeff_suspended_stripline(w, t, h, hu, hl, er, freq):
 
     u = (((w/hl))/(1.0+(h/hl)))
     fu = 6.0+(2.0*pi-6.0)*exp(-power((30.666/u),0.7528))
-    Zo=60.0*log((fu/u)+csqrt(1.0+4/u/u))
-    Z = (Zo/csqrt(eeff))
+    Zo = 60.0*log((fu/u)+csqrt(1.0+4/u/u))
+    Z = Zo/csqrt(eeff)
 
     return (Z, eeff)
 
@@ -1223,8 +1218,7 @@ def Z_eeff_inverted_suspended_stripline(w, t, h, hu, hl, er, freq):
     # The stated error
     # of the fit to the exact theoretical calculations is less than 0.6% for 1<=er<=20,
     # 0.5<=w/hl<=10, and 0.06<=h/hl<=1.5.
-    hu = hl = ((b-h)/2.0)
-    f1 = csqrt(er)-1.0
+
     f = log(er)
     d33 = (- 530.2099 - 2666.352*f - 3220.096*f**2 + 1324.499*f**3) * 1e-9
     d32 = (124.9655  + 577.5381*f + 1366.453*f**2 - 481.13*f**3) * 1e-7
@@ -1248,8 +1242,10 @@ def Z_eeff_inverted_suspended_stripline(w, t, h, hu, hl, er, freq):
     c1 = d13*k**3 + d12*k**2 + d11*k**1 + d10
     c0 = d03*k**3 + d02*k**2 + d01*k**1 + d00
     f2 = (1./ (c3*((w/hl))**3 + c2*((w/hl))**2 + c1*((w/hl))**1 + c0))
+    f1 = csqrt(er)-1.0
     eeff = (1.0+f1*f2)**2
 
+    b = h+hu+hl
     u = (w/b)
     fu = 6.0+(2.0*pi-6.0)*exp(-power((30.666/u),0.7528))
     Zo=60.0*log((fu/u)+csqrt(1.0+4/u/u))
@@ -1260,7 +1256,7 @@ def Z_eeff_inverted_suspended_stripline(w, t, h, hu, hl, er, freq):
 def Z_eeff_suspended_stripline_eski(w, t, a, b, er, freq):
     # Transmssion Line Design Handbook, p141, a-dielectric height, b-spacing
     # height, t-metal thickness, w-metal width
-    #� Hatali, er etkisi olmasi gerekenden az gorunuyor.
+    # Hatali, er etkisi olmasi gerekenden az gorunuyor.
     f1 = 1. - (1.0/ csqrt(er))
     f = log(er)
     d33 = (-35.2531 + 601.0291 * f - 643.0814 * f **
@@ -1488,14 +1484,14 @@ def suspended_microstripline_synthesis(arg, defaultunits):
     newargs = convert2pq(arg, defaultunits)
     w, t, a, b, er, tand, sigma, mu, roughness, freq, length, Z, deg = tuple(newargs)
     # output =Sentez(lambda *x:Z_eeff_suspended_stripline(*x)[0], [w, t, a, b, er, freq], [0],target_value=[Z],init_value=[b], limits = [(a/100.0,a*100.0),(a/100.0,a*100.0)])
-    output =Sentez(lambda *x:Z_eeff_suspended_stripline(*x)[0], [w, t, a, b, er, freq], [0],target_value=[Z],init_value=[b], limits = [((a/1000.0),a*1000.0)])
+    output =Sentez(lambda *x:Z_eeff_suspended_microstripline(*x)[0], [w, t, a, b, er, freq], [0],target_value=[Z],init_value=[b], limits = [((a/1000.0),a*1000.0)])
     w= output[0]
 
 
-    Z, eeff = Z_eeff_suspended_stripline(w, t, a, b, er, freq)
+    Z, eeff = Z_eeff_suspended_microstripline(w, t, a, b, er, freq)
     length = physical_length(eeff, freq, deg)
     sd = skin_depth(freq, sigma, mu)
-    cond_loss = -pi * freq / Z / co * (Z_eeff_suspended_stripline(w, t, a, b, 1.0, freq)[0] - Z_eeff_suspended_stripline(
+    cond_loss = -pi * freq / Z / co * (Z_eeff_suspended_microstripline(w, t, a, b, 1.0, freq)[0] - Z_eeff_suspended_microstripline(
         w - sd, t - sd, a, b + sd, 1.0, freq)[0]) * 20.0 * log10(exp(1))  # dB/m, incremental inductance
     diel_loss = dielectric_loss(eeff, er, freq, tand)
     argout = [Z, deg, eeff, cond_loss, diel_loss]
@@ -1629,10 +1625,28 @@ def Z_eeff_grounded_cpw(w, er, s, h):
     k3_ = csqrt(1.0 - k3 ** 2)
     x = ellipk(k_) * ellipk(k3) / (ellipk(k) * ellipk(k3_))
     eeff = ((1 + er * x)/ (1 + x))
-    Zo = 60 * pi / \
-        csqrt(eeff) / ((ellipk(k)/ ellipk(k_)) + (ellipk(k3)/ ellipk(k3_)))
+    Zo = 60 * pi /csqrt(eeff) / ((ellipk(k)/ ellipk(k_)) + (ellipk(k3)/ ellipk(k3_)))
     return (Zo, eeff)
+    
+def Z_eeff_grounded_cpw_thick(w, th, er, s, h):
+# Coplanar waveguide circuits, components and systems s89
+# Transmission Line Design Handbook s79
+	# For thickness correction Reference: "CPWG impedance formula" document
 
+    dd = 1.25*th/pi*(1.0+log(2*h/th));
+    Zair, _ = Z_eeff_grounded_cpw(w+dd, 1.0, s-dd, h)
+    Cair = 1/co/Zair
+    L = Cair*Zair*Zair
+    Zair_thin, _ = Z_eeff_grounded_cpw(w, 1.0, s, h)
+    Cex = 1./co*(1./Zair-1./Zair_thin)
+    Cex = 2.0*eps0*th/s+(Cex-2*eps0*th/s)*(er+1.0)/2.0
+    Zthin, eps_eff_thin = Z_eeff_grounded_cpw(w, er, s, h)
+    Cthin = 1./Zthin/co*sqrt(eps_eff_thin);
+    vp = 1./sqrt(L*(Cthin+Cex));
+    eeff = (co/vp)**2;
+    Zo = sqrt(L/(Cthin+Cex));
+    return (Zo, eeff)
+    
 def Z_eeff_cpw(w, er, s, h, t):
 # Transmission Line Design Handbook s73
     a = w
@@ -1653,37 +1667,37 @@ def Z_eeff_cpw(w, er, s, h, t):
 def grounded_cpw_analysis(arg, defaultunits):
     """
     Argument List:
-    First 10 arguments are inputs.
+    First 11 arguments are inputs.
     1- Line Width (w);length
     2- Line Spacing (s);length
-    3- Dielectric Permittivity (<font size=+2>&epsilon;<sub>r</sub></font>);
-    4- Substrate Thickness (h);length
-    5- Dielectric Loss Tangent ;
-    6- Metal Conductivity ;  electrical conductivity
-    7- Metal Permeability ;
-    8- Roughness ;length
-    9- Frequency ; frequency
-    10- Physical Length ;length
-    11- Impedance ;   impedance
-    12- Electrical Length ; angle
-    13- <font size=+2>&epsilon;<sub>eff</sub></font> ;
-    14- Conductor Loss ;   loss per length
-    15- Dielectric Loss ;  loss per length
+    3- Metal Thickness (th);length
+    4- Dielectric Permittivity (<font size=+2>&epsilon;<sub>r</sub></font>);
+    5- Substrate Thickness (h);length
+    6- Dielectric Loss Tangent ;
+    7- Metal Conductivity ;  electrical conductivity
+    8- Metal Permeability ;
+    9- Roughness ;length
+    10- Frequency ; frequency
+    11- Physical Length ;length
+    12- Impedance ;   impedance
+    13- Electrical Length ; angle
+    14- <font size=+2>&epsilon;<sub>eff</sub></font> ;
+    15- Conductor Loss ;   loss per length
+    16- Dielectric Loss ;  loss per length
     Ref: Coplanar waveguide circuits, components and systems s89
     """
 
     arg = arg[:10]
     newargs = convert2pq(arg, defaultunits)
-    w, s, er, h, tand, sigma, mu, roughness, freq, length = tuple(newargs)
-    Z, eeff = Z_eeff_grounded_cpw(w, er, s, h)
+    w, s, th, er, h, tand, sigma, mu, roughness, freq, length = tuple(newargs)
+    Z, eeff = Z_eeff_grounded_cpw_thick(w, th, er, s, h)
     deg = electrical_length(eeff, freq, length)
     sd = skin_depth(freq, sigma, mu)
-    cond_loss = -pi * freq / Z / co * (Z_eeff_grounded_cpw(w, 1.0, s, h)[0] - Z_eeff_grounded_cpw(
-        w - sd, 1.0, s + sd, h + sd)[0]) * 20.0 * log10(exp(1))  # dB/m, incremental inductance
+    cond_loss = -pi * freq / Z / co * (Z_eeff_grounded_cpw(w, th, 1.0, s, h)[0] - Z_eeff_grounded_cpw(
+        w - sd, th-sd, 1.0, s + sd, h + sd)[0]) * 20.0 * log10(exp(1))  # dB/m, incremental inductance
     diel_loss = dielectric_loss(eeff, er, freq, tand)
     argout = [Z, deg, eeff, cond_loss, diel_loss]
-    arg = arg + [prettystring(argout[i], defaultunits[len(arg) + i])
-                 for i in range(len(argout))]
+    arg = arg + [prettystring(argout[i], defaultunits[len(arg) + i]) for i in range(len(argout))]
     return arg
 
 def grounded_cpw_synthesis(arg, defaultunits):
@@ -1711,12 +1725,10 @@ def grounded_cpw_synthesis(arg, defaultunits):
     arg = arg[:12]
     newargs = convert2pq(arg, defaultunits)
     w, s, er, h, tand, sigma, mu, roughness, freq, length, Z, deg = tuple(newargs)
-    #Z, eeff = Z_eeff_grounded_cpw(w, er, s, h)
     output = Sentez(lambda *x: Z_eeff_grounded_cpw(*x)[0], [w, er, s, h], [0], target_value=[Z],
                     init_value=[h], limits=[((h/ 1000.0), h * 1000.0)])
     w = output[0]
     Z, eeff = Z_eeff_grounded_cpw(w, er, s, h)
-    #deg = electrical_length(eeff, freq, length)
     length = physical_length(eeff, freq, deg)
     sd = skin_depth(freq, sigma, mu)
     cond_loss = -pi * freq / Z / co * (Z_eeff_grounded_cpw(w, 1.0, s, h)[0] - Z_eeff_grounded_cpw(
@@ -1726,8 +1738,7 @@ def grounded_cpw_synthesis(arg, defaultunits):
     arg[9] = prettystring(length, defaultunits[9])
     arg = arg[:10]
     argout = [Z, deg, eeff, cond_loss, diel_loss]
-    arg = arg + [prettystring(argout[i], defaultunits[len(arg) + i])
-                 for i in range(len(argout))]
+    arg = arg + [prettystring(argout[i], defaultunits[len(arg) + i]) for i in range(len(argout))]
     return arg
 
 def Z_eeff_covered_grounded_cpw(w, s, h, er, h1):
@@ -1779,8 +1790,7 @@ def covered_grounded_coplanar_waveguide_analysis(arg, defaultunits):
         w - sd, s + sd, h + sd, 1.0, h1 + sd)[0]) * 20.0 * log10(exp(1))  # dB/m, incremental inductance
     diel_loss = dielectric_loss(eeff, er, freq, tand)
     argout = [Z, deg, eeff, cond_loss, diel_loss]
-    arg = arg + [prettystring(argout[i], defaultunits[len(arg) + i])
-                 for i in range(len(argout))]
+    arg = arg + [prettystring(argout[i], defaultunits[len(arg) + i]) for i in range(len(argout))]
     return arg
 
 def covered_grounded_coplanar_waveguide_synthesis(arg, defaultunits):
@@ -1813,7 +1823,6 @@ def covered_grounded_coplanar_waveguide_synthesis(arg, defaultunits):
                     init_value=[h], limits=[((h/ 100.0), h * 100.0)])
     w = output[0]
     Z, eeff = Z_eeff_covered_grounded_cpw(w, s, h, er, h1)
-    #deg = electrical_length(eeff, freq, length)
     length = physical_length(eeff, freq, deg)
     sd = skin_depth(freq, sigma, mu)
     cond_loss = -pi * freq / Z / co * (Z_eeff_covered_grounded_cpw(w, s, h, 1.0, h1)[0] - Z_eeff_covered_grounded_cpw(
@@ -1822,8 +1831,7 @@ def covered_grounded_coplanar_waveguide_synthesis(arg, defaultunits):
     argout = [Z, deg, eeff, cond_loss, diel_loss]
     arg[0]=prettystring(w, defaultunits[0])
     arg[10]=prettystring(length, defaultunits[10])
-    arg = arg + [prettystring(argout[i], defaultunits[len(arg) + i])
-                 for i in range(len(argout))]
+    arg = arg + [prettystring(argout[i], defaultunits[len(arg) + i]) for i in range(len(argout))]
     return arg
 
 def Z_eeff_laterally_covered_grounded_cpw(w, s, h, er, h1):
@@ -1888,8 +1896,7 @@ def edge_coupled_microstrip_analysis(arg, defaultunits):
     matched_impedance = sqrt((Z_even * Z_odd))
     argout = [Z_even, Z_odd, deg_even, deg_odd, eeff_even, eeff_odd,
               cond_loss_even, cond_loss_odd, diel_loss_even, diel_loss_odd, max_coupling, matched_impedance]
-    arg = arg + [prettystring(argout[i], defaultunits[len(arg) + i])
-                 for i in range(len(argout))]
+    arg = arg + [prettystring(argout[i], defaultunits[len(arg) + i]) for i in range(len(argout))]
     return arg
 
 def edge_coupled_microstrip_analysis_view(arg, defaultunits):
@@ -2638,10 +2645,11 @@ edge_coupled_stripline_synthesis = edge_coupled_stripline_synthesis
 broadside_coupled_stripline_synthesis = broadside_offset_coupled_stripline_synthesis
 
 if __name__ == "__main__":
-    arg =["55mil","0.1mil","5mil", "20mil", "20mil", "2.2","0.001","10e9","1.0","0.0","10GHz","100mil","50","100"]
-    args=covered_suspended_microstripline_analysis(arg,[""]*17)
-    print(args)
-    print(Z_eeff_suspended_stripline(55, 0.1, 5, 20, 20, 2.2, 1000))
+    # arg =["55mil","0.1mil","5mil", "20mil", "20mil", "2.2","0.001","10e9","1.0","0.0","10GHz","100mil","50","100"]
+    # args=covered_suspended_microstripline_analysis(arg,[""]*17)
+    # print(args)
+    # print(Z_eeff_suspended_stripline(55, 0.1, 5, 20, 20, 2.2, 1000))
+    print(Z_eeff_grounded_cpw_thick(100e-6, 0.1e-6, 3.0, 100e-6, 127e-6))
     """
     Argument List:
     First 12 arguments are inputs.
