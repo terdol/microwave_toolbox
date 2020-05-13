@@ -14,6 +14,7 @@ from string import *
 import re
 import numpy as np
 from numpy.lib.scimath import sqrt as csqrt
+from network import *
 co=speed_of_light_in_freespace.simplified.magnitude
 eta0=free_space_wave_impedance.simplified.magnitude
 mu0=free_space_permeability.simplified.magnitude
@@ -38,12 +39,12 @@ def EWG_ABCD(a,b,er,length,frek):
     Xp1=(Xo/tanh(gamma*length/2.0))
     Xp2=(Xo/sinh(gamma*length))
     networks=[]
-    #networks.append(shZ(-1.0j*Xo*tanh(gamma*length)))
-    networks.append(shZ(1.0j*Xp1))
-    networks.append(seZ(1.0j*Xs1))
-    networks.append(shZ(1.0j*Xp1))
-    #networks.append(shZ(-1.0j*Xo*tanh(gamma*length)))
-    return CascadeNetworks(networks)    
+    #networks.append(shunt_z(-1.0j*Xo*tanh(gamma*length)))
+    networks.append(shunt_z(1.0j*Xp1))
+    networks.append(series_z(1.0j*Xs1))
+    networks.append(shunt_z(1.0j*Xp1))
+    #networks.append(shunt_z(-1.0j*Xo*tanh(gamma*length)))
+    return cascade_networks(networks)    
 
 def MinimumButterworthFilterDegree(L,fstop):
     #KAYNAK:Microstrip Filters for RF Microwave Applications s.42, fstop: normalize frekans, L: fstoptaki bastirma (dB)
@@ -353,42 +354,42 @@ if __name__ == "__main__":
     
     for frek in linspace(6e9,10e9,101):
         networks=[]
-        networks.append(shZ(2.0j*pi*frek*X))
+        networks.append(shunt_z(2.0j*pi*frek*X))
         networks.append(transformer(n))
         if loss:
-            networks.append(shZ(-1.0j/2./pi/frek/c1))
-            networks.append(shZ(2.0j*pi*frek*l1))
+            networks.append(shunt_z(-1.0j/2./pi/frek/c1))
+            networks.append(shunt_z(2.0j*pi*frek*l1))
         else:
-            networks.append(shZ(2.0j*pi*frek*l1i+r1i))
+            networks.append(shunt_z(2.0j*pi*frek*l1i+r1i))
             
         networks.append(EWG_ABCD(a1,b,er,length,frek))
         #networks.append(EWG_inv(a1,b,er,length,frek))
         #networks.append(jinv(j))
-        #networks.append(shZ(-1.0j/j))
-        #networks.append(seZ(1.0j/j))
-        #networks.append(shZ(-1.0j/j))
+        #networks.append(shunt_z(-1.0j/j))
+        #networks.append(series_z(1.0j/j))
+        #networks.append(shunt_z(-1.0j/j))
         if loss:
-            networks.append(shZ(-1.0j/2./pi/frek/c2))
-            networks.append(shZ(2.0j*pi*frek*l2))
+            networks.append(shunt_z(-1.0j/2./pi/frek/c2))
+            networks.append(shunt_z(2.0j*pi*frek*l2))
         else:
-            networks.append(shZ(2.0j*pi*frek*l2i+r2i))
+            networks.append(shunt_z(2.0j*pi*frek*l2i+r2i))
         networks.append(EWG_ABCD(a1,b,er,length,frek))
         #networks.append(EWG_inv(a1,b,er,length,frek))
         #networks.append(jinv(j))
-        #networks.append(shZ(-1.0j/j))
-        #networks.append(seZ(1.0j/j))
-        #networks.append(shZ(-1.0j/j))
+        #networks.append(shunt_z(-1.0j/j))
+        #networks.append(series_z(1.0j/j))
+        #networks.append(shunt_z(-1.0j/j))
         if loss:
-            networks.append(shZ(-1.0j/2./pi/frek/c1))
-            networks.append(shZ(2.0j*pi*frek*l1))
+            networks.append(shunt_z(-1.0j/2./pi/frek/c1))
+            networks.append(shunt_z(2.0j*pi*frek*l1))
         else:
-            networks.append(shZ(2.0j*pi*frek*l1i+r1i))
+            networks.append(shunt_z(2.0j*pi*frek*l1i+r1i))
             
         networks.append(transformer((1./n)))
-        networks.append(shZ(2.0j*pi*frek*X))
-        abcd=CascadeNetworks(networks)
-        sonuc.append(ABCD2S(abcd,Z_WG_TE10_1(er,a,b,frek))[0,1])
-    #sonuc.append(ABCD2S(abcd,Z_WG_TE10(er,a,b,8.5e9))[0,1])
+        networks.append(shunt_z(2.0j*pi*frek*X))
+        abcd=cascade_networks(networks)
+        sonuc.append(abcd2s(abcd,Z_WG_TE10_1(er,a,b,frek))[0,1])
+    #sonuc.append(abcd2s(abcd,Z_WG_TE10(er,a,b,8.5e9))[0,1])
     #print sonuc
     plot(linspace(6e9,10e9,101),20.0*log10(abs(array(sonuc))))
     grid()

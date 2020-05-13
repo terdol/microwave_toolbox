@@ -2,13 +2,14 @@
 """
 General methods
 """
-
+import sys
 import quantities as pq
 import numpy as np
 import re
 import collections
 import cProfile
 from copy import deepcopy
+
 
 Np2dB = 8.68589 # guc kaybi icin alpha'dan' dB/m'ye donusum katsayisi (20.0*log10(e))
                 # alpha'nin birimi 1/m (Neper)'dir
@@ -29,11 +30,61 @@ pq.microinch = pq.UnitQuantity('microinch', pq.inch / 1e6, symbol='microinch')
 
 pq.dB = pq.UnitQuantity('dB', pq.dimensionless, symbol='dB')
 
+def ekpolyfit(x):
+    #polynomial fit for ellipk function. works from 0 to 0.98 with good accuracy.
+    p1 =       36.94 
+    p2 =        -114 
+    p3 =       148.9 
+    p4 =        -106 
+    p5 =       44.75 
+    p6 =      -11.16 
+    p7 =       1.807 
+    p8 =     0.09132 
+    p9 =      0.3972 
+    p10 =       1.571
+    ek = p1*x**9+p2*x**8+ p3*x**7 + p4*x**6 +p5*x**5 + p6*x**4 + p7*x**3 + p8*x**2 + p9*x + p10
+    return ek
+
+class dotdict(dict):
+    """dot.notation access to dictionary attributes
+    This class is not pickleable!!! 
+    objdict is pickleable, because it raises correct exceptions,
+    dill instead of pickle does not work too.
+    """
+    # __getattr__ = dict.get
+    __getattr__ = dict.__getitem__
+    __setattr__ = dict.__setitem__
+    __delattr__ = dict.__delitem__
+
+class objectview(object):
+    def __init__(self, d):
+        self.__dict__ = d
+
+class objdict(dict):
+    def __getattr__(self, name):
+        if name in self:
+            return self[name]
+        else:
+            raise AttributeError("No such attribute: " + name)
+
+    def __setattr__(self, name, value):
+        self[name] = value
+
+    def __delattr__(self, name):
+        if name in self:
+            del self[name]
+        else:
+            raise AttributeError("No such attribute: " + name)
+
+
 def tukey_window(alpha,N):
     """
     Tukey window (also known as "tapered cosine window")
+    Also available in scipy.signal
     """
     sonuc=[]
+    cos = np.cos
+    pi = np.pi
     for i in range(N):
         if (i<=alpha*(N-1.0)/2.0):
             sonuc.append(0.5*(1.0+cos(pi*(2.0*i/alpha/(N-1.0)-1.0))))
@@ -43,14 +94,30 @@ def tukey_window(alpha,N):
             sonuc.append(0.5*(1.0+cos(pi*(2.0*i/alpha/(N-1.0)-2.0/alpha+1.0))))
     return sonuc
 
+def blackman_window(N):
+    """
+    Blackman-Harris window
+    Also available in scipy.signal
+    """
+    sonuc=[]
+    a0 = 0.35875
+    a1 = 0.48829
+    a2 = 0.14128
+    a3 = 0.01168
+    for i in range(N):
+        sonuc.append(a0-a1*np.cos(2*np.pi*i/(N-1))+a2*np.cos(4*np.pi*i/(N-1))-a3*np.cos(6*np.pi*i/(N-1)))
+        # sonuc.append(0.42+0.5*np.cos(np.pi*i/(N-1))+0.08*np.cos(2*np.pi*i/(N-1)))
+    return np.array(sonuc)
+
 def gaussian_window(sigma,N):
     """
     Gaussian window
     sigma should be smaller than or equal to 0.5
-
+    Also available in scipy.signal
     Ref: Wikipedia
     """
     sonuc=[]
+    exp = np.exp
     for i in range(N):
         sonuc.append(exp(-0.5*((i-(N-1.0)/2.0)/(sigma*(N-1.0)/2.0))**2))
     return sonuc
@@ -337,10 +404,10 @@ def smooth(x, window_len=11, window='hanning'):
         raise ValueError("Window is on of 'flat', 'hanning', 'hamming', 'bartlett', 'blackman'")
     s = np.r_[2 * x[0] - x[window_len:1:-1], x, 2 * x[-1] - x[-1:-window_len:-1]]
     if window == 'flat':  #moving average
-        w = ones(window_len, 'd')
+        w = np.ones(window_len, 'd')
     else:
         w = eval('np.' + window + '(window_len)')
-    y = np.convolve(w / w.sum(), s, mode='valid')
+    y = np.convolve(w / w.sum(), s, mode='same')
     return y[window_len - 1:-window_len + 1]
 
 

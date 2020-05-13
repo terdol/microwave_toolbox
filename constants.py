@@ -7,3 +7,4 @@ free_space_permittivity=8.854187817e-12*pq.F/pq.m
 
 mu0 = free_space_permeability.simplified.magnitude
 eps0 = free_space_permittivity.simplified.magnitude
+c0 = speed_of_light_in_freespace.simplified.magnitude

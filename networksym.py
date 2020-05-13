@@ -3,18 +3,18 @@
 Network Parameters
 """
 import numpy as np
+import sympy as sp
 import operator as op
-from numpy.lib.scimath import sqrt as csqrt
 from functools import reduce
 
 def idealNport(N):
     """
     S-parameters of ideal N-port junction with equal reference impedances at all ports
     """
-    S = np.matrix(np.ones((N,N),dtype=float))
+    S = sp.ones(N,N)
     a=(2-N)/N
     b=2/N
-    S=b*S
+    S=S*b
     for i in range(N):
         S[i,i]=a
     return S
@@ -23,68 +23,75 @@ def shunt_z(Z):
     """
     ABCD parameters of shunt impedance
     """
-    return np.matrix([[1., 0], [(1./Z), 1.]])
+    return sp.Matrix([[1., 0], [(1./Z), 1.]])
+
 def series_z(Z): 
     """
     ABCD parameters of series impedance
     """
-    return np.matrix([[1., Z], [0, 1.]])
+    return sp.Matrix([[1., Z], [0, 1.]])
+
 def jinv(J): 
     """    
     ABCD parameters of J - inverter
     """
-    return np.matrix([[0, 1.0j/J], [1.0j * J, 0]])
+    return sp.Matrix([[0, 1.0j/J], [1.0j * J, 0]])
+
 def jinv_lumped(X): 
     """
     ABCD parameters of J - inverter produced by 3 inductors in Tee form.
     """
     return CascadeNetworks([shZ( - X), seZ(X), shZ( - X)])
+
 def kinv(K): 
     """
     ABCD parameters of k - inverter
     """
-    return np.matrix([[0, 1.0j * K], [1.0j/K, 0]])
+    return sp.Matrix([[0, 1.0j * K], [1.0j/K, 0]])
+
 def tline(Zo, theta): 
     """
     ABCD parameters of ideal transmission line,  theta = radian
     """
-    return np.matrix([[np.cos(theta), 1.0j * Zo * np.sin(theta)], [1.0j/Zo * np.sin(theta), np.cos(theta)]])
+    return sp.Matrix([[sp.cos(theta), 1.0j * Zo * sp.sin(theta)], [1.0j/Zo * sp.sin(theta), sp.cos(theta)]])
+
 def tline_list(Zo, theta): 
     """
     ABCD parameters of ideal transmission line,  theta = radian
     """
-    return tuple([np.cos(theta), 1.0j * Zo * np.sin(theta), 1.0j/Zo * np.sin(theta), np.cos(theta)])
-
+    return tuple([sp.cos(theta), 1.0j * Zo * sp.sin(theta), 1.0j/Zo * sp.sin(theta), sp.cos(theta)])
 
 def transformer(N): 
     """
     ABCD parameters of ideal transformer (1:N)
     """
-    return np.matrix([[1./N, 0], [0, N]])
+    return sp.Matrix([[1./N, 0], [0, N]])
+
 def t_network(Zs1, Zp, Zs2): 
     """
     ABCD parameters of Tee network
     """
-    return np.matrix([[1 + Zs1/Zp, Zs1 + Zs2 + Zs1 * Zs2/Zp], [1./Zp, 1. + Zs2/Zp]])
+    return sp.Matrix([[1 + Zs1/Zp, Zs1 + Zs2 + Zs1 * Zs2/Zp], [1./Zp, 1. + Zs2/Zp]])
+
 def pi_network(Zp1, Zs, Zp2): 
     """
     ABCD parameters of Pi network
     """
-    return np.matrix([[1 + Zs/Zp2, Zs], [1./Zp1 + 1./Zp2 + Zs/Zp1/Zp2, 1 + Zs/Zp1]])
+    return sp.Matrix([[1 + Zs/Zp2, Zs], [1./Zp1 + 1./Zp2 + Zs/Zp1/Zp2, 1 + Zs/Zp1]])
     
 def abcd2y(M): 
     """
     ABCD parameters to Y - Parameters conversion
     """
     a, b, c, d = M[0, 0], M[0, 1], M[1, 0], M[1, 1]
-    return np.matrix([[d/b, (b * c - a * d)/b], [ -1./b, a/b]])
+    return sp.Matrix([[d/b, (b * c - a * d)/b], [ -1./b, a/b]])
     
 def y2abcd(M): 
     """
     Y-Parameters to ABCD parameters conversion
     """
     y11, y12, y21, y22 = M[0, 0], M[0, 1], M[1, 0], M[1, 1]
-    return np.matrix([[ -y22/y21,  -1./y21], [(y12 * y21 - y11 * y22)/y21,  -y11/y21]])
+    return sp.Matrix([[ -y22/y21,  -1./y21], [(y12 * y21 - y11 * y22)/y21,  -y11/y21]])
 
 def t2s(M): 
     """
@@ -94,7 +101,7 @@ def t2s(M):
     """
     t11, t12, t21, t22 = M[0, 0], M[0, 1], M[1, 0], M[1, 1]
     delta=t11*t22-t12*t21
-    return np.matrix([[ t12/t22,  delta/t22], [1./t22,  -t21/t22]])
+    return sp.Matrix([[ t12/t22,  delta/t22], [1./t22,  -t21/t22]])
 
 def s2t(M): 
     """
@@ -104,23 +111,23 @@ def s2t(M):
     """
     s11, s12, s21, s22 = M[0, 0], M[0, 1], M[1, 0], M[1, 1]
     delta=s11*s22-s12*s21
-    return np.matrix([[ -delta/s21,  s11/s21], [-s22/s21,  1./s21]])
+    return sp.Matrix([[ -delta/s21,  s11/s21], [-s22/s21,  1./s21]])
     
 def abcd2z(M): 
     """
     ABCD parameters to Z - Parameters conversion
     """
     a, b, c, d = M[0, 0], M[0, 1], M[1, 0], M[1, 1]
-    return np.matrix([[a/c, ( - b * c + a * d)/c], [1./c, d/c]])
+    return sp.Matrix([[a/c, ( - b * c + a * d)/c], [1./c, d/c]])
     
 def z2abcd(M): 
     """
     Z - Parameters to ABCD parameters conversion
     """
     z11, z12, z21, z22 = M[0, 0], M[0, 1], M[1, 0], M[1, 1]
-    return np.matrix([[z11/z21, (z11 * z22 - z21 * z12)/z21], [1./z21, z22/z21]])
+    return sp.Matrix([[z11/z21, (z11 * z22 - z21 * z12)/z21], [1./z21, z22/z21]])
     
-def abcd2s(M, Zo=50.0): 
+def abcd2s(M, Zo=50): 
     """
     ABCD parameters to S - Parameters conversion
     Valid for real Zo value
@@ -130,9 +137,9 @@ def abcd2s(M, Zo=50.0):
     s12 = 2. * (a * d - b * c)/(a + b/Zo + c * Zo + d)
     s21 = (2./(a + b/Zo + c * Zo + d))
     s22 = (( - a + b/Zo - c * Zo + d)/(a + b/Zo + c * Zo + d))
-    return np.matrix([[s11, s12], [s21, s22]])
+    return sp.Matrix([[s11, s12], [s21, s22]])
 
-def abcd2s_list(M, Zo=50.0): 
+def abcd2s_list(M, Zo=50): 
     """
     ABCD parameters to S - Parameters conversion
     Valid for real Zo value
@@ -144,7 +151,7 @@ def abcd2s_list(M, Zo=50.0):
     s22 = (( - a + b/Zo - c * Zo + d)/(a + b/Zo + c * Zo + d))
     return [s11, s12, s21, s22]
 
-def s2abcd(M, Z=[50.0, 50.0]): 
+def s2abcd(M, Z=[50, 50]): 
     """
     S-Parameters to ABCD parameters conversion
     Valid for real Z values
@@ -152,13 +159,13 @@ def s2abcd(M, Z=[50.0, 50.0]):
     """
     Zo1, Zo2 = tuple(Z)
     s11, s12, s21, s22 = M[0, 0], M[0, 1], M[1, 0], M[1, 1]
-    a = ((Zo1 + s11 * Zo1) * (1. - s22) + s12 * s21 * Zo1)/(2. * s21 * csqrt(Zo1 * Zo2))
-    b = ((Zo1 + s11 * Zo1) * (Zo2 + s22 * Zo2) - s12 * s21 * Zo1 * Zo2)/(2. * s21 * csqrt(Zo1 * Zo2))
-    c = ((1. - s11) * (1. - s22) - s12 * s21)/(2. * s21 * csqrt(Zo1 * Zo2))
-    d = ((1. - s11) * (Zo2 + s22 * Zo2) + s12 * s21 * Zo2)/(2. * s21 * csqrt(Zo1 * Zo2))
-    return np.matrix([[a, b], [c, d]])    
+    a = ((Zo1 + s11 * Zo1) * (1. - s22) + s12 * s21 * Zo1)/(2. * s21 * sp.sqrt(Zo1 * Zo2))
+    b = ((Zo1 + s11 * Zo1) * (Zo2 + s22 * Zo2) - s12 * s21 * Zo1 * Zo2)/(2. * s21 * sp.sqrt(Zo1 * Zo2))
+    c = ((1. - s11) * (1. - s22) - s12 * s21)/(2. * s21 * sp.sqrt(Zo1 * Zo2))
+    d = ((1. - s11) * (Zo2 + s22 * Zo2) + s12 * s21 * Zo2)/(2. * s21 * sp.sqrt(Zo1 * Zo2))
+    return sp.Matrix([[a, b], [c, d]])    
 
-def abcd2t(M, Zo=50.0): 
+def abcd2t(M, Zo=50): 
     """
     ABCD parameters to T - Parameters conversion
 
@@ -173,9 +180,9 @@ def abcd_change_ports(M):
     Switching ports of ABCD parameters 
     """
     M = M.I
-    np.matrix([[M[0, 0],  - M[0, 1]], [ - M[1, 0], M[1, 1]]])
+    sp.Matrix([[M[0, 0],  - M[0, 1]], [ - M[1, 0], M[1, 1]]])
 
-def t2abcd(M, Z=[50.0,50.0]): 
+def t2abcd(M, Z=[50,50]): 
     """
     T-parameters to ABCD parameters conversion
     """
@@ -189,8 +196,8 @@ def snp2smp(SM,ports):
     if the length of "ports" argument is lower than number of ports, remaining ports are terminated with current reference impedances and number of ports are reduced.
     """
     ports = [x-1 for x in ports]
-    ixgrid = np.ix_(ports, ports)
-    return SM[ixgrid]
+    ixgrid = ports, ports
+    return SM.extract(*ixgrid)
 
 def cascade_networks(networks): 
     """
@@ -218,8 +225,8 @@ def s_normalize_pseudo(S, Zold, Znew):
     Pseudo-Wave icin
     """
     ps = len(Zold)
-    A = np.matrix(np.zeros((ps, ps)), dtype = complex)
-    gamma = np.matrix(np.zeros((ps, ps)), dtype = complex)
+    A = sp.zeros(ps, ps)
+    gamma = sp.zeros(ps, ps)
     imp_yeni = []
     for i in range(ps):
         imp_yeni.append(Znew[i])
@@ -227,7 +234,7 @@ def s_normalize_pseudo(S, Zold, Znew):
         ri = ((imp_yeni[i] - z)/(imp_yeni[i] + z))
         gamma[i, i] = ri                
         A[i, i] = csqrt(z.real/imp_yeni[i].real) * abs(imp_yeni[i]/z) * 2 * z/(imp_yeni[i] + z)   
-    return A.I * (S - gamma) * (np.matrix(np.eye(ps)) - gamma * S).I * A
+    return A.I * (S - gamma) * (sp.eye(ps) - gamma * S).I * A
     
 def s_normalize_power(S, Zold, Znew):
     """
@@ -236,23 +243,23 @@ def s_normalize_power(S, Zold, Znew):
     Reference: Article, “Multiport conversions between S, Z, Y, h, ABCD, and T parameters”
     """
     ps = len(Zold)
-    A = np.matrix(np.zeros((ps, ps)), dtype = complex)
-    gamma = np.matrix(np.zeros((ps, ps)), dtype = complex)
+    A = sp.zeros(ps, ps)
+    gamma = sp.zeros(ps, ps)
     imp_yeni = []
     for i in range(ps):
         imp_yeni.append(Znew[i])
         z = Zold[i]
-        gamma[i, i] = ((imp_yeni[i] - z)/(imp_yeni[i] + z.conj()))          
-        A[i, i] = 2*csqrt(z.real)*csqrt(imp_yeni[i].real) /(imp_yeni[i].conj() + z)   
-    return A.I * (S - gamma.conj()) * (np.matrix(np.eye(ps)) - gamma * S).I * A.conj()
+        gamma[i, i] = ((imp_yeni[i] - z)/(imp_yeni[i] + z.C))          
+        A[i, i] = 2*csqrt(z.real)*csqrt(imp_yeni[i].real) /(imp_yeni[i].C + z)   
+    return A.I * (S - gamma.C) * (sp.eye(ps) - gamma * S).I * A.C
     
 def s_phase_deembed(S, phase):
     """
     S-parameter deembedding 
-    S is numpy.matrix NxN
+    S is sympy.Matrix NxN
     phase, deembedding phase for each port in radian. Positive phase is deembedding into the circuit
     """
-    PhaseMatrix=np.exp(1j*np.matrix(np.diag(phase)))   
+    PhaseMatrix=sp.exp(1j*sp.diag(*phase))
     return PhaseMatrix*S*PhaseMatrix
 
 def connect_2_ports(Smatrix,k,m):
@@ -260,10 +267,9 @@ def connect_2_ports(Smatrix,k,m):
     Reference: QUCS technical.pdf, S-parameters in CAE programs, p.29
     """
     k,m=min(k,m),max(k,m)
-    k=k-1
-    m=m-1
-    ps=np.shape(Smatrix)[0]
-    Sm=np.matrix(np.zeros((ps-2,ps-2),dtype=complex)) # output matrix
+    k, m = k-1, m-1
+    ps=Smatrix.shape[0]
+    Sm=sp.zeros(ps-2,ps-2) # output matrix
     S = Smatrix
     for i in range(ps-2):
         ii=i+(i>=k)+(i>=(m-1))
@@ -280,36 +286,35 @@ def connect_network_1_conn(Smatrix,EX,k,m):
     Reference: QUCS technical.pdf, S-parameters in CAE programs, p.29
     """
     S = Smatrix
-    k=k-1
-    m=m-1
-    ps1=np.shape(S)[0]
-    ps2=np.shape(EX)[0]
+    k, m = k-1, m-1
+    ps1=S.shape[0]
+    ps2=EX.shape[0]
     ps=ps1+ps2-2
-    Sm=np.matrix(np.ones((ps,ps),dtype=complex))
+    Sm=sp.ones(ps,ps)
     for i in range(ps1-1):
         ii=i+(i>(k-1))
         for j in range(ps1-1):
             jj=j+(j>(k-1))
             # index = (i-1)*ps+(j-1)
-            Sm[i,j] = S[ii,jj]+S[k,jj]*EX[m,m]*S[ii,k]/(1.0-S[k,k]*EX[m,m])
+            Sm[i,j] = S[ii,jj]+S[k,jj]*EX[m,m]*S[ii,k]/(1-S[k,k]*EX[m,m])
     for i in range(ps2-1):
         ii=i+(i>(m-1))
         for j in range(ps1-1):
             jj=j+(j>(k-1))
             # index = (i+ps1-1-1)*ps+(j-1)
-            Sm[i+ps1-1,j] = S[k,jj] * EX[ii,m] / (1.0 - S[k,k] * EX[m,m])
+            Sm[i+ps1-1,j] = S[k,jj] * EX[ii,m] / (1 - S[k,k] * EX[m,m])
     for i in range(ps1-1):
         ii=i+(i>(k-1))
         for j in range(ps2-1):
             jj=j+(j>(m-1))
             # index = (i-1)*ps+(j+ps1-1-1)
-            Sm[i,j+ps1-1] = EX[m,jj] * S[ii,k] / (1.0 - EX[m,m] * S[k,k])
+            Sm[i,j+ps1-1] = EX[m,jj] * S[ii,k] / (1 - EX[m,m] * S[k,k])
     for i in range(ps2-1):
         ii=i+(i>(m-1))
         for j in range(ps2-1):
             jj=j+ (j>(m-1))
             # index = (i+ps1-1-1)*ps+(j+ps1-1-1)
-            Sm[i+ps1-1,j+ps1-1] = EX[ii,jj]+EX[m,jj]*S[k,k]*EX[ii,m]/(1.0-EX[m,m]*S[k,k])
+            Sm[i+ps1-1,j+ps1-1] = EX[ii,jj]+EX[m,jj]*S[k,k]*EX[ii,m]/(1-EX[m,m]*S[k,k])
     return Sm
 
 def connect_2_ports_list(Smatrix,conns):
@@ -332,12 +337,26 @@ def connect_2_ports_retain(Smatrix,k,m):
     New port becomes the last port of the circuit.
     Reference: QUCS technical.pdf, S-parameters in CAE programs, p.29
     """
-    ideal3port = 1/3*np.matrix([[-1,2,2],[2,-1,2],[2,2,-1]])    
-    ps = np.shape(Smatrix)[0]
+    ideal3port = idealNport(3)
+    ps = Smatrix.shape[0]
     k,m=min(k,m),max(k,m)
     Sm = connect_network_1_conn(Smatrix,ideal3port,m,1)
     Sm = connect_2_ports(Sm,k,ps)
     return Sm
 
 if __name__=="__main__":
-    print(idealNport(4))
+    R1, R2 = sp.symbols("R1 R2")
+    # s1 = abcd2s(shunt_z(R1)*series_z(R2)*shunt_z(R1) )
+    # sonuc = s1.subs([(R1,100),(R2,50)]).evalf()
+    # sp.pprint(s1)
+    # sp.pprint(sonuc)
+    s1=abcd2s(shunt_z(R1))
+    s2=abcd2s(series_z(R2))
+    # ss = connect_network_1_conn(s1,s2,2,1)
+    ss = connect_network_1_conn(connect_network_1_conn(s1,s2,2,1),s1,2,1)
+    sonuc = ss.subs([(R1,100),(R2,50)]).evalf()
+    # sp.pprint(sp.simplify(s2))
+    # sp.pprint(sp.simplify(s2abcd(ss)))
+    sp.pprint(sonuc)
+    sp.pprint(sp.ones(3,4))
+    sp.pprint(sp.diag(*np.array([1,2,3])))

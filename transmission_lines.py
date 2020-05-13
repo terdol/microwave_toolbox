@@ -3,21 +3,21 @@
 from constants import *
 import sys
 # from scipy import *
-from scipy.special import ellipk
+# from scipy.special import ellipk
 #from copy import deepcopy
 from genel import *
 #import numpy as np
-import visvis
+# import visvis
 from numpy.lib.scimath import sqrt as csqrt
 from numpy import sqrt, pi, log, log10, cos, sin, tan, cosh, sinh, tanh, exp
 from numpy import arccosh, arctan, arccos, arcsin, arcsinh, arctanh, seterr
-from numpy import atleast_1d,power,ndarray,array,fabs, sum
+from numpy import atleast_1d,power,ndarray,array,fabs, sum, mean
 co = speed_of_light_in_freespace.simplified.magnitude
 eta0 = free_space_wave_impedance.simplified.magnitude
 mu0 = free_space_permeability.simplified.magnitude
 eps0 = free_space_permittivity.simplified.magnitude
 
-
+ellipk = ekpolyfit
 
 def physical_length(eeff, f, elec_length):
     """
@@ -76,7 +76,7 @@ def Sentez(fonk, _args, k, target_value = [],init_value = [], limits = []):
     if len(limits)==1:
         limits=limits*len(k)
     k.sort()
-    def callable_func(x):
+    def callable_func(x, grad=0):
         tempargs=[]
         tempindex=0
         for i in range(len(k)):
@@ -88,10 +88,21 @@ def Sentez(fonk, _args, k, target_value = [],init_value = [], limits = []):
         if not isinstance(tempout, collections.Iterable):
             tempout=(tempout,)
         out = sum([fabs(target_value[count]-tempout[count])**2 for count in range(len(k))])
+        # print(out)
         return out
-    from scipy.optimize import fmin_l_bfgs_b, fmin_tnc, minimize
-    output = fmin_l_bfgs_b(callable_func,array(init_value),approx_grad=1,factr=0.01,bounds=limits,maxfun=100000,pgtol=1.0e-10, epsilon=1.0e-8)
-    return output  #output[0]
+    # from scipy.optimize import fmin_l_bfgs_b, fmin_tnc, minimize
+    # output = fmin_l_bfgs_b(callable_func,array(init_value),approx_grad=1,factr=0.01,bounds=limits,maxfun=100000,pgtol=1.0e-10, epsilon=1.0e-8)
+    
+    import nlopt
+    opt = nlopt.opt(nlopt.GN_ESCH, len(k))
+    opt.set_min_objective(callable_func)
+    opt.set_lower_bounds([a[0] for a in limits])
+    opt.set_upper_bounds([a[1] for a in limits])
+    # opt.set_maxeval(1000)
+    opt.set_maxtime(1)
+    # opt.set_xtol_abs(0.1)
+    xopt = opt.optimize(init_value)
+    return xopt  
 
 def skindepth_analysis(arg, defaultunits):
     """
@@ -118,6 +129,7 @@ def Z_qs_thin_microstrip(w, h, er):
     0.0tet1% for w/h<1, 0.01% for w/h<1000
     """
     r = (h/ w)
+    # print("rw= "+str(r)+"  "+str(w))
     fu = 6. + (2 * pi - 6.) * exp(-(30.666 * r) ** (0.7528))
     eeff = er_eff_qs_thin_microstrip(w, h, er)
     return eta0 / (2 * pi * csqrt(eeff)) * log(fu * r + csqrt(1.0+(2.0*r)** 2))
@@ -133,6 +145,7 @@ def er_eff_qs_thin_microstrip(w, h, er1):
     b = 0.564 * pow(((er - 0.9)/ (er + 3.)), 0.053)
     a = 1. + 1. / 49. * log(((u ** 4 + ((u/ 52.)) ** 2)/
                     (u ** 4 + 0.432))) + 1. / 18.7 * log(1. + ((u/ 18.1)) ** 3)
+    # print("u= "+str(u)+" "+str(a)+" "+str(b))
     return ((er + 1.)/ 2.) + (er - 1.) / 2. * (1. + (10./ u)) ** (-a * b)
 
 
@@ -142,9 +155,12 @@ def Z_qs_thick_microstrip(w, h, er, t=0):
     """
     th = (t/ h)
     wt = (w/ t)
-    dw1 = (t > 0) * t / pi * \
-        log(4. * exp(1) / csqrt((th) ** 2 + 1 / pi / (wt + 1.1)))
-    dwr = (t > 0) * 0.5 * dw1 * (1. + (1./ er))
+    # print("tw= "+str(t)+"  "+str(w))
+    # dw1 = (t > 0) * t / pi * \
+    #     log(4. * exp(1) / csqrt((th) ** 2 + 1 / pi / (wt + 1.1)))
+    # dwr = (t > 0) * 0.5 * dw1 * (1. + (1./ er))
+    dw1 = t / pi * log(4. * exp(1) / csqrt((th) ** 2 + 1 / pi / (wt + 1.1)))
+    dwr = 0.5 * dw1 * (1. + (1./ er))
 #    w1=w+dw1
     wr = w + dwr
     x = er_eff_qs_thin_microstrip(wr, h, er)
@@ -193,6 +209,10 @@ def Z_disp_thick_microstrip(w, h, t, er, f):
     eeff = er_eff_disp_thick_microstrip(w, h, t, er, f)
     return (Z_qs_thick_microstrip(w, h, 1, t)/ csqrt(eeff))
 
+def Z_eeff_disp_thick_microstrip(w, h, t, er, f):
+    """ This function is for convenience only. Returns (Z,eeff) pair to be used at ABCD matrix of TL """
+    eeff = er_eff_disp_thick_microstrip(w, h, t, er, f)
+    return (Z_qs_thick_microstrip(w, h, 1, t)/ csqrt(eeff), eeff)
 
 def average_power_rating_thick_microstrip(w, h, t, er, f, tand, sigma, mu_r, rms_roughness, Kd, dT_allowed):
     """
@@ -461,16 +481,16 @@ def microstrip_analysis(arg, defaultunits):
 def microstrip_analysis_view(arg, defaultunits):
     """
     """
-    arg = arg[:11]
-    newargs = convert2pq(arg, defaultunits)
-    w, h, t, er, tand, Kd, sigma, mu, roughness, freq, length = tuple(newargs)
-    visvis.clf()
-    diel = visvis.solidBox(translation=(0,0,h/t/2.0),scaling=(w/t*5.0,w/t*10.0,(h/t)))
-    line = visvis.solidBox(translation=(0,0,(h/t)+0.5),scaling=((w/t),w/t*10.0,(t/t)))
-    gnd = visvis.solidBox(translation=(0,0,-0.5),scaling=(w/t*5.0,w/t*10.0,(t/t)))
-    diel.faceColor="g"
-    line.faceColor="r"
-    gnd.faceColor="r"
+    # arg = arg[:11]
+    # newargs = convert2pq(arg, defaultunits)
+    # w, h, t, er, tand, Kd, sigma, mu, roughness, freq, length = tuple(newargs)
+    # visvis.clf()
+    # diel = visvis.solidBox(translation=(0,0,h/t/2.0),scaling=(w/t*5.0,w/t*10.0,(h/t)))
+    # line = visvis.solidBox(translation=(0,0,(h/t)+0.5),scaling=((w/t),w/t*10.0,(t/t)))
+    # gnd = visvis.solidBox(translation=(0,0,-0.5),scaling=(w/t*5.0,w/t*10.0,(t/t)))
+    # diel.faceColor="g"
+    # line.faceColor="r"
+    # gnd.faceColor="r"
     return
 
 def C_R_interdigital_capacitor(w,s,h,t,length,N,er,sigma, freq):
@@ -520,12 +540,43 @@ def Z_thick_stripline(w, b, t, er):
     except:
         Zk2 = 2.0 * log(2.0)
     Zo2 = 94.15 / csqrt(er) / ((wb/ (1 - tb)) + (Zk2/  pi))
-    # print tb, Zo1, Zo2, w
-    return ((wb >= 0.35) * Zo2 + (wb < 0.35) * Zo1)
+    if wb>0.35:
+        return Zo2
+    else:
+        return Zo1
 
-
+def Z_thick_offset_stripline(w, eps_r, h1, h2, t):
+    '''
+    Transmssion Line Design Handbook, p129
+    '''
+    # print(w, eps_r, h1, h2, t)
+    seterr(all='raise')
+    def F(x):
+        return (1-2*x)*((1-x)*log(1-x)-x*log(x))
+    b = h1+h2+t
+    s= fabs(h1-h2)
+    eeff = eps_r
+    cl=(b-s)/2
+    if w/(b-t)<0.35:
+        x=min(t,w)/max(w,t)
+        d0 = w*(0.5008+1.0235*x-1.023*x**2+1.1564*x**3-0.4749*x**4)
+        A=sin(pi*cl/b)/tanh(pi*d0/2/b)
+        Z_0 = eta0*arccosh(A)/2/pi/sqrt(eps_r)
+    else:
+        if w/(b-t)<t/b:
+            k=sech(pi*w/2/b)
+            k_ = tanh(pi*w/2/b)
+            w_b = w/b+(1-t/b)**8*(ekpolyfit(k_)/ekpolyfit(k)-2/pi*log(2)-w/b)
+        else:
+            w_b = w/b
+        beta = 1-t/b
+        gamma = cl/b-t/2/b
+        cf=eps_r*eps0/pi*(2*log(1/gamma/(beta-gamma))+1/gamma/(beta-gamma)*(F(t/b)-F(cl/b)))
+        Z_0=eta0/sqrt(eps_r)/(w_b/gamma+w_b/(beta-gamma)+2*cf/eps_r/eps0)
+    return Z_0
+        
 def conductor_loss_stripline(w, b, t, er, f, sigma, mu):
-    # Incremental Inductance Rule
+    """ Incremental Inductance Rule """
     sd = skin_depth(f, sigma, mu)
     z1 = Z_thick_stripline(w - sd, b + sd, t - sd, 1.0)
     z2 = Z_thick_stripline(w, b, t, 1.0)
@@ -573,15 +624,15 @@ def stripline_analysis_view(arg, defaultunits):
     arg = arg[:10]
     newargs = convert2pq(arg, defaultunits)
     w, b, t, er, tand, sigma, mu, roughness, freq, length = tuple(newargs)
-    visvis.clf()
-    diel = visvis.solidBox(translation=(0,0,b/t/2.0),scaling=(w/t*5.0,w/t*10.0,(b/t)))
-    line = visvis.solidBox(translation=(0,0,b/t/2.0),scaling=((w/t),w/t*10.1,(t/t)))
-    gnd1 = visvis.solidBox(translation=(0,0,-0.5),scaling=(w/t*5.0,w/t*10.0,(t/t)))
-    gnd2 = visvis.solidBox(translation=(0,0,(b/t)+0.5),scaling=(w/t*5.0,w/t*10.0,(t/t)))
-    diel.faceColor="g"
-    line.faceColor="r"
-    gnd1.faceColor="r"
-    gnd2.faceColor="r"
+    # visvis.clf()
+    # diel = visvis.solidBox(translation=(0,0,b/t/2.0),scaling=(w/t*5.0,w/t*10.0,(b/t)))
+    # line = visvis.solidBox(translation=(0,0,b/t/2.0),scaling=((w/t),w/t*10.1,(t/t)))
+    # gnd1 = visvis.solidBox(translation=(0,0,-0.5),scaling=(w/t*5.0,w/t*10.0,(t/t)))
+    # gnd2 = visvis.solidBox(translation=(0,0,(b/t)+0.5),scaling=(w/t*5.0,w/t*10.0,(t/t)))
+    # diel.faceColor="g"
+    # line.faceColor="r"
+    # gnd1.faceColor="r"
+    # gnd2.faceColor="r"
     return
 
 def stripline_synthesis(arg, defaultunits):
@@ -777,13 +828,13 @@ def coaxial_analysis_view(arg, defaultunits):
     arg = arg[:9]
     newargs = convert2pq(arg, defaultunits)
     r, d, er, tand, sigma, mu, roughness, freq, length = tuple(newargs)
-    visvis.clf()
-    gnd = visvis.solidCylinder(translation=(0,0,0),scaling=((d/r)+0.5,(d/r)+0.5,10.0),N=64)
-    diel = visvis.solidCylinder(translation=(0.0,0.0,-0.1),scaling=((d/r),(d/r),10.2),N=64)
-    line = visvis.solidCylinder(translation=(0.0,0.0,-0.2),scaling=((r/r),(r/r),10.4),N=64)
-    diel.faceColor="g"
-    line.faceColor="r"
-    gnd.faceColor="r"
+    # visvis.clf()
+    # gnd = visvis.solidCylinder(translation=(0,0,0),scaling=((d/r)+0.5,(d/r)+0.5,10.0),N=64)
+    # diel = visvis.solidCylinder(translation=(0.0,0.0,-0.1),scaling=((d/r),(d/r),10.2),N=64)
+    # line = visvis.solidCylinder(translation=(0.0,0.0,-0.2),scaling=((r/r),(r/r),10.4),N=64)
+    # diel.faceColor="g"
+    # line.faceColor="r"
+    # gnd.faceColor="r"
     return
 
 def coaxial_strip_center_analysis(arg, defaultunits):
@@ -828,14 +879,14 @@ def coaxial_strip_center_analysis_view(arg, defaultunits):
     arg = arg[:9]
     newargs = convert2pq(arg, defaultunits)
     w, er, d, tand, sigma, mu, roughness, freq, length = tuple(newargs)
-    visvis.clf()
-    t=(w/5.0)
-    gnd = visvis.solidCylinder(translation=(-2.5*d/2/t,0,0),  scaling=(d/2/t+0.5,d/2/t+0.5,5.0*d/2/t),direction=(1,0,0),rotation=90,N=64)
-    diel = visvis.solidCylinder(translation=(-2.55*d/2/t,0,0),scaling=(d/2/t,d/2/t,5.1*d/2/t),        direction=(1,0,0),rotation=90,N=64)
-    line = visvis.solidBox(translation=(0,0,0),               scaling=((w/t),(t/t),5.2*d/2/t),            direction=(1,0,0),rotation=90)
-    diel.faceColor="g"
-    line.faceColor="r"
-    gnd.faceColor="r"
+    # visvis.clf()
+    # t=(w/5.0)
+    # gnd = visvis.solidCylinder(translation=(-2.5*d/2/t,0,0),  scaling=(d/2/t+0.5,d/2/t+0.5,5.0*d/2/t),direction=(1,0,0),rotation=90,N=64)
+    # diel = visvis.solidCylinder(translation=(-2.55*d/2/t,0,0),scaling=(d/2/t,d/2/t,5.1*d/2/t),        direction=(1,0,0),rotation=90,N=64)
+    # line = visvis.solidBox(translation=(0,0,0),               scaling=((w/t),(t/t),5.2*d/2/t),            direction=(1,0,0),rotation=90)
+    # diel.faceColor="g"
+    # line.faceColor="r"
+    # gnd.faceColor="r"
     return
 
 def square_coaxial_circular_center_analysis(arg, defaultunits):
@@ -1615,8 +1666,9 @@ def shielded_suspended_stripline_synthesis(arg, defaultunits):
     return arg
 
 def Z_eeff_grounded_cpw(w, er, s, h):
-# Coplanar waveguide circuits, components and systems s89
-# Transmission Line Design Handbook s79
+    """Coplanar waveguide circuits, components and systems s89
+    Transmission Line Design Handbook s79
+    """
     a = (w/ 2)
     b = (w/ 2) + s
     k = (a/ b)
@@ -1629,10 +1681,10 @@ def Z_eeff_grounded_cpw(w, er, s, h):
     return (Zo, eeff)
     
 def Z_eeff_grounded_cpw_thick(w, th, er, s, h):
-# Coplanar waveguide circuits, components and systems s89
-# Transmission Line Design Handbook s79
-	# For thickness correction Reference: "CPWG impedance formula" document
-
+    """Coplanar waveguide circuits, components and systems s89
+    Transmission Line Design Handbook s79
+	For thickness correction Reference: "CPWG impedance formula" document
+    """
     dd = 1.25*th/pi*(1.0+log(2*h/th));
     Zair, _ = Z_eeff_grounded_cpw(w+dd, 1.0, s-dd, h)
     Cair = 1/co/Zair
@@ -1648,7 +1700,7 @@ def Z_eeff_grounded_cpw_thick(w, th, er, s, h):
     return (Zo, eeff)
     
 def Z_eeff_cpw(w, er, s, h, t):
-# Transmission Line Design Handbook s73
+    """ Transmission Line Design Handbook s73"""
     a = w
     b = w + 2 * s
     k = (a/ b)
@@ -1742,7 +1794,7 @@ def grounded_cpw_synthesis(arg, defaultunits):
     return arg
 
 def Z_eeff_covered_grounded_cpw(w, s, h, er, h1):
-# Coplanar waveguide circuits, components and systems s89
+    """ Coplanar waveguide circuits, components and systems s89"""
     a = (w/ 2)
     b = (w/ 2) + s
     k = (a/ b)
@@ -1835,7 +1887,7 @@ def covered_grounded_coplanar_waveguide_synthesis(arg, defaultunits):
     return arg
 
 def Z_eeff_laterally_covered_grounded_cpw(w, s, h, er, h1):
-# Coplanar waveguide circuits, components and systems s89
+    """Coplanar waveguide circuits, components and systems s89"""
     pass
 
 def edge_coupled_microstrip_analysis(arg, defaultunits):
@@ -1906,17 +1958,16 @@ def edge_coupled_microstrip_analysis_view(arg, defaultunits):
     newargs = convert2pq(arg, defaultunits)
     w, s, t, h, er, tand, sigma, mu, roughness, freq, length = tuple(newargs)
     Z_even, Z_odd, eeff_even, eeff_odd = Z_eeff_edge_coupled_microstrip(w, er, t, h, s, freq)
-    visvis.clf()
-    diel = visvis.solidBox(translation=(0,0,h/t/2.0),scaling=(w/t*5.0,w/t*10.0,(h/t)))
-    line1 = visvis.solidBox(translation=(w/t/2+s/t/2,0,(h/t)+0.5),scaling=((w/t),w/t*10.0,(t/t)))
-    line2 = visvis.solidBox(translation=(-w/t/2-s/t/2,0,(h/t)+0.5),scaling=((w/t),w/t*10.0,(t/t)))
-    gnd = visvis.solidBox(translation=(0,0,-0.5),scaling=(w/t*5.0,w/t*10.0,(t/t)))
-    diel.faceColor="g"
-    line1.faceColor="r"
-    line2.faceColor="r"
-    gnd.faceColor="r"
+    # visvis.clf()
+    # diel = visvis.solidBox(translation=(0,0,h/t/2.0),scaling=(w/t*5.0,w/t*10.0,(h/t)))
+    # line1 = visvis.solidBox(translation=(w/t/2+s/t/2,0,(h/t)+0.5),scaling=((w/t),w/t*10.0,(t/t)))
+    # line2 = visvis.solidBox(translation=(-w/t/2-s/t/2,0,(h/t)+0.5),scaling=((w/t),w/t*10.0,(t/t)))
+    # gnd = visvis.solidBox(translation=(0,0,-0.5),scaling=(w/t*5.0,w/t*10.0,(t/t)))
+    # diel.faceColor="g"
+    # line1.faceColor="r"
+    # line2.faceColor="r"
+    # gnd.faceColor="r"
     return
-
 
 def edge_coupled_microstrip_synthesis(arg, defaultunits):
     """
@@ -2136,7 +2187,6 @@ def Z_edge_coupled_thick_symmetric_stripline(w, b, s, er, t):
     Zodd = (1.0/ temp)
     return (Zeven, Zodd)
 
-
 def edge_coupled_stripline_analysis(arg, defaultunits):
     """
     Argument List:
@@ -2192,17 +2242,17 @@ def edge_coupled_stripline_analysis_view(arg, defaultunits):
     arg = arg[:11]
     newargs = convert2pq(arg, defaultunits)
     w, s, t, b, er, tand, sigma, mu, roughness, freq, length = tuple(newargs)
-    visvis.clf()
-    diel = visvis.solidBox(translation=(0,0,b/t/2.0),scaling=(w/t*5.0,w/t*10.0,(b/t)))
-    line1 = visvis.solidBox(translation=(w/t/2+s/t/2,0,b/t/2.0),scaling=((w/t),w/t*10.1,(t/t)))
-    line2 = visvis.solidBox(translation=(-w/t/2-s/t/2,0,b/t/2.0),scaling=((w/t),w/t*10.1,(t/t)))
-    gnd1 = visvis.solidBox(translation=(0,0,-0.5),scaling=(w/t*5.0,w/t*10.0,(t/t)))
-    gnd2 = visvis.solidBox(translation=(0,0,(b/t)+0.5),scaling=(w/t*5.0,w/t*10.0,(t/t)))
-    diel.faceColor="g"
-    line1.faceColor="r"
-    line2.faceColor="r"
-    gnd1.faceColor="r"
-    gnd2.faceColor="r"
+    # visvis.clf()
+    # diel = visvis.solidBox(translation=(0,0,b/t/2.0),scaling=(w/t*5.0,w/t*10.0,(b/t)))
+    # line1 = visvis.solidBox(translation=(w/t/2+s/t/2,0,b/t/2.0),scaling=((w/t),w/t*10.1,(t/t)))
+    # line2 = visvis.solidBox(translation=(-w/t/2-s/t/2,0,b/t/2.0),scaling=((w/t),w/t*10.1,(t/t)))
+    # gnd1 = visvis.solidBox(translation=(0,0,-0.5),scaling=(w/t*5.0,w/t*10.0,(t/t)))
+    # gnd2 = visvis.solidBox(translation=(0,0,(b/t)+0.5),scaling=(w/t*5.0,w/t*10.0,(t/t)))
+    # diel.faceColor="g"
+    # line1.faceColor="r"
+    # line2.faceColor="r"
+    # gnd1.faceColor="r"
+    # gnd2.faceColor="r"
     return
 
 def edge_coupled_stripline_synthesis(arg, defaultunits):
@@ -2257,8 +2307,9 @@ def edge_coupled_stripline_synthesis(arg, defaultunits):
     return arg
 
 def Z_shielded_stripline(w, b, t, g, er):
-    # Transmssion Line Design Handbook, p136, g-yanduvarla hat arasi bosluk,
-    # b-toplam yukseklik
+    """Transmssion Line Design Handbook, p136, g-yanduvarla hat arasi bosluk,
+    b-toplam yukseklik
+    """
     cf0 = 1.0 * er * log(2.0) / pi
     cf = er / pi * (b / (b - t) * log(((2.0 * b - t)/ t)) +
                     log(t * (2.0 * b - t) / (b - t) ** 2.0))
@@ -2267,7 +2318,7 @@ def Z_shielded_stripline(w, b, t, g, er):
     return Zo
 
 def conductor_loss_shielded_stripline(w, b, t, g, er, f, sigma, mu):
-    # Incremental Inductance Rule
+    """Incremental Inductance Rule"""
     sd = skin_depth(f, sigma, mu)
     z1 = Z_shielded_stripline(w - sd, b + sd, t - sd, g + 2 * sd, er)
     z2 = Z_shielded_stripline(w, b, t, g, er)
@@ -2414,19 +2465,18 @@ def broadside_offset_coupled_stripline_analysis_view(arg, defaultunits):
     arg = arg[:12]
     newargs = convert2pq(arg, defaultunits)
     w, wo, t, s, b, er, tand, sigma, mu, roughness, freq, length = tuple(newargs)
-    visvis.clf()
-    diel = visvis.solidBox(translation=(0,0,0.0),scaling=((w+wo)/t*3.0,w/t*10.0,(b/t)))
-    line1 = visvis.solidBox(translation=(wo/t/2,0,s/t/2.0),scaling=((w/t),w/t*10.1,(t/t)))
-    line2 = visvis.solidBox(translation=(-wo/t/2,0,-s/t/2.0),scaling=((w/t),w/t*10.1,(t/t)))
-    gnd1 = visvis.solidBox(translation=(0,0,-b/t/2-0.5),scaling=((w+wo)/t*3.0,w/t*10.0,(t/t)))
-    gnd2 = visvis.solidBox(translation=(0,0,b/t/2+0.5),scaling=((w+wo)/t*3.0,w/t*10.0,(t/t)))
-    diel.faceColor="g"
-    line1.faceColor="r"
-    line2.faceColor="r"
-    gnd1.faceColor="r"
-    gnd2.faceColor="r"
+    # visvis.clf()
+    # diel = visvis.solidBox(translation=(0,0,0.0),scaling=((w+wo)/t*3.0,w/t*10.0,(b/t)))
+    # line1 = visvis.solidBox(translation=(wo/t/2,0,s/t/2.0),scaling=((w/t),w/t*10.1,(t/t)))
+    # line2 = visvis.solidBox(translation=(-wo/t/2,0,-s/t/2.0),scaling=((w/t),w/t*10.1,(t/t)))
+    # gnd1 = visvis.solidBox(translation=(0,0,-b/t/2-0.5),scaling=((w+wo)/t*3.0,w/t*10.0,(t/t)))
+    # gnd2 = visvis.solidBox(translation=(0,0,b/t/2+0.5),scaling=((w+wo)/t*3.0,w/t*10.0,(t/t)))
+    # diel.faceColor="g"
+    # line1.faceColor="r"
+    # line2.faceColor="r"
+    # gnd1.faceColor="r"
+    # gnd2.faceColor="r"
     return
-
 
 def broadside_offset_coupled_stripline_synthesis(arg, defaultunits):
     """
@@ -2574,19 +2624,85 @@ def broadside_coupled_suspended_stripline_analysis_view(arg, defaultunits):
     arg = arg[:11]
     newargs = convert2pq(arg, defaultunits)
     w, b, t, s, er, tand, sigma, mu, roughness, freq, length = tuple(newargs)
-    visvis.clf()
-    diel = visvis.solidBox(translation=(0,0,0.0),scaling=((w)/t*5.0,w/t*10.0,(s/t)))
-    line1 = visvis.solidBox(translation=(0,0,s/t/2.0+t/t/2.0),scaling=((w/t),w/t*10.1,(t/t)))
-    line2 = visvis.solidBox(translation=(0,0,-s/t/2.0-t/t/2.0),scaling=((w/t),w/t*10.1,(t/t)))
-    gnd1 = visvis.solidBox(translation=(0,0,-b/t/2-0.5),scaling=((w)/t*5.0,w/t*10.0,(t/t)))
-    gnd2 = visvis.solidBox(translation=(0,0,b/t/2+0.5),scaling=((w)/t*5.0,w/t*10.0,(t/t)))
-    diel.faceColor="g"
-    line1.faceColor="r"
-    line2.faceColor="r"
-    gnd1.faceColor="r"
-    gnd2.faceColor="r"
+    # visvis.clf()
+    # diel = visvis.solidBox(translation=(0,0,0.0),scaling=((w)/t*5.0,w/t*10.0,(s/t)))
+    # line1 = visvis.solidBox(translation=(0,0,s/t/2.0+t/t/2.0),scaling=((w/t),w/t*10.1,(t/t)))
+    # line2 = visvis.solidBox(translation=(0,0,-s/t/2.0-t/t/2.0),scaling=((w/t),w/t*10.1,(t/t)))
+    # gnd1 = visvis.solidBox(translation=(0,0,-b/t/2-0.5),scaling=((w)/t*5.0,w/t*10.0,(t/t)))
+    # gnd2 = visvis.solidBox(translation=(0,0,b/t/2+0.5),scaling=((w)/t*5.0,w/t*10.0,(t/t)))
+    # diel.faceColor="g"
+    # line1.faceColor="r"
+    # line2.faceColor="r"
+    # gnd1.faceColor="r"
+    # gnd2.faceColor="r"
     return
 
+def microstrip_step_in_width(w1, w2, eps_r, h, t, freq):
+    """ Reference: Transmission Line Design Handbook p. 317"""
+    if abs(w2-w1)>w1*0.01:
+        eeff1 = er_eff_disp_thick_microstrip(w1, h, t, eps_r, freq)
+        eeff2 = er_eff_disp_thick_microstrip(w2, h, t, eps_r, freq)
+        Z1 = Z_disp_thick_microstrip(w1, h, t, eps_r, freq)
+        Z2 = Z_disp_thick_microstrip(w2, h, t, eps_r, freq)
+        C = sqrt(w1*w2)*((10.1*log10(eps_r)+2.33)*w1/w2-12.6*log10(eps_r)-3.17)*1e-12
+        Ls = h*(40.5*(w1/w2-1)-75*log10(w1/w2)+0.2*(w1/w2-1)**2)*1e-9
+        Lw1 = Z1*sqrt(eeff1)/co
+        Lw2 = Z2*sqrt(eeff2)/co
+        L1 = Lw1*Ls/(Lw1+Lw2)
+        L2 = Lw2*Ls/(Lw1+Lw2)
+        ABCDmatrix = [  -4*pi*pi*freq*freq*L1*C+1,  2j*pi*freq*(L1+L2)-1j*(2*pi*freq)**3*L1*L2*C,
+                        2j*pi*freq*C,               -(2*pi*freq)**2*L2*C+1]
+    else:
+        ABCDmatrix = [  1,  0,
+                        0,  1]
+    return ABCDmatrix # [A, B, C, D] list
+
+def stripline_step_in_width2(w1, w2, eps_r, h1, h2, t, freq):
+    """ Reference: Transmission Line Design Handbook p. 350
+    DOES NOT WORK, may be problems in units"""
+    w1, w2 = min(w1,w2), max(w1,w2)
+    if abs(w2-w1)>w1*0.01:
+        Z1 = Z_thick_offset_stripline(w1, eps_r, h1, h2, t)
+        Z2 = Z_thick_offset_stripline(w2, eps_r, h1, h2, t)
+        b = h1 + h2 + t
+        d_= w1+2*b/pi*log(2.0)
+        d = w2+2*b/pi*log(2.0)
+        alpha = d_/d
+        k = tanh(pi*w1/2/b)
+        la = 2*pi/k
+        lg = co/freq/sqrt(eps_r)
+        A = ((1+alpha)/(1-alpha))**(2*alpha)*((1+sqrt(1-d**2/la**2))/(1-sqrt(1-d**2/la**2)))-(1+3*alpha**2)/(1-alpha**2)
+        KK = log(((1-alpha**2)/(4*alpha))*((1+alpha)/(1-alpha))**((1+alpha)/(2*alpha)))+2/A
+        L = Z1*2*d*KK/lg
+        ABCDmatrix  = [ 1, 1j*(2*pi*freq)*L, 
+                        0, 1]
+    else:
+        ABCDmatrix  = [ 1, 0, 
+                        0, 1]
+    return ABCDmatrix # [A, B, C, D] list
+
+def stripline_step_in_width(w1, w2, eps_r, h1, h2, t, freq):
+    """ Reference: Transmission Line Design Handbook p. 350"""
+    w1, w2 = min(w1,w2), max(w1,w2)
+    if abs(w2-w1)>w1*0.01:
+        Z1 = Z_thick_offset_stripline(w1, eps_r, h1, h2, t)
+        Z2 = Z_thick_offset_stripline(w2, eps_r, h1, h2, t)
+        b = h1 + h2 + t
+        d1 = w1+2*b/pi*log(2.0)
+        lg = co/freq/sqrt(eps_r)
+        L = Z1*2*d1/lg*log(1/sin(pi*Z2/2/Z1))/(2*pi*mean(freq))
+
+        length= b*log(2)/pi
+        ct = cos(2*pi/lg*length/mean(freq)*freq)
+        st = sin(2*pi/lg*length/mean(freq)*freq)
+        w=2*pi*freq
+        X=1j*w*L
+        ABCDmatrix  = [ st**2*Z2/Z1+ct*(ct-1j*X*st/Z1), 1j*ct*st*Z2+ct*(X*ct-1j*st*Z1), 
+                        1j*st*(ct-1j*X*st/Z1)/Z2-1j*ct*st/Z1, 1j*st*(X*ct-1j*st*Z1)/Z2+ct**2]
+    else:
+        ABCDmatrix  = [ 1, 0, 
+                        0, 1]
+    return ABCDmatrix # [A, B, C, D] list
 
 def Z_eeff_broadside_coupled_suspended_stripline(w,s,b,er):
     """
@@ -2649,29 +2765,7 @@ if __name__ == "__main__":
     # args=covered_suspended_microstripline_analysis(arg,[""]*17)
     # print(args)
     # print(Z_eeff_suspended_stripline(55, 0.1, 5, 20, 20, 2.2, 1000))
-    print(Z_eeff_grounded_cpw_thick(100e-6, 0.1e-6, 3.0, 100e-6, 127e-6))
-    """
-    Argument List:
-    First 12 arguments are inputs.
-    1- Line Width (w) ;length
-    2- Metal Thickness (t) ;length
-    3- Substrate Thickness (h) ;length
-    4- Upper Cavity Heigh (hu) ;length
-    5- Lower Cavity Height (hl) ;length
-    6- Dielectric Permittivity (<font size=+2>&epsilon;<sub>r</sub></font>);
-    7- Dielectric Loss Tangent ;
-    8- Metal Conductivity ;  electrical conductivity
-    9- Metal Permeability ;
-    10- Roughness ;length
-    11- Frequency ; frequency
-    12- Physical Length ;length
-    13- Impedance ;   impedance
-    14- Electrical Length ;  angle
-    15- <font size=+2>&epsilon;<sub>eff</sub></font> ;
-    16- Conductor Loss ;   loss per length
-    17- Dielectric Loss ;   loss per length
-    Ref: Model for Shielded Suspended Substrate Microstrip Line.pdf, Level 1
-    Over the range 0.5<=w/hl<=10, 0.05<=h/hl<=1.5, and er<=20 the accuracy
-    of these model equations (in reproducing the exact theoretical data) is generally
-    better than 0.6 percent.
-    Static Model. Does not use frequency."""
+    # print(Z_eeff_grounded_cpw_thick(100e-6, 0.1e-6, 3.0, 100e-6, 127e-6))
+    # print(Z_coaxial(3.4, 80 , 140))
+    print(stripline_step_in_width(130e-6, 200e-6, 3, 100e-6, 300e-6, 30e-6, 77e9))
+    print(stripline_step_in_width2(130e-6, 200e-6, 3, 100e-6, 300e-6, 30e-6, 77e9))
