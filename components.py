@@ -449,11 +449,11 @@ def Pi_Attenuator_Analysis(arg, defaultunits=[]):
     K = Rp * Zo / (Rp + Zo) / Zt
     Gamma = ((Z1 - Zo)/ (Z1 + Zo))
     S21 = 20. * np.log10(K * (1 + Gamma))
-    # ilk direncte kaybolan güc
+    # power dissipated at first resistor
     P1 = 10. * np.log10((1 + Gamma) ** 2 * Zo / Rp)
-    # son direncte kaybolan güc
+    # power dissipated at last resistor
     P3 = 10. * np.log10((K * (1 + Gamma)) ** 2 * Zo / Rp)
-    # orta direncte kaybolan güc
+    # power dissipated at middle resistor
     P2 = 10. * np.log10(((1 + Gamma) * (1 - K ** 2)) ** 2 * Zo / Rs)
     argout = [S11, S21, P1, P2, P3]
     arg = arg + [prettystring(argout[i], defaultunits[len(arg) + i])
@@ -697,7 +697,7 @@ def OptimumMitered90DegMicrostripBend(arg, defaultunits=[]):
 
 
 def OptimumMiteredArbitraryAngleMicrostripBend(arg, defaultunits=[]):
-    """ Optimum Mitered Microstrip Bend Parameters
+    r""" Optimum Mitered Microstrip Bend Parameters
     Argument List:
     First 2 arguments are inputs.
     1-  Microstrip Width;length;
@@ -705,6 +705,8 @@ def OptimumMiteredArbitraryAngleMicrostripBend(arg, defaultunits=[]):
     3-  Angle (0-180 degrees); angle ;
     4-  Miter Length; length ;
     Reference: MWOHELP, MBENDA model
+
+
     Burada scipy.interpolate.griddata kullanildi ve maalesef extrapolation yapmiyor. Sinir disi degerlerde dogrudan en yakin deger kullanildi.
     """
     if len(defaultunits) == 0:
@@ -834,7 +836,7 @@ def Z_WG_TE10(er, a, b, freq, formulation=1):
         imp = csqrt(mu0 / eps0 / er) * k / beta
     return imp
 
-    
+
 def HomogeneousRectWaveguideParameters_TE(arg, defaultunits=[]):
     """ Homogeneous Rectangular Waveguide Parameters
     Argument List:
@@ -1390,7 +1392,7 @@ def Exponential_Taper_Impedance_Transformer(arg, defaultunits=[]):
     r = (ZL/ Z0)
     N = int(np.round(N))
     print("N ", N)
-    # (np.arange(float(N+1))/N), formüldeki z/L'ye denk geliyor.
+    # (np.arange(float(N+1))/N), corresponds to z/L in formula.
     z_n = np.exp((np.arange(float(N + 1))/N) * np.log(r)) * Z0
 
     # Balta metoduyla gammanin ban icindeki en kotu degerini bulma
@@ -1424,9 +1426,9 @@ def Triangular_Taper_Impedance_Transformer(arg, defaultunits=[]):
     r = (ZL/ Z0)
     N = int(np.round(N/2.0))
     print("N ", N)
-    # (np.arange(float(N+1))/N), formüldeki z/L'ye denk geliyor.
+    # (np.arange(float(N+1))/N), corresponds to z/L in formula.
     z_n1 = np.exp(2.0 * (np.arange(float(N))/N) ** 2 * np.log(r)) * Z0
-    # (np.arange(float(N+1))/N), formüldeki z/L'ye denk geliyor.
+    # (np.arange(float(N+1))/N), corresponds to z/L in formula.
     z_n2 = np.exp((2 * (np.arange(float(N))/N) + 0.5 - 2.0 *
                   (np.arange(float(N))/N) ** 2) * np.log(r)) * Z0
 
@@ -1478,21 +1480,36 @@ def Chebyshev_Taper_Impedance_Transformer(arg, defaultunits=[]):
     return arg
 
 def fcutoff_CWG(rad,eps_r=1, v=0, n=1, mode="TE"):
-    """ Computes the cutoff frequency of circular waveguide 
-    v: Mode number of φ
-    n: Radial mode number
+    r""" Computes the cutoff frequency of circular waveguide.
+
+    Args:
+        v (int): Mode number of :math:`\phi`.
+        n (int): Radial mode number.
+        eps_r (float): Permittivity of filling material.
+        mode (str): "TE" or "TM".
+        rad (float): Radius.
+    Returns:
+        fc (float): Cutoff frequency (Hz).
     """
     if mode=="TE":
         kc = jnp_zeros(v,n)/rad
     else: # mode=="TM" is assumed
-        kc = jn_zeros(v,n)/rad    
+        kc = jn_zeros(v,n)/rad
     fc= kc*co/2/np.pi/sqrt(eps_r)
     return fc
 
 def Z_CWG(rad,freq, eps_r=1, v=0, n=1, mode="TE"):
-    """ Computes the wave impedance of circular waveguide  
-    v: Mode number of φ
-    n: Radial mode number
+    r""" Computes the wave impedance of circular waveguide.
+
+    Args:
+        v (int): Mode number of :math:`\phi`.
+        n (int): Radial mode number.
+        eps_r (float): Permittivity of filling material.
+        freq (float): Frequency (Hz).
+        mode (str): "TE" or "TM".
+        rad (float): Radius.
+    Returns:
+        Z (float): Impedance.
     """
     k=2*np.pi*freq*sqrt(eps_r)/co
     if mode=="TE":
@@ -1500,7 +1517,7 @@ def Z_CWG(rad,freq, eps_r=1, v=0, n=1, mode="TE"):
         beta= csqrt(k**2-kc**2)
         Z= k*eta0/sqrt(eps_r)/beta
     else: # mode=="TM" is assumed
-        kc = jn_zeros(v,n)/rad    
+        kc = jn_zeros(v,n)/rad
         beta= csqrt(k**2-kc**2)
         Z= beta*eta0/sqrt(eps_r)/k
     return Z
@@ -1587,7 +1604,7 @@ def LC_Balun(arg, defaultunits=[]):
     7-  S11 (dB) ;
     8-  S21 (dB) ;
     8-  S31 (dB) ;
-    Reference: 
+    Reference:
     """
     if len(defaultunits) == 0:
         defaultunits = [""] * len(arg) * 2
@@ -1620,4 +1637,4 @@ if __name__ == "__main__":
     # print GyselPowerDivider(["50","100","50","50","50","2"],["","","","","","","","","","","","","",""])
     # print
     # Exponential_Taper_Impedance_Transformer(["50","100","20","9","2"],[""]*7)
-    print(OptimumMiteredArbitraryAngleMicrostripBend(["14", "10", "90deg", "3"], ["mil", "mil", "deg", "mil"]))
+    print(OptimumMiteredArbitraryAngleMicrostripBend(["300", "127", "90deg", "3"], ["um", "um", "deg", "um"]))

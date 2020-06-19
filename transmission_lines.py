@@ -92,7 +92,7 @@ def Sentez(fonk, _args, k, target_value = [],init_value = [], limits = []):
         return out
     # from scipy.optimize import fmin_l_bfgs_b, fmin_tnc, minimize
     # output = fmin_l_bfgs_b(callable_func,array(init_value),approx_grad=1,factr=0.01,bounds=limits,maxfun=100000,pgtol=1.0e-10, epsilon=1.0e-8)
-    
+
     import nlopt
     opt = nlopt.opt(nlopt.GN_ESCH, len(k))
     opt.set_min_objective(callable_func)
@@ -102,7 +102,7 @@ def Sentez(fonk, _args, k, target_value = [],init_value = [], limits = []):
     opt.set_maxtime(1)
     # opt.set_xtol_abs(0.1)
     xopt = opt.optimize(init_value)
-    return xopt  
+    return xopt
 
 def skindepth_analysis(arg, defaultunits):
     """
@@ -518,9 +518,11 @@ def C_R_interdigital_capacitor(w,s,h,t,length,N,er,sigma, freq):
     return (2.0*epso*eeff*ellipk(k)/ellipk(k_)*(N-1)*length,Rs)
 
 def Z_thick_stripline(w, b, t, er):
-    '''
-    Transmssion Line Design Handbook, p125
-    '''
+    """Characteristic impedance of symmetric stripline thick metal
+    Ref: Transmssion Line Design Handbook, p. 125
+    Returns:
+        Float -- Impedance
+    """
 
     seterr(all='raise')
     try:
@@ -546,9 +548,11 @@ def Z_thick_stripline(w, b, t, er):
         return Zo1
 
 def Z_thick_offset_stripline(w, eps_r, h1, h2, t):
-    '''
-    Transmssion Line Design Handbook, p129
-    '''
+    """Characteristic impedance of asymmetric stripline thick metal
+    Ref: Transmssion Line Design Handbook, p. 129
+    Returns:
+        Float -- Impedance
+    """
     # print(w, eps_r, h1, h2, t)
     seterr(all='raise')
     def F(x):
@@ -574,7 +578,7 @@ def Z_thick_offset_stripline(w, eps_r, h1, h2, t):
         cf=eps_r*eps0/pi*(2*log(1/gamma/(beta-gamma))+1/gamma/(beta-gamma)*(F(t/b)-F(cl/b)))
         Z_0=eta0/sqrt(eps_r)/(w_b/gamma+w_b/(beta-gamma)+2*cf/eps_r/eps0)
     return Z_0
-        
+
 def conductor_loss_stripline(w, b, t, er, f, sigma, mu):
     """ Incremental Inductance Rule """
     sd = skin_depth(f, sigma, mu)
@@ -1679,7 +1683,7 @@ def Z_eeff_grounded_cpw(w, er, s, h):
     eeff = ((1 + er * x)/ (1 + x))
     Zo = 60 * pi /csqrt(eeff) / ((ellipk(k)/ ellipk(k_)) + (ellipk(k3)/ ellipk(k3_)))
     return (Zo, eeff)
-    
+
 def Z_eeff_grounded_cpw_thick(w, th, er, s, h):
     """Coplanar waveguide circuits, components and systems s89
     Transmission Line Design Handbook s79
@@ -1698,7 +1702,7 @@ def Z_eeff_grounded_cpw_thick(w, th, er, s, h):
     eeff = (co/vp)**2;
     Zo = sqrt(L/(Cthin+Cex));
     return (Zo, eeff)
-    
+
 def Z_eeff_cpw(w, er, s, h, t):
     """ Transmission Line Design Handbook s73"""
     a = w
@@ -2674,10 +2678,10 @@ def stripline_step_in_width2(w1, w2, eps_r, h1, h2, t, freq):
         A = ((1+alpha)/(1-alpha))**(2*alpha)*((1+sqrt(1-d**2/la**2))/(1-sqrt(1-d**2/la**2)))-(1+3*alpha**2)/(1-alpha**2)
         KK = log(((1-alpha**2)/(4*alpha))*((1+alpha)/(1-alpha))**((1+alpha)/(2*alpha)))+2/A
         L = Z1*2*d*KK/lg
-        ABCDmatrix  = [ 1, 1j*(2*pi*freq)*L, 
+        ABCDmatrix  = [ 1, 1j*(2*pi*freq)*L,
                         0, 1]
     else:
-        ABCDmatrix  = [ 1, 0, 
+        ABCDmatrix  = [ 1, 0,
                         0, 1]
     return ABCDmatrix # [A, B, C, D] list
 
@@ -2697,10 +2701,10 @@ def stripline_step_in_width(w1, w2, eps_r, h1, h2, t, freq):
         st = sin(2*pi/lg*length/mean(freq)*freq)
         w=2*pi*freq
         X=1j*w*L
-        ABCDmatrix  = [ st**2*Z2/Z1+ct*(ct-1j*X*st/Z1), 1j*ct*st*Z2+ct*(X*ct-1j*st*Z1), 
+        ABCDmatrix  = [ st**2*Z2/Z1+ct*(ct-1j*X*st/Z1), 1j*ct*st*Z2+ct*(X*ct-1j*st*Z1),
                         1j*st*(ct-1j*X*st/Z1)/Z2-1j*ct*st/Z1, 1j*st*(X*ct-1j*st*Z1)/Z2+ct**2]
     else:
-        ABCDmatrix  = [ 1, 0, 
+        ABCDmatrix  = [ 1, 0,
                         0, 1]
     return ABCDmatrix # [A, B, C, D] list
 

@@ -10,22 +10,24 @@ import sympy as sp
 from copy import deepcopy
 import network
 from genel import *
+from constants import *
 import inspect
 from collections import defaultdict
+import transmission_lines as tlines
 
 
 fcoef={"HZ":1.0, "KHZ":1e3, "MHZ":1e6, "GHZ":1e9}
 
-def formatoku(cumle):
+def parseformat(cumle):
     cumle=str.upper(cumle).strip()
     a=cumle[1:].split()
     format=a[2]
-    frekans=a[0]
+    frequency=a[0]
     if len(a)>3:
-        empedans=None
+        refimpedance=None
     else:
-        empedans=50.0
-    return format,frekans,empedans
+        refimpedance=50.0
+    return format,frequency,refimpedance
 
 def generate_multiport_spfile(conffile="", outputfilename=""):
     """
@@ -74,7 +76,7 @@ def generate_multiport_spfile(conffile="", outputfilename=""):
         newspfile.copy_data_from_spfile(target_indices[i][0], target_indices[i][1], source_indices[i][0],
                                      source_indices[i][1], spfiles[spfilelist[i]])
     newspfile.write2file(outputfilename)
-    
+
 def cascade_2ports(filenames):
     if isinstance(filenames[0],str):
         first=spfile(filenames[0])
@@ -87,30 +89,31 @@ def cascade_2ports(filenames):
             sp=filenames[i]
         first.connect_network_1_conn(sp,2,1)
     return first
-    
+
 class spfile:
     """ Class to process Touchstone files.
 
     \todo
-    TODO:    
+    TODO:
 
     """
     def __init__(self,dosya="",freqs=[],portsayisi=1,satiratla=0):
         self.format="DB"
-        self.frekans_birimi="HZ"
-        self.empedans=[]
-        self.dosya_adi=""
+        self.freq_unit="HZ"
+        self.refimpedance=[]
+        self.file_name=""
         self.sdata=[]
-        self.ydata = None 
+        self.ydata = None
         self.zdata = None
         self.abcddata=[]
         self.portnames=[]
+        self.inplace=1
         self.YZ_OK=0
         self.ABCD_OK=0
         self.sym_smatrix = None
         self.sym_parameters = dict()
-        self.undefinedYindices=set()       
-        self.undefinedZindices=set()     
+        self.undefinedYindices=set()
+        self.undefinedZindices=set()
         self.formulation=1  # 1: "power-wave"
                             # 2: "pseudo-wave"
                             # 3: "HFSS pseudo-wave"
@@ -120,14 +123,21 @@ class spfile:
         if not dosya=="":
             self.dosyaoku(dosya,satiratla)
         else:
-            self.empedans=[50.0]*portsayisi
+            self.refimpedance=[50.0]*portsayisi
             self.FrequencyPoints=np.array(freqs)
             self.port_sayisi=portsayisi
             ns = len(self.FrequencyPoints)
             self.normalized=1 # normalized to 50 ohm if 1
-            self.sdata=np.zeros((ns,portsayisi**2),complex)
+            if ns>0:
+                self.sdata=np.zeros((ns,portsayisi**2),complex)
             for i in range(portsayisi):
                 self.portnames[i]=""
+
+    def copy(self):
+        return deepcopy(self)
+
+    def set_inplace(self, inplace):
+        self.inplace = inplace
 
     def set_formulation(self, formulation):
         self.formulation = formulation
@@ -136,10 +146,10 @@ class spfile:
         return self.formulation
 
     def change_formulation(self, formulation):
-        empedans = self.empedans
+        refimpedance = deepcopy(self.refimpedance)
         self.change_ref_impedance(50.0)
         self.formulation = formulation
-        self.change_ref_impedance(empedans)
+        self.change_ref_impedance(refimpedance)
 
     def copy_data_from_spfile(self,local_i,local_j,source_i,source_j,sourcespfile):
         """ This method copies S-Parameter data from another SPFILE object
@@ -147,11 +157,16 @@ class spfile:
         local_column=(local_i-1)*self.port_sayisi+(local_j-1)
         self.sdata[:,local_column]=sourcespfile.data_array(format="COMPLEX",i=source_i,j=source_j)
 
-    def copy_frequency_from_spfile(self,sourcespfile):
-        self.FrequencyPoints=sourcespfile.get_frequency_list()
+    def set_frequencies_wo_recalc(self,freqs):
+        """Directly sets the frequencies of this network, but does not re-calculate s-parameters.
+
+        Args:
+            freqs (list or ndarray): New frequency values
+        """
+        self.FrequencyPoints=deepcopy(freqs)
 
     def getfilename(self):
-        return self.dosya_adi
+        return self.file_name
 
     def getformat(self):
         return self.format
@@ -159,53 +174,54 @@ class spfile:
     def setformat(self,format):
         self.format=format
 
-    def setdatapoint(self,m,n,x):
-        """
-        m:  Frequency index
-        n:  Parameter index
-        x:  Value array
-        """
-        self.sdata[m,n]=x
+    def setdatapoint(self,m, indices,x):
+        r"""Set the value for some part of S-Parameter data.
 
-    def setdatapoint2(self,m, indices,x):
+            .. math:: S_{i j}[m:m+len(x)]=x
+
+        Args:
+            m (int): Starting frequency indice
+            indices (tuple of int): Parameters to be set (i,j)
+            x (number or list): New value. If this is a number, it is converted to a list.
         """
-        m:    Frequency start index 
-        i,j:  Parameter index
-        x:    Value array
-        """
+        if isintance(x,(int, float,complex)):
+            x=[x]
         (i,j) = indices
         for k in range(len(x)):
             self.sdata[k+m,(i-1)*self.port_sayisi+(j-1)]=x[k]
 
     def column_of_data(self,i,j):
-        """Column of sdata that corresponds to Sij"""
+        r"""Gets the indice of column at *sdata* matrix corresponding to :math:`S_{i j}`
+        For internal use of the class.
+
+        Args:
+            i (int): First index
+            j (int): Second index
+
+        Returns:
+            int: Index of column
+        """
         return (i-1)*self.port_sayisi+(j-1)
 
-    def setdatapoint3(self, m, indices,x):
-        """
-        m:  frequency index
-        indices: tuple(i,j)  Parameter indices
-        x:  Value (generally complex)
-        """
-        (i,j) = indices
-        for k in range(len(x)):
-            self.sdata[k+m,(i-1)*self.port_sayisi+(j-1)]=x[k]
-    
     def get_sym_smatrix(self):
         return self.sym_smatrix
 
     def set_sym_smatrix(self,SM):
+        """This function is used to set arithmetic expression for S-Matrix, if S-Matrix is defined using symbolic variables.
+
+        Args:
+            SM ([type]): [description]
+        """
         self.sym_smatrix = SM
 
     def get_sym_parameters(self):
         return self.sym_parameters
 
     def set_sym_parameters(self,paramdict):
-        """ This functions:
-            - Sets the value of symbolic parameters (except frequency) of the symbolic S-Parameter Matrix
-            - If symbolic S-Parameter Matrix is set before, values of symbolic parameters in matrix are set
-            - S-Parameter generator function is set
-            - S-Parameter data is updated
+        r"""This function is used to set the values of symbolic variables of the network. This is used if the S-Matrix of the network is defined by an arithmetic expression containing symbolic variables. This property is used in conjunction with *sympy* library for symbolic manipulation. Arithmetic expression for S-Matrix is defined by ``set_sym_smatrix`` function.
+
+        Args:
+            paramdict (dict): This is a dictionary containing the values of symbolic variables of the network
         """
         self.sym_parameters = paramdict
         if self.sym_smatrix:
@@ -217,16 +233,19 @@ class spfile:
             self.set_frequency_points(self.get_frequency_list())
 
     def set_sparam_gen_func(self,func = None):
-        """
-        This function is used to set the function that generates s-parameters from frequency. 
-        This is used for basic blocks like transmission line, lumped elements etc.
+        """This function is used to set the function that generates s-parameters from frequency.
+
+        Args:
+            func (function, optional): function to be set. Defaults to None.
         """
         self.sparam_gen_func = func
 
     def set_smatrix_at_frequency_point(self,indices,smatrix):
-        """
-        indices: frequency index/indices (int or list)
-        smatrix: S-Parameter matrix at m in np.matrix format
+        r"""Set S-Matrix at frequency indices
+
+        Args:
+            indices (list): List of frequency indices
+            smatrix (numpy.matrix): New S-Matrix value which is to be set at all *indices*
         """
         c=np.shape(smatrix)[0]
         smatrix.shape=1,c*c
@@ -235,29 +254,41 @@ class spfile:
         for i in indices:
             self.sdata[i,:]=np.array(smatrix)[0]
 
-    def snp2smp(self,ports):
-        """
-        This method changes the port numbering of the network
-        port j of new network corresponds to ports[j] in old network
+    def snp2smp(self,ports,inplace=-1):
+        """This method changes the port numbering of the network
+        port j of new network corresponds to ports[j] in old network.
 
         if the length of "ports" argument is lower than number of ports, remaining ports are terminated with current reference impedances and number of ports are reduced.
+
+        Args:
+            ports (list): New port order
+            inplace (int, optional): Object editing mode. Defaults to -1.
+
+        Returns:
+            spfile: Modified spfile object
         """
-        ns = len(self.FrequencyPoints)
-        ps=self.port_sayisi
+        if inplace==-1: inplace=self.inplace
+        if inplace==0:  obj = deepcopy(self); obj.set_inplace(1)
+        else:           obj = self
+        ns = len(obj.FrequencyPoints)
+        ps=obj.port_sayisi
         newps=len(ports)
-        sdata=self.sdata # to speed-up
+        sdata=obj.sdata # to speed-up
         new_sdata=np.zeros([ns,newps*newps]).astype(complex)
         for i in range(newps):
             for j in range(newps):
                 n=(i)*newps+(j)
                 m=(ports[i]-1)*ps+(ports[j]-1)
                 new_sdata[:,n]=sdata[:,m]
-        self.sdata=deepcopy(new_sdata)
-        self.port_sayisi=newps
-        self.empedans=[self.empedans[x-1] for x in ports]
-        self.YZ_OK=0
-        self.ABCD_OK=0
-        return self
+        obj.sdata=new_sdata
+        # obj.sdata=deepcopy(new_sdata)
+        obj.port_sayisi=newps
+        obj.refimpedance=[obj.refimpedance[x-1] for x in ports]
+        names=obj.portnames
+        obj.portnames=[names[ports[i]-1] for i in range(obj.port_sayisi)]
+        obj.YZ_OK=0
+        obj.ABCD_OK=0
+        return obj
 
     def scaledata(self,scale=1.0, dataindices=[]):
         if (len(dataindices)==0):
@@ -268,12 +299,12 @@ class spfile:
         return self.port_sayisi
 
     def dosyayi_tekrar_oku(self):
-        self.dosyaoku(self.dosya_adi)
+        self.dosyaoku(self.file_name)
 
-    def dosyaoku(self,dosya_adi,satiratla=0):
-        
-        self.dosya_adi=dosya_adi
-        ext=dosya_adi.split(".")[-1]
+    def dosyaoku(self,file_name,satiratla=0):
+
+        self.file_name=file_name
+        ext=file_name.split(".")[-1]
         if ext[-1].lower()=="p":
             try:
                 ps=self.port_sayisi=int("".join(ext[1:-1]))
@@ -286,12 +317,10 @@ class spfile:
             except:
                 print("Error determining port number\n")
                 return
-        # for i in range(ps):
-        #     self.portnames[i+1]=""
         try:
-            f=open(dosya_adi,'r')
+            f=open(file_name,'r')
         except:
-            print("Error opening the file: "+dosya_adi+"\n")
+            print("Error opening the file: "+file_name+"\n")
             return  0
         linesread=f.readlines()[satiratla:]
         lsonuc=[]
@@ -318,10 +347,10 @@ class spfile:
         for i,pn in portnames.items():
             self.portnames[i-1]=pn
         x=lines[0]
-        self.format,self.frekans_birimi,empedans=formatoku(x)
-        if empedans==None:
-            empedans = 50.0
-        self.empedans=np.ones(ps,dtype=complex)*empedans
+        self.format,self.freq_unit,refimpedance=parseformat(x)
+        if refimpedance==None:
+            refimpedance = 50.0
+        self.refimpedance=np.ones(ps,dtype=complex)*refimpedance
         lines.remove(x)
         datalar=np.array((" ".join(lines)).split(),dtype=float)
         k=(2*ps**2+1)
@@ -329,7 +358,7 @@ class spfile:
         datalar=datalar[:(b*k)]
         datalar.shape=b,k
         lfrekans=datalar[:,0]
-        
+
         # frequencies should increase monotonically
         c=[1+cmp(datalar[i,0],datalar[i+1,0]) for i in range(b-1)]
         no_of_points=b
@@ -343,7 +372,7 @@ class spfile:
             pass
         b=no_of_points
 
-        lfrekans=datalar[:b,0]*fcoef[self.frekans_birimi]
+        lfrekans=datalar[:b,0]*fcoef[self.freq_unit]
 
         if self.format=="RI":
             lsonuc=[datalar[:b,2*i+1]+datalar[:b,2*i+2]*1.0j for i in range(ps**2)]
@@ -370,7 +399,18 @@ class spfile:
         return self.undefinedZindices
 
     def Ffunc(self,imp):
-        """ Coefficient F in a, b definition of S-Parameters"""
+        r"""F-matrix in a, b definition of S-Parameters
+
+                .. math::
+                    a=F(V+Z_rI)
+
+                    b=F(V-Z_r^*I)
+        Args:
+            imp (ndarray): Zref, Reference impedance array for which includes the reference impedance for each port.
+
+        Returns:
+            numpy.matrix: F-Matrix
+        """
         if self.formulation == 1:
             F=np.matrix(np.diag(np.sqrt((0.25/abs(imp.real)))))
         elif self.formulation == 2:
@@ -380,8 +420,12 @@ class spfile:
         return F
 
     def calc_syz(self,input="S",indices=None):
-        """ This function generate 2 of S, Y and Z parameters by the remaining parameter given.
+        """This function calculates 2 of S, Y and Z parameters by the remaining parameter given.
         Y and Z-matrices calculated separately instead of calculating one and taking inverse. Because one of them may be undefined for some circuits.
+
+        Args:
+            input (str, optional): Input parameter type (should be S, Y or Z). Defaults to "S".
+            indices (list, optional): If given, output matrices are calculated only at the indices given by this list. If it is None, then output matrices are calculated at all frequencies. Defaults to None.
         """
         if input=="Z" and self.zdata is None:
             print("Z matrix is not calculated before")
@@ -389,7 +433,7 @@ class spfile:
         if input=="Y" and self.ydata is None:
             print("Y matrix is not calculated before")
             return
-        imp=self.prepare_ref_impedance_array(self.empedans)
+        imp=self.prepare_ref_impedance_array(self.refimpedance)
         impT=imp.T
         ps=self.port_sayisi
         ns=len(self.FrequencyPoints)
@@ -399,8 +443,8 @@ class spfile:
         G=np.matrix(np.zeros((ps,ps),dtype=complex))
         F=np.matrix(np.zeros((ps,ps),dtype=complex))
         if input=="S":
-            self.undefinedYindices.clear()        
-            self.undefinedZindices.clear()         
+            self.undefinedYindices.clear()
+            self.undefinedZindices.clear()
         if input=="S":
             # self.zdata=np.ones((ns,ps**2),dtype=complex)
             # self.ydata=np.ones((ns,ps**2),dtype=complex)
@@ -427,7 +471,7 @@ class spfile:
                     print("Y-Matrix is undefined at frequency: {: f}\n".format(self.FrequencyPoints[i]))
                     self.undefinedYindices.add(i)
                     break
-                    
+
                 try:
                     if self.formulation == 1:
                         zmatrix=F.I*(birim-smatrix).I*(smatrix*G+G.conj())*F
@@ -493,23 +537,38 @@ class spfile:
             T=network.abcd2t(abcd,[50.0+0j,50.0+0j])
             eigs,eigv=eig(T)
 
-    def inverse_2port(self):
-        """ Take inverse of 2-port data for de-embedding purposes.
-            The network is first normalized to 50.0 ohm
+    def inverse_2port(self,inplace=-1):
+        """Take inverse of 2-port data for de-embedding purposes.
+
+        Args:
+            inplace (int, optional): Object editing mode. Defaults to -1.
+
+        Returns:
+            spfile: Inverted 2-port spfile
         """
-        self.change_ref_impedance(50.0)
-        ns=len(self.FrequencyPoints)
+        if inplace==-1: inplace=self.inplace
+        if inplace==0:  obj = deepcopy(self); obj.set_inplace(1)
+        else:           obj = self
+        obj.change_ref_impedance(50.0)
+        ns=len(obj.FrequencyPoints)
         for i in range(ns):
-            smatrix=np.matrix(self.sdata[i,:]).reshape(2,2)
+            smatrix=np.matrix(obj.sdata[i,:]).reshape(2,2)
             sm = network.t2s(network.s2t(smatrix).I)
-            self.sdata[i,:] = sm.reshape(4)
-        return self
+            obj.sdata[i,:] = sm.reshape(4)
+        return obj
 
     def s2abcd(self,port1=1,port2=2):
-        """ S-Matrix to ABCD matrix conversion between 2 chosen ports. Other ports are terminated with reference impedances
+        """S-Matrix to ABCD matrix conversion between 2 chosen ports. Other ports are terminated with reference impedances
+
+        Args:
+            port1 (int, optional): Index of Port-1. Defaults to 1.
+            port2 (int, optional): Index of Port-2. Defaults to 2.
+
+        Returns:
+            numpy.matrix: ABCD data. Numpy.matrix of size (ns,4) (ns: number of frequencies). Each row contains (A,B,C,D) numbers in order.
         """
         ns=len(self.FrequencyPoints)
-        imp=self.prepare_ref_impedance_array(self.empedans)
+        imp=self.prepare_ref_impedance_array(self.refimpedance)
         imp=np.concatenate(([imp[port1-1][:]],[imp[port2-1][:]]),axis=0)
         impT=imp.T
         abcddata=np.ones((ns,4),dtype=complex)
@@ -541,7 +600,16 @@ class spfile:
         return abcddata
 
     def gmax(self,port1=1,port2=2, dB=True):
-        """ Maximum Transducer gain"""
+        """Calculates Gmax from port1 to port2. Other ports are terminated with reference impedances. If dB=True, output is in dB, otherwise it is a power ratio.
+
+        Args:
+            port1 (int, optional): Index of input port. Defaults to 1.
+            port2 (int, optional): Index of output port. Defaults to 2.
+            dB (bool, optional): Enable dB output. Defaults to True.
+
+        Returns:
+            numpy.ndarray: Array of Gmax values for all frequencies
+        """
         self.s2abcd(port1,port2)
         ns=len(self.FrequencyPoints)
         gain=[]
@@ -558,23 +626,39 @@ class spfile:
             return 10*np.log10(gain)
         else:
             return gain
-            
+
     def get_port_number_from_name(self,isim):
-        """ Returns the first port number with name "isim" """
+        """Index of first port index with name *isim*
+
+        Args:
+            isim (bool): Name of the port
+
+        Returns:
+            int: Port index if port is found, 0 otherwise
+        """
         if self.portnames.count(isim)>0:
             return self.portnames.index(isim)+1
         else:
             return 0
 
     def gav(self,port1=1,port2=2, dB=True):
-        """ Available gain from port1 to port2: Pav_toload/Pav_fromsource
-            Assumes complex conjugate matching at port2
+        r"""Available gain from port1 to port2. If dB=True, output is in dB, otherwise it is a power ratio.
+
+            .. math:: G_{av}=\frac{P_{av,toLoad}}{P_{av,fromSource}}
+
+        Args:
+            port1 (int, optional): Index of input port. Defaults to 1.
+            port2 (int, optional): Index of output port. Defaults to 2.
+            dB (bool, optional): Enable dB output. Defaults to True.
+
+        Returns:
+            numpy.ndarray: Array of Gmax values for all frequencies
         """
         self.s2abcd(port1,port2)
         ns=len(self.FrequencyPoints)
-        imp=self.prepare_ref_impedance_array(self.empedans)
-        ZL = imp[port2-1] 
-        ZS = imp[port1-1] 
+        imp=self.prepare_ref_impedance_array(self.refimpedance)
+        ZL = imp[port2-1]
+        ZS = imp[port1-1]
         GS=(ZS-50.0)/(ZS+50.0)
         gain=[]
         for i in range(ns):
@@ -588,13 +672,19 @@ class spfile:
         if dB==True:
             return 10*np.log10(gain)
         else:
-            return gain 
-    
+            return gain
+
     def Z_conjmatch(self,port1=1,port2=2):
-        """Calculates source and load reflection coefficients for simultaneous conjugate match
-        GS: reflection coefficient at port1
-        GL: reflection coefficient at port2
-        Ref: Orfanidis
+        r"""Calculates source and load reflection coefficients for simultaneous conjugate match.
+
+        Args:
+            port1 (int, optional): [description]. Defaults to 1.
+            port2 (int, optional): [description]. Defaults to 2.
+
+        Returns:
+            2-tuple of numpy.arrays (GS, GL):
+                - GS: Reflection coefficient at Port-1
+                - GL: Reflection coefficient at Port-2
         """
         s11,s12,s21,s22 = self.return_s2p(port1,port2)
         D=s11*s22-s12*s21
@@ -615,13 +705,23 @@ class spfile:
         return (GS,GL)
 
     def gt(self,port1=1,port2=2, dB=True, ZS=50.0, ZL=50.0):
-        """ Transducer gain: Pload/Pav_fromsource
-        This method calculates GT between 2 ports with specified source and load impedances
-        without impedance renormalization. This calculation can also be done using impedance renormalization.
+        r"""This method calculates Transducer gain (GT) between 2 ports with specified source and load impedances without impedance renormalization. This calculation can also be done using impedance renormalization.
+
+            .. math:: G_{av}=\frac{P_{load}}{P_{av,fromSource}}
+
+        Args:
+            port1 (int, optional): Index of source port. Defaults to 1.
+            port2 (int, optional): Index of load port. Defaults to 2.
+            dB (bool, optional): Enable dB output. Defaults to True.
+            ZS (float, optional): Source impedance. Defaults to 50.0.
+            ZL (float, optional): Load impedance. Defaults to 50.0.
+
+        Returns:
+            numpy.ndarray: Array of GT values for all frequencies
         """
         self.s2abcd(port1,port2)
         ns=len(self.FrequencyPoints)
-        refZ=self.empedans
+        refZ=self.refimpedance
         refZ[port1-1] = ZS
         refZ[port2-1] = ZL
         imp=self.prepare_ref_impedance_array(refZ)
@@ -641,7 +741,7 @@ class spfile:
         if dB==True:
             return 10*np.log10(gain)
         else:
-            return gain 
+            return gain
 
     def interpolate_data(self, data, freqs):
         # tck_db = scipy.interpolate.splrep(self.FrequencyPoints,data,s=0,k=1)  # s=0, smoothing off, k=1, order of spline
@@ -662,121 +762,164 @@ class spfile:
         return s11,s12,s21,s22
 
     def stability_factor_mu1(self,port1=1,port2=2):
-        """ Calculates mu1 factor, from port1 to port2. Other ports are terminated with reference impedances
-        Reference: Orfanidis. """
+        r"""Calculates :math:`\mu_1` stability factor, from port1 to port2. Other ports are terminated with reference impedances.
+
+        Args:
+            port1 (int, optional): Index of source port. Defaults to 1.
+            port2 (int, optional): Index of load port. Defaults to 2.
+
+        Returns:
+            numpy.ndarray: Array of stability factor for all frequencies
+        """
         s11,s12,s21,s22 = self.return_s2p(port1,port2)
         d=s11*s22-s12*s21
         mu1=(1.0-abs(s11)**2)/(abs(s22-d*s11.conjugate())+abs(s21*s12))
         return mu1
 
     def stability_factor_mu2(self,port1=1,port2=2):
-        """ Calculates mu2 factor, from port1 to port2. Other ports are terminated with reference impedances
-        Reference: Orfanidis. """
+        r"""Calculates :math:`\mu_2` stability factor, from port1 to port2. Other ports are terminated with reference impedances.
+
+        Args:
+            port1 (int, optional): Index of source port. Defaults to 1.
+            port2 (int, optional): Index of load port. Defaults to 2.
+
+        Returns:
+            numpy.ndarray: Array of stability factor for all frequencies
+        """
         s11,s12,s21,s22 = self.return_s2p(port1,port2)
         d=s11*s22-s12*s21
         mu2=(1.0-abs(s22)**2)/(abs(s11-d*s22.conj())+abs(s21*s12))
         return mu2
 
     def stability_factor_k(self,port1=1,port2=2):
-        """ Calculates k factor, from port1 to port2. Other ports are terminated with reference impedances
-        Reference: Orfanidis. """
+        r"""Calculates *k* stability factor, from port1 to port2. Other ports are terminated with reference impedances.
+
+        Args:
+            port1 (int, optional): Index of source port. Defaults to 1.
+            port2 (int, optional): Index of load port. Defaults to 2.
+
+        Returns:
+            numpy.ndarray: Array of stability factor for all frequencies
+        """
         s11,s12,s21,s22 = self.return_s2p(port1,port2)
         d=s11*s22-s12*s21
         K=((1-abs(s11)**2-abs(s22)**2+abs(d)**2)/(2*abs(s21*s12)))
         return K
 
-    def change_ref_impedance(self,Znew):
-        """ Changes reference impedance. 
-        newimp: new impedance
-        newimp possibilities;
-            number  ->  it is used for all ports
-            list    ->  it is assumed that separate values are given for each port.
-                        If None is given for a port, the current impedance value will be used. 
-                        Separate values can be number, spfile or a function of frequency vector"""
+    def change_ref_impedance(self,Znew,inplace=-1):
+        """Changes reference impedance and re-calculates S-Parameters.
+
+        Args:
+            Znew (float or list): New Reference Impedance. Its type can be:
+                - float: In this case Znew value is used for all ports
+                - list: In this case each element of this list is assgined to different ports in order as reference impedance. Length of *Znew* should be equal to number of ports. If an element of the list is None, then the reference impedance for corresponding port is not changed.
+
+        Returns:
+            spfile: The spfile object with new reference impedance
+        """
+        if inplace==-1: inplace=self.inplace
+        if inplace==0:  obj = deepcopy(self); obj.set_inplace(1)
+        else:           obj = self
         if isinstance(Znew, list):
             for i in range(len(Znew)):
                 if Znew[i] is None:
-                    Znew[i]=self.empedans[i]
-        imp=self.prepare_ref_impedance_array(self.empedans)
+                    Znew[i]=obj.refimpedance[i]
+        imp=obj.prepare_ref_impedance_array(obj.refimpedance)
         impT=imp.T
-        impnew=self.prepare_ref_impedance_array(Znew)
+        impnew=obj.prepare_ref_impedance_array(Znew)
         impnewT=impnew.T
-        ps = self.port_sayisi
+        ps = obj.port_sayisi
         birim=np.matrix(np.eye(ps))
-        for i in range(len(self.FrequencyPoints)):
-            if self.formulation == 1:
+        for i in range(len(obj.FrequencyPoints)):
+            if obj.formulation == 1:
                 G=np.matrix( np.diag( (impnewT[:][i]-impT[:][i])/(impnewT[:][i]+impT[:][i].conj()) ) )
-                F=self.Ffunc(impT[:][i])
-                Fnew=self.Ffunc(impnewT[:][i])
+                F=obj.Ffunc(impT[:][i])
+                Fnew=obj.Ffunc(impnewT[:][i])
                 A = Fnew.I*F*(birim-G.conj())
-                S = np.matrix(self.sdata[i,:]).reshape(ps,ps)
+                S = np.matrix(obj.sdata[i,:]).reshape(ps,ps)
                 C1 = (S-G.conj())
                 C2 = (birim-G*S).I
                 Snew = A.I*C1*C2*A.conj()
             else: # TODO: Should be derived, tried and tested
                 G=np.matrix( np.diag( (impnewT[:][i]-impT[:][i])/(impnewT[:][i]+impT[:][i]) ) )
-                F=self.Ffunc(impT[:][i])
-                Fnew=self.Ffunc(impnewT[:][i])
+                F=obj.Ffunc(impT[:][i])
+                Fnew=obj.Ffunc(impnewT[:][i])
                 A = Fnew.I*F*(birim-G)
-                S = np.matrix(self.sdata[i,:]).reshape(ps,ps)
+                S = np.matrix(obj.sdata[i,:]).reshape(ps,ps)
                 C1 = (S-G)
                 C2 = (birim-G*S).I
                 Snew = A.I*C1*C2*A
-            self.sdata[i,:]=Snew.reshape(ps**2)
+            obj.sdata[i,:]=Snew.reshape(ps**2)
         if isinstance(Znew,(complex, float, int)):
-            self.empedans=np.ones(ps,dtype=complex)*Znew
+            obj.refimpedance=np.ones(ps,dtype=complex)*Znew
         else:
-            self.empedans = deepcopy(Znew)
-        return self         
-
-    def change_ref_impedance_old(self,newimp):
-        """ Changes reference impedance. Firstly impedance-independent Z-matrix is calculated and then S is calculated with new Zref using Z-matrix """
-        self.calc_syz("S")
-        if isinstance(newimp,(float,complex)):
-            newimp=len(self.empedans)*[newimp]
-        for i in range(len(newimp)):
-            if newimp[i]==None:
-                newimp[i]=self.empedans[i]
-        self.empedans=newimp
-        self.calc_syz("Z")
-        self.calc_syz("Y",self.undefinedZindices)
+            obj.refimpedance = deepcopy(Znew)
+        return obj
 
     def prepare_ref_impedance_array(self,imparray):
-        """   Turns reference impedance array which is composed of numbers,arrays, functions or 1-ports to numerical array which
-        is composed of numbers and arrays. It is made sure that Re(Z)=!0.
+        r"""Turns reference impedance array which is composed of numbers,arrays, functions or 1-ports to numerical array which
+        is composed of numbers and arrays. It is made sure that :math:`Re(Z)\neq 0`. Mainly for internal use.
+
+        Args:
+            imparray (list): List of impedance array
+
+        Returns:
+            numpy.ndarray: Calculated impedance array
         """
         newarray=[]
         if isinstance(imparray,(float,complex,int)):
             imparray = [imparray]*self.port_sayisi
         for i in range(self.port_sayisi):
             if isinstance(imparray[i],spfile):
-                imparray[i].calc_syz("S")
-                newarray.append(np.array([x+(x.real==0)*1e-8 for x in imparray[i].data_array(format="COMPLEX",syz="Z",i=1,j=1, frekanslar=self.FrequencyPoints) ]))
-                # Zo = imparray[i].change_ref_impedance(50.0)
-                # Gamma = imparray[i].data_array(format="COMPLEX",syz="S",i=1,j=1, frekanslar=self.FrequencyPoints)
-                # Zin = Zo*(1.0+Gamma)/(1.0-Gamma)
-                # newarray.append(np.array([x+(x.real==0)*1e-8 for x in Zin ]))
+                # imparray[i].calc_syz("S")
+                # newarray.append(np.array([x+(x.real==0)*1e-8 for x in imparray[i].data_array(format="COMPLEX",syz="Z",i=1,j=1, frekanslar=self.FrequencyPoints) ]))
+                imparray[i].change_ref_impedance(50.0)
+                Gamma = imparray[i].data_array(format="COMPLEX",syz="S",i=1,j=1, frekanslar=self.FrequencyPoints)
+                Zin = 50.0*(1.0+Gamma)/(1.0-Gamma)
+                newarray.append(np.array([x+(x.real==0)*1e-8 for x in Zin ]))
             elif inspect.isfunction(imparray[i]):
                 newarray.append(np.array([x+(x.real==0)*1e-8 for x in imparray[i](self.FrequencyPoints)]))
             elif isinstance(imparray[i],(float,complex,int)):
                 newarray.append(np.ones(len(self.FrequencyPoints))*(imparray[i]+(imparray[i].real==0)*1e-8))
+            elif isinstance(imparray[i],(list, np.ndarray)):
+                newarray.append(np.array(imparray[i]))
         return np.array(newarray)
 
     def ImpulseResponse(self,i=2,j=1,dcinterp=1,dcvalue=0.0,MaxTimeStep=1.0,FreqResCoef=1.0, Window="blackman"):
-        """ Determine the number of frequency steps
-            Extrapolate to DC (append dc value and leave the rest to interpolation in the data_array method)
-            Take data in frequency domain"""
+        r"""Calculates impulse response of :math:`S_{i j}`
+
+        Args:
+            i (int, optional): Port-1. Defaults to 2.
+            j (int, optional): Port-2. Defaults to 1.
+            dcinterp (int, optional): If 1, add DC point to interpolation. Defaults to 1.
+            dcvalue (float, optional): dcvalue to be used at interpolation if *dcinterp=0*. Defaults to 0.0. This value is appended to :math:`S_{i j}` and the rest is left to interpolation in *data_array* function.
+            MaxTimeStep (float, optional): Not used for now. Defaults to 1.0.
+            FreqResCoef (float, optional): Coeeficient to increase the frequency resolution by interpolation. Defaults to 1.0 (no interpolation).
+            Window (str, optional): Windows function to prevent ringing. Defaults to "blackman". Other windows will be added later.
+
+        Returns:
+            9-tuple: The elements of the tuple are the following in order:
+                1. Raw frequency data used as input
+                2. Window array
+                3. Time array
+                4. Time-Domain Waveform of Impulse Response
+                5. Time-Domain Waveform of Impulse Input
+                6. Time step
+                7. Frequency step
+                8. Size of input array
+                9. Max Value of Impulse Input
+        """
 
         nn=int(FreqResCoef*self.FrequencyPoints[-1]/(self.FrequencyPoints[-1]-self.FrequencyPoints[0])*len(self.FrequencyPoints)) #data en az kac noktada temsil edilecek
         fmax = self.FrequencyPoints[-1]
         # Frequency step
         df=(self.FrequencyPoints[-1]/(nn))
-        
-        # Generate nn frequency points starting from df/2 and ending at fmax with df spacing 
-        nfdata=np.linspace((df),self.FrequencyPoints[-1],nn) 
+
+        # Generate nn frequency points starting from df/2 and ending at fmax with df spacing
+        nfdata=np.linspace((df),self.FrequencyPoints[-1],nn)
         # Get complex data in frequency domain for positive frequencies
-        rawdata=self.data_array(format="COMPLEX",syz="S",i=i,j=j, frekanslar=nfdata,DCInt=dcinterp,DCValue=dcvalue)        
-        
+        rawdata=self.data_array(format="COMPLEX",syz="S",i=i,j=j, frekanslar=nfdata,DCInt=dcinterp,DCValue=dcvalue)
+
         # Handle negative frequencies, Re(-w)=Re(w),Im(-w)=-Im(w), and prepare data array for ifft
         # Zero padding on frequency data to obtain a smooth time-domain plot
         N=2**(int((np.log10(nn)/np.log10(2.0)))+10)
@@ -794,8 +937,8 @@ class spfile:
         datawindow[N-nn:] = window[:nn]
         #   IFFT
         F_data=np.fft.ifft(data*datawindow)
-        #   Normalization with impulse response by calculating amplitude of impulse 
-        #   response assuming the frequency coefficients of 1.        
+        #   Normalization with impulse response by calculating amplitude of impulse
+        #   response assuming the frequency coefficients of 1.
         data=np.zeros(N,dtype=complex)
         data[:(nn+1)] = 1.0
         data[N-nn:] = 1.0
@@ -813,71 +956,136 @@ class spfile:
         timeline=np.linspace(-shift*dt,dt*(N-1)-shift*dt,N)
         return (rawdata,window,timeline,F_data,Vintime,dt,df,N,Norm)
 
-    def __sub__(self,c):
-        if (self.port_sayisi!=2 or c.port_sayisi!=2):
+    def __sub__(self,SP2):
+        r"""Implements SP1-SP2.
+        Deembeds SP2 from port-2 of SP1.
+        Port ordering is as follows:
+        (1)-SP1-(2)---(1)-SP2-(2)
+        SP1 is *self*.
+
+        Args:
+            SP2 (spfile): Deembedded spfile network
+
+        Returns:
+            spfile: The resulting of deembedding process
+        """
+        if (self.port_sayisi!=2 or SP2.port_sayisi!=2):
             print("Both networks should be two-port")
             return 0
         sonuc=deepcopy(self)
         sonuc.s2abcd()
-        c.set_frequency_points(sonuc.FrequencyPoints)
-        c.s2abcd()
+        SP2.set_frequency_points(sonuc.FrequencyPoints)
+        SP2.s2abcd()
         for i in range(len(sonuc.FrequencyPoints)):
             abcd1=np.matrix(sonuc.abcddata[i].reshape(2,2))
-            abcd2=np.matrix(c.abcddata[i].reshape(2,2))
+            abcd2=np.matrix(SP2.abcddata[i].reshape(2,2))
             abcd=abcd1*abcd2.I
-            s=network.abcd2s(abcd,sonuc.empedans[0])
+            s=network.abcd2s(abcd,sonuc.refimpedance[0])
             sonuc.abcddata[i]=abcd.reshape(4)
             sonuc.sdata[i]=s.reshape(4)
             sonuc.YZ_OK=0
         return sonuc
 
     def __neg__(self):
+        r"""Calculates an spfile object for two-port networks which is the inverse of this network. This is used to use + and - signs to cascade or deembed 2-port blocks.
+
+        Returns:
+            spfile:
+                1. *None* if number of ports is not 2.
+                2. *spfile* which is the inverse of the spfile object operated on.
+        """
         if (self.port_sayisi!=2):
             print("Network should be two-port")
-            return 0
+            return None
         output = deepcopy(self)
+        output.set_inplace(1)
         output.inverse_2port()
         return output
 
-    def __add__(self,c):
+    def __add__(self,SP2):
+        r"""Implements SP1+SP2.
+        Cascades SP2 to port-2 of SP1.
+        Port ordering is as follows:
+        (1)-SP1-(2)---(1)-SP2-(2)
+        SP1 is *self*.
+
+        Args:
+            SP2 (spfile): Appended spfile network
+
+        Returns:
+            spfile: The result of cascade of 2 networks
+        """
         if (self.port_sayisi!=2 or c.port_sayisi!=2):
             print("Both networks should be two-port")
             return 0
         sonuc=deepcopy(self)
+        output.set_inplace(1)
         sonuc.s2abcd()
-        if len(sonuc.FrequencyPoints)>len(c.FrequencyPoints):
+        if len(sonuc.FrequencyPoints)>len(SP2.FrequencyPoints):
             print("Uyari: ilk devrenin frekans nokta sayisi, 2. devreninkinden fazla")
-        c.set_frequency_points(sonuc.FrequencyPoints)
-        c.s2abcd()
+        SP2.set_frequency_points(sonuc.FrequencyPoints)
+        SP2.s2abcd()
         for i in range(len(sonuc.FrequencyPoints)):
             abcd1=np.matrix(sonuc.abcddata[i].reshape(2,2))
-            abcd2=np.matrix(c.abcddata[i].reshape(2,2))
+            abcd2=np.matrix(SP2.abcddata[i].reshape(2,2))
             abcd=abcd1*abcd2
-            s=network.abcd2s(abcd,sonuc.empedans[0])
+            s=network.abcd2s(abcd,sonuc.refimpedance[0])
             sonuc.abcddata[i]=abcd.reshape(4)
             sonuc.sdata[i]=s.reshape(4)
             sonuc.YZ_OK=0
         return sonuc
 
     def check_passivity(self):
-        """ This method determines the frequencies and frequency indices at which the network is non-passive
+        r"""This method determines the frequencies and frequency indices at which the network is not passive. Condition written in:
+        Fast Passivity Enforcement of S-Parameter Macromodels by Pole Perturbation.pdf
+        For a better discussion: "S-Parameter Quality Metrics (Yuriy Shlepnev)"
+
+        Returns:
+            3-tuple of lists: For non-passive frequencies (indices, frequencies, eigenvalues)
         """
         frekanslar=[] # frequency points at which the network is non-passive
         indices=[]    # frequency indices at which the network is non-passive
+        eigenvalues=[]
         ps=self.port_sayisi
         for i in range(len(self.FrequencyPoints)):
-            smatrix=np.matrix(np.matrix(self.sdata[i,:]).reshape(ps,ps))
-            tempmatrix=(np.eye(ps)).astype(complex)-smatrix.H*smatrix
+            smatrix=np.matrix(self.sdata[i,:]).reshape(ps,ps)
+            tempmatrix=smatrix.H*smatrix
             eigs,_=eig(tempmatrix)
-            for x in range(ps):
-                if (eigs[x].real < 0):
-                    frekanslar.append(self.FrequencyPoints[i])
-                    indices.append(i)
-        frekanslar=self.FrequencyPoints(indices)
-        return  indices,frekanslar
+            if np.max(np.abs(eigs)) > 1:
+                frekanslar.append(self.FrequencyPoints[i])
+                indices.append(i)
+                eigenvalues.append(sort(eigs))
+        return  indices,self.FrequencyPoints(indices),eigenvalues
 
-    def restore_passivity(self):
-        """ Bu metod S-parametre datasinin pasif olmadigi frekanslarda
+    def restore_passivity(self, inplace=-1):
+        r"""Make the network passive by minimum modification.
+        Method reference:
+        "Fast and Optimal Algorithms for Enforcing Reciprocity, Passivity and Causality in S-parameters.pdf"
+
+        Args:
+            inplace (int, optional): Object editing mode. Defaults to -1.
+
+        Returns:
+            spfile: Passive network object
+        """
+        if inplace==-1: inplace=self.inplace
+        if inplace==0:  obj = deepcopy(self); obj.set_inplace(1)
+        else:           obj = self
+        frekanslar=[] # frequency points at which the network is non-passive
+        indices=[]    # frequency indices at which the network is non-passive
+        indices,frequencies,eigenvalues = self.check_passivity()
+        ps=obj.port_sayisi
+        for i in indices:
+            smatrix=np.matrix(obj.sdata[i,:]).reshape(ps,ps)
+            P, D, Q = np.linalg.svd(smatrix)
+            dS = P @ np.diag([(np.abs(x)-1.0)*(np.abs(x)>0) for x in eigenvalues[i]]) @ Q
+            smatrix=smatrix-dS
+            obj.sdata[i,:]=smatrix.reshape(ps**2)
+        return obj
+
+    def restore_passivity2(self):
+        r"""**Obsolete**
+         Bu metod S-parametre datasinin pasif olmadigi frekanslarda
         S-parametre datasina mumkun olan en kucuk degisikligi yaparak
         S-parametre datasini pasif hale getirir.
         Referans:
@@ -945,10 +1153,10 @@ class spfile:
                 # from scipy.optimize import minimize
                 # res = minimize(func_for_minimize, xvar, jac = func_for_minimize_der,constraints = cons,  method = 'SLSQP', options={'disp': False})
                 # x = res.x
-                
+
                 import nlopt
-                opt = nlopt.opt(nlopt.GN_ESCH, len(k))
-                opt.add_inequality_constraint(constraint1, tol=0)
+                opt = nlopt.opt(nlopt.GN_ESCH, len(2*t))
+                opt.add_inequality_constraint(constraint1)
                 # opt.set_maxeval(1000)
                 # opt.set_maxtime(5)
                 x = opt.optimize(xvar)
@@ -962,25 +1170,30 @@ class spfile:
             for y in range((ps)**2):
                 sdata[index,y]=smatrix[ (y/ps) , y%ps]
 
-    def write2file(self,yenidosya="",parameter="S",frekans_birimi="",format=""):
+    def write2file(self,newfilename="",parameter="S",freq_unit="",format=""):
+        r"""This function writes a parameter (S, Y or Z) file. If the filename given does not have the proper filename extension, it is corrected.
+
+        Args:
+            newfilename (str, optional): Filename to be written. Defaults to "".
+            parameter (str, optional): Parameter to be written (S, Y or Z). Defaults to "S".
+            freq_unit (str, optional): Frequency unit (GHz, MHz, kHz or Hz). Defaults to "Hz".
+            format (str, optional): Format of file DB, RI or MA. Defaults to "".
         """
-        Bu metod yeni parametre dosyasi olusturur.
-        Eger verilen dosya isminde port sayisina uygun bir uzanti yoksa, uygun uzanti eklenir.
-        """
-        if yenidosya=="":
-            yenidosya = self.dosya_adi
-        if frekans_birimi=="":
-            frekans_birimi=self.frekans_birimi
+        if newfilename=="":
+            newfilename = self.file_name
+        if freq_unit=="":
+            freq_unit=self.freq_unit
+        freq_unit = freq_unit.upper()
         if format=="":
             format=self.format
 
         ext = "s"+str(self.port_sayisi)
         if len(ext)<3: ext=ext+"p"
-        if yenidosya[-4:].lower() != "."+ext:
-            yenidosya = yenidosya+"."+ext
+        if newfilename[-4:].lower() != "."+ext:
+            newfilename = newfilename+"."+ext
 
-        f=open(yenidosya,'w')
-        f.write("# "+frekans_birimi+" "+parameter+" "+format+" R "+str(self.empedans[0].real)+"\n")
+        f=open(newfilename,'w')
+        f.write("# "+freq_unit+" "+parameter+" "+format+" R "+str(self.refimpedance[0].real)+"\n")
         frekanslar=self.FrequencyPoints
         if parameter!="S":
             self.calc_syz()
@@ -996,64 +1209,100 @@ class spfile:
             temp=deepcopy(data[:,2])
             data[:,2]=data[:,1]
             data[:,1]=deepcopy(temp)
-        temp=(1./fcoef[frekans_birimi])
+        temp=(1./fcoef[freq_unit])
         max_params_per_line=4
         if ps==3:
             max_params_per_line=3
         if (format=="RI"):
             for x in range(len(frekanslar)):
-                print(str(frekanslar[x]*temp)+"    ", end=' ', file=f)
+                # print("\n"+f"{frekanslar[x]*temp:.2f}"+"    ", end='', file=f)
+                print("\n"+str(frekanslar[x]*temp)+"    ", end='', file=f)
                 for j in range(ps**2):
-                    print("%-12.12f    %-12.12f " % (np.real(data[x,j]),np.imag(data[x,j])), end=' ', file=f)
-                    if ((j+1)%max_params_per_line==0 or ((j+1)%ps**2==0)):
-                        print("\n", end=' ', file=f)
+                    print("%-12.12f    %-12.12f" % (np.real(data[x,j]),np.imag(data[x,j])), end='', file=f)
+                    if ((j+1)%max_params_per_line==0 and j<(ps**2-1)):
+                        print("\n", end='', file=f)
+                    elif j!=ps**2-1:
+                        print("  ", end='', file=f)
         elif (format=="MA"):
             for x in range(len(frekanslar)):
-                print(str(frekanslar[x]*temp)+"    ", end=' ', file=f)
+                # print("\n"+f"{frekanslar[x]*temp:.2f}"+"    ", end='', file=f)
+                print("\n"+str(frekanslar[x]*temp)+"    ", end='', file=f)
                 for j in range(ps**2):
-                    print("%-12.12f    %-12.12f " % (np.abs(data[x,j]),np.angle(data[x,j],deg=1)), end=' ', file=f)
-                    if ((j+1)%max_params_per_line==0 or ((j+1)%ps**2==0)):
-                        print("\n", end=' ', file=f)
+                    print("%-12.12f    %-12.12f" % (np.abs(data[x,j]),np.angle(data[x,j],deg=1)), end='', file=f)
+                    if ((j+1)%max_params_per_line==0 and j<(ps**2-1)):
+                        print("\n", end='', file=f)
+                    elif j!=ps**2-1:
+                        print("  ", end='', file=f)
         else:
             for x in range(len(frekanslar)):
-                print(str(frekanslar[x]*temp)+"    ", end=' ', file=f)
+                # print("\n"+f"{frekanslar[x]*temp:.2f}"+"    ", end='', file=f)
+                print("\n"+str(frekanslar[x]*temp)+"    ", end='', file=f)
                 for j in range(ps**2):
-                    print("%-12.12f    %-12.12f " % (20*np.log10(np.abs(data[x,j])),np.angle(data[x,j],deg=1)), end=' ', file=f)
-                    if ((j+1)%max_params_per_line==0 or ((j+1)%ps**2==0)):
-                        print("\n", end=' ', file=f)
+                    print("%-12.12f    %-12.12f" % (20*np.log10(np.abs(data[x,j])),np.angle(data[x,j],deg=1)), end='', file=f)
+                    if ((j+1)%max_params_per_line==0 and j<(ps**2-1)):
+                        print("\n     ", end='', file=f)
+                    elif j<(ps**2-1):
+                        print("  ", end='', file=f)
+        print("", file=f)
         f.close()
 
     def get_frequency_list(self):
+        r"""Returns the frequency list of network
+
+        Returns:
+            numpy.array: Frequency list of network
+        """
         return self.FrequencyPoints
 
-    def connect_2_ports_list(self,conns):
-        """ Short circuit ports together one-to-one. Short circuited ports are removed. 
-        Ports that will be connected are given as tuples in list conn
-        i.e. conn=[(p1,p2),(p3,p4),..]
+    def connect_2_ports_list(self,conns,inplace=-1):
+        r"""Short circuit ports together one-to-one. Short circuited ports are removed.
+        Ports that will be connected are given as tuples in list *conns*
+        i.e. conns=[(p1,p2),(p3,p4),..]
         The order of remaining ports is kept.
         Reference: QUCS technical.pdf, S-parameters in CAE programs, p.29
+
+        Args:
+            conns (list of tuples): A list of 2-tuples of integers showing the ports connected
+            inplace (int, optional): Object editing mode. Defaults to -1.
+
+        Returns:
+            spfile: New spfile object
         """
+        if inplace==-1: inplace=self.inplace
+        if inplace==0:  obj = deepcopy(self); obj.set_inplace(1)
+        else:           obj = self
         for i in range(len(conns)):
             k,m = conns[i]
-            self.connect_2_ports(k,m)
+            obj.connect_2_ports(k,m)
             for j in range(i+1,len(conns)):
                 conns[j][0]=conns[j][0]-(conns[j][0]>k)-(conns[j][0]>m)
-                conns[j][1]=conns[j][1]-(conns[j][1]>k)-(conns[j][1]>m)        
-        return self
-    
-    def connect_2_ports(self,k,m):
-        """ Port-m is connected to port-k and both ports are removed
+                conns[j][1]=conns[j][1]-(conns[j][1]>k)-(conns[j][1]>m)
+        return obj
+
+    def connect_2_ports(self,k,m,inplace=-1):
+        r"""Port-m is connected to port-k and both ports are removed.
         Reference: QUCS technical.pdf, S-parameters in CAE programs, p.29
+
+        Args:
+            k (int): First port index to be connected.
+            m (int): Second port index to be connected.
+            inplace (int, optional): Object editing mode. Defaults to -1.
+
+        Returns:
+            spfile: New spfile object
         """
+        if inplace==-1: inplace=self.inplace
+        if inplace==0:  obj = deepcopy(self); obj.set_inplace(1)
+        else:           obj = self
         k,m=min(k,m),max(k,m)
-        newempedans = list(self.empedans[:k-1])+list(self.empedans[k:m-1])+list(self.empedans[m:])
-        portnames = self.portnames[:k-1]+self.portnames[k:m-1]+self.portnames[m:]        
+        newrefimpedance = list(obj.refimpedance[:k-1])+list(obj.refimpedance[k:m-1])+list(obj.refimpedance[m:])
+        portnames = obj.portnames[:k-1]+obj.portnames[k:m-1]+obj.portnames[m:]
         names=defaultdict(str)
-        self.change_ref_impedance(50.0)
-        ns = len(self.FrequencyPoints)
-        ps=self.port_sayisi
+        obj.change_ref_impedance(50.0)
+        ns = len(obj.FrequencyPoints)
+        ps=obj.port_sayisi
         sdata=np.ones((ns,(ps-2)**2),dtype=complex)
-        S = self.S
+        S = obj.S
         for i in range(1,ps-1):
             ii=i+(i>=k)+(i>=(m-1))
             for j in range(1,ps-1):
@@ -1062,42 +1311,89 @@ class spfile:
                 temp = S(k,jj)*S(ii,m)*(1-S(m,k))+S(m,jj)*S(ii,k)*(1-S(k,m))+S(k,jj)*S(m,m)*S(ii,k)+S(m,jj)*S(k,k)*S(ii,m)
                 temp = S(ii,jj) + temp/((1-S(m,k))*(1-S(k,m))-S(k,k)*S(m,m))
                 sdata[:,index] = temp
-        self.port_sayisi = ps-2        
-        self.sdata = sdata
-        self.empedans=[50.0]*self.port_sayisi
-        self.change_ref_impedance(newempedans)
-        self.portnames=portnames
-        return self
+        obj.port_sayisi = ps-2
+        obj.sdata = sdata
+        obj.refimpedance=[50.0]*obj.port_sayisi
+        obj.change_ref_impedance(newrefimpedance)
+        obj.portnames=portnames
+        return obj
 
-    def connect_2_ports_retain(self,k,m):
-        """ Port-m and Port-k are joined to a single port.
-        New port becomes the last port of the circuit.
+    def connect_2_ports_retain(self,k,m,inplace=-1):
+        r"""Port-m is connected to port-k and both ports are removed. New port becomes the last port of the circuit.
         Reference: QUCS technical.pdf, S-parameters in CAE programs, p.29
-        """
-        ideal3port = spfile(freqs=self.get_frequency_list(),portsayisi=3)
-        # ideal3port.set_frequency_points(self.get_frequency_list())
-        ideal3port.set_smatrix_at_frequency_point(range(len(ideal3port.get_frequency_list())),network.idealNport(3))
-        ps = self.port_sayisi
-        k,m=min(k,m),max(k,m)
-        self.connect_network_1_conn(ideal3port,m,1)
-        self.connect_2_ports(k,ps)
-        return self
 
-    def connect_network_1_conn(self,EX,k,m):
-        """ Port-m of EX circuit is connected to port-k of this circuit 
+        Args:
+            k (int): First port index to be connected.
+            m (int): Second port index to be connected.
+            inplace (int, optional): Object editing mode. Defaults to -1.
+
+        Returns:
+            spfile: New *spfile* object
+        """
+        if inplace==-1: inplace=self.inplace
+        if inplace==0:  obj = deepcopy(self); obj.set_inplace(1)
+        else:           obj = self
+        ideal3port = spfile(freqs=obj.get_frequency_list(),portsayisi=3)
+        ideal3port.set_smatrix_at_frequency_point(range(len(ideal3port.get_frequency_list())),network.idealNport(3))
+        ps = obj.port_sayisi
+        k,m=min(k,m),max(k,m)
+        obj.connect_network_1_conn(ideal3port,m,1)
+        obj.connect_2_ports(k,ps)
+        return obj
+
+    def connect_network_1_conn_retain(self,EX,k,m,inplace=-1):
+        r"""Port-m of EX circuit is connected to port-k of this circuit. This connection point will also be a port.
         Remaining ports of EX are added to the port list of this circuit in order.
         Reference: QUCS technical.pdf, S-parameters in CAE programs, p.29
+
+        Args:
+            EX (spfile): External network to be connected to this.
+            k (int): Port number of self to be connected.
+            m (int): Port number of EX to be connected.
+            inplace (int, optional): Object editing mode. Defaults to -1.
+            preserveportnumbers1 (bool, optional): if True, the number of the first added port will be k. Defaults to False.
+
+        Returns:
+            spfile: Connected network
         """
-        newempedans=list(self.empedans[:k-1])+list(self.empedans[k:])+list(EX.empedans[:m-1])+list(EX.empedans[m:])
-        portnames=self.portnames[:k-1]+self.portnames[k:]+EX.portnames[:m-1]+EX.portnames[m:]
+        if inplace==-1: inplace=self.inplace
+        if inplace==0:  obj = deepcopy(self); obj.set_inplace(1)
+        else:           obj = self
+        ideal3port = spfile(freqs=obj.get_frequency_list(),portsayisi=3)
+        ideal3port.set_smatrix_at_frequency_point(range(len(ideal3port.get_frequency_list())),network.idealNport(3))
+        EX.connect_network_1_conn(ideal3port,m,1)
+        psex = EX.get_no_of_ports()
+        obj.connect_network_1_conn(EX,k,psex)
+        return obj
+
+    def connect_network_1_conn(self,EX,k,m,inplace=-1, preserveportnumbers1= False):
+        r"""Port-m of EX circuit is connected to port-k of this circuit. Both of these ports will be removed.
+        Remaining ports of EX are added to the port list of this circuit in order.
+        Reference: QUCS technical.pdf, S-parameters in CAE programs, p.29
+
+        Args:
+            EX (spfile): External network to be connected to this.
+            k (int): Port number of self to be connected.
+            m (int): Port number of EX to be connected.
+            inplace (int, optional): Object editing mode. Defaults to -1.
+            preserveportnumbers1 (bool, optional): if True, the number of the first added port will be k. Defaults to False.
+
+        Returns:
+            spfile: Connected network
+        """
+        if inplace==-1: inplace=self.inplace
+        if inplace==0:  obj = deepcopy(self); obj.set_inplace(1)
+        else:           obj = self
+        newrefimpedance=list(obj.refimpedance[:k-1])+list(obj.refimpedance[k:])+list(EX.refimpedance[:m-1])+list(EX.refimpedance[m:])
+        portnames=obj.portnames[:k-1]+obj.portnames[k:]+EX.portnames[:m-1]+EX.portnames[m:]
         EX.change_ref_impedance(50.0)
-        self.change_ref_impedance(50.0)
-        EX.set_frequency_points(self.FrequencyPoints)
-        ps1=self.port_sayisi
+        obj.change_ref_impedance(50.0)
+        EX.set_frequency_points(obj.FrequencyPoints)
+        ps1=obj.port_sayisi
         ps2=EX.port_sayisi
         ps=ps1+ps2-2
-        sdata=np.ones((len(self.FrequencyPoints),ps**2),dtype=complex)
-        S = self.S
+        sdata=np.ones((len(obj.FrequencyPoints),ps**2),dtype=complex)
+        S = obj.S
         for i in range(1,ps1):
             ii=i+(i>(k-1))
             for j in range(1,ps1):
@@ -1122,79 +1418,121 @@ class spfile:
                 jj=j+ (j>(m-1))
                 index = (i+ps1-1-1)*ps+(j+ps1-1-1)
                 sdata[:,index] = EX.S(ii,jj)+EX.S(m,jj)*S(k,k)*EX.S(ii,m)/(1.0-EX.S(m,m)*S(k,k))
-        self.port_sayisi=ps
-        self.sdata = sdata
-        self.empedans=[50.0]*self.port_sayisi
-        self.change_ref_impedance(newempedans)
-        self.portnames=portnames
-        return self
+        obj.port_sayisi=ps
+        obj.sdata = sdata
+        obj.refimpedance=[50.0]*obj.port_sayisi
+        obj.change_ref_impedance(newrefimpedance)
+        obj.portnames=portnames
+        if preserveportnumbers1:
+            portorder=list(range(1,ps+1))
+            portorder.insert(k-1,portorder.pop(ps1-1))
+            obj.snp2smp(portorder)
+        return obj
 
-    def add_abs_noise(self,dbnoise=0.1,phasenoise=0.1 ):
-        """ This method adds random amplitude and phase noise to the s-parameter data
-        phasenoise unit : degree """
-        n=self.port_sayisi**2
+    def add_abs_noise(self,dbnoise=0.1,phasenoise=0.1,inplace=-1):
+        r"""This method adds random amplitude and phase noise to the s-parameter data.
+        Mean value for both noises are 0.
+
+        Args:
+            dbnoise (float, optional): Standard deviation of amplitude noise in dB. Defaults to 0.1.
+            phasenoise (float, optional): Standard deviation of phase noise in degrees. Defaults to 0.1.
+            inplace (int, optional): object editing mode. Defaults to -1.
+
+        Returns:
+            spfile: object with noisy data
+        """
+        if inplace==-1: inplace=self.inplace
+        if inplace==0:  obj = deepcopy(self); obj.set_inplace(1)
+        else:           obj = self
+        n=obj.port_sayisi**2
         ynew=[]
-        sdata=np.zeros((len(self.FrequencyPoints),n),dtype=complex)
+        sdata=np.zeros((len(obj.FrequencyPoints),n),dtype=complex)
         for j in range(n):
-            ydb=np.array([20*np.log10(abs(self.sdata[k,j])) for k in range(len(self.FrequencyPoints))])
-            yphase=np.array([np.angle(self.sdata[k,j],deg=1)  for k in range(len(self.FrequencyPoints))]) # degree
-            ynew_db = ydb+dbnoise*np.random.randn(len(ydb))
-            ynew_ph = yphase+phasenoise*np.random.randn(len(yphase))
+            ydb=np.array([20*np.log10(abs(obj.sdata[k,j])) for k in range(len(obj.FrequencyPoints))])
+            yphase=np.array([np.angle(obj.sdata[k,j],deg=1)  for k in range(len(obj.FrequencyPoints))]) # degree
+            ynew_db = ydb+dbnoise*np.random.normal(len(ydb))
+            ynew_ph = yphase+phasenoise*np.random.normal(size=len(yphase))
             ynew_mag=10**((ynew_db/20.0))
             ynew=ynew_mag*(np.cos(ynew_ph*np.pi/180)+1.0j*np.sin(ynew_ph*np.pi/180))
             sdata[:,j]=ynew
-        self.sdata=sdata
-        self.YZ_OK=0
-        self.ABCD_OK=0
+        obj.sdata=sdata
+        obj.YZ_OK=0
+        obj.ABCD_OK=0
+        return obj
 
-    def smoothing(self,smoothing_length=5):
-        """ This method applies moving average smoothing to the s-parameter data """
-        outspfile=deepcopy(self)
-        n=outspfile.port_sayisi**2
+    def smoothing(self,smoothing_length=5,inplace=-1):
+        r"""This method applies moving average smoothing to the s-parameter data
+
+        Args:
+            smoothing_length (int, optional): Number of points used for smoothing. Defaults to 5.
+            inplace (int, optional): object editing mode. Defaults to -1.
+
+        Returns:
+            spfile: Network object with smooth data
+        """
+        if inplace==-1: inplace=self.inplace
+        if inplace==0:  obj = deepcopy(self); obj.set_inplace(1)
+        else:           obj = self
+        n=obj.port_sayisi**2
         ynew=[]
-        sdata=np.zeros((len(outspfile.FrequencyPoints),n),dtype=complex)
+        sdata=np.zeros((len(obj.FrequencyPoints),n),dtype=complex)
         for j in range(n):
-            ydb=np.array([20*np.log10(abs(outspfile.sdata[k,j])) for k in range(len(outspfile.FrequencyPoints))])
-            yphase=np.unwrap([np.angle(outspfile.sdata[k,j],deg=0)  for k in range(len(outspfile.FrequencyPoints))])*180.0/np.pi # degree
+            ydb=np.array([20*np.log10(abs(obj.sdata[k,j])) for k in range(len(obj.FrequencyPoints))])
+            yphase=np.unwrap([np.angle(obj.sdata[k,j],deg=0)  for k in range(len(obj.FrequencyPoints))])*180.0/np.pi # degree
             ynew_db=smooth(ydb,window_len=smoothing_length,window='hanning')
             ynew_ph=smooth(yphase,window_len=smoothing_length,window='hanning')
             ynew_mag=10**((ynew_db/20.0))
             ynew=ynew_mag*(np.cos(ynew_ph*np.pi/180)+1.0j*np.sin(ynew_ph*np.pi/180))
             sdata[:,j]=ynew
-        outspfile.sdata=sdata
-        outspfile.ABCD_OK=0
-        outspfile.YZ_OK=0
-        return outspfile
+        obj.sdata=sdata
+        obj.ABCD_OK=0
+        obj.YZ_OK=0
+        return obj
 
-    def data_array(self,format="DB",syz="S",i=1,j=1, frekanslar=[],ref=None, DCInt=0,DCValue=0.0,smoothing=0, InterpolationConstant=0):
-        """Returns a data array
-        -For VSWR calculation j is ignored and only i is used.
-        DCValue in (dB,deg), aci bilgisi +/- durumlarini kurtarmak icin
-        Keyword Arguments:
-            format {str} -- [description] (default: {"DB"})
-            syz {str} -- [description] (default: {"S"})
-            i {int} -- [description] (default: {1})
-            j {int} -- [description] (default: {1})
-            frekanslar {list} -- [description] (default: {[]})
-            ref {[type]} -- [description] (default: {None})
-            DCInt {int} -- [Include DCValue in interpolation calculation] (default: {0})
-            DCValue {tuple} -- [Only used at interpolation if DCInt=1. Is not actually added to the output array] (default: {(0.0,0.0)})
-            smoothing {int} -- [description] (default: {0})
-            InterpolationConstant {int} -- [description] (default: {0})
-        
+    def data_array(self,format="DB",M="S",i=1,j=1, frekanslar=[],ref=None, DCInt=0,DCValue=0.0,smoothing=0, InterpolationConstant=0):
+        r"""Return a network parameter between ports *i* and *j* (:math:`M_{i j}`) at specified frequencies in specified format.
+
+        Args:
+            format (str, optional): Defaults to "DB". The format of the data returned. Possible values (case insensitive):
+                -   "K": Stability factor of 2-port
+                -   "MU1": Input stability factor of 2-port
+                -   "MU2": Output stability factor of 2-port
+                -   "VSWR": VSWR ar port i
+                -   "MAG": Magnitude of :math:`M_{i j}`
+                -   "DB": Magnitude of :math:`M_{i j}` in dB
+                -   "REAL": Real part of :math:`M_{i j}`
+                -   "IMAG": Imaginary part of :math:`M_{i j}`
+                -   "PHASE": Phase of :math:`M_{i j}` in degrees between 0-360
+                -   "UNWRAPPEDPHASE": Unwrapped Phase of :math:`M_{i j}` in degrees
+                -   "GROUPDELAY": Group Delay of :math:`M_{i j}` in degrees
+            M (str, optional): Defaults to "S". Possible values (case insensitive):
+                -   "S": Return S-parameter data
+                -   "Y": Return Y-parameter data
+                -   "Z": Return Z-parameter data
+                -   "ABCD": Return ABCD-parameter data
+            i (int, optional): First port number. Defaults to 1.
+            j (int, optional): Second port number. Defaults to 1. Ignored for format="VSWR"
+            frekanslar (list, optional): Defaults to []. List of frequencies in Hz. If an empty list is given, networks whole frequency range is used.
+            ref (spfile, optional): Defaults to None. If given the data of this network is subtracted from the same data of *ref* object.
+            DCInt (int, optional): Defaults to 0. If 1, DC point given by *DCValue* is used at frequency interpolation if *frekanslar* is not [].
+            DCValue (complex, optional): Defaults to 0.0. DCValue that can be used for interpolation over frequency.
+            smoothing (int, optional): Defaults to 0. if this is higher than 0, it is used as the number of points for smoothing.
+            InterpolationConstant (int, optional): Defaults to 0. If this is higher than 0, it is taken as the number of frequencies that will be added between 2 consecutive frequency points. By this way, number of frequencies is increased by interpolation.
+
         Returns:
-            [numpy array] -- [parameter array]
+            numpy.array: Network data array
         """
         if i>self.port_sayisi or j>self.port_sayisi:
             print("Error: port index is higher than number of ports!"+"\t"+str(i)+"\t"+str(j))
             return []
-        if format=="K":
+        FORMAT=str.upper(format)
+        if FORMAT=="K":
             return self.stability_factor_k(frekanslar,i,j)
-        if format.upper()=="MU1":
+        if FORMAT=="MU1":
             return self.stability_factor_mu1(frekanslar,i,j)
-        if format.upper()=="MU2":
+        if FORMAT=="MU2":
             return self.stability_factor_mu2(frekanslar,i,j)
-        if format=="VSWR" and i!=j:
+        if FORMAT=="VSWR" and i!=j:
             j=i
             return
 
@@ -1211,30 +1549,29 @@ class spfile:
             dcdb=[20*np.log10((np.abs(DCValue)+1e-8))]
             dcph=[np.angle(DCValue,deg=False)]
             x=np.append([0.0],x)
-        FORMAT=str.upper(format)
         n=(i-1)*self.port_sayisi+(j-1)
         ynew=[]
         mag_threshold=1.0e-10
-        if (str.upper(syz)=="Y" or str.upper(syz)=="Z"):
+        if (str.upper(M)=="Y" or str.upper(M)=="Z"):
             self.calc_syz("S")
-        if str.upper(syz)=="S" or FORMAT=="GROUPDELAY":
+        if str.upper(M)=="S" or FORMAT=="GROUPDELAY":
             ydb=dcdb+[20*np.log10(abs(self.sdata[k,n])+mag_threshold) for k in range(lenx)]
             yph=np.unwrap(dcph+[np.angle(self.sdata[k,n],deg=0)  for k in range(lenx)])*180.0/np.pi
-        elif str.upper(syz)=="Y":
+        elif str.upper(M)=="Y":
             ydb=dcdb+[20*np.log10(abs(self.ydata[k,n])+mag_threshold) for k in range(lenx)]
             yph=np.unwrap(dcph+[np.angle(self.ydata[k,n],deg=0)  for k in range(lenx)])*180.0/np.pi
-        elif str.upper(syz)=="Z":
+        elif str.upper(M)=="Z":
             ydb=dcdb+[20*np.log10(abs(self.zdata[k,n])+mag_threshold) for k in range(lenx)]
             yph=np.unwrap(dcph+[np.angle(self.zdata[k,n],deg=0)  for k in range(lenx)])*180.0/np.pi
-        elif str.upper(syz)=="ABCD":
+        elif str.upper(M)=="ABCD":
             self.s2abcd()
             ydb=dcdb+[20*np.log10(abs(self.abcddata[k,n])+mag_threshold) for k in range(lenx)]
             yph=np.unwrap(dcph+[np.angle(self.abcddata[k,n],deg=0)  for k in range(lenx)])*180.0/np.pi
 
         if frekanslar is self.FrequencyPoints:
-            ynew_db=array(ydb )  
+            ynew_db=array(ydb )
             ynew_ph=array(yph)
-        elif len(self.FrequencyPoints)>1:            
+        elif len(self.FrequencyPoints)>1:
             # order = 2
             # tck_db = scipy.interpolate.InterpolatedUnivariateSpline(x,ydb,k=order)
             # ynew_db = tck_db(frekanslar)
@@ -1244,7 +1581,7 @@ class spfile:
             ynew_db = np.interp(frekanslar, x, ydb)
             ynew_ph = np.interp(frekanslar, x, yph) #degrees
 
-            # tck_db = scipy.interpolate.CubicSpline(x,ydb,extrapolate=True) 
+            # tck_db = scipy.interpolate.CubicSpline(x,ydb,extrapolate=True)
             # ynew_db = tck_db(frekanslar)
             # tck_phase = scipy.interpolate.CubicSpline(x,yph,extrapolate=True)
             # ynew_ph = tck_phase(frekanslar)
@@ -1253,8 +1590,8 @@ class spfile:
             ynew_ph=array(yph*len(frekanslar))
 
         if not ref==None:
-            ynew_db=ynew_db-ref.data_array("DB",syz,i,j,frekanslar)
-            ynew_ph=ynew_ph-ref.data_array("UNWRAPPEDPHASE",syz,i,j,frekanslar)
+            ynew_db=ynew_db-ref.data_array("DB",M,i,j,frekanslar)
+            ynew_ph=ynew_ph-ref.data_array("UNWRAPPEDPHASE",M,i,j,frekanslar)
 
         if smoothing>0:
             if smoothing>lenx-1:
@@ -1294,14 +1631,18 @@ class spfile:
         return ynew
 
     def Extraction(self, measspfile):
-        """ 
-        measspfile is the measurement of first k ports.
-        Port ordering in measspfile is assumed to be the same as this spfile.
+        r"""Extract die S-Parameters using measurement data and simulated S-Parameters
+        Port ordering in *measspfile* is assumed to be the same as this *spfile*.
         Remaining ports are ports of block to be extracted.
+        See "Extracting multiport S-Parameters of chip" in technical document.
 
-        See "Extracting multiport S-Parameters of chip" in technical document
+        Args:
+            measspfile (spfile): Network object of measured S-Parameters of first k ports
+
+        Returns:
+            spfile: Netowrk object of die's S-Parameters
         """
-        empedans = self.empedans # save to restore later
+        refimpedance = self.refimpedance # save to restore later
         self.change_ref_impedance(50.0)
         measspfile.change_ref_impedance(50.0)
         measspfile.set_frequency_points(self.FrequencyPoints)
@@ -1317,24 +1658,31 @@ class spfile:
             SM = np.matrix(measspfile.sdata[i,:]).reshape(k,k)
             SC = (S21*(SM-S11).I*S12+S22).I
             block.set_smatrix_at_frequency_point(i,SC)
-        self.change_ref_impedance(empedans)
+        self.change_ref_impedance(refimpedance)
         return block
 
-    def UniformDeembed(self, phase, delay=False, deg=0):
-        """
-        if delay=True, phase is actually delay value
-        phase: phase (radian if deg==0: degrees if not) if delay = False, seconds if delay = True
-        if phase is a complex, same phase value is used for all ports and frequencies
-        if phase is a list:
-            if length of the list is the same as number of ports each element is assumed to be the phase 
-            at each port and it is the same for all frequencies.
-        A positive phase means deembedding into the circuit.
+    def UniformDeembed(self, phase, delay=False, deg=True,inplace=-1):
+        r"""This function deembeds a phase length from all ports of S-Parameters.A positive phase means deembedding into the circuit.
         The Zc of de-embedding lines is the reference impedances of each port.
-        """        
-        w = 2*np.pi*self.FrequencyPoints
-        N=len(self.FrequencyPoints)
-        ps = self.port_sayisi
-        if deg==1:
+
+        Args:
+            phase (float or list): Phase or delay to be deembedded.
+                - If a number is given, it is used for all frequencies and ports
+                - If a list is given, its size should be equal to the number of frequencies. If an element of list is number, it is used for all ports. If an element of the list is also a list, the lements size should be same as the number of ports.
+            delay (bool, optional): If True, *phase* is assumed to be time delay, phase otherwise. Defaults to False.
+            deg (bool, optional): if True, *phase* is assumed to be in radians if *delay* is False. Defaults to 0.
+            inplace (int, optional): Object editing mode. Defaults to -1.
+
+        Returns:
+            spfile: De-embedded spfile
+        """
+        if inplace==-1: inplace=self.inplace
+        if inplace==0:  obj = deepcopy(self); obj.set_inplace(1)
+        else:           obj = self
+        w = 2*np.pi*obj.FrequencyPoints
+        N=len(obj.FrequencyPoints)
+        ps = obj.port_sayisi
+        if deg:
             phase = phase*np.pi/180.0
         if isinstance(phase,(complex, float, int)):
             phase = N*[phase]
@@ -1343,56 +1691,111 @@ class spfile:
                 phase = N*[phase]
             else:
                 print("Wrong size of phase parameter")
-                return        
+                return
         for i in range(N):
             if isinstance(phase[i],(complex, float, int)):
                 phase[i] = ps*[phase[i]]
-            smatrix = np.matrix(self.sdata[i,:]).reshape(ps,ps)
+            smatrix = np.matrix(obj.sdata[i,:]).reshape(ps,ps)
             if delay:
                 PhaseMatrix = np.matrix(np.diag([np.exp(1j*w[i]*x) for x in phase[i]]))
             else:
-                PhaseMatrix = np.matrix(np.diag([np.exp(1j*x) for x in phase[i]]))  
+                PhaseMatrix = np.matrix(np.diag([np.exp(1j*x) for x in phase[i]]))
             Sm = PhaseMatrix*smatrix*PhaseMatrix
-            self.sdata[i,:]=Sm.reshape(ps**2)
-            # self.sdata[i,:]=[-x for x in self.sdata[i,:]]
-        return self
+            obj.sdata[i,:]=Sm.reshape(ps**2)
+        return obj
 
     def S(self,i=1,j=1,format="COMPLEX"):
-        return self.data_array(format,"S",i,j)
-    def Z(self,i=1,j=1,format="COMPLEX"):
-        return self.data_array(format,"Z",i,j)
-    def Y(self,i=1,j=1,format="COMPLEX"):
-        return self.data_array(format,"Y",i,j)
-    def set_frequency_points(self,frekanslar):
-        """ Set new frequency points:
-        if generator function is available, use that to calculate new s-parameter data
-        if not, use interpolation/extrapolation """
-        if self.sparam_gen_func is not None:
-            self.FrequencyPoints=frekanslar
-            ns =len(self.FrequencyPoints)
-            # self.nokta_sayisi = ns
-            self.sdata=np.zeros((ns,self.port_sayisi**2),dtype=complex)
-            for i in range(len(self.FrequencyPoints)):
-                self.set_smatrix_at_frequency_point(i,self.sparam_gen_func(self.FrequencyPoints[i]))
-        else:
-            if len(self.FrequencyPoints)==0:
-                self.FrequencyPoints=frekanslar
-                ns = len(self.FrequencyPoints)
-                # self.nokta_sayisi = ns
-                self.sdata=np.zeros((ns,self.port_sayisi**2),dtype=complex)
-            else:
-                sdata=np.zeros((len(frekanslar),self.port_sayisi**2),dtype=complex)
-                for i in range(1,self.port_sayisi+1):
-                    for j in range(1,self.port_sayisi+1):
-                        n=(i-1)*self.port_sayisi+(j-1)
-                        sdata[:,n]=self.data_array("COMPLEX","S",i,j, frekanslar)
-                self.FrequencyPoints=frekanslar
-                self.sdata=sdata
-                # self.nokta_sayisi=len(self.FrequencyPoints)
-        return self
+        r"""Return :math:`S_{i j}` in format *format*
+        Uses *data_array* method internally. A convenience function for practical use.
 
-    def set_frequency_points_array(self,fstart,fstop,NumberOfPoints):
-        self.set_frequency_points(frekanslar=np.linspace(fstart,fstop,NumberOfPoints,endpoint=True))
+        Args:
+            i (int, optional): Port-1. Defaults to 1.
+            j (int, optional): Port-2. Defaults to 1.
+            format (str, optional): See *format* parameter of *data_array* method. Defaults to "COMPLEX".
+
+        Returns:
+            numpy.array: :math:`S_{i j}` as *format*
+        """
+        return self.data_array(format,"S",i,j)
+
+    def Z(self,i=1,j=1,format="COMPLEX"):
+        r"""Return :math:`Z_{i j}` in format *format*
+        Uses *data_array* method internally. A convenience function for practical use.
+
+        Args:
+            i (int, optional): Port-1. Defaults to 1.
+            j (int, optional): Port-2. Defaults to 1.
+            format (str, optional): See *format* parameter of *data_array* method. Defaults to "COMPLEX".
+
+        Returns:
+            numpy.array: :math:`Z_{i j}` as *format*
+        """
+        return self.data_array(format,"Z",i,j)
+
+    def Y(self,i=1,j=1,format="COMPLEX"):
+        r"""Return :math:`Y_{i j}` in format *format*
+        Uses *data_array* method internally. A convenience function for practical use.
+
+        Args:
+            i (int, optional): Port-1. Defaults to 1.
+            j (int, optional): Port-2. Defaults to 1.
+            format (str, optional): See *format* parameter of *data_array* method. Defaults to "COMPLEX".
+
+        Returns:
+            numpy.array: :math:`Y_{i j}` as *format*
+        """
+        return self.data_array(format,"Y",i,j)
+
+    def set_frequency_points(self,frekanslar,inplace=-1):
+        r"""Set new frequency points. if S-Parameter generator function is available, use that to calculate new s-parameter data. If not, use interpolation/extrapolation.
+
+        Args:
+            frekanslar (list): New frequency array
+            inplace (int, optional): Object editing mode. Defaults to -1.
+
+        Returns:
+            spfile: spfile object with new frequency points.
+        """
+        if inplace==-1: inplace=self.inplace
+        if inplace==0:  obj = deepcopy(self); obj.set_inplace(1)
+        else:           obj = self
+        if obj.sparam_gen_func is not None:
+            obj.FrequencyPoints=frekanslar
+            ns =len(obj.FrequencyPoints)
+            # self.nokta_sayisi = ns
+            obj.sdata=np.zeros((ns,obj.port_sayisi**2),dtype=complex)
+            for i in range(len(obj.FrequencyPoints)):
+                obj.set_smatrix_at_frequency_point(i,obj.sparam_gen_func(obj.FrequencyPoints[i]))
+        else:
+            if len(obj.FrequencyPoints)==0:
+                obj.FrequencyPoints=frekanslar
+                ns = len(obj.FrequencyPoints)
+                # self.nokta_sayisi = ns
+                obj.sdata=np.zeros((ns,obj.port_sayisi**2),dtype=complex)
+            else:
+                sdata=np.zeros((len(frekanslar),obj.port_sayisi**2),dtype=complex)
+                for i in range(1,obj.port_sayisi+1):
+                    for j in range(1,obj.port_sayisi+1):
+                        n=(i-1)*obj.port_sayisi+(j-1)
+                        sdata[:,n]=obj.data_array("COMPLEX","S",i,j, frekanslar)
+                obj.FrequencyPoints=frekanslar
+                obj.sdata=sdata
+                # self.nokta_sayisi=len(self.FrequencyPoints)
+        return obj
+
+    def set_frequency_points_array(self,fstart,fstop,NumberOfPoints,inplace=-1):
+        """Set the frequencies of the object using start-end frequencies and number of points.
+
+        Args:
+            fstart ([type]): Start frequency.
+            fstop ([type]): End frequency.
+            NumberOfPoints (int): Number of frequencies.
+            inplace (int, optional): Object editing mode. Defaults to -1.
+
+        Returns:
+            spfile: spfile object with new frequency points.
+        """
+        self.set_frequency_points(frekanslar=np.linspace(fstart,fstop,NumberOfPoints,endpoint=True),inplace=-1)
         return self
 
     def convert_s1p_to_s2p(self):
@@ -1408,8 +1811,128 @@ class spfile:
         self.sdata=newdata
         return self
 
+# Factory Methods to practically create specialized objects
+    @classmethod
+    def microstripstep(cls, w1, w2, eps_r, h, t, freqs=None):
+        r"""Create an object corresponding to a microstrip step.
+
+        Args:
+            w1 (float): Width of microstrip line at port-1.
+            w2 (float): Width of microstrip line at port-2.
+            eps_r (float): Relative permittivity of microstrip substrate.
+            h (float): Thickness of microstrip substrate.
+            t (float): Thickness of metal.
+            freqs (float, optional): Frequency list of object. Defaults to None. If not given, frequencies should be set later.
+
+        Returns:
+            spfile: An spfile object equivalent to microstrip step.
+        """
+        obj = cls(portsayisi=2)
+        obj.set_sparam_gen_func(lambda x:network.abcd2s(tlines.microstrip_step_in_width(w1, w2, eps_r, h, t, x)))
+        if freqs:
+            obj.set_frequency_points(freqs)
+        return obj
+
+    @classmethod
+    def striplinestep(cls, w1, w2, eps_r, h1, h2, t, freqs=None):
+        r"""Create an object corresponding to a stripline step
+
+        Args:
+            w1 (float): Width of stripline line at port-1.
+            w2 (float): Width of stripline line at port-2.
+            eps_r (float): Relative permittivity of stripline substrate.
+            h (float): Thickness of stripline substrate.
+            t (float): Thickness of metal.
+            freqs (float, optional): Frequency list of object. Defaults to None. If not given, frequencies should be set later.
+
+        Returns:
+            spfile: An spfile object.
+        """
+        obj = cls(portsayisi=2)
+        obj.set_sparam_gen_func(lambda x:network.abcd2s(tlines.stripline_step_in_width(w1, w2, eps_r, h1, h2, t, x)))
+        if freqs:
+            obj.set_frequency_points(freqs)
+        return obj
+
+    @classmethod
+    def microstripline(cls, length, w, h, t, er, freqs=None):
+        r"""Create an object corresponding to a microstrip line.
+
+        Args:
+            length (float): Length of microstrip line.
+            w (float): Width of microstrip line.
+            h (float): Thickness of substrate.
+            t (float): Thickness of metal.
+            er (float): Relative permittivity of microstrip substrate.
+            freqs (float, optional): Frequency list of object. Defaults to None. If not given, frequencies should be set later.
+
+        Returns:
+            spfile: An spfile object.
+        """
+        obj = cls(portsayisi=2)
+        def spr(freq):
+            Z, eeff = tlines.Z_eeff_disp_thick_microstrip(w, h, t, er, freq)
+            theta=2*np.pi*freq*np.sqrt(eeff)/c0*length
+            return network.abcd2s(network.tline(Z, theta))
+        obj.set_sparam_gen_func(spr)
+        if freqs:
+            obj.set_frequency_points(freqs)
+        return obj
+
+    @classmethod
+    def stripline(cls, length, w, er, h1, h2, t, freqs=None):
+        r"""Create an object corresponding to a stripline transmission line.
+
+        Args:
+            length (float): Length of cpwg line.
+            w (float): Width of stripline.
+            er (float): Relative permittivity of substrate.
+            h1 (float): Thickness of substrate from bottom ground to bottom of line.
+            h2 (float): Thickness of substrate from top line to top ground.
+            t (float): Thickness of metal.
+            freqs (float, optional): Frequency list of object. Defaults to None. If not given, frequencies should be set later.
+
+        Returns:
+            spfile: An spfile object.
+        """
+        obj = cls(portsayisi=2)
+        def spr(freq):
+            Z = tlines.Z_thick_offset_stripline(w, er, h1, h2, t)
+            theta=2*np.pi*freq*np.sqrt(er)/c0*length
+            return network.abcd2s(network.tline(Z, theta))
+        obj.set_sparam_gen_func(spr)
+        if freqs:
+            obj.set_frequency_points(freqs)
+        return obj
+
+    @classmethod
+    def cpwgline(cls, length, w, th, er, s, h, freqs=None):
+        r"""Create an object corresponding to a cpwg transmission line.
+
+        Args:
+            length (float): Length of cpwg line.
+            w (float): Width of cpwg line.
+            th (float): Thickness of metal.
+            er (float): Relative permittivity of substrate.
+            s (float): Gap of cpwg line.
+            h (float): Thickness of substrate.
+            freqs (float, optional): Frequency list of object. Defaults to None. If not given, frequencies should be set later.
+
+        Returns:
+            spfile: An spfile object.
+        """
+        obj = cls(portsayisi=2)
+        def spr(freq):
+            Z, eeff = tlines.Z_eeff_grounded_cpw_thick(w, th, er, s, h)
+            theta=2*np.pi*freq*np.sqrt(eeff)/c0*length
+            return network.abcd2s(network.tline(Z, theta))
+        obj.set_sparam_gen_func(spr)
+        if freqs:
+            obj.set_frequency_points(freqs)
+        return obj
+
 if __name__ == '__main__':
-    
+
     sptline=spfile(freqs=[10e9],portsayisi=2)
     theta=90
     # for i in range(len(frequencies)):
@@ -1436,8 +1959,8 @@ if __name__ == '__main__':
     # plt.legend()
     # plt.grid()
     # plt.show()
-    
-    
+
+
     # sp = spfile(r"C:\\Users\\Erdoel\\Documents\\MATLAB\\Transition Design Tests\\QS2_ExtractedZ_chip.s1p")
     # import pysmith
     # ax = pysmith.get_smith(plt.figure(), 111)
