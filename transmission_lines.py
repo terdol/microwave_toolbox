@@ -124,34 +124,55 @@ def skindepth_analysis(arg, defaultunits):
 
 
 def Z_qs_thin_microstrip(w, h, er):
-    """
-    Ref: Qucs Technical.pdf, Hammerstad and Jensen (er should be eeff in 11.5 formula )
-    0.0tet1% for w/h<1, 0.01% for w/h<1000
+    r"""Impedance of microstrip transmission line with infinitely thin metal and ignoring dispersion.
+    Reference:  Qucs Technical.pdf, Hammerstad and Jensen (er should be eeff in 11.5 formula )
+    0.01% for w/h<1, 0.01% for w/h<1000
+
+    Args:
+        w (float): Line width (in m).
+        h (float): Thickness of the substrate (in m).
+        er (float): Dielectric permittivity of the substrate.
+
+    Returns:
+        float: Characteristic impedance.
     """
     r = (h/ w)
-    # print("rw= "+str(r)+"  "+str(w))
     fu = 6. + (2 * pi - 6.) * exp(-(30.666 * r) ** (0.7528))
     eeff = er_eff_qs_thin_microstrip(w, h, er)
     return eta0 / (2 * pi * csqrt(eeff)) * log(fu * r + csqrt(1.0+(2.0*r)** 2))
 
 
-def er_eff_qs_thin_microstrip(w, h, er1):
-    """
-    Ref: Hammerstad and Jensen
-    0.2% for 0.01<w/h<1000 and er<128
+def er_eff_qs_thin_microstrip(w, h, er):
+    r"""Effective dielectric permittivity of microstrip transmission line with infinitely thin metal and ignoring dispersion.
+    Reference:  Hammerstad and Jensen, 0.2% for 0.01<w/h<1000 and er<128
+
+    Args:
+        w (float): Line width (in m).
+        h (float): Thickness of the substrate (in m).
+        er (float): Dielectric permittivity of the substrate.
+
+    Returns:
+        float: Effective dielectric permittivity.
     """
     u = (w/ h)
-    er = er1
     b = 0.564 * pow(((er - 0.9)/ (er + 3.)), 0.053)
     a = 1. + 1. / 49. * log(((u ** 4 + ((u/ 52.)) ** 2)/
                     (u ** 4 + 0.432))) + 1. / 18.7 * log(1. + ((u/ 18.1)) ** 3)
-    # print("u= "+str(u)+" "+str(a)+" "+str(b))
     return ((er + 1.)/ 2.) + (er - 1.) / 2. * (1. + (10./ u)) ** (-a * b)
 
 
 def Z_qs_thick_microstrip(w, h, er, t=0):
-    """
-    Ref: Hammerstad and Jensen
+    r"""Impedance of microstrip transmission line ignoring dispersion.
+    Reference:  Hammerstad and Jensen
+
+    Args:
+        w (float): Line width (in m).
+        h (float): Thickness of the substrate (in m).
+        er (float): Dielectric permittivity of the substrate.
+        t (float. optional): Thickness of metal. Default is 0.
+
+    Returns:
+        float: Characteristic impedance.
     """
     th = (t/ h)
     wt = (w/ t)
@@ -342,8 +363,19 @@ def Z_disp_thick_covered_microstrip(w, h, h2, t, er, f):
 
 
 def er_eff_disp_thick_covered_microstrip(w, h, h2, t, er, f):
-    """
-    Ref: Lumped elements for RF and Microwave circuits, p438
+    r"""Effective dielectric permittivity of microstrip transmission line with a metallic cover.
+    Reference:  Lumped elements for RF and Microwave circuits, p438
+
+    Args:
+        w (float): Line width (in m).
+        h (float): Thickness of the substrate (in m).
+        h2 (float): Height above the substrate up to the cover (in m).?
+        t (float): Thickness of the metal (in m).
+        er (float): Dielectric permittivity of the substrate.
+        f (float): Frequency (in Hz).
+
+    Returns:
+        float: Effective dielectric permittivity.
     """
     F = 0.0
     x = (w/ h)
@@ -518,10 +550,17 @@ def C_R_interdigital_capacitor(w,s,h,t,length,N,er,sigma, freq):
     return (2.0*epso*eeff*ellipk(k)/ellipk(k_)*(N-1)*length,Rs)
 
 def Z_thick_stripline(w, b, t, er):
-    """Characteristic impedance of symmetric stripline thick metal
-    Ref: Transmssion Line Design Handbook, p. 125
+    r"""Characteristic impedance of symmetric stripline transmission line.
+    Reference:  Transmssion Line Design Handbook, p. 125
+
+    Args:
+        w (float): Line width (in m).
+        b (float): Thickness of the substrate (in m).
+        t (float): Thickness of the metal (in m).
+        er (float): Dielectric permittivity of the substrate.
+
     Returns:
-        Float -- Impedance
+        float: Characteristic impedance.
     """
 
     seterr(all='raise')
@@ -548,10 +587,18 @@ def Z_thick_stripline(w, b, t, er):
         return Zo1
 
 def Z_thick_offset_stripline(w, eps_r, h1, h2, t):
-    """Characteristic impedance of asymmetric stripline thick metal
+    """Characteristic impedance of asymmetric stripline transmission line.
     Ref: Transmssion Line Design Handbook, p. 129
+
+    Args:
+        w (float): Line width (in m).
+        eps_r (float): Dielectric permittivity of the substrate.
+        h1 (float): Thickness of the substrate under the line (in m).
+        h2 (float): Thickness of the substrate above the line (in m).
+        t (float): Thickness of the metal (in m).
+
     Returns:
-        Float -- Impedance
+        float: Characteristic impedance.
     """
     # print(w, eps_r, h1, h2, t)
     seterr(all='raise')
@@ -580,7 +627,20 @@ def Z_thick_offset_stripline(w, eps_r, h1, h2, t):
     return Z_0
 
 def conductor_loss_stripline(w, b, t, er, f, sigma, mu):
-    """ Incremental Inductance Rule """
+    """Calculation of conductor loss of stripline with incremental inductance rule.
+
+    Args:
+        w (float): Width of line (in m).
+        b (float): Thickness of the substrate (in m).
+        t (float): Thickness of the metal trace (in m).
+        er (float): Dielectric permittivity.
+        f (float): Frequency (in Hz).
+        sigma (float): Electrical conductivity of metal trace.
+        mu (float): Magnetic permeability of metal trace.
+
+    Returns:
+        float: Conductor loss in dB/m ?
+    """
     sd = skin_depth(f, sigma, mu)
     z1 = Z_thick_stripline(w - sd, b + sd, t - sd, 1.0)
     z2 = Z_thick_stripline(w, b, t, 1.0)
