@@ -157,7 +157,13 @@ lam = 3e8/77e9/np.sqrt(4.07)
 import numpy as np
 b=np.matrix(np.diag([2,3,4,5,6,7,8]))
 ixgrid=np.ix_([2,3,4], [2,3,4])
-print(b[ixgrid])
+# print(b[ixgrid])
+b.shape
+print(np.random.normal(size=10))
+class aa:
+    xs=3
+a=aa()
+print(a.xs)
 
 
 # %%
@@ -185,35 +191,67 @@ print(aa.__dict__)
 
 # %%
 from tkinter import *
-
 m1 = PanedWindow()
 m1.pack(fill=BOTH, expand=1)
-
 left = Label(m1, text="left pane")
 m1.add(left)
-
 m2 = PanedWindow(m1, orient=VERTICAL)
 m1.add(m2)
-
 top = Label(m2, text="top pane")
 m2.add(top)
-
 bottom = Label(m2, text="bottom pane")
 m2.add(bottom)
-
 mainloop()
+
+# %%
+dd=[]
+def aa(bb):
+    global dd
+    dd=bb
+v=[1,2,3,4]
+aa(v)
+v[2]=10
+ss="tuncay"
+aa(ss)
+ss="w"
+print(ss)
+print(dd)
+ee="aaa.fff.rrr"
+print(ee.rsplit(".",1)[0])
+dd=ee.upper()
+print(dd)
+print(ee)
 
 
 # %%
 import numpy as np
-aa = np.array([1.1,2.1,3.1])
-aa**1.2
+a=0.146628025*np.exp(-1j*(-35.8358441/180*np.pi))
+z=50.0*(1+a)/(1-a)
+print(z)
+a=-0.001071569567424 +0.070497997856861*1j
+z=50.0*(1+a)/(1-a)
+print(z)
+dd="+5j"
+print(complex(dd))
+
 
 
 # %%
 import numpy as np
 a=np.array(list(range(10,20)))
-print(a[[2,5,8]])
+print(1.2**a)
+# gg=np.matrix(np.diag([1,5,2]))
+gg=np.matrix(np.diag([1,5,2]))
+gg=np.eye(3)
+print(gg)
+print(type(gg))
+
+# %%
+a=list(range(1,15))
+k=3
+m=10
+a.insert(k-1,a.pop(m-1))
+print(a)
 
 
 # %%

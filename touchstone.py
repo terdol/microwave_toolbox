@@ -2,8 +2,13 @@
 # pragma pylint: disable=too-many-function-args
 import numpy as np
 from numpy.linalg import eig
+try:
+    import scipy.interpolate
+    import scipy.optimize
+except:
+    pass
+
 # from scipy.linalg import eig
-# import scipy.interpolate
 # from scipy.signal import get_window
 from numpy.lib.scimath import sqrt as csqrt
 import sympy as sp
@@ -210,9 +215,15 @@ class spfile:
         """This function is used to set arithmetic expression for S-Matrix, if S-Matrix is defined using symbolic variables.
 
         Args:
-            SM ([type]): [description]
+            SM (sympy.Matrix): Symbolic ``sympy.Matrix`` expression for S-Parameter matrix
         """
         self.sym_smatrix = SM
+        f = sp.Symbol("f")
+        if f in self.sym_smatrix.free_symbols:
+            self.sparam_gen_func = lambda x : self.sym_smatrix.subs((f,x)).evalf()
+        else:
+            self.sparam_gen_func = lambda x : self.sym_smatrix.evalf()
+        self.set_frequency_points(self.get_frequency_list())
 
     def get_sym_parameters(self):
         return self.sym_parameters
@@ -229,7 +240,10 @@ class spfile:
             if len(self.sym_parameters.keys())>0:
                 sym_smatrix.subs(list(self.sym_parameters.items()))
             f = sp.Symbol("f")
-            self.sparam_gen_func = lambda x : self.sym_smatrix.subs((f,x)).evalf()
+            if f in self.sym_smatrix.free_symbols:
+                self.sparam_gen_func = lambda x : self.sym_smatrix.subs((f,x)).evalf()
+            else:
+                self.sparam_gen_func = lambda x : self.sym_smatrix.evalf()
             self.set_frequency_points(self.get_frequency_list())
 
     def set_sparam_gen_func(self,func = None):
@@ -627,6 +641,16 @@ class spfile:
         else:
             return gain
 
+    def get_port_names(self):
+        """Get list of port names.
+        """
+        return self.portnames
+
+    def set_port_names(self, names):
+        """Set port names with a list.
+        """
+        self.portnames=names[:]
+
     def get_port_number_from_name(self,isim):
         """Index of first port index with name *isim*
 
@@ -744,10 +768,12 @@ class spfile:
             return gain
 
     def interpolate_data(self, data, freqs):
-        # tck_db = scipy.interpolate.splrep(self.FrequencyPoints,data,s=0,k=1)  # s=0, smoothing off, k=1, order of spline
-        # newdata = scipy.interpolate.splev(freqs,tck_db,der=0)  # the order of derivative of spline
-        # return newdata
-        return np.interp(freqs, self.FrequencyPoints, data)
+        if "scipy.interpolate" in sys.modules:
+            tck_db = scipy.interpolate.splrep(self.FrequencyPoints,data,s=0,k=1)  # s=0, smoothing off, k=1, order of spline
+            newdata = scipy.interpolate.splev(freqs,tck_db,der=0)  # the order of derivative of spline
+            return newdata
+        else:
+            return np.interp(freqs, self.FrequencyPoints, data)
 
     def return_s2p(self,port1=1,port2=2):
         i21=(port1-1)*self.port_sayisi+(port2-1)
@@ -874,7 +900,7 @@ class spfile:
                 # imparray[i].calc_syz("S")
                 # newarray.append(np.array([x+(x.real==0)*1e-8 for x in imparray[i].data_array(format="COMPLEX",syz="Z",i=1,j=1, frekanslar=self.FrequencyPoints) ]))
                 imparray[i].change_ref_impedance(50.0)
-                Gamma = imparray[i].data_array(format="COMPLEX",syz="S",i=1,j=1, frekanslar=self.FrequencyPoints)
+                Gamma = imparray[i].data_array(format="COMPLEX",M="S",i=1,j=1, frekanslar=self.FrequencyPoints)
                 Zin = 50.0*(1.0+Gamma)/(1.0-Gamma)
                 newarray.append(np.array([x+(x.real==0)*1e-8 for x in Zin ]))
             elif inspect.isfunction(imparray[i]):
@@ -918,7 +944,7 @@ class spfile:
         # Generate nn frequency points starting from df/2 and ending at fmax with df spacing
         nfdata=np.linspace((df),self.FrequencyPoints[-1],nn)
         # Get complex data in frequency domain for positive frequencies
-        rawdata=self.data_array(format="COMPLEX",syz="S",i=i,j=j, frekanslar=nfdata,DCInt=dcinterp,DCValue=dcvalue)
+        rawdata=self.data_array(format="COMPLEX",M="S",i=i,j=j, frekanslar=nfdata,DCInt=dcinterp,DCValue=dcvalue)
 
         # Handle negative frequencies, Re(-w)=Re(w),Im(-w)=-Im(w), and prepare data array for ifft
         # Zero padding on frequency data to obtain a smooth time-domain plot
@@ -1150,16 +1176,20 @@ class spfile:
                 cons=({ 'type'   :   'ineq',
                         'fun'    :   constraint1,
                         'jac'    :   constraint1_der },)
-                # from scipy.optimize import minimize
-                # res = minimize(func_for_minimize, xvar, jac = func_for_minimize_der,constraints = cons,  method = 'SLSQP', options={'disp': False})
-                # x = res.x
-
-                import nlopt
-                opt = nlopt.opt(nlopt.GN_ESCH, len(2*t))
-                opt.add_inequality_constraint(constraint1)
-                # opt.set_maxeval(1000)
-                # opt.set_maxtime(5)
-                x = opt.optimize(xvar)
+                if "scipy.optimize" in sys.modules:
+                    from scipy.optimize import minimize
+                    res = minimize(func_for_minimize, xvar, jac = func_for_minimize_der,constraints = cons,  method = 'SLSQP', options={'disp': False})
+                    x = res.x
+                else:
+                    try:
+                        import nlopt
+                        opt = nlopt.opt(nlopt.GN_ESCH, len(2*t))
+                        opt.add_inequality_constraint(constraint1)
+                        # opt.set_maxeval(1000)
+                        # opt.set_maxtime(5)
+                        x = opt.optimize(xvar)
+                    except:
+                        print("Error at root finding with NLOPT")
 
                 for y in range(t):
                     perturbation[(y/ps),y%ps]=x[2*y]+x[2*y+1]*1.0j
@@ -1578,13 +1608,14 @@ class spfile:
             # tck_phase = scipy.interpolate.InterpolatedUnivariateSpline(x,yph,k=order)
             # ynew_ph = tck_phase(frekanslar)
 
-            ynew_db = np.interp(frekanslar, x, ydb)
-            ynew_ph = np.interp(frekanslar, x, yph) #degrees
-
-            # tck_db = scipy.interpolate.CubicSpline(x,ydb,extrapolate=True)
-            # ynew_db = tck_db(frekanslar)
-            # tck_phase = scipy.interpolate.CubicSpline(x,yph,extrapolate=True)
-            # ynew_ph = tck_phase(frekanslar)
+            if "scipy" in sys.modules:
+                tck_db = scipy.interpolate.CubicSpline(x,ydb,extrapolate=True)
+                ynew_db = tck_db(frekanslar)
+                tck_phase = scipy.interpolate.CubicSpline(x,yph,extrapolate=True)
+                ynew_ph = tck_phase(frekanslar)
+            else:
+                ynew_db = np.interp(frekanslar, x, ydb)
+                ynew_ph = np.interp(frekanslar, x, yph) #degrees
         else:
             ynew_db=array(ydb*len(frekanslar))
             ynew_ph=array(yph*len(frekanslar))
@@ -1747,7 +1778,7 @@ class spfile:
         return self.data_array(format,"Y",i,j)
 
     def set_frequency_points(self,frekanslar,inplace=-1):
-        r"""Set new frequency points. if S-Parameter generator function is available, use that to calculate new s-parameter data. If not, use interpolation/extrapolation.
+        r"""Set new frequency points. if S-Parameter data generator function is available, use that to calculate new s-parameter data. If not, use interpolation/extrapolation.
 
         Args:
             frekanslar (list): New frequency array
@@ -1814,7 +1845,7 @@ class spfile:
 # Factory Methods to practically create specialized objects
     @classmethod
     def microstripstep(cls, w1, w2, eps_r, h, t, freqs=None):
-        r"""Create an object corresponding to a microstrip step.
+        r"""Create an ``spfile`` object corresponding to a microstrip step.
 
         Args:
             w1 (float): Width of microstrip line at port-1.
@@ -1835,7 +1866,7 @@ class spfile:
 
     @classmethod
     def striplinestep(cls, w1, w2, eps_r, h1, h2, t, freqs=None):
-        r"""Create an object corresponding to a stripline step
+        r"""Create an ``spfile`` object corresponding to a stripline step
 
         Args:
             w1 (float): Width of stripline line at port-1.
@@ -1856,7 +1887,7 @@ class spfile:
 
     @classmethod
     def microstripline(cls, length, w, h, t, er, freqs=None):
-        r"""Create an object corresponding to a microstrip line.
+        r"""Create an ``spfile`` object corresponding to a microstrip line.
 
         Args:
             length (float): Length of microstrip line.
@@ -1881,7 +1912,7 @@ class spfile:
 
     @classmethod
     def stripline(cls, length, w, er, h1, h2, t, freqs=None):
-        r"""Create an object corresponding to a stripline transmission line.
+        r"""Create an ``spfile`` object corresponding to a stripline transmission line.
 
         Args:
             length (float): Length of cpwg line.
@@ -1907,7 +1938,7 @@ class spfile:
 
     @classmethod
     def cpwgline(cls, length, w, th, er, s, h, freqs=None):
-        r"""Create an object corresponding to a cpwg transmission line.
+        r"""Create an ``spfile`` object corresponding to a cpwg transmission line.
 
         Args:
             length (float): Length of cpwg line.
