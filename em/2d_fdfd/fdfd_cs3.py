@@ -10,7 +10,8 @@ import numpy as np
 import scipy.linalg
 import matplotlib.pyplot as plt
 import matplotlib.patches as mpatches
-from grid import CartesianGrid
+# from grid import CartesianGrid
+from grid2 import CartesianGrid
 import scipy.sparse
 from copy import deepcopy
 from scipy.interpolate import griddata

@@ -805,7 +805,7 @@ def PCBTrackCurrentCapacity(arg, defaultunits=[]):
     arg = arg[:7]
     newargs = convert2pq(arg, defaultunits)
     w, h, t, dT, K, sigma, external = tuple(newargs)
-    external = np.round(external)
+    external = round(external)
     A = dT * w * w * K * sigma * t / h
     cur = csqrt(A * (external + 1.0) / 2.0) * pq.A
     arg.append(prettystring(cur, defaultunits[7]))
