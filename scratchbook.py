@@ -225,15 +225,38 @@ print(ee)
 
 # %%
 import numpy as np
-a=0.146628025*np.exp(-1j*(-35.8358441/180*np.pi))
+a=0.146628025*np.exp(1j*(-35.8358441/180*np.pi))
 z=50.0*(1+a)/(1-a)
 print(z)
 a=-0.001071569567424 +0.070497997856861*1j
 z=50.0*(1+a)/(1-a)
 print(z)
-dd="+5j"
-print(complex(dd))
 
+# %%
+# Generating nonuniform grid from fine to coarse
+import numpy as np
+d=0.1
+dm=0.2
+L=1
+r=(L-d)/(L-dm)
+p=0 # should stay 0
+n=np.int(np.ceil(np.log(dm/d)/np.log(r)))+1
+L=L-p
+coeffs=[0]*(n+1)
+coeffs[0]=1
+coeffs[n-1]=-L/d
+coeffs[n]=L/d-1
+roots=np.roots(coeffs)
+print(roots)
+i=0
+while i<len(roots):
+    if np.real(roots[i])>1.0000001:
+        if np.abs(np.imag(roots[i]))<0.0000001:
+            r=np.real(roots[i])
+            break
+    i=i+1
+cells=[d*np.power(r,x) for x in range(n)]
+print(cells)
 
 
 # %%

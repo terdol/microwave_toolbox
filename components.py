@@ -38,9 +38,9 @@ def Zo_eeff_WireOnGroundedSubstrate(arg, defaultunits=[]):
 
             1.  Wire Diameter (d);length
             2.  Dielectric Thickness (t);length
-            3.  Dielectric Permittivity (<font size=+2>&epsilon;<sub>r</sub></font>) ;
+            3.  Dielectric Permittivity ;
             4.  Impedance ; impedance
-            5.  <font size=+2>&epsilon;<sub>eff</sub></font> ;
+            5.  Effective Diel. Permittivity ;
             Reference:  Transmission Line Design Handbook, Wadell, s.151
             Note: eeff is the same as eeff of microstrip with w=2*d, t=0
 
@@ -71,7 +71,7 @@ def L_StraightRoundWire(arg, defaultunits=[]):
             1. Wire Diameter ;length
             2. Wire Length ;length
             3. Frequency ; frequency
-            4. Dielectric Permeability (<font size=+2>&epsilon;<sub>r</sub></font>)  ;
+            4. Dielectric Permeability  ;
             5. Conductivity ; electrical conductivity
             6. Inductance ;inductance
             7. Impedance ; impedance
@@ -110,9 +110,9 @@ def Zo_eeff_StraightWireOverSubstrate(arg, defaultunits=[]):
             1.  Wire Diameter (d);length
             2.  Height Of Wire Center Above Ground (h);length
             3.  Dielectric Thickness (t);length
-            4.  Dielectric Permittivity (<font size=+2>&epsilon;<sub>r</sub></font>) ;
+            4.  Dielectric Permittivity ;
             5.  Impedance ; impedance
-            6.  <font size=+2>&epsilon;<sub>eff</sub></font> ;
+            6.  Effective Diel. Permittivity ;
             Reference:  Transmission Line Design Handbook, Wadell, s.151
 
         defaultunits(list, optional): Default units for quantities in *arg* list. Default is [] which means SI units will be used if no unit is given in *arg*.
@@ -402,8 +402,8 @@ def Tee_Attenuator_Synthesis(arg, defaultunits=[]):
             1. Reference Impedance (Zo); impedance
             2. Series Impedance (Rs); impedance
             3. Parallel Impedance (Rp); impedance
-            4. <font size=+1>S<sub>11</sub></font> ;
-            5. <font size=+1>S<sub>21</sub></font> ;
+            4. S(1,1) ;
+            5. S(2,1) ;
             6. P1 ;
             7. P2 ;
             8. P3 ;
@@ -436,8 +436,8 @@ def Tee_Attenuator_Analysis(arg, defaultunits=[]):
             1. Reference Impedance (Zo); impedance
             2. Series Impedance (Rs); impedance
             3. Parallel Impedance (Rp); impedance
-            4. <font size=+1>S<sub>11</sub></font> ;
-            5. <font size=+1>S<sub>21</sub></font> ;
+            4. S(1,1) ;
+            5. S(2,1) ;
             6. P1 ;
             7. P2 ;
             8. P3 ;
@@ -477,8 +477,8 @@ def Pi_Attenuator_Synthesis(arg, defaultunits=[]):
             1. Reference Impedance (Zo); impedance
             2. Series Impedance (Rs); impedance
             3. Parallel Impedance (Rp); impedance
-            4. <font size=+1>S<sub>11</sub></font> ;
-            5. <font size=+1>S<sub>21</sub></font> ;
+            4. S(1,1) ;
+            5. S(2,1) ;
             6. P1 ;
             7. P2 ;
             8. P3 ;
@@ -512,8 +512,8 @@ def Pi_Attenuator_Analysis(arg, defaultunits=[]):
             1. Reference Impedance (Zo); impedance
             2. Series Impedance (Rs); impedance
             3. Parallel Impedance (Rp); impedance
-            4. <font size=+1>S<sub>11</sub></font> ;
-            5. <font size=+1>S<sub>21</sub></font> ;
+            4. S(1,1) ;
+            5. S(2,1) ;
             6. P1 ;
             7. P2 ;
             8. P3 ;
@@ -556,8 +556,8 @@ def Bridged_Tee_Attenuator_Synthesis(arg, defaultunits=[]):
             1. Reference Impedance (Zo); impedance
             2. Series Impedance (Rs); impedance
             3. Parallel Impedance (Rp); impedance
-            4. <font size=+1>S<sub>11</sub></font> ;
-            5. <font size=+1>S<sub>21</sub></font> ;
+            4. S(1,1) ;
+            5. S(2,1) ;
             Reference:
 
         defaultunits(list, optional): Default units for quantities in *arg* list. Default is [] which means SI units will be used if no unit is given in *arg*.
@@ -587,8 +587,8 @@ def Bridged_Tee_Attenuator_Analysis(arg, defaultunits=[]):
             1. Reference Impedance (Zo); impedance
             2. Series Impedance (Rs); impedance
             3. Parallel Impedance (Rp); impedance
-            4. <font size=+1>S<sub>11</sub></font> ;
-            5. <font size=+1>S<sub>21</sub></font> ;
+            4. S(1,1) ;
+            5. S(2,1) ;
             Reference:
 
         defaultunits(list, optional): Default units for quantities in *arg* list. Default is [] which means SI units will be used if no unit is given in *arg*.
@@ -979,10 +979,10 @@ def Shorten90DegreeLine(arg, defaultunits=[]):
     Args:
         arg(list): First 3 arguments are inputs.
 
-            1. Impedance (Z<sub>o</sub>); impedance
+            1. Impedance (Zo); impedance
             2. Center Frequency ;  frequency
-            3. Electrical Length (<font size=+1>&theta;</font>) ; angle
-            4. Impedance (Z<sub>x</sub>); impedance
+            3. Electrical Length (theta) ; angle
+            4. Impedance (Z); impedance
             5. Capacitance ; capacitance
             Reference:
 
@@ -1105,7 +1105,7 @@ def InductivePostInWaveguide(arg, defaultunits=[]):
     Args:
         arg(list): First 6 arguments are inputs.
 
-            1. Dielectric Permittivity in Waveguide (<font size=+2>&epsilon;<sub>r</sub></font>);
+            1. Dielectric Permittivity in Waveguide ;
             2. Waveguide Width (a);length
             3. Waveguide Height (b);length
             4. Post Diameter (d);length
@@ -1188,7 +1188,7 @@ def InductiveWindowInWaveguide(arg, defaultunits=[]):
     Args:
         arg(list): First 6 arguments are inputs.
 
-            1. Dielectric Permittivity in Waveguide (<font size=+2>&epsilon;<sub>r</sub></font>);
+            1. Dielectric Permittivity in Waveguide ;
             2. Waveguide Width (a);length
             3. Waveguide Height (b);length
             4. Difference Of Waveguide Width To Window Width;length
@@ -1456,8 +1456,8 @@ def GyselPowerDivider(arg, defaultunits=[]):
             Zo1: 1. port impedance
             Zo2: 2. port impedance
             Zo3: 3. port impedance
-            R1: 1. isolation resistor (2. porta yakin)
-            R2: 2. isolation resistor (3. porta yakin)
+            R1: first isolation resistor (2.porta yakin)
+            R2: second isolation resistor (3.porta yakin)
             ratio: P2/P3 power ratio
             Z1: impedance of transmission line between 1.port and 2.port
             Z2: impedance of transmission line between 1.port and 3.port
@@ -1713,6 +1713,7 @@ def Triangular_Taper_Impedance_Transformer(arg, defaultunits=[]):
 
 def Patch_Antenna_Analysis(arg, defaultunits=[]):
     """ Calculates performance and impedance values for an N-section Chebyshev Impedance Taper.
+    Ref: Overview of Microstrip Antennas (Jackson) (Presentation)
 
     Args:
         arg(list): First 6 arguments are inputs.
@@ -1720,7 +1721,7 @@ def Patch_Antenna_Analysis(arg, defaultunits=[]):
             1.  Width (W) ; length
             2.  Length (L) ; length
             3.  Substrate Thickness (h);length
-            4.  Dielectric Permittivity (<font size=+2>&epsilon;<sub>r</sub></font>) ;
+            4.  Dielectric Permittivity ;
             5.  Dielectric Loss Tangent ;
             6.  Metal Conductivity ; electrical conductivity
             7.  Resonance Frequency (f) ; frequency

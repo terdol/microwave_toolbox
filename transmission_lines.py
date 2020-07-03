@@ -22,11 +22,13 @@ ellipk = ekpolyfit
 def physical_length(eeff, f, elec_length):
     """
     This function returns physical length in meters.
-    Argument List:
-    First 3 arguments are inputs.
-    1- eeff ( effective relative permittivity  ) ;
-    2- f ; frequency
-    3- elec_length (radian); angle
+
+    Args:
+        arg(list): First 3 arguments are inputs.
+
+            1. eeff ( effective relative permittivity  ) ;
+            2. f ; frequency
+            3. elec_length (radian); angle
     """
     temp = (co * elec_length / 2 / pi / f / csqrt(eeff))
     return temp
@@ -34,34 +36,46 @@ def physical_length(eeff, f, elec_length):
 def electrical_length(eeff, f, len):
     """
     This function returns electrical length in radians.
-    Argument List:
-    First 3 arguments are inputs.
-    1- eeff ( effective relative permittivity  ) ;
-    2- f ; frequency
-    3- length ; length
+
+    Args:
+        arg(list): First 3 arguments are inputs.
+
+            1. eeff ( effective relative permittivity  ) ;
+            2. f ; frequency
+            3. length ; length
     """
     temp = (len * 2.0 * pi * f * csqrt(eeff) / co)
     return temp
 
-def skin_depth(f, sigma, mu=1.0):
+def skin_depth(f, sigma, mu=1.0, er=0.0):
     """
     This function returns skin depth in meters.
-    Argument List:
-    First 3 arguments are inputs.
-    1- f ; frequency
-    2- sigma ; conductivity
-    3- mu ; permeability
+    Ref: https://en.wikipedia.org/wiki/Skin_effect
+
+    Args:
+        arg(list): First 3 arguments are inputs.
+
+            1. f ; frequency
+            2. sigma ; conductivity
+            3. mu ; relative permeability
+            4. er ; relative permittivity
     """
-    return csqrt(1.0 / sigma / mu / mu0 / pi / f)
+    return csqrt(1.0 / sigma / mu / mu0 / pi / f)*csqrt(csqrt(1+(2*pi*f*er*eps0/sigma)**2)+2*pi*f*er*eps0/sigma)
 
 def Sentez(fonk, _args, k, target_value = [],init_value = [], limits = []):
-    """
-    fonk: optimizasyonda kullan�lacak fonksiyon
-    _args: fonk fonksiyonunun argumanlar�
-    k: optimizasyonla bulunacak degiskenlerin indisleri, list
-    target_value: target value of fonk
-    init_value: initial values of variables
-    limits: constraints on variables
+    r"""Function that is used to calculate the parameter value of a function
+    that will give target value.
+
+    Args:
+        fonk (function): function to be used at optimization
+        _args (list): function arguments of fonk
+        k (int): list of indices of variables to be calculated by optimization
+        target_value (list, optional): target value of fonk. Defaults to [].
+        init_value (list, optional): initial values of variables]. Defaults to [].
+        limits (list, optional): constraints on variables. Defaults to [].
+
+    Returns:
+        float: Calculated parameter
     """
     # if isinstance(k,int):
     #     k=[k]
@@ -108,11 +122,12 @@ def skindepth_analysis(arg, defaultunits):
     """
     Argument List:
     First 3 arguments are inputs.
-    1- Metal Conductivity ; electrical conductivity
-    2- Metal Permeability ;
-    3- Frequency ; frequency
-    4- Skin Depth ;length
-    5- Surface Impedance ; impedance
+
+    1. Metal Conductivity ; electrical conductivity
+    2. Metal Permeability ;
+    3. Frequency ; frequency
+    4. Skin Depth ;length
+    5. Surface Impedance ; impedance
     """
     arg = arg[:3]
     newargs = convert2pq(arg, defaultunits)
@@ -287,8 +302,8 @@ def dc_current_rating_thick_microstrip(w, h, t, er, f, tand, sigma, mu_r, rms_ro
     alpha_d = dielectric_loss(eeff, er, f, tand)
     alpha_c = conductor_loss_microstrip(
         w, h, t, er, sigma, mu_r, rms_roughness, f)
-    # Bu iki dPc ve dPd ifadesi 1W giri� g�c� i�in 1m'de kaybolan g�� oluyor.
-    # Bunlar�n yerine birim uzunlukta kaybolan g�� olan dP/dx=0.2303 * alpha_c yazsak daha iyi olmaz m�?
+    # dPc ve dPd expressions are power lost in 1m, for 1W input power
+    # It might be  better to write dP/dx=0.2303 * alpha_c as power lost in unit distance
     dPc = 1.0 - exp(-0.2303 * alpha_c)
     dPd = 1.0 - exp(-0.2303 * alpha_d)
 
@@ -389,35 +404,37 @@ def er_eff_disp_thick_covered_microstrip(w, h, h2, t, er, f):
 
 def microstrip_synthesis(arg, defaultunits):
     """
-    Argument List:
-    First 13 arguments are inputs.
-    1- Line Width ;length
-    2- Substrate Thickness ;length
-    3- Metal Thickness ;length
-    4- Dielectric Permittivity (<font size=+2>&epsilon;<sub>r</sub></font>);
-    5- Dielectric Loss Tangent ;
-    6- Dielectric Thermal Conductivity ;   thermal conductivity
-    7- Metal Conductivity ; electrical conductivity
-    8- Metal Permeability ;
-    9- Roughness ;length
-    10- Frequency ; frequency
-    11- Physical Length ;length
-    12- Impedance ;   impedance
-    13- Electrical Length ;  angle
-    14- Max Temp Difference (<sup>o</sup>C) ;
-    15- <font size=+2>&epsilon;<sub>eff</sub></font> ;
-    16- Conductor Loss ;  loss per length
-    17- Dielectric Loss ; loss per length
-    18- Skin Depth ;length
-    19- Cutoff Frequency for TE1 mode ; frequency
-    20- Transverse Resonance Frequency; frequency
-    21- Frequency Limit for Coupling to Surface Modes ; frequency
-    22- Time Delay ; time
-    23- L  per unit length ;
-    24- C per unit length ;
-    25- Surface Impedance ; impedance
-    26- Average Rated Power ; power
-    27- Max DC Current ; current
+
+    Args:
+        arg(list): First 13 arguments are inputs.
+
+            1. Line Width ;length
+            2. Substrate Thickness ;length
+            3. Metal Thickness ;length
+            4. Dielectric Permittivity (<font size=+2>&epsilon;<sub>r</sub></font>);
+            5. Dielectric Loss Tangent ;
+            6. Dielectric Thermal Conductivity ;   thermal conductivity
+            7. Metal Conductivity ; electrical conductivity
+            8. Metal Permeability ;
+            9. Roughness ;length
+            10. Frequency ; frequency
+            11. Physical Length ;length
+            12. Impedance ;   impedance
+            13. Electrical Length ;  angle
+            14. Max Temp Difference (<sup>o</sup>C) ;
+            15. <font size=+2>&epsilon;<sub>eff</sub></font> ;
+            16. Conductor Loss ;  loss per length
+            17. Dielectric Loss ; loss per length
+            18. Skin Depth ;length
+            19. Cutoff Frequency for TE1 mode ; frequency
+            20. Transverse Resonance Frequency; frequency
+            21. Frequency Limit for Coupling to Surface Modes ; frequency
+            22. Time Delay ; time
+            23. L  per unit length ;
+            24. C per unit length ;
+            25. Surface Impedance ; impedance
+            26. Average Rated Power ; power
+            27. Max DC Current ; current
     """
 
     if len(defaultunits) == 0:
@@ -453,36 +470,38 @@ def microstrip_synthesis(arg, defaultunits):
     return arg
 
 def microstrip_analysis(arg, defaultunits):
-    """
-    Argument List:
-    First 11 arguments are inputs.
-    1- Line Width (w);length
-    2- Substrate Thickness (h);length
-    3- Metal Thickness (t);length
-    4- Dielectric Permittivity (<font size=+2>&epsilon;<sub>r</sub></font>);
-    5- Dielectric Loss Tangent ;
-    6- Dielectric Thermal Conductivity ;   thermal conductivity
-    7- Metal Conductivity ; electrical conductivity
-    8- Metal Permeability ;
-    9- Roughness ;length
-    10- Frequency ; frequency
-    11- Physical Length ;length
-    12- Impedance ;   impedance
-    13- Electrical Length ;  angle
-    14- Max Temp Difference (<sup>o</sup>C) ;
-    15- <font size=+2>&epsilon;<sub>eff</sub></font> ;
-    16- Conductor Loss ;  loss per length
-    17- Dielectric Loss ; loss per length
-    18- Skin Depth ;length
-    19- Cutoff Frequency for TE1 mode ; frequency
-    20- Transverse Resonance Frequency; frequency
-    21- Frequency Limit for Coupling to Surface Modes ; frequency
-    22- Time Delay ; time
-    23- L  per unit length ;
-    24- C per unit length ;
-    25- Surface Impedance ; impedance
-    26- Average Rated Power ; power
-    27- Max DC Current ; current
+    r"""Analysis function for microstrip transmission lines.
+
+    Args:
+        arg(list): First 11 arguments are inputs.
+
+            1. Line Width (w);length
+            2. Substrate Thickness (h);length
+            3. Metal Thickness (t);length
+            4. Dielectric Permittivity (<font size=+2>&epsilon;<sub>r</sub></font>);
+            5. Dielectric Loss Tangent ;
+            6. Dielectric Thermal Conductivity ;   thermal conductivity
+            7. Metal Conductivity ; electrical conductivity
+            8. Metal Permeability ;
+            9. Roughness ;length
+            10. Frequency ; frequency
+            11. Physical Length ;length
+            12. Impedance ;   impedance
+            13. Electrical Length ;  angle
+            14. Max Temp Difference (<sup>o</sup>C) ;
+            15. <font size=+2>&epsilon;<sub>eff</sub></font> ;
+            16. Conductor Loss ;  loss per length
+            17. Dielectric Loss ; loss per length
+            18. Skin Depth ;length
+            19. Cutoff Frequency for TE1 mode ; frequency
+            20. Transverse Resonance Frequency; frequency
+            21. Frequency Limit for Coupling to Surface Modes ; frequency
+            22. Time Delay ; time
+            23. L  per unit length ;
+            24. C per unit length ;
+            25. Surface Impedance ; impedance
+            26. Average Rated Power ; power
+            27. Max DC Current ; current
     """
 
     dT = convert2pq(arg[13],defaultunits[13])[0]
@@ -526,17 +545,22 @@ def microstrip_analysis_view(arg, defaultunits):
     return
 
 def C_R_interdigital_capacitor(w,s,h,t,length,N,er,sigma, freq):
-    """
-    Approximate Capacitance of Interdigital Capacitor
+    r"""Approximate Capacitance of Interdigital Capacitor.
     Ref: RF and Microwave Coupled-Line Circuits
-    :param w: width of fingers
-    :param s: gap between fingers
-    :param h: height of substrate
-    :param t: metal thickness
-    :param l: length of fingers
-    :param N: number of fingers
-    :param er: dielectric permittivity
-    :return: (effective series capacitance, effective series resistance)
+
+    Args:
+        w (float): Width of fingers
+        s (float): Gap between fingers
+        h (float): Height of substrate
+        t (float): Metal thickness
+        length (float): Length of fingers
+        N (int): Number of fingers
+        er (float): Dielectric permittivity
+        sigma (float): Electrical conductivity of metal
+        freq (float): Frequency
+
+    Returns:
+        float: Capacitance.
     """
     a=(w/2.0)
     b=((w+s)/2.0)
@@ -615,7 +639,7 @@ def Z_thick_offset_stripline(w, eps_r, h1, h2, t):
         Z_0 = eta0*arccosh(A)/2/pi/sqrt(eps_r)
     else:
         if w/(b-t)<t/b:
-            k=sech(pi*w/2/b)
+            k = 1.0/cosh(pi*w/2/b)
             k_ = tanh(pi*w/2/b)
             w_b = w/b+(1-t/b)**8*(ekpolyfit(k_)/ekpolyfit(k)-2/pi*log(2)-w/b)
         else:
@@ -639,7 +663,7 @@ def conductor_loss_stripline(w, b, t, er, f, sigma, mu):
         mu (float): Magnetic permeability of metal trace.
 
     Returns:
-        float: Conductor loss in dB/m ?
+        float: Conductor loss in dB/m.
     """
     sd = skin_depth(f, sigma, mu)
     z1 = Z_thick_stripline(w - sd, b + sd, t - sd, 1.0)
@@ -649,24 +673,26 @@ def conductor_loss_stripline(w, b, t, er, f, sigma, mu):
 
 
 def stripline_analysis(arg, defaultunits):
-    """
-    Argument List:
-    First 10 arguments are inputs.
-    1- Line Width (w);length
-    2- Ground Separation (h);length
-    3- Metal Thickness (t);length
-    4- Dielectric Permittivity (<font size=+2>&epsilon;<sub>r</sub></font>);
-    5- Dielectric Loss Tangent ;
-    6- Metal Conductivity ; electrical conductivity
-    7- Metal Permeability ;
-    8- Roughness ;length
-    9- Frequency ; frequency
-    10- Physical Length ;length
-    11- Impedance ;   impedance
-    12- Electrical Length ;   angle
-    13- <font size=+2>&epsilon;<sub>eff</sub></font> ;
-    14- Conductor Loss ;   loss per length
-    15- Dielectric Loss ;   loss per length
+    """Analysis function for stripline transmission lines.
+
+    Args:
+        arg(list): First 10 arguments are inputs.
+
+            1. Line Width (w);length
+            2. Ground Separation (h);length
+            3. Metal Thickness (t);length
+            4. Dielectric Permittivity (<font size=+2>&epsilon;<sub>r</sub></font>);
+            5. Dielectric Loss Tangent ;
+            6. Metal Conductivity ; electrical conductivity
+            7. Metal Permeability ;
+            8. Roughness ;length
+            9. Frequency ; frequency
+            10. Physical Length ;length
+            11. Impedance ;   impedance
+            12. Electrical Length ;   angle
+            13. <font size=+2>&epsilon;<sub>eff</sub></font> ;
+            14. Conductor Loss ;   loss per length
+            15. Dielectric Loss ;   loss per length
     """
 
     arg = arg[:10]
@@ -701,23 +727,25 @@ def stripline_analysis_view(arg, defaultunits):
 
 def stripline_synthesis(arg, defaultunits):
     """
-    Argument List:
-    First 10 arguments are inputs.
-    1- Line Width ;length
-    2- Ground Separation ;length
-    3- Metal Thickness ;length
-    4- Dielectric Permittivity (<font size=+2>&epsilon;<sub>r</sub></font>);
-    5- Dielectric Loss Tangent ;
-    6- Metal Conductivity ; electrical conductivity
-    7- Metal Permeability ;
-    8- Roughness ;length
-    9- Frequency ; frequency
-    10- Physical Length ;length
-    11- Impedance ;   impedance
-    12- Electrical Length ;   angle
-    13- <font size=+2>&epsilon;<sub>eff</sub></font> ;
-    14- Conductor Loss ;   loss per length
-    15- Dielectric Loss ;   loss per length
+
+    Args:
+        arg(list): First 10 arguments are inputs.
+
+            1. Line Width ;length
+            2. Ground Separation ;length
+            3. Metal Thickness ;length
+            4. Dielectric Permittivity (<font size=+2>&epsilon;<sub>r</sub></font>);
+            5. Dielectric Loss Tangent ;
+            6. Metal Conductivity ; electrical conductivity
+            7. Metal Permeability ;
+            8. Roughness ;length
+            9. Frequency ; frequency
+            10. Physical Length ;length
+            11. Impedance ;   impedance
+            12. Electrical Length ;   angle
+            13. <font size=+2>&epsilon;<sub>eff</sub></font> ;
+            14. Conductor Loss ;   loss per length
+            15. Dielectric Loss ;   loss per length
     """
     arg = arg[:12]
     newargs = convert2pq(arg, defaultunits)
@@ -810,24 +838,27 @@ def conductor_loss_eccentric_coaxial(er, r, d, sh, f, sigma, mu):
 
 def coaxial_line_analysis(arg, defaultunits):
     """
-    Argument List:
-    First 9 arguments are inputs.
-    1- Inner Radius (r);length
-    2- Outer Radius (d);length
-    3- Dielectric Permittivity (<font size=+2>&epsilon;<sub>r</sub></font>);
-    4- Dielectric Loss Tangent ;
-    5- Metal Conductivity ;  electrical conductivity
-    6- Metal Permeability ;
-    7- Roughness ;length
-    8- Frequency ; frequency
-    9- Physical Length ;length
-    10- Impedance ;  impedance
-    11- Electrical Length ; angle
-    12- <font size=+2>&epsilon;<sub>eff</sub></font> ;
-    13- Conductor Loss ;   loss per length
-    14- Dielectric Loss ;  loss per length
-    15- Cutoff Frequency for TE11 mode ;  frequency
     Ref: Transmssion Line Design Handbook, p47, r-inner diameter, d-outer diameter
+
+    Args:
+        arg(list): First 9 arguments are inputs.
+
+        1. Inner Radius (r);length
+        2. Outer Radius (d);length
+        3. Dielectric Permittivity (<font size=+2>&epsilon;<sub>r</sub></font>);
+        4. Dielectric Loss Tangent ;
+        5. Metal Conductivity ;  electrical conductivity
+        6. Metal Permeability ;
+        7. Roughness ;length
+        8. Frequency ; frequency
+        9. Physical Length ;length
+        10. Impedance ;  impedance
+        11. Electrical Length ; angle
+        12. <font size=+2>&epsilon;<sub>eff</sub></font> ;
+        13. Conductor Loss ;   loss per length
+        14. Dielectric Loss ;  loss per length
+        15. Cutoff Frequency for TE11 mode ;  frequency
+
     """
     arg = arg[:9]
     newargs = convert2pq(arg, defaultunits)
@@ -846,23 +877,26 @@ def coaxial_line_analysis(arg, defaultunits):
 
 def coaxial_line_synthesis(arg, defaultunits):
     """
-    Argument List:
-    First 9 arguments are inputs.
-    1- Inner Radius (r);length
-    2- Outer Radius (d);length
-    3- Dielectric Permittivity (<font size=+2>&epsilon;<sub>r</sub></font>);
-    4- Dielectric Loss Tangent ;
-    5- Metal Conductivity ;  electrical conductivity
-    6- Metal Permeability ;
-    7- Roughness ;length
-    8- Frequency ; frequency
-    9- Physical Length ;length
-    10- Impedance ;  impedance
-    11- Electrical Length ; angle
-    12- <font size=+2>&epsilon;<sub>eff</sub></font> ;
-    13- Conductor Loss ;   loss per length
-    14- Dielectric Loss ;  loss per length
-    15- Cutoff Frequency for TE11 mode ;  frequency
+
+    Args:
+        arg(list): First 9 arguments are inputs.
+
+            1. Inner Radius (r);length
+            2. Outer Radius (d);length
+            3. Dielectric Permittivity (<font size=+2>&epsilon;<sub>r</sub></font>);
+            4. Dielectric Loss Tangent ;
+            5. Metal Conductivity ;  electrical conductivity
+            6. Metal Permeability ;
+            7. Roughness ;length
+            8. Frequency ; frequency
+            9. Physical Length ;length
+            10. Impedance ;  impedance
+            11. Electrical Length ; angle
+            12. <font size=+2>&epsilon;<sub>eff</sub></font> ;
+            13. Conductor Loss ;   loss per length
+            14. Dielectric Loss ;  loss per length
+            15. Cutoff Frequency for TE11 mode ;  frequency
+
     Ref: Transmssion Line Design Handbook, p47, r-inner diameter, d-outer diameter
     """
     arg = arg[:11]
@@ -903,22 +937,24 @@ def coaxial_analysis_view(arg, defaultunits):
 
 def coaxial_strip_center_analysis(arg, defaultunits):
     """
-    Argument List:
-    First 9 arguments are inputs.
-    1- Strip Width (w) ;length
-    2- Dielectric Permittivity (<font size=+2>&epsilon;<sub>r</sub></font>);
-    3- Outer Diameter (D);length
-    4- Dielectric Loss Tangent ;
-    5- Metal Conductivity ;  electrical conductivity
-    6- Metal Permeability ;
-    7- Roughness ;length
-    8- Frequency ; frequency
-    9- Physical Length ;length
-    10- Impedance ;  impedance
-    11- Electrical Length ; angle
-    12- <font size=+2>&epsilon;<sub>eff</sub></font> ;
-    13- Conductor Loss ;   loss per length
-    14- Dielectric Loss ;  loss per length
+
+    Args:
+        arg(list): First 9 arguments are inputs.
+
+            1. Strip Width (w) ;length
+            2. Dielectric Permittivity (<font size=+2>&epsilon;<sub>r</sub></font>);
+            3. Outer Diameter (D);length
+            4. Dielectric Loss Tangent ;
+            5. Metal Conductivity ;  electrical conductivity
+            6. Metal Permeability ;
+            7. Roughness ;length
+            8. Frequency ; frequency
+            9. Physical Length ;length
+            10. Impedance ;  impedance
+            11. Electrical Length ; angle
+            12. <font size=+2>&epsilon;<sub>eff</sub></font> ;
+            13. Conductor Loss ;   loss per length
+            14. Dielectric Loss ;  loss per length
     Ref: Transmssion Line Design Handbook, p47, r-inner diameter, d-outer diameter
     """
 
@@ -929,7 +965,7 @@ def coaxial_strip_center_analysis(arg, defaultunits):
     eeff = er
     deg = electrical_length(eeff, freq, length)
     sd = skin_depth(freq, sigma, mu)
-    cond_loss = -pi * freq / Z / co * (Z_coaxial_strip_center(1.0, w, d) - Z_coaxial_strip_center(
+    cond_loss = -mu * pi * freq / Z / co * (Z_coaxial_strip_center(1.0, w, d) - Z_coaxial_strip_center(
         1.0, w - sd, d + sd)) * 20.0 * log10(exp(1))  # dB/m, incremental inductance
     diel_loss = dielectric_loss(eeff, er, freq, tand)
     argout = [Z, deg, eeff, cond_loss, diel_loss]
@@ -957,20 +993,20 @@ def square_coaxial_circular_center_analysis(arg, defaultunits):
     """
     Argument List:
     First 9 arguments are inputs.
-    1- Inner Radius (r);length
-    2- Outer Size (D);length
-    3- Dielectric Permittivity (<font size=+2>&epsilon;<sub>r</sub></font>);
-    4- Dielectric Loss Tangent ;
-    5- Metal Conductivity ;  electrical conductivity
-    6- Metal Permeability ;
-    7- Roughness ;length
-    8- Frequency ; frequency
-    9- Physical Length ;length
-    10- Impedance ;  impedance
-    11- Electrical Length ; angle
-    12- <font size=+2>&epsilon;<sub>eff</sub></font> ;
-    13- Conductor Loss ;   loss per length
-    14- Dielectric Loss ;  loss per length
+    1. Inner Radius (r);length
+    2. Outer Size (D);length
+    3. Dielectric Permittivity (<font size=+2>&epsilon;<sub>r</sub></font>);
+    4. Dielectric Loss Tangent ;
+    5. Metal Conductivity ;  electrical conductivity
+    6. Metal Permeability ;
+    7. Roughness ;length
+    8. Frequency ; frequency
+    9. Physical Length ;length
+    10. Impedance ;  impedance
+    11. Electrical Length ; angle
+    12. <font size=+2>&epsilon;<sub>eff</sub></font> ;
+    13. Conductor Loss ;   loss per length
+    14. Dielectric Loss ;  loss per length
     Ref: Transmssion Line Design Handbook, p47, r-inner diameter, d-outer diameter
     """
 
@@ -981,7 +1017,7 @@ def square_coaxial_circular_center_analysis(arg, defaultunits):
     eeff = er
     deg = electrical_length(eeff, freq, length)
     sd = skin_depth(freq, sigma, mu)
-    cond_loss = -pi * freq / Z / co * (Z_square_coaxial(1.0, 2*r, d) - Z_square_coaxial(
+    cond_loss = -mu * pi * freq / Z / co * (Z_square_coaxial(1.0, 2*r, d) - Z_square_coaxial(
         1.0, 2*r - (sd/ 2.0), d + (sd/ 2.0))) * 20.0 * log10(exp(1))  # dB/m, incremental inductance
     diel_loss = dielectric_loss(eeff, er, freq, tand)
     argout = [Z, deg, eeff, cond_loss, diel_loss]
@@ -993,22 +1029,22 @@ def rectangular_coaxial_line_analysis(arg, defaultunits):
     """
     Argument List:
     First 11 arguments are inputs.
-    1- Line Width (w) ;length
-    2- Line Thickness (t) ;length
-    3- Box Width (a) ;length
-    4- Box Height (b) ;length
-    5- Dielectric Permittivity (<font size=+2>&epsilon;<sub>r</sub></font>);
-    6- Dielectric Loss Tangent ;
-    7- Metal Conductivity ;  electrical conductivity
-    8- Metal Permeability ;
-    9- Roughness ;length
-    10- Frequency ; frequency
-    11- Physical Length ;length
-    12- Impedance ;  impedance
-    13- Electrical Length ; angle
-    14- <font size=+2>&epsilon;<sub>eff</sub></font> ;
-    15- Conductor Loss ;   loss per length
-    16- Dielectric Loss ;  loss per length
+    1. Line Width (w) ;length
+    2. Line Thickness (t) ;length
+    3. Box Width (a) ;length
+    4. Box Height (b) ;length
+    5. Dielectric Permittivity (<font size=+2>&epsilon;<sub>r</sub></font>);
+    6. Dielectric Loss Tangent ;
+    7. Metal Conductivity ;  electrical conductivity
+    8. Metal Permeability ;
+    9. Roughness ;length
+    10. Frequency ; frequency
+    11. Physical Length ;length
+    12. Impedance ;  impedance
+    13. Electrical Length ; angle
+    14. <font size=+2>&epsilon;<sub>eff</sub></font> ;
+    15. Conductor Loss ;   loss per length
+    16. Dielectric Loss ;  loss per length
     Ref: Transmssion Line Design Handbook, p60
     """
 
@@ -1019,7 +1055,7 @@ def rectangular_coaxial_line_analysis(arg, defaultunits):
     eeff = er
     deg = electrical_length(eeff, freq, length)
     sd = skin_depth(freq, sigma, mu)
-    cond_loss = -pi * freq / Z / co * (Z_rectangular_coaxial(w, b, t, a, 1.0) - Z_rectangular_coaxial(
+    cond_loss = -mu * pi * freq / Z / co * (Z_rectangular_coaxial(w, b, t, a, 1.0) - Z_rectangular_coaxial(
         w-sd, b + sd, t - sd, a+sd,1.0)) * 20.0 * log10(exp(1))  # dB/m, incremental inductance
     diel_loss = dielectric_loss(eeff, er, freq, tand)
     argout = [Z, deg, eeff, cond_loss, diel_loss]
@@ -1031,22 +1067,22 @@ def rectangular_coaxial_line_synthesis(arg, defaultunits):
     """
     Argument List:
     First 11 arguments are inputs.
-    1- Line Width (w) ;length
-    2- Line Thickness (t) ;length
-    3- Box Width (a) ;length
-    4- Box Height (b) ;length
-    5- Dielectric Permittivity (<font size=+2>&epsilon;<sub>r</sub></font>);
-    6- Dielectric Loss Tangent ;
-    7- Metal Conductivity ;  electrical conductivity
-    8- Metal Permeability ;
-    9- Roughness ;length
-    10- Frequency ; frequency
-    11- Physical Length ;length
-    12- Impedance ;  impedance
-    13- Electrical Length ; angle
-    14- <font size=+2>&epsilon;<sub>eff</sub></font> ;
-    15- Conductor Loss ;   loss per length
-    16- Dielectric Loss ;  loss per length
+    1. Line Width (w) ;length
+    2. Line Thickness (t) ;length
+    3. Box Width (a) ;length
+    4. Box Height (b) ;length
+    5. Dielectric Permittivity (<font size=+2>&epsilon;<sub>r</sub></font>);
+    6. Dielectric Loss Tangent ;
+    7. Metal Conductivity ;  electrical conductivity
+    8. Metal Permeability ;
+    9. Roughness ;length
+    10. Frequency ; frequency
+    11. Physical Length ;length
+    12. Impedance ;  impedance
+    13. Electrical Length ; angle
+    14. <font size=+2>&epsilon;<sub>eff</sub></font> ;
+    15. Conductor Loss ;   loss per length
+    16. Dielectric Loss ;  loss per length
     Ref: Transmssion Line Design Handbook, p60
     """
 
@@ -1061,7 +1097,7 @@ def rectangular_coaxial_line_synthesis(arg, defaultunits):
     length = physical_length(eeff, freq, deg)
     #deg = electrical_length(eeff, freq, length)
     sd = skin_depth(freq, sigma, mu)
-    cond_loss = -pi * freq / Z / co * (Z_rectangular_coaxial(w, b, t, a, 1.0) - Z_rectangular_coaxial(
+    cond_loss = -mu * pi * freq / Z / co * (Z_rectangular_coaxial(w, b, t, a, 1.0) - Z_rectangular_coaxial(
         w-sd, b + sd, t - sd, a+sd,1.0)) * 20.0 * log10(exp(1))  # dB/m, incremental inductance
     diel_loss = dielectric_loss(eeff, er, freq, tand)
     argout = [eeff, cond_loss, diel_loss]
@@ -1075,20 +1111,20 @@ def square_coaxial_line_square_center_analysis(arg, defaultunits):
     """
     Argument List:
     First 9 arguments are inputs.
-    1- Dielectric Permittivity (<font size=+2>&epsilon;<sub>r</sub></font>);
-    2- Inner Size (d) ;length
-    3- Outer Size (D) ;length
-    4- Dielectric Loss Tangent ;
-    5- Metal Conductivity ;  electrical conductivity
-    6- Metal Permeability ;
-    7- Roughness ;length
-    8- Frequency ; frequency
-    9- Physical Length ;length
-    10- Impedance ;  impedance
-    11- Electrical Length ; angle
-    12- <font size=+2>&epsilon;<sub>eff</sub></font> ;
-    13- Conductor Loss ;   loss per length
-    14- Dielectric Loss ;  loss per length
+    1. Dielectric Permittivity (<font size=+2>&epsilon;<sub>r</sub></font>);
+    2. Inner Size (d) ;length
+    3. Outer Size (D) ;length
+    4. Dielectric Loss Tangent ;
+    5. Metal Conductivity ;  electrical conductivity
+    6. Metal Permeability ;
+    7. Roughness ;length
+    8. Frequency ; frequency
+    9. Physical Length ;length
+    10. Impedance ;  impedance
+    11. Electrical Length ; angle
+    12. <font size=+2>&epsilon;<sub>eff</sub></font> ;
+    13. Conductor Loss ;   loss per length
+    14. Dielectric Loss ;  loss per length
     Ref: Transmssion Line Design Handbook, p47, r-inner diameter, d-outer diameter
     """
 
@@ -1099,7 +1135,7 @@ def square_coaxial_line_square_center_analysis(arg, defaultunits):
     eeff = er
     deg = electrical_length(eeff, freq, length)
     sd = skin_depth(freq, sigma, mu)
-    cond_loss = -pi * freq / Z / co * (Z_square_coaxial_square_center(1.0, r, d) - Z_square_coaxial_square_center(
+    cond_loss = -mu * pi * freq / Z / co * (Z_square_coaxial_square_center(1.0, r, d) - Z_square_coaxial_square_center(
         1.0, r - (sd/ 2.0), d + (sd/ 2.0))) * 20.0 * log10(exp(1))  # dB/m, incremental inductance
     diel_loss = dielectric_loss(eeff, er, freq, tand)
     argout = [Z, deg, eeff, cond_loss, diel_loss]
@@ -1111,20 +1147,20 @@ def square_coaxial_line_square_center_synthesis(arg, defaultunits):
     """
     Argument List:
     First 9 arguments are inputs.
-    1- Dielectric Permittivity (<font size=+2>&epsilon;<sub>r</sub></font>);
-    2- Inner Size ;length
-    3- Outer Size ;length
-    4- Dielectric Loss Tangent ;
-    5- Metal Conductivity ;  electrical conductivity
-    6- Metal Permeability ;
-    7- Roughness ;length
-    8- Frequency ; frequency
-    9- Physical Length ;length
-    10- Impedance ;  impedance
-    11- Electrical Length ; angle
-    12- <font size=+2>&epsilon;<sub>eff</sub></font> ;
-    13- Conductor Loss ;   loss per length
-    14- Dielectric Loss ;  loss per length
+    1. Dielectric Permittivity (<font size=+2>&epsilon;<sub>r</sub></font>);
+    2. Inner Size ;length
+    3. Outer Size ;length
+    4. Dielectric Loss Tangent ;
+    5. Metal Conductivity ;  electrical conductivity
+    6. Metal Permeability ;
+    7. Roughness ;length
+    8. Frequency ; frequency
+    9. Physical Length ;length
+    10. Impedance ;  impedance
+    11. Electrical Length ; angle
+    12. <font size=+2>&epsilon;<sub>eff</sub></font> ;
+    13. Conductor Loss ;   loss per length
+    14. Dielectric Loss ;  loss per length
     Ref: Transmssion Line Design Handbook, p47, r-inner diameter, d-outer diameter
     """
 
@@ -1139,7 +1175,7 @@ def square_coaxial_line_square_center_synthesis(arg, defaultunits):
     length = physical_length(eeff, freq, deg)
     #deg = electrical_length(eeff, freq, length)
     sd = skin_depth(freq, sigma, mu)
-    cond_loss = -pi * freq / Z / co * (Z_square_coaxial_square_center(1.0, r, d) - Z_square_coaxial_square_center(
+    cond_loss = -mu * pi * freq / Z / co * (Z_square_coaxial_square_center(1.0, r, d) - Z_square_coaxial_square_center(
         1.0, r - (sd/ 2.0), d + (sd/ 2.0))) * 20.0 * log10(exp(1))  # dB/m, incremental inductance
     diel_loss = dielectric_loss(eeff, er, freq, tand)
     argout = [eeff, cond_loss, diel_loss]
@@ -1153,21 +1189,21 @@ def eccentric_coaxial_analysis(arg, defaultunits):
     """
     Argument List:
     First 10 arguments are inputs.
-    1- Dielectric Permittivity (<font size=+2>&epsilon;<sub>r</sub></font>) ;
-    2- Inner Radius (r) ;length
-    3- Outer Radius (d) ;length
-    4- Shift From Center (s) ;length
-    5- Dielectric Loss Tangent ;
-    6- Metal Conductivity ;  electrical conductivity
-    7- Metal Permeability ;
-    8- Roughness ;length
-    9- Frequency ; frequency
-    10- Physical Length ;length
-    11- Impedance ;  impedance
-    12- Electrical Length ; angle
-    13- <font size=+2>&epsilon;<sub>eff</sub></font> ;
-    14- Conductor Loss ;   loss per length
-    15- Dielectric Loss ;  loss per length
+    1. Dielectric Permittivity (<font size=+2>&epsilon;<sub>r</sub></font>) ;
+    2. Inner Radius (r) ;length
+    3. Outer Radius (d) ;length
+    4. Shift From Center (s) ;length
+    5. Dielectric Loss Tangent ;
+    6. Metal Conductivity ;  electrical conductivity
+    7. Metal Permeability ;
+    8. Roughness ;length
+    9. Frequency ; frequency
+    10. Physical Length ;length
+    11. Impedance ;  impedance
+    12. Electrical Length ; angle
+    13. <font size=+2>&epsilon;<sub>eff</sub></font> ;
+    14. Conductor Loss ;   loss per length
+    15. Dielectric Loss ;  loss per length
     Ref: Transmssion Line Design Handbook, p56, r-inner diameter, d-outer diameter
     """
 
@@ -1178,7 +1214,7 @@ def eccentric_coaxial_analysis(arg, defaultunits):
     eeff = er
     deg = electrical_length(eeff, freq, length)
     sd = skin_depth(freq, sigma, mu)
-    cond_loss = -pi * freq / Z / co * (Z_eccentric_coaxial(1.0, r, d, sh) - Z_eccentric_coaxial(
+    cond_loss = -mu * pi * freq / Z / co * (Z_eccentric_coaxial(1.0, r, d, sh) - Z_eccentric_coaxial(
         1.0, r - (sd/ 2.0), d + (sd/ 2.0), sh)) * 20.0 * log10(exp(1))  # dB/m, incremental inductance
     diel_loss = dielectric_loss(eeff, er, freq, tand)
     argout = [Z, deg, eeff, cond_loss, diel_loss]
@@ -1190,21 +1226,21 @@ def parallel_wires_analysis(arg, defaultunits):
     """
     Argument List:
     First 10 arguments are inputs.
-    1- Dielectric Permittivity (<font size=+2>&epsilon;<sub>r</sub></font>);
-    2- First Diameter (<font size=+2>d<sub>1</sub></font>) ;length
-    3- Second Diameter (<font size=+2>d<sub>2</sub></font>) ;length
-    4- Center to Center Spacing (D) ;length
-    5- Dielectric Loss Tangent ;
-    6- Metal Conductivity ;  electrical conductivity
-    7- Metal Permeability ;
-    8- Roughness ;length
-    9- Frequency ; frequency
-    10- Physical Length ;length
-    11- Impedance ;  impedance
-    12- Electrical Length ; angle
-    13- <font size=+2>&epsilon;<sub>eff</sub></font> ;
-    14- Conductor Loss ;   loss per length
-    15- Dielectric Loss ;  loss per length
+    1. Dielectric Permittivity (<font size=+2>&epsilon;<sub>r</sub></font>);
+    2. First Diameter (<font size=+2>d<sub>1</sub></font>) ;length
+    3. Second Diameter (<font size=+2>d<sub>2</sub></font>) ;length
+    4. Center to Center Spacing (D) ;length
+    5. Dielectric Loss Tangent ;
+    6. Metal Conductivity ;  electrical conductivity
+    7. Metal Permeability ;
+    8. Roughness ;length
+    9. Frequency ; frequency
+    10. Physical Length ;length
+    11. Impedance ;  impedance
+    12. Electrical Length ; angle
+    13. <font size=+2>&epsilon;<sub>eff</sub></font> ;
+    14. Conductor Loss ;   loss per length
+    15. Dielectric Loss ;  loss per length
     Ref: Transmssion Line Design Handbook, p67
     """
 
@@ -1215,7 +1251,7 @@ def parallel_wires_analysis(arg, defaultunits):
     eeff = er
     deg = electrical_length(eeff, freq, length)
     sd = skin_depth(freq, sigma, mu)
-    cond_loss = -pi * freq / Z / co * (Z_parallel_wires(1.0, d1, d2, D) - Z_parallel_wires(
+    cond_loss = -mu * pi * freq / Z / co * (Z_parallel_wires(1.0, d1, d2, D) - Z_parallel_wires(
         1.0, d1 - sd, d2 - sd, D)) * 20.0 * log10(exp(1))  # dB/m, incremental inductance
     diel_loss = dielectric_loss(eeff, er, freq, tand)
     argout = [Z, deg, eeff, cond_loss, diel_loss]
@@ -1439,23 +1475,23 @@ def covered_suspended_microstripline_analysis(arg, defaultunits):
     """
     Argument List:
     First 12 arguments are inputs.
-    1- Line Width (w) ;length
-    2- Metal Thickness (t) ;length
-    3- Substrate Thickness (h) ;length
-    4- Upper Cavity Height (hu) ;length
-    5- Lower Cavity Height (hl) ;length
-    6- Dielectric Permittivity (<font size=+2>&epsilon;<sub>r</sub></font>);
-    7- Dielectric Loss Tangent ;
-    8- Metal Conductivity ;  electrical conductivity
-    9- Metal Permeability ;
-    10- Roughness ;length
-    11- Frequency ; frequency
-    12- Physical Length ;length
-    13- Impedance ;   impedance
-    14- Electrical Length ;  angle
-    15- <font size=+2>&epsilon;<sub>eff</sub></font> ;
-    16- Conductor Loss ;   loss per length
-    17- Dielectric Loss ;   loss per length
+    1. Line Width (w) ;length
+    2. Metal Thickness (t) ;length
+    3. Substrate Thickness (h) ;length
+    4. Upper Cavity Height (hu) ;length
+    5. Lower Cavity Height (hl) ;length
+    6. Dielectric Permittivity (<font size=+2>&epsilon;<sub>r</sub></font>);
+    7. Dielectric Loss Tangent ;
+    8. Metal Conductivity ;  electrical conductivity
+    9. Metal Permeability ;
+    10. Roughness ;length
+    11. Frequency ; frequency
+    12. Physical Length ;length
+    13. Impedance ;   impedance
+    14. Electrical Length ;  angle
+    15. <font size=+2>&epsilon;<sub>eff</sub></font> ;
+    16. Conductor Loss ;   loss per length
+    17. Dielectric Loss ;   loss per length
     Ref: Model for Shielded Suspended Substrate Microstrip Line.pdf, Level 1
     Over the range 0.5<=w/hl<=10, 0.05<=h/hl<=1.5, and er<=20 the accuracy
     of these model equations (in reproducing the exact theoretical data) is generally
@@ -1473,7 +1509,7 @@ def covered_suspended_microstripline_analysis(arg, defaultunits):
     Z, eeff = Z_eeff_suspended_stripline(w, t, h, hu, hl, er, freq)
     deg = electrical_length(eeff, freq, length)
     sd = min([skin_depth(freq, sigma, mu),(t/2.0)])
-    cond_loss = -pi * freq / Z / co * (Z_eeff_suspended_stripline(w, t, h, hu, hl, 1.0, freq)[0] - Z_eeff_suspended_stripline(
+    cond_loss = -mu * pi * freq / Z / co * (Z_eeff_suspended_stripline(w, t, h, hu, hl, 1.0, freq)[0] - Z_eeff_suspended_stripline(
         w - sd, t - sd,  h, hu + sd, hl + sd, 1.0, freq)[0]) * 20.0 * log10(exp(1))  # dB/m, incremental inductance
     diel_loss = dielectric_loss(eeff, er, freq, tand)
     argout = [Z, deg, eeff, cond_loss, diel_loss]
@@ -1485,23 +1521,23 @@ def covered_suspended_microstripline_synthesis(arg, defaultunits):
     """
     Argument List:
     First 11 arguments are inputs.
-    1- Line Width (w) ;length
-    2- Metal Thickness (t) ;length
-    3- Substrate Thickness (h) ;length
-    4- Upper Cavity Heigh (hu) ;length
-    5- Lower Cavity Height (hl) ;length
-    6- Dielectric Permittivity (<font size=+2>&epsilon;<sub>r</sub></font>);
-    7- Dielectric Loss Tangent ;
-    8- Metal Conductivity ;  electrical conductivity
-    9- Metal Permeability ;
-    10- Roughness ;length
-    11- Frequency ; frequency
-    12- Physical Length ;length
-    13- Impedance ;   impedance
-    14- Electrical Length ;  angle
-    15- <font size=+2>&epsilon;<sub>eff</sub></font> ;
-    16- Conductor Loss ;   loss per length
-    17- Dielectric Loss ;   loss per length
+    1. Line Width (w) ;length
+    2. Metal Thickness (t) ;length
+    3. Substrate Thickness (h) ;length
+    4. Upper Cavity Heigh (hu) ;length
+    5. Lower Cavity Height (hl) ;length
+    6. Dielectric Permittivity (<font size=+2>&epsilon;<sub>r</sub></font>);
+    7. Dielectric Loss Tangent ;
+    8. Metal Conductivity ;  electrical conductivity
+    9. Metal Permeability ;
+    10. Roughness ;length
+    11. Frequency ; frequency
+    12. Physical Length ;length
+    13. Impedance ;   impedance
+    14. Electrical Length ;  angle
+    15. <font size=+2>&epsilon;<sub>eff</sub></font> ;
+    16. Conductor Loss ;   loss per length
+    17. Dielectric Loss ;   loss per length
     Ref: Transmssion Line Design Handbook, p141, a-dielectric height, b-spacing height, t-metal thickness, w-metal width
     Dispersion characteristics are valid for er=12.9 and frequency >20GHz
     """
@@ -1515,7 +1551,7 @@ def covered_suspended_microstripline_synthesis(arg, defaultunits):
     Z, eeff = Z_eeff_suspended_stripline(w, t, h, hu, hl, er, freq)
     length = physical_length(eeff, freq, deg)
     sd = skin_depth(freq, sigma, mu)
-    cond_loss = -pi * freq / Z / co * (Z_eeff_suspended_stripline(w, t, h, hu, hl, 1.0, freq)[0] - Z_eeff_suspended_stripline(
+    cond_loss = -mu * pi * freq / Z / co * (Z_eeff_suspended_stripline(w, t, h, hu, hl, 1.0, freq)[0] - Z_eeff_suspended_stripline(
         w - sd, t - sd,  h, hu + sd, hl + sd, 1.0, freq)[0]) * 20.0 * log10(exp(1))  # dB/m, incremental inductance
     diel_loss = dielectric_loss(eeff, er, freq, tand)
     argout = [Z, deg, eeff, cond_loss, diel_loss]
@@ -1530,22 +1566,22 @@ def suspended_microstripline_analysis(arg, defaultunits):
     """
     Argument List:
     First 11 arguments are inputs.
-    1- Line Width (w) ;length
-    2- Metal Thickness (t) ;length
-    3- Substrate Thickness (a) ;length
-    4- Spacing Height (b) ;length
-    5- Dielectric Permittivity (<font size=+2>&epsilon;<sub>r</sub></font>);
-    6- Dielectric Loss Tangent ;
-    7- Metal Conductivity ;  electrical conductivity
-    8- Metal Permeability ;
-    9- Roughness ;length
-    10- Frequency ; frequency
-    11- Physical Length ;length
-    12- Impedance ;   impedance
-    13- Electrical Length ;  angle
-    14- <font size=+2>&epsilon;<sub>eff</sub></font> ;
-    15- Conductor Loss ;   loss per length
-    16- Dielectric Loss ;   loss per length
+    1. Line Width (w) ;length
+    2. Metal Thickness (t) ;length
+    3. Substrate Thickness (a) ;length
+    4. Spacing Height (b) ;length
+    5. Dielectric Permittivity (<font size=+2>&epsilon;<sub>r</sub></font>);
+    6. Dielectric Loss Tangent ;
+    7. Metal Conductivity ;  electrical conductivity
+    8. Metal Permeability ;
+    9. Roughness ;length
+    10. Frequency ; frequency
+    11. Physical Length ;length
+    12. Impedance ;   impedance
+    13. Electrical Length ;  angle
+    14. <font size=+2>&epsilon;<sub>eff</sub></font> ;
+    15. Conductor Loss ;   loss per length
+    16. Dielectric Loss ;   loss per length
     Ref: Model for Shielded Suspended Substrate Microstrip Line.pdf, Level 1
     Over the range 0.5<=w/hl<=10, 0.05<=h/hl<=1.5, and er<=20 the accuracy
     of these model equations (in reproducing the exact theoretical data) is generally
@@ -1563,7 +1599,7 @@ def suspended_microstripline_analysis(arg, defaultunits):
     Z, eeff = Z_eeff_suspended_stripline(w, t, a, 1000*b, b, er, freq)
     deg = electrical_length(eeff, freq, length)
     sd = min(skin_depth(freq, sigma, mu),(t/2.0))
-    cond_loss = -pi * freq / Z / co * (Z_eeff_suspended_stripline(w, t, a, 1000*b, b, 1.0, freq)[0] - Z_eeff_suspended_stripline(
+    cond_loss = -mu * pi * freq / Z / co * (Z_eeff_suspended_stripline(w, t, a, 1000*b, b, 1.0, freq)[0] - Z_eeff_suspended_stripline(
         w - sd, t - sd, a, 1000*b, b + sd, 1.0, freq)[0]) * 20.0 * log10(exp(1))  # dB/m, incremental inductance
     diel_loss = dielectric_loss(eeff, er, freq, tand)
     argout = [Z, deg, eeff, cond_loss, diel_loss]
@@ -1575,22 +1611,22 @@ def suspended_microstripline_synthesis(arg, defaultunits):
     """
     Argument List:
     First 11 arguments are inputs.
-    1- Line Width (w) ;length
-    2- Metal Thickness (t) ;length
-    3- Substrate Thickness (a) ;length
-    4- Spacing Height (b) ;length
-    5- Dielectric Permittivity (<font size=+2>&epsilon;<sub>r</sub></font>);
-    6- Dielectric Loss Tangent ;
-    7- Metal Conductivity ;  electrical conductivity
-    8- Metal Permeability ;
-    9- Roughness ;length
-    10- Frequency ; frequency
-    11- Physical Length ;length
-    12- Impedance ;   impedance
-    13- Electrical Length ;  angle
-    14- <font size=+2>&epsilon;<sub>eff</sub></font> ;
-    15- Conductor Loss ;   loss per length
-    16- Dielectric Loss ;   loss per length
+    1. Line Width (w) ;length
+    2. Metal Thickness (t) ;length
+    3. Substrate Thickness (a) ;length
+    4. Spacing Height (b) ;length
+    5. Dielectric Permittivity (<font size=+2>&epsilon;<sub>r</sub></font>);
+    6. Dielectric Loss Tangent ;
+    7. Metal Conductivity ;  electrical conductivity
+    8. Metal Permeability ;
+    9. Roughness ;length
+    10. Frequency ; frequency
+    11. Physical Length ;length
+    12. Impedance ;   impedance
+    13. Electrical Length ;  angle
+    14. <font size=+2>&epsilon;<sub>eff</sub></font> ;
+    15. Conductor Loss ;   loss per length
+    16. Dielectric Loss ;   loss per length
     Ref: Transmssion Line Design Handbook, p141, a-dielectric height, b-spacing height, t-metal thickness, w-metal width
     Dispersion characteristics are valid for er=12.9 and frequency >20GHz
     """
@@ -1606,7 +1642,7 @@ def suspended_microstripline_synthesis(arg, defaultunits):
     Z, eeff = Z_eeff_suspended_microstripline(w, t, a, b, er, freq)
     length = physical_length(eeff, freq, deg)
     sd = skin_depth(freq, sigma, mu)
-    cond_loss = -pi * freq / Z / co * (Z_eeff_suspended_microstripline(w, t, a, b, 1.0, freq)[0] - Z_eeff_suspended_microstripline(
+    cond_loss = -mu * pi * freq / Z / co * (Z_eeff_suspended_microstripline(w, t, a, b, 1.0, freq)[0] - Z_eeff_suspended_microstripline(
         w - sd, t - sd, a, b + sd, 1.0, freq)[0]) * 20.0 * log10(exp(1))  # dB/m, incremental inductance
     diel_loss = dielectric_loss(eeff, er, freq, tand)
     argout = [Z, deg, eeff, cond_loss, diel_loss]
@@ -1647,22 +1683,22 @@ def shielded_suspended_stripline_analysis(arg, defaultunits):
     """
     Argument List:
     First 11 arguments are inputs.
-    1- Line Width (w);length
-    2- Substrate Thickness (h);length
-    3- Total Height (b);length
-    4- Box Width (a);length
-    5- Dielectric Permittivity (<font size=+2>&epsilon;<sub>r</sub></font>);
-    6- Dielectric Loss Tangent ;
-    7- Metal Conductivity ;  electrical conductivity
-    8- Metal Permeability ;
-    9- Roughness ;length
-    10- Frequency ; frequency
-    11- Physical Length ;length
-    12- Impedance ;   impedance
-    13- Electrical Length ;   angle
-    14- <font size=+2>&epsilon;<sub>eff</sub></font> ;
-    15- Conductor Loss ;   loss per length
-    16- Dielectric Loss ;  loss per length
+    1. Line Width (w);length
+    2. Substrate Thickness (h);length
+    3. Total Height (b);length
+    4. Box Width (a);length
+    5. Dielectric Permittivity (<font size=+2>&epsilon;<sub>r</sub></font>);
+    6. Dielectric Loss Tangent ;
+    7. Metal Conductivity ;  electrical conductivity
+    8. Metal Permeability ;
+    9. Roughness ;length
+    10. Frequency ; frequency
+    11. Physical Length ;length
+    12. Impedance ;   impedance
+    13. Electrical Length ;   angle
+    14. <font size=+2>&epsilon;<sub>eff</sub></font> ;
+    15. Conductor Loss ;   loss per length
+    16. Dielectric Loss ;  loss per length
     Ref: Transmssion Line Design Handbook, p141
     Analysis Equations for Shielded Suspended Substrate Microstrip Line and Broadside-Coupled Stripline.pdf
     Valid for 1 < a/b < 2.5, 1 < er < 4, 0.1 < h/b < 0.5
@@ -1676,7 +1712,7 @@ def shielded_suspended_stripline_analysis(arg, defaultunits):
     Z, eeff = Z_eeff_shielded_suspended_stripline(w, h, b, a, er)
     deg = electrical_length(eeff, freq, length)
     sd = skin_depth(freq, sigma, mu)
-    cond_loss = -pi * freq / Z / co * (Z_eeff_shielded_suspended_stripline(w, h, b, a, 1.0)[0] - Z_eeff_shielded_suspended_stripline(
+    cond_loss = -mu * pi * freq / Z / co * (Z_eeff_shielded_suspended_stripline(w, h, b, a, 1.0)[0] - Z_eeff_shielded_suspended_stripline(
         w - sd, h + sd, b + sd, a + sd, 1.0)[0]) * 20.0 * log10(exp(1))  # dB/m, incremental inductance
     diel_loss = dielectric_loss(eeff, er, freq, tand)
     argout = [Z, deg, eeff, cond_loss, diel_loss]
@@ -1689,22 +1725,22 @@ def shielded_suspended_stripline_synthesis(arg, defaultunits):
     """
     Argument List:
     First 11 arguments are inputs.
-    1- Line Width (w);length
-    2- Substrate Thickness (h);length
-    3- Total Height (b);length
-    4- Box Width (a);length
-    5- Dielectric Permittivity (<font size=+2>&epsilon;<sub>r</sub></font>);
-    6- Dielectric Loss Tangent ;
-    7- Metal Conductivity ;  electrical conductivity
-    8- Metal Permeability ;
-    9- Roughness ;length
-    10- Frequency ; frequency
-    11- Physical Length ;length
-    12- Impedance ;   impedance
-    13- Electrical Length ;   angle
-    14- <font size=+2>&epsilon;<sub>eff</sub></font> ;
-    15- Conductor Loss ;   loss per length
-    16- Dielectric Loss ;  loss per length
+    1. Line Width (w);length
+    2. Substrate Thickness (h);length
+    3. Total Height (b);length
+    4. Box Width (a);length
+    5. Dielectric Permittivity (<font size=+2>&epsilon;<sub>r</sub></font>);
+    6. Dielectric Loss Tangent ;
+    7. Metal Conductivity ;  electrical conductivity
+    8. Metal Permeability ;
+    9. Roughness ;length
+    10. Frequency ; frequency
+    11. Physical Length ;length
+    12. Impedance ;   impedance
+    13. Electrical Length ;   angle
+    14. <font size=+2>&epsilon;<sub>eff</sub></font> ;
+    15. Conductor Loss ;   loss per length
+    16. Dielectric Loss ;  loss per length
     Ref: Transmssion Line Design Handbook, p141
     Analysis Equations for Shielded Suspended Substrate Microstrip Line and Broadside-Coupled Stripline.pdf
     Valid for 1 < a/b < 2.5, 1 < er < 4, 0.1 < h/b < 0.5
@@ -1719,7 +1755,7 @@ def shielded_suspended_stripline_synthesis(arg, defaultunits):
     Z, eeff = Z_eeff_shielded_suspended_stripline(w, h, b, a, er)
     length = physical_length(eeff, freq, deg)
     sd = skin_depth(freq, sigma, mu)
-    cond_loss = -pi * freq / Z / co * (Z_eeff_shielded_suspended_stripline(w, h, b, a, 1.0)[0] - Z_eeff_shielded_suspended_stripline(
+    cond_loss = -mu * pi * freq / Z / co * (Z_eeff_shielded_suspended_stripline(w, h, b, a, 1.0)[0] - Z_eeff_shielded_suspended_stripline(
         w - sd, h + sd, b + sd, a + sd, 1.0)[0]) * 20.0 * log10(exp(1))  # dB/m, incremental inductance
     diel_loss = dielectric_loss(eeff, er, freq, tand)
     argout = [eeff, cond_loss, diel_loss]
@@ -1784,22 +1820,22 @@ def grounded_cpw_analysis(arg, defaultunits):
     """
     Argument List:
     First 11 arguments are inputs.
-    1- Line Width (w);length
-    2- Line Spacing (s);length
-    3- Metal Thickness (th);length
-    4- Dielectric Permittivity (<font size=+2>&epsilon;<sub>r</sub></font>);
-    5- Substrate Thickness (h);length
-    6- Dielectric Loss Tangent ;
-    7- Metal Conductivity ;  electrical conductivity
-    8- Metal Permeability ;
-    9- Roughness ;length
-    10- Frequency ; frequency
-    11- Physical Length ;length
-    12- Impedance ;   impedance
-    13- Electrical Length ; angle
-    14- <font size=+2>&epsilon;<sub>eff</sub></font> ;
-    15- Conductor Loss ;   loss per length
-    16- Dielectric Loss ;  loss per length
+    1. Line Width (w);length
+    2. Line Spacing (s);length
+    3. Metal Thickness (th);length
+    4. Dielectric Permittivity (<font size=+2>&epsilon;<sub>r</sub></font>);
+    5. Substrate Thickness (h);length
+    6. Dielectric Loss Tangent ;
+    7. Metal Conductivity ;  electrical conductivity
+    8. Metal Permeability ;
+    9. Roughness ;length
+    10. Frequency ; frequency
+    11. Physical Length ;length
+    12. Impedance ;   impedance
+    13. Electrical Length ; angle
+    14. <font size=+2>&epsilon;<sub>eff</sub></font> ;
+    15. Conductor Loss ;   loss per length
+    16. Dielectric Loss ;  loss per length
     Ref: Coplanar waveguide circuits, components and systems s89
     """
 
@@ -1809,7 +1845,7 @@ def grounded_cpw_analysis(arg, defaultunits):
     Z, eeff = Z_eeff_grounded_cpw_thick(w, th, er, s, h)
     deg = electrical_length(eeff, freq, length)
     sd = skin_depth(freq, sigma, mu)
-    cond_loss = -pi * freq / Z / co * (Z_eeff_grounded_cpw(w, th, 1.0, s, h)[0] - Z_eeff_grounded_cpw(
+    cond_loss = -mu * pi * freq / Z / co * (Z_eeff_grounded_cpw(w, th, 1.0, s, h)[0] - Z_eeff_grounded_cpw(
         w - sd, th-sd, 1.0, s + sd, h + sd)[0]) * 20.0 * log10(exp(1))  # dB/m, incremental inductance
     diel_loss = dielectric_loss(eeff, er, freq, tand)
     argout = [Z, deg, eeff, cond_loss, diel_loss]
@@ -1820,21 +1856,21 @@ def grounded_cpw_synthesis(arg, defaultunits):
     """
     Argument List:
     First 10 arguments are inputs.
-    1- Line Width (w);length
-    2- Line Spacing (s);length
-    3- Dielectric Permittivity (<font size=+2>&epsilon;<sub>r</sub></font>);
-    4- Substrate Thickness (h);length
-    5- Dielectric Loss Tangent ;
-    6- Metal Conductivity ;  electrical conductivity
-    7- Metal Permeability ;
-    8- Roughness ;length
-    9- Frequency ; frequency
-    10- Physical Length ;length
-    11- Impedance ;   impedance
-    12- Electrical Length ; angle
-    13- <font size=+2>&epsilon;<sub>eff</sub></font> ;
-    14- Conductor Loss ;   loss per length
-    15- Dielectric Loss ;  loss per length
+    1. Line Width (w);length
+    2. Line Spacing (s);length
+    3. Dielectric Permittivity (<font size=+2>&epsilon;<sub>r</sub></font>);
+    4. Substrate Thickness (h);length
+    5. Dielectric Loss Tangent ;
+    6. Metal Conductivity ;  electrical conductivity
+    7. Metal Permeability ;
+    8. Roughness ;length
+    9. Frequency ; frequency
+    10. Physical Length ;length
+    11. Impedance ;   impedance
+    12. Electrical Length ; angle
+    13. <font size=+2>&epsilon;<sub>eff</sub></font> ;
+    14. Conductor Loss ;   loss per length
+    15. Dielectric Loss ;  loss per length
     Ref: Coplanar waveguide circuits, components and systems s89
     """
 
@@ -1847,7 +1883,7 @@ def grounded_cpw_synthesis(arg, defaultunits):
     Z, eeff = Z_eeff_grounded_cpw(w, er, s, h)
     length = physical_length(eeff, freq, deg)
     sd = skin_depth(freq, sigma, mu)
-    cond_loss = -pi * freq / Z / co * (Z_eeff_grounded_cpw(w, 1.0, s, h)[0] - Z_eeff_grounded_cpw(
+    cond_loss = -mu * pi * freq / Z / co * (Z_eeff_grounded_cpw(w, 1.0, s, h)[0] - Z_eeff_grounded_cpw(
         w - sd, 1.0, s + sd, h + sd)[0]) * 20.0 * log10(exp(1))  # dB/m, incremental inductance
     diel_loss = dielectric_loss(eeff, er, freq, tand)
     arg[0] = prettystring(w, defaultunits[0])
@@ -1877,22 +1913,22 @@ def covered_grounded_coplanar_waveguide_analysis(arg, defaultunits):
     """
     Argument List:
     First 11 arguments are inputs.
-    1- Line Width (w);length
-    2- Line Spacing (s);length
-    3- Substrate Thickness (h);length
-    4- Dielectric Permittivity (<font size=+2>&epsilon;<sub>r</sub></font>);
-    5- Cover Height (b);length
-    6- Dielectric Loss Tangent ;
-    7- Metal Conductivity ;  electrical conductivity
-    8- Metal Permeability ;
-    9- Roughness ;length
-    10- Frequency ; frequency
-    11- Physical Length ;length
-    11- Impedance ;   impedance
-    12- Electrical Length ;  angle
-    13- <font size=+2>&epsilon;<sub>eff</sub></font> ;
-    14- Conductor Loss ; loss per length
-    15- Dielectric Loss ;   loss per length
+    1. Line Width (w);length
+    2. Line Spacing (s);length
+    3. Substrate Thickness (h);length
+    4. Dielectric Permittivity (<font size=+2>&epsilon;<sub>r</sub></font>);
+    5. Cover Height (b);length
+    6. Dielectric Loss Tangent ;
+    7. Metal Conductivity ;  electrical conductivity
+    8. Metal Permeability ;
+    9. Roughness ;length
+    10. Frequency ; frequency
+    11. Physical Length ;length
+    11. Impedance ;   impedance
+    12. Electrical Length ;  angle
+    13. <font size=+2>&epsilon;<sub>eff</sub></font> ;
+    14. Conductor Loss ; loss per length
+    15. Dielectric Loss ;   loss per length
     Ref: Coplanar waveguide circuits, components and systems s89
     """
 
@@ -1902,7 +1938,7 @@ def covered_grounded_coplanar_waveguide_analysis(arg, defaultunits):
     Z, eeff = Z_eeff_covered_grounded_cpw(w, s, h, er, h1)
     deg = electrical_length(eeff, freq, length)
     sd = skin_depth(freq, sigma, mu)
-    cond_loss = -pi * freq / Z / co * (Z_eeff_covered_grounded_cpw(w, s, h, 1.0, h1)[0] - Z_eeff_covered_grounded_cpw(
+    cond_loss = -mu * pi * freq / Z / co * (Z_eeff_covered_grounded_cpw(w, s, h, 1.0, h1)[0] - Z_eeff_covered_grounded_cpw(
         w - sd, s + sd, h + sd, 1.0, h1 + sd)[0]) * 20.0 * log10(exp(1))  # dB/m, incremental inductance
     diel_loss = dielectric_loss(eeff, er, freq, tand)
     argout = [Z, deg, eeff, cond_loss, diel_loss]
@@ -1913,22 +1949,22 @@ def covered_grounded_coplanar_waveguide_synthesis(arg, defaultunits):
     """
     Argument List:
     First 11 arguments are inputs.
-    1- Line Width (w);length
-    2- Line Spacing (s);length
-    3- Substrate Thickness (h);length
-    4- Dielectric Permittivity (<font size=+2>&epsilon;<sub>r</sub></font>);
-    5- Cover Height (b);length
-    6- Dielectric Loss Tangent ;
-    7- Metal Conductivity ;  electrical conductivity
-    8- Metal Permeability ;
-    9- Roughness ;length
-    10- Frequency ; frequency
-    11- Physical Length ;length
-    12- Impedance ;   impedance
-    13- Electrical Length ;  angle
-    14- <font size=+2>&epsilon;<sub>eff</sub></font> ;
-    15- Conductor Loss ; loss per length
-    16- Dielectric Loss ;   loss per length
+    1. Line Width (w);length
+    2. Line Spacing (s);length
+    3. Substrate Thickness (h);length
+    4. Dielectric Permittivity (<font size=+2>&epsilon;<sub>r</sub></font>);
+    5. Cover Height (b);length
+    6. Dielectric Loss Tangent ;
+    7. Metal Conductivity ;  electrical conductivity
+    8. Metal Permeability ;
+    9. Roughness ;length
+    10. Frequency ; frequency
+    11. Physical Length ;length
+    12. Impedance ;   impedance
+    13. Electrical Length ;  angle
+    14. <font size=+2>&epsilon;<sub>eff</sub></font> ;
+    15. Conductor Loss ; loss per length
+    16. Dielectric Loss ;   loss per length
     Ref: Coplanar waveguide circuits, components and systems s89
     """
 
@@ -1941,7 +1977,7 @@ def covered_grounded_coplanar_waveguide_synthesis(arg, defaultunits):
     Z, eeff = Z_eeff_covered_grounded_cpw(w, s, h, er, h1)
     length = physical_length(eeff, freq, deg)
     sd = skin_depth(freq, sigma, mu)
-    cond_loss = -pi * freq / Z / co * (Z_eeff_covered_grounded_cpw(w, s, h, 1.0, h1)[0] - Z_eeff_covered_grounded_cpw(
+    cond_loss = -mu * pi * freq / Z / co * (Z_eeff_covered_grounded_cpw(w, s, h, 1.0, h1)[0] - Z_eeff_covered_grounded_cpw(
         w - sd, s + sd, h + sd, 1.0, h1 + sd)[0]) * 20.0 * log10(exp(1))  # dB/m, incremental inductance
     diel_loss = dielectric_loss(eeff, er, freq, tand)
     argout = [Z, deg, eeff, cond_loss, diel_loss]
@@ -1958,29 +1994,29 @@ def edge_coupled_microstrip_analysis(arg, defaultunits):
     """
     Argument List:
     First 11 arguments are inputs.
-    1- Line Width (w) ;length
-    2- Line Gap (s) ;length
-    3- Metal Thickness (t) ;length
-    4- Substrate Thickness (h) ;length
-    5- Dielectric Permittivity (<font size=+2>&epsilon;<sub>r</sub></font>);
-    6- Dielectric Loss Tangent ;
-    7- Metal Conductivity ;  electrical conductivity
-    8- Metal Permeability ;
-    9- Roughness ;length
-    10- Frequency ; frequency
-    11- Physical Length ;length
-    12- Impedance (even);   impedance
-    13- Impedance (odd);   impedance
-    14- Electrical Length (even) ;   angle
-    15- Electrical Length (odd) ;  angle
-    16- <font size=+2>&epsilon;<sub>eff</sub></font> (even);
-    17- <font size=+2>&epsilon;<sub>eff</sub></font> (odd);
-    18- Conductor Loss (even) ;  loss per length
-    19- Conductor Loss (odd) ;  loss per length
-    20- Dielectric Loss (even) ; loss per length
-    21- Dielectric Loss (odd) ; loss per length
-    22- Maximum Coupling ;
-    23- Matched Impedance ;
+    1. Line Width (w) ;length
+    2. Line Gap (s) ;length
+    3. Metal Thickness (t) ;length
+    4. Substrate Thickness (h) ;length
+    5. Dielectric Permittivity (<font size=+2>&epsilon;<sub>r</sub></font>);
+    6. Dielectric Loss Tangent ;
+    7. Metal Conductivity ;  electrical conductivity
+    8. Metal Permeability ;
+    9. Roughness ;length
+    10. Frequency ; frequency
+    11. Physical Length ;length
+    12. Impedance (even);   impedance
+    13. Impedance (odd);   impedance
+    14. Electrical Length (even) ;   angle
+    15. Electrical Length (odd) ;  angle
+    16. <font size=+2>&epsilon;<sub>eff</sub></font> (even);
+    17. <font size=+2>&epsilon;<sub>eff</sub></font> (odd);
+    18. Conductor Loss (even) ;  loss per length
+    19. Conductor Loss (odd) ;  loss per length
+    20. Dielectric Loss (even) ; loss per length
+    21. Dielectric Loss (odd) ; loss per length
+    22. Maximum Coupling ;
+    23. Matched Impedance ;
     Ref: Transmssion Line Design Handbook, p199, with errata sheet
     """
 
@@ -2037,28 +2073,28 @@ def edge_coupled_microstrip_synthesis(arg, defaultunits):
     """
     Argument List:
     First 11 arguments are inputs.
-    1- Line Width (w) ;length
-    2- Line Gap (s) ;length
-    3- Metal Thickness (t) ;length
-    4- Substrate Thickness (h) ;length
-    5- Dielectric Permittivity (<font size=+2>&epsilon;<sub>r</sub></font>);
-    6- Dielectric Loss Tangent ;
-    7- Metal Conductivity ;  electrical conductivity
-    8- Metal Permeability ;
-    9- Roughness ;length
-    10- Frequency ; frequency
-    11- Physical Length ;length
-    12- Impedance (even);   impedance
-    13- Impedance (odd);   impedance
-    14- Electrical Length (even) ;   angle
-    15- Electrical Length (odd) ;  angle
-    16- <font size=+2>&epsilon;<sub>eff</sub></font> (even);
-    17- <font size=+2>&epsilon;<sub>eff</sub></font> (odd);
-    18- Conductor Loss (even) ;  loss per length
-    19- Conductor Loss (odd) ;  loss per length
-    20- Dielectric Loss (even) ; loss per length
-    21- Dielectric Loss (odd) ; loss per length
-    22- Maximum Coupling ;
+    1. Line Width (w) ;length
+    2. Line Gap (s) ;length
+    3. Metal Thickness (t) ;length
+    4. Substrate Thickness (h) ;length
+    5. Dielectric Permittivity (<font size=+2>&epsilon;<sub>r</sub></font>);
+    6. Dielectric Loss Tangent ;
+    7. Metal Conductivity ;  electrical conductivity
+    8. Metal Permeability ;
+    9. Roughness ;length
+    10. Frequency ; frequency
+    11. Physical Length ;length
+    12. Impedance (even);   impedance
+    13. Impedance (odd);   impedance
+    14. Electrical Length (even) ;   angle
+    15. Electrical Length (odd) ;  angle
+    16. <font size=+2>&epsilon;<sub>eff</sub></font> (even);
+    17. <font size=+2>&epsilon;<sub>eff</sub></font> (odd);
+    18. Conductor Loss (even) ;  loss per length
+    19. Conductor Loss (odd) ;  loss per length
+    20. Dielectric Loss (even) ; loss per length
+    21. Dielectric Loss (odd) ; loss per length
+    22. Maximum Coupling ;
     Ref: Transmssion Line Design Handbook, p199, with errata sheet
     """
 
@@ -2255,25 +2291,25 @@ def edge_coupled_stripline_analysis(arg, defaultunits):
     """
     Argument List:
     First 14 arguments are inputs.
-    1- Line Width (w) ;length
-    2- Line Spacing (s) ;length
-    3- Metal Thickness ;length
-    4- Ground Spacing (b) ;length
-    5- Dielectric Permittivity (<font size=+2>&epsilon;<sub>r</sub></font>) ;
-    6- Dielectric Loss Tangent ;
-    7- Metal Conductivity ;  electrical conductivity
-    8- Metal Permeability ;
-    9- Roughness ;length
-    10- Frequency ; frequency
-    11- Physical Length ;length
-    12- Impedance (even);   impedance
-    13- Impedance (odd);   impedance
-    14- Electrical Length ;   angle
-    15- <font size=+2>&epsilon;<sub>eff</sub></font> ;
-    16- Conductor Loss (Even Mode) ;  loss per length
-    17- Conductor Loss (Odd Mode) ;  loss per length
-    18- Dielectric Loss ; loss per length
-    19- Maximum Coupling ;
+    1. Line Width (w) ;length
+    2. Line Spacing (s) ;length
+    3. Metal Thickness ;length
+    4. Ground Spacing (b) ;length
+    5. Dielectric Permittivity (<font size=+2>&epsilon;<sub>r</sub></font>) ;
+    6. Dielectric Loss Tangent ;
+    7. Metal Conductivity ;  electrical conductivity
+    8. Metal Permeability ;
+    9. Roughness ;length
+    10. Frequency ; frequency
+    11. Physical Length ;length
+    12. Impedance (even);   impedance
+    13. Impedance (odd);   impedance
+    14. Electrical Length ;   angle
+    15. <font size=+2>&epsilon;<sub>eff</sub></font> ;
+    16. Conductor Loss (Even Mode) ;  loss per length
+    17. Conductor Loss (Odd Mode) ;  loss per length
+    18. Dielectric Loss ; loss per length
+    19. Maximum Coupling ;
     Ref: Transmssion Line Design Handbook, p233, with errata sheet
     """
 
@@ -2323,25 +2359,25 @@ def edge_coupled_stripline_synthesis(arg, defaultunits):
     """
     Argument List:
     First 14 arguments are inputs.
-    1- Line Width (w) ;length
-    2- Dielectric Permittivity (<font size=+2>&epsilon;<sub>r</sub></font>) ;
-    3- Metal Thickness ;length
-    4- Ground Spacing (b) ;length
-    5- Line Spacing (s) ;length
-    6- Dielectric Loss Tangent ;
-    7- Metal Conductivity ;  electrical conductivity
-    8- Metal Permeability ;
-    9- Roughness ;length
-    10- Frequency ; frequency
-    11- Physical Length ;length
-    12- Impedance (even);   impedance
-    13- Impedance (odd);   impedance
-    14- Electrical Length ;   angle
-    15- <font size=+2>&epsilon;<sub>eff</sub></font> ;
-    16- Conductor Loss (Even Mode) ;  loss per length
-    17- Conductor Loss (Odd Mode) ;  loss per length
-    18- Dielectric Loss ; loss per length
-    19- Maximum Coupling ;
+    1. Line Width (w) ;length
+    2. Dielectric Permittivity (<font size=+2>&epsilon;<sub>r</sub></font>) ;
+    3. Metal Thickness ;length
+    4. Ground Spacing (b) ;length
+    5. Line Spacing (s) ;length
+    6. Dielectric Loss Tangent ;
+    7. Metal Conductivity ;  electrical conductivity
+    8. Metal Permeability ;
+    9. Roughness ;length
+    10. Frequency ; frequency
+    11. Physical Length ;length
+    12. Impedance (even);   impedance
+    13. Impedance (odd);   impedance
+    14. Electrical Length ;   angle
+    15. <font size=+2>&epsilon;<sub>eff</sub></font> ;
+    16. Conductor Loss (Even Mode) ;  loss per length
+    17. Conductor Loss (Odd Mode) ;  loss per length
+    18. Dielectric Loss ; loss per length
+    19. Maximum Coupling ;
     Ref: Transmssion Line Design Handbook, p233, with errata sheet
     """
 
@@ -2393,22 +2429,22 @@ def symmetrical_shielded_stripline_analysis(arg, defaultunits):
     Argument List:
     Problemli.
     First 11 arguments are inputs.
-    1- Line Width (w) ;length
-    2- Ground Spacing (b);length
-    3- Metal Thickness (t) ;length
-    4- spacing between lateral wall and line (g) ;length
-    5- Dielectric Permittivity (<font size=+2>&epsilon;<sub>r</sub></font>);
-    6- Dielectric Loss Tangent ;
-    7- Metal Conductivity ;  electrical conductivity
-    8- Metal Permeability ;
-    9- Roughness ;length
-    10- Frequency ; frequency
-    11- Physical Length ;length
-    12- Impedance ;   impedance
-    13- Electrical Length ;   angle
-    14- <font size=+2>&epsilon;<sub>eff</sub></font> ;
-    15- Conductor Loss ;   loss per length
-    16- Dielectric Loss ;  loss per length
+    1. Line Width (w) ;length
+    2. Ground Spacing (b);length
+    3. Metal Thickness (t) ;length
+    4. spacing between lateral wall and line (g) ;length
+    5. Dielectric Permittivity (<font size=+2>&epsilon;<sub>r</sub></font>);
+    6. Dielectric Loss Tangent ;
+    7. Metal Conductivity ;  electrical conductivity
+    8. Metal Permeability ;
+    9. Roughness ;length
+    10. Frequency ; frequency
+    11. Physical Length ;length
+    12. Impedance ;   impedance
+    13. Electrical Length ;   angle
+    14. <font size=+2>&epsilon;<sub>eff</sub></font> ;
+    15. Conductor Loss ;   loss per length
+    16. Dielectric Loss ;  loss per length
     Ref: Transmssion Line Design Handbook, p136, g-yanduvarla hat arasi bosluk, b-toplam yukseklik, g<2b olmali
     """
 
@@ -2432,22 +2468,22 @@ def symmetrical_shielded_stripline_synthesis(arg, defaultunits):
     Argument List:
     Problemli.
     First 11 arguments are inputs.
-    1- Line Width (w) ;length
-    2- Ground Spacing (b);length
-    3- Metal Thickness (t) ;length
-    4- spacing between lateral wall and line (g) ;length
-    5- Dielectric Permittivity (<font size=+2>&epsilon;<sub>r</sub></font>);
-    6- Dielectric Loss Tangent ;
-    7- Metal Conductivity ;  electrical conductivity
-    8- Metal Permeability ;
-    9- Roughness ;length
-    10- Frequency ; frequency
-    11- Physical Length ;length
-    12- Impedance ;   impedance
-    13- Electrical Length ;   angle
-    14- <font size=+2>&epsilon;<sub>eff</sub></font> ;
-    15- Conductor Loss ;   loss per length
-    16- Dielectric Loss ;  loss per length
+    1. Line Width (w) ;length
+    2. Ground Spacing (b);length
+    3. Metal Thickness (t) ;length
+    4. spacing between lateral wall and line (g) ;length
+    5. Dielectric Permittivity (<font size=+2>&epsilon;<sub>r</sub></font>);
+    6. Dielectric Loss Tangent ;
+    7. Metal Conductivity ;  electrical conductivity
+    8. Metal Permeability ;
+    9. Roughness ;length
+    10. Frequency ; frequency
+    11. Physical Length ;length
+    12. Impedance ;   impedance
+    13. Electrical Length ;   angle
+    14. <font size=+2>&epsilon;<sub>eff</sub></font> ;
+    15. Conductor Loss ;   loss per length
+    16. Dielectric Loss ;  loss per length
     Ref: Transmssion Line Design Handbook, p136, g-yanduvarla hat arasi bosluk, b-toplam yukseklik, g<2b olmali
     """
 
@@ -2475,29 +2511,32 @@ def symmetrical_shielded_stripline_synthesis(arg, defaultunits):
 
 def broadside_offset_coupled_stripline_analysis(arg, defaultunits):
     """
-    Argument List:
-    First 11 arguments are inputs.
-    1- Line Width (w) ;length
-    2- Offset (wo) ;length
-    3- Metal Thickness (t) ;length
-    4- Spacing between lines (s) ;length
-    5- Ground Spacing (b);length
-    6- Dielectric Permittivity (<font size=+2>&epsilon;<sub>r</sub></font>);
-    7- Dielectric Loss Tangent ;
-    8- Metal Conductivity ;  electrical conductivity
-    9- Metal Permeability ;
-    10- Roughness ;length
-    11- Frequency ; frequency
-    12- Physical Length ;length
-    13- Impedance (even) ;   impedance
-    14- Impedance (odd);   impedance
-    15- Electrical Length ;   angle
-    16- <font size=+2>&epsilon;<sub>eff</sub></font> ;
-    17- Conductor Loss (Even Mode) ;  loss per length
-    18- Conductor Loss (Odd Mode) ;  loss per length
-    19- Dielectric Loss ; loss per length
-    20- Maximum Coupling ;
     Ref: RF and Microwave Coupled Line Circuits
+
+    Args:
+        arg(list): First 11 arguments are inputs.
+
+            1. Line Width (w) ;length
+            2. Offset (wo) ;length
+            3. Metal Thickness (t) ;length
+            4. Spacing between lines (s) ;length
+            5. Ground Spacing (b);length
+            6. Dielectric Permittivity (<font size=+2>&epsilon;<sub>r</sub></font>);
+            7. Dielectric Loss Tangent ;
+            8. Metal Conductivity ;  electrical conductivity
+            9. Metal Permeability ;
+            10. Roughness ;length
+            11. Frequency ; frequency
+            12. Physical Length ;length
+            13. Impedance (even) ;   impedance
+            14. Impedance (odd);   impedance
+            15. Electrical Length ;   angle
+            16. <font size=+2>&epsilon;<sub>eff</sub></font> ;
+            17. Conductor Loss (Even Mode) ;  loss per length
+            18. Conductor Loss (Odd Mode) ;  loss per length
+            19. Dielectric Loss ; loss per length
+            20. Maximum Coupling ;
+
     """
 
     arg = arg[:12]
@@ -2546,26 +2585,26 @@ def broadside_offset_coupled_stripline_synthesis(arg, defaultunits):
     """
     Argument List:
     First 11 arguments are inputs.
-    1- Line Width (w) ;length
-    2- Offset (wo) ;length
-    3- Metal Thickness (t) ;length
-    4- Spacing between lines (s) ;length
-    5- Ground Spacing (b);length
-    6- Dielectric Permittivity (<font size=+2>&epsilon;<sub>r</sub></font>);
-    7- Dielectric Loss Tangent ;
-    8- Metal Conductivity ;  electrical conductivity
-    9- Metal Permeability ;
-    10- Roughness ;length
-    11- Frequency ; frequency
-    12- Physical Length ;length
-    13- Impedance (even) ;   impedance
-    14- Impedance (odd);   impedance
-    15- Electrical Length ;   angle
-    16- <font size=+2>&epsilon;<sub>eff</sub></font> ;
-    17- Conductor Loss (Even Mode) ;  loss per length
-    18- Conductor Loss (Odd Mode) ;  loss per length
-    19- Dielectric Loss ; loss per length
-    20- Maximum Coupling ;
+    1. Line Width (w) ;length
+    2. Offset (wo) ;length
+    3. Metal Thickness (t) ;length
+    4. Spacing between lines (s) ;length
+    5. Ground Spacing (b);length
+    6. Dielectric Permittivity (<font size=+2>&epsilon;<sub>r</sub></font>);
+    7. Dielectric Loss Tangent ;
+    8. Metal Conductivity ;  electrical conductivity
+    9. Metal Permeability ;
+    10. Roughness ;length
+    11. Frequency ; frequency
+    12. Physical Length ;length
+    13. Impedance (even) ;   impedance
+    14. Impedance (odd);   impedance
+    15. Electrical Length ;   angle
+    16. <font size=+2>&epsilon;<sub>eff</sub></font> ;
+    17. Conductor Loss (Even Mode) ;  loss per length
+    18. Conductor Loss (Odd Mode) ;  loss per length
+    19. Dielectric Loss ; loss per length
+    20. Maximum Coupling ;
     Ref: RF and Microwave Coupled Line Circuits
     """
 
@@ -2630,28 +2669,28 @@ def broadside_coupled_suspended_stripline_analysis(arg, defaultunits):
     """
     Argument List:
     First 11 arguments are inputs.
-    1- Line Width (w) ;length
-    2- Ground Spacing (b);length
-    3- Metal Thickness (t) ;length
-    4- Spacing between lines (s) ;length
-    5- Dielectric Permittivity (<font size=+2>&epsilon;<sub>r</sub></font>);
-    6- Dielectric Loss Tangent ;
-    7- Metal Conductivity ;  electrical conductivity
-    8- Metal Permeability ;
-    9- Roughness ;length
-    10- Frequency ; frequency
-    11- Physical Length ;length
-    12- Impedance (even) ;   impedance
-    13- Impedance (odd);   impedance
-    14- Electrical Length (Even Mode);   angle
-    15- Electrical Length (Odd Mode) ;   angle
-    16- <font size=+2>&epsilon;<sub>eff</sub> (even)</font> ;
-    17- <font size=+2>&epsilon;<sub>eff</sub> (odd)</font> ;
-    18- Conductor Loss (Even Mode) ;  loss per length
-    19- Conductor Loss (Odd Mode) ;  loss per length
-    20- Dielectric Loss (Even Mode); loss per length
-    21- Dielectric Loss (Odd Mode) ; loss per length
-    22- Maximum Coupling ;
+    1. Line Width (w) ;length
+    2. Ground Spacing (b);length
+    3. Metal Thickness (t) ;length
+    4. Spacing between lines (s) ;length
+    5. Dielectric Permittivity (<font size=+2>&epsilon;<sub>r</sub></font>);
+    6. Dielectric Loss Tangent ;
+    7. Metal Conductivity ;  electrical conductivity
+    8. Metal Permeability ;
+    9. Roughness ;length
+    10. Frequency ; frequency
+    11. Physical Length ;length
+    12. Impedance (even) ;   impedance
+    13. Impedance (odd);   impedance
+    14. Electrical Length (Even Mode);   angle
+    15. Electrical Length (Odd Mode) ;   angle
+    16. <font size=+2>&epsilon;<sub>eff</sub> (even)</font> ;
+    17. <font size=+2>&epsilon;<sub>eff</sub> (odd)</font> ;
+    18. Conductor Loss (Even Mode) ;  loss per length
+    19. Conductor Loss (Odd Mode) ;  loss per length
+    20. Dielectric Loss (Even Mode); loss per length
+    21. Dielectric Loss (Odd Mode) ; loss per length
+    22. Maximum Coupling ;
 
     Ref: RF and Microwave Coupled Line Circuits
     """
