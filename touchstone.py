@@ -197,7 +197,7 @@ class spfile:
 
     def column_of_data(self,i,j):
         r"""Gets the indice of column at *sdata* matrix corresponding to :math:`S_{i j}`
-        For internal use of the class.
+        For internal use of the library.
 
         Args:
             i (int): First index
@@ -226,6 +226,11 @@ class spfile:
         self.set_frequency_points(self.get_frequency_list())
 
     def get_sym_parameters(self):
+        """This function is used to get the values of symbolic variables of the network.
+
+        Returns:
+            dict: This is a dictionary containing the values of symbolic variables of the network
+        """
         return self.sym_parameters
 
     def set_sym_parameters(self,paramdict):
@@ -717,19 +722,15 @@ class spfile:
         b1=1+np.abs(s11)**2-np.abs(s22)**2-np.abs(D)**2
         b2=1+np.abs(s22)**2-np.abs(s11)**2-np.abs(D)**2
         GS=b1/2/c1
-        if b1>0:
-            GS=GS-np.sqrt(b1**2-4*np.abs(c1)**2+0j)/2/c1
-        else:
-            GS=GS+np.sqrt(b1**2-4*np.abs(c1)**2+0j)/2/c1
+        bool1=np.array([2*(cc>0)-1 for cc in b1])
+        GS=GS-np.sqrt(b1**2-4*np.abs(c1)**2+0j)/2/c1*bool1
         GL=b2/2/c2
-        if b2>0:
-            GL=GL-np.sqrt(b2**2-4*np.abs(c2)**2+0j)/2/c2
-        else:
-            GL=GL+np.sqrt(b2**2-4*np.abs(c2)**2+0j)/2/c2
+        bool2=np.array([2*(cc>0)-1 for cc in b2])
+        GL=GL-np.sqrt(b2**2-4*np.abs(c2)**2+0j)/2/c2*bool2
         return (GS,GL)
 
-    def gt(self,port1=1,port2=2, dB=True, ZS=50.0, ZL=50.0):
-        r"""This method calculates Transducer gain (GT) between 2 ports with specified source and load impedances without impedance renormalization. This calculation can also be done using impedance renormalization.
+    def gt(self,port1=1,port2=2, dB=True, ZS=None, ZL=None):
+        r"""This method calculates Transducer Gain (GT) from port1 to port2. Source and Load impedances can be specified independently. If any one of them is not specified, current reference impedance is used for that port. Other ports are terminated by reference impedances. This calculation can also be done using impedance renormalization.
 
             .. math:: G_{av}=\frac{P_{load}}{P_{av,fromSource}}
 
@@ -746,8 +747,10 @@ class spfile:
         self.s2abcd(port1,port2)
         ns=len(self.FrequencyPoints)
         refZ=self.refimpedance
-        refZ[port1-1] = ZS
-        refZ[port2-1] = ZL
+        if ZS:
+            refZ[port1-1] = ZS
+        if ZL:
+            refZ[port2-1] = ZL
         imp=self.prepare_ref_impedance_array(refZ)
         ZL = np.array(imp[port2-1] )
         ZS = np.array(imp[port1-1] )
@@ -768,6 +771,15 @@ class spfile:
             return gain
 
     def interpolate_data(self, data, freqs):
+        """Calculate new data corresponding to new frequency points *freqs* by interpolation from original data corresponding to current frequency points of the network.
+
+        Args:
+            data (numpy.ndarray or list): Original data specified at current frequency points of the network.
+            freqs (numpy.ndarray or list): New frequency list.
+
+        Returns:
+            numpy.ndarray: New data corresponding to *freqs*
+        """
         if "scipy.interpolate" in sys.modules:
             tck_db = scipy.interpolate.splrep(self.FrequencyPoints,data,s=0,k=1)  # s=0, smoothing off, k=1, order of spline
             newdata = scipy.interpolate.splev(freqs,tck_db,der=0)  # the order of derivative of spline
@@ -781,10 +793,10 @@ class spfile:
         i11=(port1-1)*self.port_sayisi+(port1-1)
         i22=(port2-1)*self.port_sayisi+(port2-1)
         sdata=self.sdata
-        s11=sdata[i11,:]
-        s21=sdata[i21,:]
-        s12=sdata[i12,:]
-        s22=sdata[i22,:]
+        s11=sdata[:,i11]
+        s21=sdata[:,i21]
+        s12=sdata[:,i12]
+        s22=sdata[:,i22]
         return s11,s12,s21,s22
 
     def stability_factor_mu1(self,port1=1,port2=2):
@@ -1041,11 +1053,11 @@ class spfile:
         Returns:
             spfile: The result of cascade of 2 networks
         """
-        if (self.port_sayisi!=2 or c.port_sayisi!=2):
+        if (self.port_sayisi!=2 or SP2.port_sayisi!=2):
             print("Both networks should be two-port")
             return 0
         sonuc=deepcopy(self)
-        output.set_inplace(1)
+        sonuc.set_inplace(1)
         sonuc.s2abcd()
         if len(sonuc.FrequencyPoints)>len(SP2.FrequencyPoints):
             print("Uyari: ilk devrenin frekans nokta sayisi, 2. devreninkinden fazla")
