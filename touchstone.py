@@ -418,7 +418,7 @@ class spfile:
         return self.undefinedZindices
 
     def Ffunc(self,imp):
-        r"""F-matrix in a, b definition of S-Parameters
+        r"""Calculates F-matrix in a, b definition of S-Parameters. For internal use of the library.
 
                 .. math::
                     a=F(V+Z_rI)
@@ -619,7 +619,7 @@ class spfile:
         return abcddata
 
     def gmax(self,port1=1,port2=2, dB=True):
-        """Calculates Gmax from port1 to port2. Other ports are terminated with reference impedances. If dB=True, output is in dB, otherwise it is a power ratio.
+        """Calculates Gmax from port1 to port2. Other ports are terminated with current reference impedances. If dB=True, output is in dB, otherwise it is a power ratio.
 
         Args:
             port1 (int, optional): Index of input port. Defaults to 1.
@@ -651,8 +651,20 @@ class spfile:
         """
         return self.portnames
 
+    def set_port_name(self, name, i):
+        r"""Set name of a specific port.
+
+        Args:
+            name(str): New name of the port
+            i(int): Port number
+        """
+        self.portnames[i+1]=name
+
     def set_port_names(self, names):
-        """Set port names with a list.
+        r"""Set port names with a list.
+
+        Args:
+            names(list): List of new names of the ports
         """
         self.portnames=names[:]
 
@@ -1258,7 +1270,7 @@ class spfile:
         if (format=="RI"):
             for x in range(len(frekanslar)):
                 # print("\n"+f"{frekanslar[x]*temp:.2f}"+"    ", end='', file=f)
-                print("\n"+str(frekanslar[x]*temp)+"    ", end='', file=f)
+                print("\n%-12.3f"%(frekanslar[x]*temp)+"    ", end='', file=f)
                 for j in range(ps**2):
                     print("%-12.12f    %-12.12f" % (np.real(data[x,j]),np.imag(data[x,j])), end='', file=f)
                     if ((j+1)%max_params_per_line==0 and j<(ps**2-1)):
@@ -1268,7 +1280,8 @@ class spfile:
         elif (format=="MA"):
             for x in range(len(frekanslar)):
                 # print("\n"+f"{frekanslar[x]*temp:.2f}"+"    ", end='', file=f)
-                print("\n"+str(frekanslar[x]*temp)+"    ", end='', file=f)
+                print("\n%-12.3f"%(frekanslar[x]*temp)+"    ", end='', file=f)
+                # print("\n"+str(frekanslar[x]*temp)+"    ", end='', file=f)
                 for j in range(ps**2):
                     print("%-12.12f    %-12.12f" % (np.abs(data[x,j]),np.angle(data[x,j],deg=1)), end='', file=f)
                     if ((j+1)%max_params_per_line==0 and j<(ps**2-1)):
@@ -1278,7 +1291,8 @@ class spfile:
         else:
             for x in range(len(frekanslar)):
                 # print("\n"+f"{frekanslar[x]*temp:.2f}"+"    ", end='', file=f)
-                print("\n"+str(frekanslar[x]*temp)+"    ", end='', file=f)
+                print("\n%-12.3f"%(frekanslar[x]*temp)+"    ", end='', file=f)
+                # print("\n"+str(frekanslar[x]*temp)+"    ", end='', file=f)
                 for j in range(ps**2):
                     print("%-12.12f    %-12.12f" % (20*np.log10(np.abs(data[x,j])),np.angle(data[x,j],deg=1)), end='', file=f)
                     if ((j+1)%max_params_per_line==0 and j<(ps**2-1)):

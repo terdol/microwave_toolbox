@@ -1336,6 +1336,8 @@ def EWG_inv(a, b, er, length, frek):
     networks.append(shunt_z(-1.0j * Xs1))
     return CascadeNetworks(networks)
 
+def SIW_EquivalentWidth(w, d, s):
+    return w-d**2/0.95/s
 
 def RectWG2EvanescentRectWGStep(a1, a2):
     """ Waveguide Width Step from Rectangular Waveguide to Evanescent Mode Rectangular Waveguide.
