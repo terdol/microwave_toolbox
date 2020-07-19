@@ -1337,6 +1337,16 @@ def EWG_inv(a, b, er, length, frek):
     return CascadeNetworks(networks)
 
 def SIW_EquivalentWidth(w, d, s):
+    """Equivalent width of substrate integrated waveguide.
+
+    Args:
+        w (float): Distance between the centers of two via arrays.
+        d (float): Diameter of vias.
+        s (float): Distance between the centers of consecutive vias of via arrays.
+
+    Returns:
+        float: Equivalent width of waveguide.
+    """
     return w-d**2/0.95/s
 
 def RectWG2EvanescentRectWGStep(a1, a2):
