@@ -340,6 +340,7 @@ def cutoff_frequency_for_TE1_mode_microstrip(er, h):
     """
     try:
       return co / 4.0 / h / csqrt(er - 1.0)
+    #   return co * arctan(er) / (sqrt(2) * pi * h * csqrt(er - 1.0))
     except ZeroDivisionError:
       return Inf
 
@@ -357,6 +358,7 @@ def transverse_resonance_frequency_microstrip(er, h, w):
         float: Frequency.
     """
     return co / 2.0 / (h + w) / csqrt(er)
+    # return co / ((0.8*h + 2*w) * csqrt(er))
 
 
 def freq_limit_for_coupling_to_surface_modes_microstrip(er, h):

@@ -91,11 +91,20 @@ def kinv(K):
     ABCD parameters of k - inverter
     """
     return np.matrix([[0, 1.0j * K], [1.0j/K, 0]])
+
 def tline(Zo, theta):
     """
     ABCD parameters of ideal transmission line,  theta = radian
     """
     return np.matrix([[np.cos(theta), 1.0j * Zo * np.sin(theta)], [1.0j/Zo * np.sin(theta), np.cos(theta)]])
+
+def tline_lossy(Zo, gamma):
+    """
+    ABCD parameters of lossy transmission line,  gamma = complex propagation constant
+    """
+    return np.matrix([[np.cosh(gamma), Zo * np.sinh(gamma)], [1.0/Zo * np.sinh(gamma), np.cosh(gamma)]])
+
+
 def tline_list(Zo, theta):
     """
     ABCD parameters of ideal transmission line,  theta = radian

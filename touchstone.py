@@ -14,6 +14,7 @@ from numpy.lib.scimath import sqrt as csqrt
 import sympy as sp
 from copy import deepcopy
 import network
+import itertools
 from genel import *
 from constants import *
 import inspect
@@ -82,6 +83,66 @@ def generate_multiport_spfile(conffile="", outputfilename=""):
                                      source_indices[i][1], spfiles[spfilelist[i]])
     newspfile.write2file(outputfilename)
 
+def extract_gamma_ereff(file_long,file_short,dL,sm=1):
+    """Extraction of complex propagation constant (gamma) and complex effective permittivity from the S-Parameters of 2 uniform transmission lines with different lengths.
+
+    Args:
+        file_long (str): S-Parameter filename of longer line.
+        file_short (str): S-Parameter filename of shorter line.
+        dL (float): Difference of lengths of two lines (positive in meter).
+        sm (int, optional): If this is larger than 1, this is used as number of points for smoothing. Defaults to 1.
+
+    Returns:
+        tuple: tuple of two complex numpy arrays (gamma, er_eff).
+    """
+    sp1=spfile(file_short)
+    sp2=spfile(file_long)
+    if sm>1:
+        sp1.smoothing(sm)
+        sp2.smoothing(sm)
+
+    freks=sp1.get_frequency_list()
+    w=2*np.pi*freks
+
+    net1=sp2-sp1
+    net2=-sp1+sp2
+    net1.s2abcd()
+    net2.s2abcd()
+
+    a1=np.arccosh(0.5*(net1.abcddata[:,0]+net1.abcddata[:,3]))
+    a2=np.arccosh(0.5*(net2.abcddata[:,0]+net2.abcddata[:,3]))
+    a1=np.real(a1)+np.unwrap(np.imag(a1))*1j
+    a2=np.real(a2)+np.unwrap(np.imag(a2))*1j
+    dA=0.5*(a1+a2)
+    gamma=dA/dL
+    gamma=np.abs(np.real(gamma))+1j*np.abs(np.imag(gamma))
+    er_eff  = -(c0*gamma/w)**2
+    return (gamma,er_eff)
+
+def extract_gamma_ereff_all(files,Ls,sm=1):
+    """Extraction of average complex propagation constant (gamma) and complex effective permittivity from the S-Parameters of multiple uniform transmission lines with different lengths.
+
+    Args:
+        files (list): List of S-Parameter filenames of transmission lines.
+        Ls (list): List of lengths of transmission lines in the same order as *files* parameter.
+        sm (int, optional): If this is larger than 1, this is used as number of points for smoothing. Defaults to 1.
+
+    Returns:
+        tuple: tuple of two complex numpy arrays (gamma, er_eff).
+    """
+    files_Ls=list(zip(files,Ls))
+    files_Ls.sort(key=lambda x:-x[1])
+    cifts = list(itertools.combinations(files_Ls,2))
+    eeff_all=()
+    gamma_all=()
+    for cift in cifts:
+        (gamma,eeff)=extract_gamma_ereff(cift[0][0],cift[1][0],cift[0][1]-cift[1][1],sm)
+        eeff_all = eeff_all + (eeff,)
+        gamma_all = gamma_all + (gamma,)
+    gamma_av  = sum(gamma_all  )/len(cifts)
+    eeff_av= sum(eeff_all)/len(cifts)
+    return (gamma_av, eeff_av)
+
 def cascade_2ports(filenames):
     if isinstance(filenames[0],str):
         first=spfile(filenames[0])
@@ -111,6 +172,7 @@ class spfile:
         self.ydata = None
         self.zdata = None
         self.abcddata=[]
+        self.tdata=[]
         self.portnames=[]
         self.inplace=1
         self.YZ_OK=0
@@ -136,7 +198,7 @@ class spfile:
             if ns>0:
                 self.sdata=np.zeros((ns,portsayisi**2),complex)
             for i in range(portsayisi):
-                self.portnames[i]=""
+                self.portnames=[""]*portsayisi
 
     def copy(self):
         return deepcopy(self)
@@ -267,11 +329,11 @@ class spfile:
             smatrix (numpy.matrix): New S-Matrix value which is to be set at all *indices*
         """
         c=np.shape(smatrix)[0]
-        smatrix.shape=1,c*c
+        smatrix=smatrix.reshape(c*c)
         if isinstance(indices,int):
             indices=[indices]
         for i in indices:
-            self.sdata[i,:]=np.array(smatrix)[0]
+            self.sdata[i,:]=np.array(smatrix)
 
     def snp2smp(self,ports,inplace=-1):
         """This method changes the port numbering of the network
@@ -556,6 +618,23 @@ class spfile:
             T=network.abcd2t(abcd,[50.0+0j,50.0+0j])
             eigs,eigv=eig(T)
 
+    def s2t(self):
+        """Take inverse of 2-port data for de-embedding purposes.
+
+        Args:
+            inplace (int, optional): Object editing mode. Defaults to -1.
+
+        Returns:
+            spfile: Inverted 2-port spfile
+        """
+        ns=len(self.FrequencyPoints)
+        self.tdata=np.zeros((ns,self.port_sayisi**2),complex)
+        for i in range(ns):
+            smatrix=np.matrix(self.sdata[i,:]).reshape(2,2)
+            sm = network.s2t(smatrix).I
+            self.tdata[i,:] = sm.reshape(4)
+        return self
+
     def inverse_2port(self,inplace=-1):
         """Take inverse of 2-port data for de-embedding purposes.
 
@@ -617,6 +696,42 @@ class spfile:
             abcddata[i,:]=ABCD.reshape(4)
         self.abcddata = abcddata
         return abcddata
+
+    def input_impedance(self,k):
+        """Input impedance at port k. All ports are terminated with reference impedances.
+
+        Args:
+            port (int): Port number for input impedance.
+
+        Returns:
+            numpy.ndarray: Array of impedance values for all frequencies
+        """
+        imp=self.prepare_ref_impedance_array(self.refimpedance)
+        Zr = imp[k-1]
+        T=self.S(k,k)
+        if self.formulation==1:
+            Z=(Zr.conj()+Zr*T)/(1-T)
+        else:
+            Z=Zr*(1+T)/(1-T)
+        return Z
+
+    def input_impedance(self,Gamma_in,port1=1,port2=2):
+        """Calculates Termination Reflection Coefficient at port2 that gives Gamma_in reflection coefficient at port1.
+
+        Args:
+            Gamma_in (float,ndarray): Required reflection coefficient.
+            port1 (int): Source port.
+            port2 (int): Load port.
+
+        Returns:
+            numpy.ndarray: Array of reflection coeeficient of termination at port2
+        """
+        s11=self.S(port1,port1)
+        s22=self.S(port2,port2)
+        s12=self.S(port1,port2)
+        s21=self.S(port2,port1)
+        Gamma_Load=(Gamma_in-s11)/(s12*s21+s22*(Gamma_in-s11))
+        return Gamma_Load
 
     def gmax(self,port1=1,port2=2, dB=True):
         """Calculates Gmax from port1 to port2. Other ports are terminated with current reference impedances. If dB=True, output is in dB, otherwise it is a power ratio.
@@ -698,8 +813,8 @@ class spfile:
         self.s2abcd(port1,port2)
         ns=len(self.FrequencyPoints)
         imp=self.prepare_ref_impedance_array(self.refimpedance)
-        ZL = imp[port2-1]
-        ZS = imp[port1-1]
+        # ZL = imp[port2-1]
+        # ZS = imp[port1-1]
         GS=(ZS-50.0)/(ZS+50.0)
         gain=[]
         for i in range(ns):
@@ -1694,10 +1809,10 @@ class spfile:
         See "Extracting multiport S-Parameters of chip" in technical document.
 
         Args:
-            measspfile (spfile): Network object of measured S-Parameters of first k ports
+            measspfile (spfile): *SPFILE* object of measured S-Parameters of first k ports
 
         Returns:
-            spfile: Netowrk object of die's S-Parameters
+            spfile: *SPFILE* object of die's S-Parameters
         """
         refimpedance = self.refimpedance # save to restore later
         self.change_ref_impedance(50.0)
