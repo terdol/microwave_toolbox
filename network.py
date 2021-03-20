@@ -152,6 +152,16 @@ def t2s(M):
     delta=t11*t22-t12*t21
     return np.matrix([[ t12/t22,  delta/t22], [1./t22,  -t21/t22]])
 
+def t2s_list(M):
+    """
+    Transfer scattering parameters to S-Parameters conversion
+    According to definition [b1,a1]=T.[a2,b2]
+    Ref: https://en.wikipedia.org/wiki/Scattering_parameters#Scattering_transfer_parameters
+    """
+    t11, t12, t21, t22 = M[0], M[1], M[2], M[3]
+    delta=t11*t22-t12*t21
+    return [ t12/t22,  delta/t22, 1./t22,  -t21/t22]
+
 def s2t(M):
     """
     S-Parameters to Transfer scattering parameters conversion
@@ -161,6 +171,16 @@ def s2t(M):
     s11, s12, s21, s22 = M[0, 0], M[0, 1], M[1, 0], M[1, 1]
     delta=s11*s22-s12*s21
     return np.matrix([[ -delta/s21,  s11/s21], [-s22/s21,  1./s21]])
+    
+def s2t_list(M):
+    """
+    S-Parameters to Transfer scattering parameters conversion
+    According to definition [b1,a1]=T.[a2,b2]
+    Ref: https://en.wikipedia.org/wiki/Scattering_parameters#Scattering_transfer_parameters
+    """
+    s11, s12, s21, s22 = M[0], M[1], M[2], M[3]
+    delta=s11*s22-s12*s21
+    return [ -delta/s21,  s11/s21, -s22/s21,  1./s21]
 
 def abcd2z(M):
     """

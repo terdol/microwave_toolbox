@@ -1,21 +1,23 @@
 #-*-coding:utf-8-*-
 
-from constants import *
+# from constants import *
+import myconstants as mycons
+from genel import *
 import sys
 # from scipy import *
 # from scipy.special import ellipk
 #from copy import deepcopy
-from genel import *
+# from genel import *
 #import numpy as np
 # import visvis
 from numpy.lib.scimath import sqrt as csqrt
 from numpy import sqrt, pi, log, log10, cos, sin, tan, cosh, sinh, tanh, exp
 from numpy import arccosh, arctan, arccos, arcsin, arcsinh, arctanh, seterr
 from numpy import atleast_1d,power,ndarray,array,fabs, sum, mean
-co = speed_of_light_in_freespace.simplified.magnitude
-eta0 = free_space_wave_impedance.simplified.magnitude
-mu0 = free_space_permeability.simplified.magnitude
-eps0 = free_space_permittivity.simplified.magnitude
+co = mycons.speed_of_light_in_freespace.simplified.magnitude
+eta0 = mycons.free_space_wave_impedance.simplified.magnitude
+mu0 = mycons.free_space_permeability.simplified.magnitude
+eps0 = mycons.free_space_permittivity.simplified.magnitude
 
 ellipk = ekpolyfit
 
@@ -62,9 +64,46 @@ def skin_depth(f, sigma, mu=1.0, er=0.0):
     """
     return csqrt(1.0 / sigma / mu / mu0 / pi / f)*csqrt(csqrt(1+(2*pi*f*er*eps0/sigma)**2)+2*pi*f*er*eps0/sigma)
 
+def SentezBisection_1d(fonk, _args, k, target_value, init_value, limits = []):
+    """
+    This function is added because NLOPT version in Sentez function does not work fast.
+    This function works faster because it employs the fact that all the fonk functions are monotonic functions,
+    so bisection method can be used securely.
+    """
+    args=_args[:]
+    args[k] = init_value
+    argsmid = args[:]
+    lim = limits[:]
+    tol = 1e-10
+    tt=0
+    while((fonk(*argsmid)-target_value)**2>tol):
+        if tt!=2:
+            argsmin=args[:]
+            argsmin[k]=lim[0]
+            fmin=fonk(*argsmin)-target_value
+        
+        if tt!=1:
+            argsmax=args[:]
+            argsmax[k]=lim[1]
+            fmax=fonk(*argsmax)-target_value
+        
+        midpoint=0.5*(lim[0]+lim[1])
+        argsmid=args[:]
+        argsmid[k]=midpoint
+        fmid=fonk(*argsmid)-target_value
+        
+        if fmin*fmid<0:
+            lim[1]=midpoint
+            tt=1
+        elif fmax*fmid<0:
+            lim[0]=midpoint
+            tt=2
+    return midpoint
+    
 def Sentez(fonk, _args, k, target_value = [],init_value = [], limits = []):
     r"""Function that is used to calculate the parameter value of a function
-    that will give target value.
+    that will give target value. There are 2 versions in this function (SciPy and NLOPT).
+    NLOPT is added to avoid SciPy for smaller package size for packed applications.
 
     Args:
         fonk (function): function to be used at optimization
@@ -83,7 +122,7 @@ def Sentez(fonk, _args, k, target_value = [],init_value = [], limits = []):
     if not isinstance(k,(list, ndarray)):
         print("k variable should be a list or integer")
         return
-    if not isinstance(init_value, collections.Iterable):
+    if not isinstance(init_value, collections.abc.Iterable):
         init_value=[init_value]*len(k)
     elif len(init_value)==1:
         init_value=init_value*len(k)
@@ -99,23 +138,27 @@ def Sentez(fonk, _args, k, target_value = [],init_value = [], limits = []):
             tempindex=k[i]+1
         tempargs=tempargs+_args[len(tempargs):]
         tempout=fonk(*tuple(tempargs))
-        if not isinstance(tempout, collections.Iterable):
+        if not isinstance(tempout, collections.abc.Iterable):
             tempout=(tempout,)
         out = sum([fabs(target_value[count]-tempout[count])**2 for count in range(len(k))])
         # print(out)
         return out
     # from scipy.optimize import fmin_l_bfgs_b, fmin_tnc, minimize
-    # output = fmin_l_bfgs_b(callable_func,array(init_value),approx_grad=1,factr=0.01,bounds=limits,maxfun=100000,pgtol=1.0e-10, epsilon=1.0e-8)
-
+    # xopt = fmin_l_bfgs_b(callable_func,array(init_value),approx_grad=1,factr=0.01,bounds=limits,maxfun=100000,pgtol=1.0e-10, epsilon=1.0e-8)
+    # print(xopt)
+    
     import nlopt
+    print(limits)
+    print(init_value)
     opt = nlopt.opt(nlopt.GN_ESCH, len(k))
     opt.set_min_objective(callable_func)
-    opt.set_lower_bounds([a[0] for a in limits])
-    opt.set_upper_bounds([a[1] for a in limits])
-    # opt.set_maxeval(1000)
-    opt.set_maxtime(1)
-    # opt.set_xtol_abs(0.1)
+    opt.set_lower_bounds([a[0]*50 for a in limits])
+    opt.set_upper_bounds([a[1]/50 for a in limits])
+    opt.set_maxeval(5000)
+    # opt.set_maxtime(5)
+    # opt.set_ftol_abs(0.1)
     xopt = opt.optimize(init_value)
+    print(xopt)
     return xopt
 
 def skindepth_analysis(arg, defaultunits):
@@ -461,9 +504,14 @@ def microstrip_synthesis(arg, defaultunits):
     _, h, t, er, tand, Kd, sigma, mu, roughness, freq, _, Z, rad, dT = tuple(
         newargs)
     w = h
+    
     # print a,h,t,er,tand,Kd,sigma,mu,roughness,freq,a,Z,deg
-    output = Sentez(Z_disp_thick_microstrip, [w, h, t, er, freq], [0], [Z] , [h] , [((h/1000.0),1000.0*h)])
-    w=output[0]
+    # output = Sentez(Z_disp_thick_microstrip, [w, h, t, er, freq], [0], [Z] , [h] , [((h/1000.0),1000.0*h)])
+    # w=output[0]
+    
+    w = SentezBisection_1d(Z_disp_thick_microstrip, [w, h, t, er, freq], 0, Z , h , [h/1000.0,1000.0*h])
+
+    
     # print "w= ",w, type(w)
     eeff = er_eff_disp_thick_microstrip(w, h, t, er, freq)
     length = physical_length(eeff, freq, rad)
@@ -769,8 +817,11 @@ def stripline_synthesis(arg, defaultunits):
         newargs)
     eeff = er
     w = (b/ 5.0)
-    output = Sentez(Z_thick_stripline, [w, b, t, er], [0], [Zc] , [b] , [((b/1000.0),1000.0*b)])
-    w=output[0]
+    # output = Sentez(Z_thick_stripline, [w, b, t, er], [0], [Zc] , [b] , [((b/1000.0),1000.0*b)])
+    # w=output[0]
+    
+    w = SentezBisection_1d(Z_thick_stripline, [w, b, t, er], 0, Zc , b , [b/1000.0,1000.0*b])
+    
     print("ee ", eeff, freq, elec_length)
     length = physical_length(eeff, freq, elec_length)
     cond_loss = conductor_loss_stripline(w, b, t, er, freq, sigma, mu)
@@ -2027,9 +2078,12 @@ def covered_grounded_coplanar_waveguide_synthesis(arg, defaultunits):
     arg = arg[:13]
     newargs = convert2pq(arg, defaultunits)
     w, s, h, er, h1, tand, sigma, mu, roughness, freq, length, Z, deg = tuple(newargs)
-    output = Sentez(lambda *x: Z_eeff_covered_grounded_cpw(*x)[0], [w, s, h, er, h1], [0], target_value=[Z],
-                    init_value=[h], limits=[((h/ 100.0), h * 100.0)])
-    w = output[0]
+    # output = Sentez(lambda *x: Z_eeff_covered_grounded_cpw(*x)[0], [w, s, h, er, h1], [0], target_value=[Z],
+                    # init_value=[h], limits=[((h/ 100.0), h * 100.0)])
+    # w = output[0]
+    
+    w = SentezBisection_1d(lambda *x: Z_eeff_covered_grounded_cpw(*x)[0], [w, s, h, er, h1], 0, Z,h, limits=[h/ 100.0, h * 100.0])
+    
     Z, eeff = Z_eeff_covered_grounded_cpw(w, s, h, er, h1)
     length = physical_length(eeff, freq, deg)
     sd = skin_depth(freq, sigma, mu)
@@ -2922,5 +2976,39 @@ if __name__ == "__main__":
     # print(Z_eeff_suspended_stripline(55, 0.1, 5, 20, 20, 2.2, 1000))
     # print(Z_eeff_grounded_cpw_thick(100e-6, 0.1e-6, 3.0, 100e-6, 127e-6))
     # print(Z_coaxial(3.4, 80 , 140))
-    print(stripline_step_in_width(130e-6, 200e-6, 3, 100e-6, 300e-6, 30e-6, 77e9))
-    print(stripline_step_in_width2(130e-6, 200e-6, 3, 100e-6, 300e-6, 30e-6, 77e9))
+    # print(stripline_step_in_width(130e-6, 200e-6, 3, 100e-6, 300e-6, 30e-6, 77e9))
+    # print(stripline_step_in_width2(130e-6, 200e-6, 3, 100e-6, 300e-6, 30e-6, 77e9))
+    print(microstrip_synthesis(["10mil","5mil","1mil","3.0","0","10","5e8","1","0","77GHz","100mil","50.0","90","100"],[]))
+    """Synthesis function for microstrip transmission lines.
+
+    Args:
+        arg(list): First 13 arguments are inputs.
+
+            1. Line Width ;length
+            2. Substrate Thickness ;length
+            3. Metal Thickness ;length
+            4. Dielectric Permittivity (<font size=+2>&epsilon;<sub>r</sub></font>);
+            5. Dielectric Loss Tangent ;
+            6. Dielectric Thermal Conductivity ;   thermal conductivity
+            7. Metal Conductivity ; electrical conductivity
+            8. Metal Permeability ;
+            9. Roughness ;length
+            10. Frequency ; frequency
+            11. Physical Length ;length
+            12. Impedance ;   impedance
+            13. Electrical Length ;  angle
+            14. Max Temp Difference (<sup>o</sup>C) ;
+            15. <font size=+2>&epsilon;<sub>eff</sub></font> ;
+            16. Conductor Loss ;  loss per length
+            17. Dielectric Loss ; loss per length
+            18. Skin Depth ;length
+            19. Cutoff Frequency for TE1 mode ; frequency
+            20. Transverse Resonance Frequency; frequency
+            21. Frequency Limit for Coupling to Surface Modes ; frequency
+            22. Time Delay ; time
+            23. L  per unit length ;
+            24. C per unit length ;
+            25. Surface Impedance ; impedance
+            26. Average Rated Power ; power
+            27. Max DC Current ; current
+    """

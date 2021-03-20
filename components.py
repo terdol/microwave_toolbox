@@ -4,7 +4,7 @@ Created on Tue Nov 17 11:52:33 2009
 
 @author: Tuncay
 """
-from constants import *
+from myconstants import *
 # from scipy.special import iv, scipy.special.ellipk, scipy.special.ellipe
 # from scipy.optimize import scipy.optimize.brentq
 # from scipy.integrate import scipy.integrate.quad
