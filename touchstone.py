@@ -18,9 +18,9 @@ import itertools
 from genel import *
 from myconstants import *
 import inspect
+
 from collections import defaultdict
 import transmission_lines as tlines
-
 
 fcoef={"HZ":1.0, "KHZ":1e3, "MHZ":1e6, "GHZ":1e9}
 
