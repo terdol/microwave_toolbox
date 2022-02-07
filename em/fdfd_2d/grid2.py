@@ -25,8 +25,8 @@ class subregion():
         self.startindex=0
         self.endindex=0
         self.Ncell=0
-        self.type=0
-        #uniform type=1 FC=2,CF=3,FCF=4
+        self.shape=0
+        #uniform shape=1 FC=2,CF=3,FCF=4
         #startindex bolgenin icindeki ilk hucreyi isaret eder, endindex bolgenin disindaki ilk hucreyi isaret eder.
         
 class CartesianGrid():
@@ -76,21 +76,21 @@ class CartesianGrid():
             sr = subregion()
             sr.start = meshx[i]
             sr.end = meshx[i+1]
-            sr.type = 1
+            sr.shape = 1
             subx.append(sr)
             
         for i in range(self.sizey-1):
             sr = subregion()
             sr.start = meshy[i]
             sr.end = meshy[i+1]
-            sr.type = 1
+            sr.shape = 1
             suby.append(sr)
             
         # for i in range(self.sizez-1):
             # sr = subregion()
             # sr.start = meshz[i]
             # sr.end = meshz[i+1]
-            # sr.type = 1
+            # sr.shape = 1
             # subz.append(sr)
         
         self.subx=subx
@@ -173,10 +173,10 @@ class CartesianGrid():
         # return (self.subz[i].start,self.subz[i].end)
         return (0,0)
     
-    def customgrid(self, dmin, dmax, index, rmax, type, axis, policy):
+    def customgrid(self, dmin, dmax, index, rmax, shape, axis, policy):
         """ index: subregion numarasi
             rmax =      maximum ratio between neighboring grids
-            type =      0- fine-coarse
+            shape =      0- fine-coarse
                         1- coarse-fine
                         2- fine-coarse-fine
                         3- uniform
@@ -201,7 +201,7 @@ class CartesianGrid():
             bas=subx[index].startindex
             son=subx[index].endindex
             length=subx[index].end-subx[index].start
-            grids = self.nugrid(dmin,dmax,rmax,length,type,policy)
+            grids = self.nugrid(dmin,dmax,rmax,length,shape,policy)
             subx[index].Ncell+=len(grids)-subx[index].Ncell
     
             subx[index].endindex+=len(grids)-(son-bas)
@@ -225,7 +225,7 @@ class CartesianGrid():
             bas=suby[index].startindex
             son=suby[index].endindex
             length=suby[index].end-suby[index].start
-            grids=self.nugrid(dmin,dmax,rmax,length,type,policy)
+            grids=self.nugrid(dmin,dmax,rmax,length,shape,policy)
             suby[index].Ncell+=len(grids)-suby[index].Ncell
     
             suby[index].endindex+=len(grids)-(son-bas)
@@ -251,7 +251,7 @@ class CartesianGrid():
             # bas=subz[index].startindex
             # son=subz[index].endindex
             # length=subz[index].end-subz[index].start
-            # grids=nugrid(dmin,dmax,rmax,length,type,policy)
+            # grids=nugrid(dmin,dmax,rmax,length,shape,policy)
             # it=dz.begin()
             # subz[index].Ncell+=len(grids)-subz[index].Ncell
     
@@ -275,7 +275,7 @@ class CartesianGrid():
         self.suby = suby
         # self.subz = subz
     
-    def reshapegrid(self, delta, index, rmax, type, axis, policy):
+    def reshapegrid(self, delta, index, rmax, shape, axis, policy):
         #index: subregion numarasi
         dx = self.dx
         dy = self.dy
@@ -397,16 +397,16 @@ class CartesianGrid():
         if (grid==0):
             a = self.subx[c].mincell
             b = self.subx[c].maxcell
-            type = self.subx[c].type
+            shape = self.subx[c].shape
         elif (grid==1):
             a = self.suby[c].mincell
             b = self.suby[c].maxcell
-            type = self.suby[c].type
+            shape = self.suby[c].shape
         # elif (grid==2):
             # a = self.subz[c].mincell
             # b = self.subz[c].maxcell
-            # type = self.subz[c].type
-        return a, b, type
+            # shape = self.subz[c].shape
+        return a, b, shape
     
     def return_subregion_params(self, grid, index):
         if (grid==0):
@@ -431,10 +431,10 @@ class CartesianGrid():
         grids = [length/N]*N
         return grids
     
-    def nugrid(self, delta1, delta2, rmax, length, type,  policy=0):
+    def nugrid(self, delta1, delta2, rmax, length, shape,  policy=0):
         """ rmax =      maximum ratio between neighboring grids
             length=     total length
-            type =      0- fine-coarse
+            shape =      0- fine-coarse
                         1- coarse-fine
                         2- fine-coarse-fine
                         3- uniform
@@ -444,13 +444,13 @@ class CartesianGrid():
         r=rmax
         cc=0.999
     
-        if (type==3):
+        if (shape==3):
             grids=self.ugrid(delta1,length)
-        elif  (type==2):
+        elif  (shape==2):
             grids=self.nugrid(delta1,delta2,rmax,length/2.0,0, policy)
             temp=self.nugrid(delta1,delta2,rmax,length/2.0,1, policy)
             grids = grids + temp
-        elif  (type==0 or type==1):
+        elif  (shape==0 or shape==1):
             grids=[]
             deltamin=np.min([delta1,delta2])
             deltamax=np.max([delta1,delta2])
@@ -466,8 +466,7 @@ class CartesianGrid():
                     elif (temp3<length):
                         r=r*(2.0-cc)
                 
-                grids = grids + [deltamin*np.power(r,i) for i in range(N+1)]
-                
+                grids = grids + [deltamin*np.power(r,i) for i in range(N+1)]                
             elif (policy==0):
                 N=1+round(float(np.ceil(np.log(deltamax/deltamin)/np.log(rmax))))
                 temp2=deltamin*(np.power(rmax,N)-1)/(rmax-1)
@@ -483,8 +482,7 @@ class CartesianGrid():
                             r=r*(2.0-cc)
                     
                     grids = grids + [deltamin*np.power(r,i) for i in range(N)]
-                    grids = grids + [deltamin*np.power(r,N-1) for i in range(N3)]
-                
+                    grids = grids + [deltamin*np.power(r,N-1) for i in range(N3)]                
                 else:
                     N1=round(float(np.ceil(np.log(length*(rmax-1)/deltamin+1.)/np.log(rmax))))
                     while(1):
@@ -497,9 +495,7 @@ class CartesianGrid():
                             r=r*(2.0-cc)
                     
                     grids = grids + [deltamin*np.power(r,i) for i in range(N1)]
-                
-            
-            if (type==1):
+            if (shape==1):
                 grids.reverse()
         return grids
     

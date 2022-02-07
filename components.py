@@ -10,6 +10,7 @@ from myconstants import *
 # from scipy.integrate import scipy.integrate.quad
 # from scipy.misc import scipy.misc.factorial
 import scipy.special
+import scipy.integrate
 import re
 import os
 # from filters import *

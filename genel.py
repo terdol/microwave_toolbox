@@ -9,7 +9,15 @@ import re
 import collections
 import cProfile
 from copy import deepcopy
+import os
+from functools import lru_cache
 
+inkscape_exe = os.path.normpath(r"C:\Users\Erdoel\Programlar\inkscape\bin\inkscape.exe ")
+convert_exe = os.path.normpath(r"C:\Users\Erdoel\Programlar\ImageMagick-7.0.9-5-portable-Q16-x64\convert.exe ")
+
+def convert_image(filename, format):
+    import subprocess
+    subprocess.call(inkscape_exe+filename+" --export-type=\""+format+"\"",shell=True)
 
 Np2dB = 8.68589 # guc kaybi icin alpha'dan' dB/m'ye donusum katsayisi (20.0*log10(e))
                 # alpha'nin birimi 1/m (Neper)'dir
@@ -76,6 +84,27 @@ class objdict(dict):
         else:
             raise AttributeError("No such attribute: " + name)
 
+def polarsample(x):
+    """Samples the Smith Chart uniformly and returns the reflection coefficient values
+    x: approximate distance between the points
+    """
+    maxref=0.99
+    n=int(np.ceil(maxref/x))
+    x=maxref/n
+    refs = [0]
+    for i in range(1,n+1):
+        r=x*i
+        m=int(np.ceil(2*np.pi*i))
+        th = 2*np.pi/m
+        for j in range(m):
+            refs.append(r*np.exp(1j*j*th))
+    return refs
+
+class Flexlist(list):
+    """This is a list implementation that supports indexing by list to return some elements of the list"""
+    def __getitem__(self, keys):
+        if isinstance(keys, (int, slice)): return list.__getitem__(self, keys)
+        return [self[k] for k in keys]
 
 def tukey_window(alpha,N):
     """
@@ -269,6 +298,12 @@ def coef(birim):
     temp = pq.Quantity(1.0, birim)
     return (temp.magnitude) / (temp.simplified.magnitude)
 
+def split_camel_case(str):
+    "Split string written with CamelCase to words. The first letter can be either lower or upper case."
+    start_idx = [i for i, e in enumerate(str) if e.isupper()] + [len(str)]
+    start_idx = [0] + start_idx
+    return [str[x: y] for x, y in zip(start_idx, start_idx[1:]) if x!=y]
+
 def stripunit(sayi):
     match = re.search(r"([+\-]?)(\d+(\.\d*)?|\d*\.\d+)([eE][+\-]?\d+)?\s*(\D+\S*)?",sayi)
     number = ""
@@ -279,6 +314,7 @@ def stripunit(sayi):
                 number = number + str(match.group(k))
     return float(number)
 
+# @lru_cache did not work with arguments of type list since lists are not hashable
 def convert2pq(sayilar, defaultunits=[]):
     """
     Method to convert a string or string list to float after unit conversion to SI
@@ -314,9 +350,9 @@ def convert2pq(sayilar, defaultunits=[]):
     for i in range(len(sayilar)):
         sayi = sayilar[i]
         try:
-          if (sayi == convert2pq.sayilar[i]) and (convert2pq.units[i]):
-              sonuclar.append(convert2pq.sonuc[i])
-              continue
+            if (sayi == convert2pq.sayilar[i]) and (convert2pq.units[i]):
+                sonuclar.append(convert2pq.sonuc[i])
+                continue
         except:
             pass
         #print "sss ",i, " ",sayi
@@ -328,9 +364,6 @@ def convert2pq(sayilar, defaultunits=[]):
             # if len(defaultunits) > 0:
                 # unit = defaultunits[i]
             # sonuc=pq.Quantity(float(sayi), unit)
-            print(sayi)
-            print(np.array(sayi))
-            print(np.shape(np.array(sayi)))
             sonuc=pq.Quantity(np.array(sayi), defaultunits[i])
             sonuclar.append(sonuc.simplified.magnitude)
         else:
@@ -357,6 +390,7 @@ def convert2pq(sayilar, defaultunits=[]):
     convert2pq.sayilar = deepcopy(sayilar)
     convert2pq.defaultunits=deepcopy(defaultunits)
     return convert2pq.sonuc
+    # return sonuclar
 
 def flatten(x):
     """Flatten (an irregular) list of lists"""
@@ -387,7 +421,10 @@ def smooth(x, window_len=11, window='hanning'):
     input:
         x: the input signal
         window_len: the dimension of the smoothing window; should be an odd integer
-        window: the type of window from 'flat', 'hanning', 'hamming', 'bartlett', 'blackman'
+        window: either
+                    window array with type list or numpy array with size window_len
+                or
+                    the type of window from 'flat', 'hanning', 'hamming', 'bartlett', 'blackman'
             flat window will produce a moving average smoothing.
     output:
         the smoothed signal
@@ -399,7 +436,6 @@ def smooth(x, window_len=11, window='hanning'):
     numpy.hanning, numpy.hamming, numpy.bartlett, numpy.blackman, numpy.convolve
     scipy.signal.lfilter
 
-    TODO: the window parameter could be the window itself if an array instead of a string
     """
 
     import numpy as np
@@ -413,10 +449,13 @@ def smooth(x, window_len=11, window='hanning'):
     if not window in ['flat', 'hanning', 'hamming', 'bartlett', 'blackman']:
         raise ValueError("Window is on of 'flat', 'hanning', 'hamming', 'bartlett', 'blackman'")
     s = np.r_[2 * x[0] - x[window_len:1:-1], x, 2 * x[-1] - x[-1:-window_len:-1]]
-    if window == 'flat':  #moving average
-        w = np.ones(window_len, 'd')
+    if isinstance(window, (list,np.ndarray)):
+        w = np.array(window)
     else:
-        w = eval('np.' + window + '(window_len)')
+        if window == 'flat':  #moving average
+            w = np.ones(window_len, 'd')
+        else:
+            w = eval('np.' + window + '(window_len)')
     y = np.convolve(w / w.sum(), s, mode='same')
     return y[window_len - 1:-window_len + 1]
 
@@ -495,14 +534,78 @@ def peakdet(v, delta, x = None):
 
     return array(maxtab), array(mintab)
 
+def levenshtein_ratio_and_distance(s, t, ratio_calc = False):
+    """ levenshtein_ratio_and_distance:
+        Calculates levenshtein distance between two strings.
+        If ratio_calc = True, the function computes the
+        levenshtein distance ratio of similarity between two strings
+        For all i and j, distance[i,j] will contain the Levenshtein
+        distance between the first i characters of s and the
+        first j characters of t
+    """
+    # Initialize matrix of zeros
+    rows = len(s)+1
+    cols = len(t)+1
+    distance = np.zeros((rows,cols),dtype = int)
+
+    # Populate matrix of zeros with the indeces of each character of both strings
+    for i in range(1, rows):
+        for k in range(1,cols):
+            distance[i][0] = i
+            distance[0][k] = k
+
+    # Iterate over the matrix to compute the cost of deletions,insertions and/or substitutions
+    for col in range(1, cols):
+        for row in range(1, rows):
+            if s[row-1] == t[col-1]:
+                cost = 0 # If the characters are the same in the two strings in a given position [i,j] then the cost is 0
+            else:
+                # In order to align the results with those of the Python Levenshtein package, if we choose to calculate the ratio
+                # the cost of a substitution is 2. If we calculate just distance, then the cost of a substitution is 1.
+                if ratio_calc == True:
+                    cost = 2
+                else:
+                    cost = 1
+            distance[row][col] = min(distance[row-1][col] + 1,      # Cost of deletions
+                                 distance[row][col-1] + 1,          # Cost of insertions
+                                 distance[row-1][col-1] + cost)     # Cost of substitutions
+    if ratio_calc == True:
+        # Computation of the Levenshtein Distance Ratio
+        Ratio = ((len(s)+len(t)) - distance[row][col]) / (len(s)+len(t))
+        return Ratio
+    else:
+        # print(distance) # Uncomment if you want to see the matrix showing how the algorithm computes the cost of deletions,
+        # insertions and/or substitutions
+        # This is the minimum number of edits needed to convert string a to string b
+        return "The strings are {} edits away".format(distance[row][col])
 
 if __name__ == "__main__":
-    print(convert2pq("10mil"))
-    print(convert2pq(["10", "10 inch"], ["m", "m"]))
-    print(convert2pq([10.0, "10 inch"]))
-    print(convert2pq([[10.0, 36.2], "10 inch"], ["mil", "m"]))
-    a = np.array([12.1, 45.3])
-    print(prettystring(a, birim=""))
+    #print(convert2pq("10mil"))
+    #from timeit import default_timer as timer
+    #t1 = timer()
+    #print(convert2pq(["10", "10.00 inch"], ["m", "m"]))
+    #t2 = timer()
+    #print(convert2pq(["10", "10.00 inch"], ["m", "m"]))
+    #t3 = timer()
+    #print(t2-t1)
+    #print(t3-t2)
+    #print(convert2pq([10.0, "10 inch"]))
+    #print(convert2pq([[10.0, 36.2], "10 inch"], ["mil", "m"]))
+    #a = np.array([12.1, 45.3])
+    #print(prettystring(a, birim=""))
+
+    rr = polarsample(0.2)
+    print(rr)
+    for r in rr:
+        print(r)
+    import matplotlib.pyplot as plt
+    import pysmith
+    fig= plt.figure(figsize=(15,10))
+    ax = pysmith.get_smith(fig, 111)
+    for r in rr:
+        ax.plot([np.real(r)],[np.imag(r)],"*")
+    plt.savefig("Sample_points_02.png")
+    plt.show()
 
    # arg = ["12.1", "34.2", "23.4"]
    # arg = [np.array([12.1, 15.2, 18.3]), "34.2", "23.4"]

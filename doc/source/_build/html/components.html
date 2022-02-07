@@ -1,0 +1,1600 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>components module &#8212; spfile 0.1 documentation</title>
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="_static/graphviz.css" />
+    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/language_data.js"></script>
+    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="prev" title="touchstone module" href="touchstone.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <div class="section" id="module-components">
+<span id="components-module"></span><h1>components module<a class="headerlink" href="#module-components" title="Permalink to this headline">¶</a></h1>
+<p>Created on Tue Nov 17 11:52:33 2009</p>
+<p>&#64;author: Tuncay</p>
+<dl class="py function">
+<dt id="components.AWG2Dia">
+<code class="sig-prename descclassname">components.</code><code class="sig-name descname">AWG2Dia</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">arg</span></em>, <em class="sig-param"><span class="n">defaultunits</span><span class="o">=</span><span class="default_value">[]</span></em><span class="sig-paren">)</span><a class="headerlink" href="#components.AWG2Dia" title="Permalink to this definition">¶</a></dt>
+<dd><p>Convert AWG to Diameter.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>arg</strong> (<em>list</em>) – <p>First 1 arguments are inputs.</p>
+<ol class="arabic simple">
+<li><p>AWG ;</p></li>
+<li><p>Diameter ;length</p></li>
+</ol>
+<p>3. Current rating in still air ; current
+Reference:  Wikipedia, Current rating is calculated through curve fit from online data</p>
+</p></li>
+<li><p><strong>defaultunits</strong> (<em>list</em><em>, </em><em>optional</em>) – Default units for quantities in <em>arg</em> list. Default is [] which means SI units will be used if no unit is given in <em>arg</em>.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>arg</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>list</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="components.Absorptive_Filter_Equalizer">
+<code class="sig-prename descclassname">components.</code><code class="sig-name descname">Absorptive_Filter_Equalizer</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">arg</span></em>, <em class="sig-param"><span class="n">defaultunits</span><span class="o">=</span><span class="default_value">[]</span></em><span class="sig-paren">)</span><a class="headerlink" href="#components.Absorptive_Filter_Equalizer" title="Permalink to this definition">¶</a></dt>
+<dd><p>Equalizer using an absorptive filter composed of two coupled lines.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>arg</strong> (<em>list</em>) – <p>First 4 arguments are inputs.</p>
+<ol class="arabic simple">
+<li><p>Reference Impedance ; impedance</p></li>
+<li><p>Coupling (dB) ;</p></li>
+<li><p>Center Frequency ; frequency</p></li>
+<li><p>Test Frequency ; frequency</p></li>
+<li><p>S21 (dB) ;</p></li>
+<li><p>Zeven ;  impedance</p></li>
+<li><p>Zodd ;  impedance</p></li>
+</ol>
+<p>Reference:</p>
+</p></li>
+<li><p><strong>defaultunits</strong> (<em>list</em><em>, </em><em>optional</em>) – Default units for quantities in <em>arg</em> list. Default is [] which means SI units will be used if no unit is given in <em>arg</em>.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>arg</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>list</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="components.Binomial_QWave_Impedance_Transformer">
+<code class="sig-prename descclassname">components.</code><code class="sig-name descname">Binomial_QWave_Impedance_Transformer</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">arg</span></em>, <em class="sig-param"><span class="n">defaultunits</span><span class="o">=</span><span class="default_value">[]</span></em><span class="sig-paren">)</span><a class="headerlink" href="#components.Binomial_QWave_Impedance_Transformer" title="Permalink to this definition">¶</a></dt>
+<dd><p>Binomial Quarter Wave Impedance Transformer.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>arg</strong> (<em>list</em>) – <p>First 5 arguments are inputs.</p>
+<ol class="arabic simple">
+<li><p>Source Impedance;impedance</p></li>
+<li><p>Load Impedance;impedance</p></li>
+<li><p>Number Of Matching Sections;</p></li>
+<li><p>Max(dB(S&lt;sub&gt;11&lt;/sub&gt;)) In Frequency Band ;</p></li>
+<li><p>Center Frequency ; frequency</p></li>
+<li><p>Impedances ; impedance</p></li>
+</ol>
+<p>7.  Bandwidth ; frequency
+Reference:  Impedance Matching and Transformation.pdf</p>
+</p></li>
+<li><p><strong>defaultunits</strong> (<em>list</em><em>, </em><em>optional</em>) – Default units for quantities in <em>arg</em> list. Default is [] which means SI units will be used if no unit is given in <em>arg</em>.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>arg</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>list</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="components.Bridged_Tee_Attenuator_Analysis">
+<code class="sig-prename descclassname">components.</code><code class="sig-name descname">Bridged_Tee_Attenuator_Analysis</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">arg</span></em>, <em class="sig-param"><span class="n">defaultunits</span><span class="o">=</span><span class="default_value">[]</span></em><span class="sig-paren">)</span><a class="headerlink" href="#components.Bridged_Tee_Attenuator_Analysis" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bridged Tee Attenuator Analysis.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>arg</strong> (<em>list</em>) – <p>First 3 arguments are inputs.</p>
+<ol class="arabic simple">
+<li><p>Reference Impedance (Zo); impedance</p></li>
+<li><p>Series Impedance (Rs); impedance</p></li>
+<li><p>Parallel Impedance (Rp); impedance</p></li>
+<li><p>S(1,1) ;</p></li>
+</ol>
+<p>5. S(2,1) ;
+Reference:</p>
+</p></li>
+<li><p><strong>defaultunits</strong> (<em>list</em><em>, </em><em>optional</em>) – Default units for quantities in <em>arg</em> list. Default is [] which means SI units will be used if no unit is given in <em>arg</em>.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>arg</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>list</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="components.Bridged_Tee_Attenuator_Synthesis">
+<code class="sig-prename descclassname">components.</code><code class="sig-name descname">Bridged_Tee_Attenuator_Synthesis</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">arg</span></em>, <em class="sig-param"><span class="n">defaultunits</span><span class="o">=</span><span class="default_value">[]</span></em><span class="sig-paren">)</span><a class="headerlink" href="#components.Bridged_Tee_Attenuator_Synthesis" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bridged Tee Attenuator Synthesis.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>arg</strong> (<em>list</em>) – <p>First 3 arguments are inputs.</p>
+<ol class="arabic simple">
+<li><p>Reference Impedance (Zo); impedance</p></li>
+<li><p>Series Impedance (Rs); impedance</p></li>
+<li><p>Parallel Impedance (Rp); impedance</p></li>
+<li><p>S(1,1) ;</p></li>
+</ol>
+<p>5. S(2,1) ;
+Reference:</p>
+</p></li>
+<li><p><strong>defaultunits</strong> (<em>list</em><em>, </em><em>optional</em>) – Default units for quantities in <em>arg</em> list. Default is [] which means SI units will be used if no unit is given in <em>arg</em>.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>arg</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>list</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="components.Chebyshev_QWave_Impedance_Transformer">
+<code class="sig-prename descclassname">components.</code><code class="sig-name descname">Chebyshev_QWave_Impedance_Transformer</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">arg</span></em>, <em class="sig-param"><span class="n">defaultunits</span><span class="o">=</span><span class="default_value">[]</span></em><span class="sig-paren">)</span><a class="headerlink" href="#components.Chebyshev_QWave_Impedance_Transformer" title="Permalink to this definition">¶</a></dt>
+<dd><p>Chebyshev Quarter Wave Impedance Transformer.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>arg</strong> (<em>list</em>) – <p>First 6 arguments are inputs.</p>
+<ol class="arabic simple">
+<li><p>Source Impedance ; impedance</p></li>
+<li><p>Load Impedance ; impedance</p></li>
+<li><p>Number Of Matching Sections ;</p></li>
+<li><p>Minimum Frequency ; frequency</p></li>
+<li><p>Maximum Frequency ; frequency</p></li>
+<li><p>Test Frequency ; frequency</p></li>
+<li><p>Impedances ; impedance</p></li>
+</ol>
+<p>8.  Return Loss at Test Frequency ;
+Reference:  Impedance Matching and Transformation.pdf + eski kod</p>
+</p></li>
+<li><p><strong>defaultunits</strong> (<em>list</em><em>, </em><em>optional</em>) – Default units for quantities in <em>arg</em> list. Default is [] which means SI units will be used if no unit is given in <em>arg</em>.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>arg</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>list</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="components.Chebyshev_Taper_Impedance_Transformer">
+<code class="sig-prename descclassname">components.</code><code class="sig-name descname">Chebyshev_Taper_Impedance_Transformer</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">arg</span></em>, <em class="sig-param"><span class="n">defaultunits</span><span class="o">=</span><span class="default_value">[]</span></em><span class="sig-paren">)</span><a class="headerlink" href="#components.Chebyshev_Taper_Impedance_Transformer" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculates performance and impedance values for an N-section Chebyshev Impedance Taper.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>arg</strong> (<em>list</em>) – <p>First 5 arguments are inputs.</p>
+<ol class="arabic simple">
+<li><p>Source Impedance ; impedance</p></li>
+<li><p>Load Impedance ; impedance</p></li>
+<li><p>Number Of Sections (Even) ;</p></li>
+<li><p>Fractional Bandwidth (F2/F1) ;</p></li>
+<li><p>Length (normalized to Lambda at fcenter) ;</p></li>
+<li><p>Impedances ; impedance</p></li>
+</ol>
+<p>7.  Return Loss ;
+Reference:  Foundations for Microwave Engineering, Collin</p>
+</p></li>
+<li><p><strong>defaultunits</strong> (<em>list</em><em>, </em><em>optional</em>) – Default units for quantities in <em>arg</em> list. Default is [] which means SI units will be used if no unit is given in <em>arg</em>.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>arg</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>list</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="components.CircularPlateCap">
+<code class="sig-prename descclassname">components.</code><code class="sig-name descname">CircularPlateCap</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">arg</span></em>, <em class="sig-param"><span class="n">defaultunits</span><span class="o">=</span><span class="default_value">[]</span></em><span class="sig-paren">)</span><a class="headerlink" href="#components.CircularPlateCap" title="Permalink to this definition">¶</a></dt>
+<dd><p>Circular Plate Capacitance.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>arg</strong> (<em>list</em>) – <p>First 3 arguments are inputs.</p>
+<ol class="arabic simple">
+<li><p>Radius;length</p></li>
+<li><p>Height;length</p></li>
+<li><p>Dielectric Permittivity;</p></li>
+</ol>
+<p>4. Capacitance; capacitance
+Reference:</p>
+</p></li>
+<li><p><strong>defaultunits</strong> (<em>list</em><em>, </em><em>optional</em>) – Default units for quantities in <em>arg</em> list. Default is [] which means SI units will be used if no unit is given in <em>arg</em>.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>arg</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>list</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="components.Dia2AWG">
+<code class="sig-prename descclassname">components.</code><code class="sig-name descname">Dia2AWG</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">arg</span></em>, <em class="sig-param"><span class="n">defaultunits</span><span class="o">=</span><span class="default_value">[]</span></em><span class="sig-paren">)</span><a class="headerlink" href="#components.Dia2AWG" title="Permalink to this definition">¶</a></dt>
+<dd><p>Convert Diameter to AWG.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>arg</strong> (<em>list</em>) – <p>First 1 arguments are inputs.</p>
+<ol class="arabic simple">
+<li><p>AWG ;</p></li>
+<li><p>Diameter ;length</p></li>
+</ol>
+<p>3. Current rating in still air ; current
+Reference:  Wikipedia</p>
+</p></li>
+<li><p><strong>defaultunits</strong> (<em>list</em><em>, </em><em>optional</em>) – Default units for quantities in <em>arg</em> list. Default is [] which means SI units will be used if no unit is given in <em>arg</em>.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>arg</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>list</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="components.DualFrequencyTransformer">
+<code class="sig-prename descclassname">components.</code><code class="sig-name descname">DualFrequencyTransformer</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">arg</span></em>, <em class="sig-param"><span class="n">defaultunits</span><span class="o">=</span><span class="default_value">[]</span></em><span class="sig-paren">)</span><a class="headerlink" href="#components.DualFrequencyTransformer" title="Permalink to this definition">¶</a></dt>
+<dd><p>Dual Frequency Transformer.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>arg</strong> (<em>list</em>) – <p>First 4 arguments are inputs.</p>
+<ol class="arabic simple">
+<li><p>Source Impedance; impedance</p></li>
+<li><p>Load Impedance; impedance</p></li>
+<li><p>f1 Lower Frequency; frequency</p></li>
+<li><p>f2 Higher Frequency; frequency</p></li>
+<li><p>Z1; impedance</p></li>
+<li><p>Z2; impedance</p></li>
+</ol>
+<p>7. Electrical Length ; angle
+Reference:  A Small Dual Frequency Transformer in Two Sections</p>
+</p></li>
+<li><p><strong>defaultunits</strong> (<em>list</em><em>, </em><em>optional</em>) – Default units for quantities in <em>arg</em> list. Default is [] which means SI units will be used if no unit is given in <em>arg</em>.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>arg</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>list</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="components.DualTransformation1">
+<code class="sig-prename descclassname">components.</code><code class="sig-name descname">DualTransformation1</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">arg</span></em>, <em class="sig-param"><span class="n">defaultunits</span><span class="o">=</span><span class="default_value">[]</span></em><span class="sig-paren">)</span><a class="headerlink" href="#components.DualTransformation1" title="Permalink to this definition">¶</a></dt>
+<dd><p>Dual Transformation 1.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>arg</strong> (<em>list</em>) – <p>First 4 arguments are inputs.</p>
+<ol class="arabic simple">
+<li><p>L1 ; inductance</p></li>
+<li><p>C1 ; capacitance</p></li>
+<li><p>L2 ; inductance</p></li>
+<li><p>C2 ; capacitance</p></li>
+<li><p>L1’ ; inductance</p></li>
+<li><p>C1’ ; capacitance</p></li>
+<li><p>L2’ ; inductance</p></li>
+</ol>
+<p>8.  C2’ ; capacitance
+Reference:  Microstrip Filters for RF-Microwave Applications, s.25, Figure 2.6a</p>
+</p></li>
+<li><p><strong>defaultunits</strong> (<em>list</em><em>, </em><em>optional</em>) – Default units for quantities in <em>arg</em> list. Default is [] which means SI units will be used if no unit is given in <em>arg</em>.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>arg</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>list</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="components.DualTransformation2">
+<code class="sig-prename descclassname">components.</code><code class="sig-name descname">DualTransformation2</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">arg</span></em>, <em class="sig-param"><span class="n">defaultunits</span><span class="o">=</span><span class="default_value">[]</span></em><span class="sig-paren">)</span><a class="headerlink" href="#components.DualTransformation2" title="Permalink to this definition">¶</a></dt>
+<dd><p>Dual Transformation 1.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>arg</strong> (<em>list</em>) – <p>First 4 arguments are inputs.</p>
+<ol class="arabic simple">
+<li><p>L1 ; inductance</p></li>
+<li><p>C1 ; capacitance</p></li>
+<li><p>L2 ; inductance</p></li>
+<li><p>C2 ; capacitance</p></li>
+<li><p>L1’ ; inductance</p></li>
+<li><p>C1’ ; capacitance</p></li>
+<li><p>L2’ ; inductance</p></li>
+</ol>
+<p>8.  C2’ ; capacitance
+Reference:  Microstrip Filters for RF-Microwave Applications, s.25, Figure 2.6b</p>
+</p></li>
+<li><p><strong>defaultunits</strong> (<em>list</em><em>, </em><em>optional</em>) – Default units for quantities in <em>arg</em> list. Default is [] which means SI units will be used if no unit is given in <em>arg</em>.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>arg</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>list</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="components.EWG_ABCD">
+<code class="sig-prename descclassname">components.</code><code class="sig-name descname">EWG_ABCD</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">a</span></em>, <em class="sig-param"><span class="n">b</span></em>, <em class="sig-param"><span class="n">er</span></em>, <em class="sig-param"><span class="n">length</span></em>, <em class="sig-param"><span class="n">frek</span></em><span class="sig-paren">)</span><a class="headerlink" href="#components.EWG_ABCD" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="components.EWG_inv">
+<code class="sig-prename descclassname">components.</code><code class="sig-name descname">EWG_inv</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">a</span></em>, <em class="sig-param"><span class="n">b</span></em>, <em class="sig-param"><span class="n">er</span></em>, <em class="sig-param"><span class="n">length</span></em>, <em class="sig-param"><span class="n">frek</span></em><span class="sig-paren">)</span><a class="headerlink" href="#components.EWG_inv" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="components.EvanescentWGEquivalent">
+<code class="sig-prename descclassname">components.</code><code class="sig-name descname">EvanescentWGEquivalent</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">arg</span></em>, <em class="sig-param"><span class="n">defaultunits</span><span class="o">=</span><span class="default_value">[]</span></em><span class="sig-paren">)</span><a class="headerlink" href="#components.EvanescentWGEquivalent" title="Permalink to this definition">¶</a></dt>
+<dd><p>Waveguide Width Step from Rectangular Waveguide to Evanescent Mode Rectangular Waveguide.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>arg</strong> (<em>list</em>) – <p>First 5 arguments are inputs.</p>
+<ol class="arabic simple">
+<li><p>Waveguide Width;length</p></li>
+<li><p>Waveguide Height;length</p></li>
+<li><p>Dielectric Permittivity;</p></li>
+<li><p>Waveguide Length;length</p></li>
+<li><p>Frequency; frequency</p></li>
+<li><p>Series Inductance For Shunt-Series-Shunt Model; inductance</p></li>
+<li><p>Shunt Inductance For Shunt-Series-Shunt Model; inductance</p></li>
+<li><p>Series Inductance For Series-Shunt-Series Model; inductance</p></li>
+<li><p>Shunt Inductance For Series-Shunt-Series Model; inductance</p></li>
+</ol>
+<p>10. Characteristic Impedance; impedance
+Reference:  The Design of Evanescent Mode Waveguide Bandpass Filters for a Prescribed Insertion Loss Characteristic.pdf
+Model= Xp1,Xs1,Xp1 ya da Xs2,Xp2,Xs2 (p: shunt, s: series)
+Zo=jXo</p>
+</p></li>
+<li><p><strong>defaultunits</strong> (<em>list</em><em>, </em><em>optional</em>) – Default units for quantities in <em>arg</em> list. Default is [] which means SI units will be used if no unit is given in <em>arg</em>.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>arg</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>list</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="components.Exponential_Taper_Impedance_Transformer">
+<code class="sig-prename descclassname">components.</code><code class="sig-name descname">Exponential_Taper_Impedance_Transformer</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">arg</span></em>, <em class="sig-param"><span class="n">defaultunits</span><span class="o">=</span><span class="default_value">[]</span></em><span class="sig-paren">)</span><a class="headerlink" href="#components.Exponential_Taper_Impedance_Transformer" title="Permalink to this definition">¶</a></dt>
+<dd><p>Exponential Impedance Taper.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>arg</strong> (<em>list</em>) – <p>First 5 arguments are inputs.</p>
+<ol class="arabic simple">
+<li><p>Source Impedance ; impedance</p></li>
+<li><p>Load Impedance ; impedance</p></li>
+<li><p>Number Of Sections ;</p></li>
+<li><p>Fractional Bandwidth (F2/F1) ;</p></li>
+<li><p>Length (normalized to Lambda at fcenter) ;</p></li>
+<li><p>Impedances ; impedance</p></li>
+</ol>
+<p>7.  Return Loss ;
+Reference:  Foundations for Microwave Engineering, Collin</p>
+</p></li>
+<li><p><strong>defaultunits</strong> (<em>list</em><em>, </em><em>optional</em>) – Default units for quantities in <em>arg</em> list. Default is [] which means SI units will be used if no unit is given in <em>arg</em>.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>arg</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>list</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="components.GyselPowerDivider">
+<code class="sig-prename descclassname">components.</code><code class="sig-name descname">GyselPowerDivider</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">arg</span></em>, <em class="sig-param"><span class="n">defaultunits</span><span class="o">=</span><span class="default_value">[]</span></em><span class="sig-paren">)</span><a class="headerlink" href="#components.GyselPowerDivider" title="Permalink to this definition">¶</a></dt>
+<dd><p>Triangle network to Star network transformation.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>arg</strong> (<em>list</em>) – <p>First 6 arguments are inputs.</p>
+<ol class="arabic simple">
+<li><p>Zo1;  impedance</p></li>
+<li><p>Zo2;  impedance</p></li>
+<li><p>Zo3;  impedance</p></li>
+<li><p>R1; impedance</p></li>
+<li><p>R2; impedance</p></li>
+<li><p>P2/P3 ratio;</p></li>
+<li><p>Z1; impedance</p></li>
+<li><p>Z2; impedance</p></li>
+<li><p>Z3; impedance</p></li>
+</ol>
+<p>10. Z4; impedance
+Reference:
+Zo1: 1. port impedance
+Zo2: 2. port impedance
+Zo3: 3. port impedance
+R1: first isolation resistor (2.porta yakin)
+R2: second isolation resistor (3.porta yakin)
+ratio: P2/P3 power ratio
+Z1: impedance of transmission line between 1.port and 2.port
+Z2: impedance of transmission line between 1.port and 3.port
+Z3: impedance of transmission line between 2.port and isolation resistor
+Z4: impedance of transmission line between 3.port and isolation resistor</p>
+</p></li>
+<li><p><strong>defaultunits</strong> (<em>list</em><em>, </em><em>optional</em>) – Default units for quantities in <em>arg</em> list. Default is [] which means SI units will be used if no unit is given in <em>arg</em>.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>arg</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>list</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="components.HomogeneousRectWaveguideParameters_TE">
+<code class="sig-prename descclassname">components.</code><code class="sig-name descname">HomogeneousRectWaveguideParameters_TE</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">arg</span></em>, <em class="sig-param"><span class="n">defaultunits</span><span class="o">=</span><span class="default_value">[]</span></em><span class="sig-paren">)</span><a class="headerlink" href="#components.HomogeneousRectWaveguideParameters_TE" title="Permalink to this definition">¶</a></dt>
+<dd><p>Homogeneous Rectangular Waveguide Parameters.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>arg</strong> (<em>list</em>) – <p>First 10 arguments are inputs.</p>
+<ol class="arabic simple">
+<li><p>Dielectric Permittivity in Waveguide;</p></li>
+<li><p>Waveguide Width;length</p></li>
+<li><p>Waveguide Height;length</p></li>
+<li><p>Mode (0: Te, 1: Tm);</p></li>
+<li><p>M;</p></li>
+<li><p>N;</p></li>
+<li><p>Tand Of Dielectric;</p></li>
+<li><p>Electrical Conductivity Of Walls; electrical conductivity</p></li>
+<li><p>Frequency; frequency</p></li>
+<li><p>Physical Length;length</p></li>
+<li><p>Cond Loss; loss per length</p></li>
+<li><p>Diel Loss; loss per length</p></li>
+<li><p>Cutoff Freq; frequency</p></li>
+<li><p>Lambda_Guided;length</p></li>
+<li><p>Impedance; impedance</p></li>
+<li><p>Electrical Length; angle</p></li>
+</ol>
+<p>Reference:  Marcuvitz Waveguide Handbook s.253</p>
+</p></li>
+<li><p><strong>defaultunits</strong> (<em>list</em><em>, </em><em>optional</em>) – Default units for quantities in <em>arg</em> list. Default is [] which means SI units will be used if no unit is given in <em>arg</em>.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>arg</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>list</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="components.InductivePostInWaveguide">
+<code class="sig-prename descclassname">components.</code><code class="sig-name descname">InductivePostInWaveguide</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">arg</span></em>, <em class="sig-param"><span class="n">defaultunits</span><span class="o">=</span><span class="default_value">[]</span></em><span class="sig-paren">)</span><a class="headerlink" href="#components.InductivePostInWaveguide" title="Permalink to this definition">¶</a></dt>
+<dd><p>Inductive Post In Waveguide.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>arg</strong> (<em>list</em>) – <p>First 6 arguments are inputs.</p>
+<ol class="arabic simple">
+<li><p>Dielectric Permittivity in Waveguide ;</p></li>
+<li><p>Waveguide Width (a);length</p></li>
+<li><p>Waveguide Height (b);length</p></li>
+<li><p>Post Diameter (d);length</p></li>
+<li><p>Waveguide Sidewall To Post Center (s);length</p></li>
+<li><p>Frequency; frequency</p></li>
+<li><p>Inductance;inductance</p></li>
+<li><p>Capacitance; capacitance</p></li>
+</ol>
+<p>9. Impedance; impedance
+Reference:  Marcuvitz Waveguide Handbook s.257</p>
+</p></li>
+<li><p><strong>defaultunits</strong> (<em>list</em><em>, </em><em>optional</em>) – Default units for quantities in <em>arg</em> list. Default is [] which means SI units will be used if no unit is given in <em>arg</em>.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>arg</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>list</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="components.InductiveWindowInWaveguide">
+<code class="sig-prename descclassname">components.</code><code class="sig-name descname">InductiveWindowInWaveguide</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">arg</span></em>, <em class="sig-param"><span class="n">defaultunits</span><span class="o">=</span><span class="default_value">[]</span></em><span class="sig-paren">)</span><a class="headerlink" href="#components.InductiveWindowInWaveguide" title="Permalink to this definition">¶</a></dt>
+<dd><p>Waveguide Width Step from Rectangular Waveguide to Evanescent Mode Rectangular Waveguide.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>arg</strong> (<em>list</em>) – <p>First 6 arguments are inputs.</p>
+<ol class="arabic simple">
+<li><p>Dielectric Permittivity in Waveguide ;</p></li>
+<li><p>Waveguide Width (a);length</p></li>
+<li><p>Waveguide Height (b);length</p></li>
+<li><p>Difference Of Waveguide Width To Window Width;length</p></li>
+<li><p>Window Thickness;length</p></li>
+<li><p>Frequency; frequency</p></li>
+<li><p>Inductance;inductance</p></li>
+<li><p>Capacitance; capacitance</p></li>
+<li><p>Impedance; impedance</p></li>
+</ol>
+<p>Reference:  Marcuvitz Waveguide Handbook s.253</p>
+</p></li>
+<li><p><strong>defaultunits</strong> (<em>list</em><em>, </em><em>optional</em>) – Default units for quantities in <em>arg</em> list. Default is [] which means SI units will be used if no unit is given in <em>arg</em>.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>arg</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>list</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="components.Interference_Phase_Amp_Error">
+<code class="sig-prename descclassname">components.</code><code class="sig-name descname">Interference_Phase_Amp_Error</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">arg</span></em>, <em class="sig-param"><span class="n">defaultunits</span><span class="o">=</span><span class="default_value">[]</span></em><span class="sig-paren">)</span><a class="headerlink" href="#components.Interference_Phase_Amp_Error" title="Permalink to this definition">¶</a></dt>
+<dd><p>Maximum phase and amplitude variation of a signal in presence of an interfering signal.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>arg</strong> (<em>list</em>) – <p>First 1 arguments are inputs.</p>
+<ol class="arabic simple">
+<li><p>Difference in dB ;</p></li>
+<li><p>Amplitude Error;</p></li>
+</ol>
+<p>3. Phase Error; angle
+Reference:</p>
+</p></li>
+<li><p><strong>defaultunits</strong> (<em>list</em><em>, </em><em>optional</em>) – Default units for quantities in <em>arg</em> list. Default is [] which means SI units will be used if no unit is given in <em>arg</em>.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>arg</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>list</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="components.Klopfenstein_Taper_Impedance_Transformer">
+<code class="sig-prename descclassname">components.</code><code class="sig-name descname">Klopfenstein_Taper_Impedance_Transformer</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">arg</span></em>, <em class="sig-param"><span class="n">defaultunits</span><span class="o">=</span><span class="default_value">[]</span></em><span class="sig-paren">)</span><a class="headerlink" href="#components.Klopfenstein_Taper_Impedance_Transformer" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculates performance and impedance values for an N-section Klopfenstein Impedance Taper.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>arg</strong> (<em>list</em>) – <p>First 6 arguments are inputs.</p>
+<ol class="arabic simple">
+<li><p>Source Impedance ; impedance</p></li>
+<li><p>Load Impedance ; impedance</p></li>
+<li><p>Maximum Reflection Coefficient (dB) ;</p></li>
+<li><p>Number Of Sections ;</p></li>
+<li><p>Minimum Frequency ; frequency</p></li>
+<li><p>Test Frequency ; frequency</p></li>
+<li><p>Minimum Total Phase at Minimum Frequency ; angle ;</p></li>
+<li><p>Impedances ; impedance</p></li>
+</ol>
+<p>9.  MAG(Reflection Coefficient) ;
+Reference:  Microwave Engineering, Pozar</p>
+</p></li>
+<li><p><strong>defaultunits</strong> (<em>list</em><em>, </em><em>optional</em>) – Default units for quantities in <em>arg</em> list. Default is [] which means SI units will be used if no unit is given in <em>arg</em>.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>arg</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>list</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="components.LC_Balun">
+<code class="sig-prename descclassname">components.</code><code class="sig-name descname">LC_Balun</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">arg</span></em>, <em class="sig-param"><span class="n">defaultunits</span><span class="o">=</span><span class="default_value">[]</span></em><span class="sig-paren">)</span><a class="headerlink" href="#components.LC_Balun" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate LC Balun.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>arg</strong> (<em>list</em>) – <p>First 4 arguments are inputs.</p>
+<ol class="arabic simple">
+<li><p>Source Impedance (Rin) ; impedance</p></li>
+<li><p>Load Impedances (RL) ; impedance</p></li>
+<li><p>Frequency; frequency</p></li>
+<li><p>Test Frequency ; frequency</p></li>
+<li><p>Inductance ; inductance</p></li>
+<li><p>Capacitance ; capacitance</p></li>
+<li><p>S11 (dB) ;</p></li>
+<li><p>S21 (dB) ;</p></li>
+</ol>
+<p>9.  S31 (dB) ;
+Reference:</p>
+</p></li>
+<li><p><strong>defaultunits</strong> (<em>list</em><em>, </em><em>optional</em>) – Default units for quantities in <em>arg</em> list. Default is [] which means SI units will be used if no unit is given in <em>arg</em>.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>arg</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>list</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="components.L_BondWire">
+<code class="sig-prename descclassname">components.</code><code class="sig-name descname">L_BondWire</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">arg</span></em>, <em class="sig-param"><span class="n">defaultunits</span><span class="o">=</span><span class="default_value">[]</span></em><span class="sig-paren">)</span><a class="headerlink" href="#components.L_BondWire" title="Permalink to this definition">¶</a></dt>
+<dd><p>Inductance of a bond wire.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>arg</strong> (<em>list</em>) – <p>First 4 arguments are inputs.</p>
+<ol class="arabic simple">
+<li><p>Bondwire Radius ;length</p></li>
+<li><p>Substrate Thickness ;length</p></li>
+<li><p>Distance Between End Points ;length</p></li>
+<li><p>Angle At End Points In Degrees ; angle</p></li>
+</ol>
+<p>5. Inductance ;inductance
+Reference:  Transmission Line Design Handbook, Wadell, s.153</p>
+</p></li>
+<li><p><strong>defaultunits</strong> (<em>list</em><em>, </em><em>optional</em>) – Default units for quantities in <em>arg</em> list. Default is [] which means SI units will be used if no unit is given in <em>arg</em>.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>arg</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>list</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="components.L_StraightFlatWire">
+<code class="sig-prename descclassname">components.</code><code class="sig-name descname">L_StraightFlatWire</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">arg</span></em>, <em class="sig-param"><span class="n">defaultunits</span><span class="o">=</span><span class="default_value">[]</span></em><span class="sig-paren">)</span><a class="headerlink" href="#components.L_StraightFlatWire" title="Permalink to this definition">¶</a></dt>
+<dd><p>Inductance of a flat wire.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>arg</strong> (<em>list</em>) – <p>First 6 arguments are inputs.</p>
+<ol class="arabic simple">
+<li><p>Wire Width ;length</p></li>
+<li><p>Wire Thickness ;length</p></li>
+<li><p>Wire Length ;length</p></li>
+<li><p>Frequency ; frequency</p></li>
+<li><p>Relative Permeability ;</p></li>
+<li><p>Conductivity ; electrical conductivity</p></li>
+<li><p>Inductance ;inductance</p></li>
+</ol>
+<p>8.  Impedance ;impedance
+Reference:  Transmission Line Design Handbook, Wadell, s.382</p>
+</p></li>
+<li><p><strong>defaultunits</strong> (<em>list</em><em>, </em><em>optional</em>) – Default units for quantities in <em>arg</em> list. Default is [] which means SI units will be used if no unit is given in <em>arg</em>.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>arg</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>list</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="components.L_StraightRoundWire">
+<code class="sig-prename descclassname">components.</code><code class="sig-name descname">L_StraightRoundWire</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">arg</span></em>, <em class="sig-param"><span class="n">defaultunits</span><span class="o">=</span><span class="default_value">[]</span></em><span class="sig-paren">)</span><a class="headerlink" href="#components.L_StraightRoundWire" title="Permalink to this definition">¶</a></dt>
+<dd><p>Inductance of a straight round wire.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>arg</strong> (<em>list</em>) – <p>First 5 arguments are inputs.</p>
+<ol class="arabic simple">
+<li><p>Wire Diameter ;length</p></li>
+<li><p>Wire Length ;length</p></li>
+<li><p>Frequency ; frequency</p></li>
+<li><p>Dielectric Permeability  ;</p></li>
+<li><p>Conductivity ; electrical conductivity</p></li>
+<li><p>Inductance ;inductance</p></li>
+</ol>
+<p>7. Impedance ; impedance
+Reference:  Transmission Line Design Handbook, Wadell, s.380</p>
+</p></li>
+<li><p><strong>defaultunits</strong> (<em>list</em><em>, </em><em>optional</em>) – Default units for quantities in <em>arg</em> list. Default is [] which means SI units will be used if no unit is given in <em>arg</em>.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>arg</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>list</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="components.L_air_core_coil">
+<code class="sig-prename descclassname">components.</code><code class="sig-name descname">L_air_core_coil</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">arg</span></em>, <em class="sig-param"><span class="n">defaultunits</span><span class="o">=</span><span class="default_value">[]</span></em><span class="sig-paren">)</span><a class="headerlink" href="#components.L_air_core_coil" title="Permalink to this definition">¶</a></dt>
+<dd><p>Inductance of a via hole in microstrip.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>arg</strong> (<em>list</em>) – <p>First 4 arguments are inputs.</p>
+<ol class="arabic simple">
+<li><p>Wire Diameter (d) ;length</p></li>
+<li><p>Coil Inner Diameter (d_in) ;length</p></li>
+<li><p>Spacing Between Turns (s) ; length</p></li>
+<li><p>Number Of Turns ;</p></li>
+<li><p>Inductance ; inductance</p></li>
+</ol>
+<p>6. Resonance Frequency ; frequency
+Reference:  www.microwavecoil.com , Microwave Components Inc.</p>
+</p></li>
+<li><p><strong>defaultunits</strong> (<em>list</em><em>, </em><em>optional</em>) – Default units for quantities in <em>arg</em> list. Default is [] which means SI units will be used if no unit is given in <em>arg</em>.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>arg</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>list</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="components.L_microstrip_via_hole">
+<code class="sig-prename descclassname">components.</code><code class="sig-name descname">L_microstrip_via_hole</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">arg</span></em>, <em class="sig-param"><span class="n">defaultunits</span><span class="o">=</span><span class="default_value">[]</span></em><span class="sig-paren">)</span><a class="headerlink" href="#components.L_microstrip_via_hole" title="Permalink to this definition">¶</a></dt>
+<dd><p>Inductance of a via hole in microstrip.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>arg</strong> (<em>list</em>) – <p>First 2 arguments are inputs.</p>
+<ol class="arabic simple">
+<li><p>Via Radius ;length</p></li>
+<li><p>Substrate Thickness ;length</p></li>
+</ol>
+<p>3. Inductance ; inductance
+Reference:  Microstrip Via Hole Grounds in Microstrip.pdf</p>
+</p></li>
+<li><p><strong>defaultunits</strong> (<em>list</em><em>, </em><em>optional</em>) – Default units for quantities in <em>arg</em> list. Default is [] which means SI units will be used if no unit is given in <em>arg</em>.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>arg</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>list</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="components.OptimumMitered90DegMicrostripBend">
+<code class="sig-prename descclassname">components.</code><code class="sig-name descname">OptimumMitered90DegMicrostripBend</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">arg</span></em>, <em class="sig-param"><span class="n">defaultunits</span><span class="o">=</span><span class="default_value">[]</span></em><span class="sig-paren">)</span><a class="headerlink" href="#components.OptimumMitered90DegMicrostripBend" title="Permalink to this definition">¶</a></dt>
+<dd><p>Optimum Mitered Microstrip Bend Parameters.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>arg</strong> (<em>list</em>) – <p>First 2 arguments are inputs.</p>
+<ol class="arabic simple">
+<li><p>Microstrip Width;length</p></li>
+<li><p>Substrate Height;length</p></li>
+</ol>
+<p>3.  Miter Length; length
+Reference: Tranmission line design handbook, p.290</p>
+</p></li>
+<li><p><strong>defaultunits</strong> (<em>list</em><em>, </em><em>optional</em>) – Default units for quantities in <em>arg</em> list. Default is [] which means SI units will be used if no unit is given in <em>arg</em>.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>arg</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>list</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="components.OptimumMiteredArbitraryAngleMicrostripBend">
+<code class="sig-prename descclassname">components.</code><code class="sig-name descname">OptimumMiteredArbitraryAngleMicrostripBend</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">arg</span></em>, <em class="sig-param"><span class="n">defaultunits</span><span class="o">=</span><span class="default_value">[]</span></em><span class="sig-paren">)</span><a class="headerlink" href="#components.OptimumMiteredArbitraryAngleMicrostripBend" title="Permalink to this definition">¶</a></dt>
+<dd><p>Optimum Mitered Microstrip Bend Parameters.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>arg</strong> (<em>list</em>) – <p>First 2 arguments are inputs.</p>
+<ol class="arabic simple">
+<li><p>Microstrip Width;length;</p></li>
+<li><p>Substrate Height;length;</p></li>
+<li><p>Angle (0-180 degrees); angle ;</p></li>
+</ol>
+<p>4.  Miter Length; length ;
+Reference: MWOHELP, MBENDA model</p>
+</p>
+</dd>
+</dl>
+<p>Burada scipy.interpolate.griddata kullanildi ve maalesef extrapolation yapmiyor. Sinir disi degerlerde dogrudan en yakin deger kullanildi.</p>
+<blockquote>
+<div><p>defaultunits(list, optional): Default units for quantities in <em>arg</em> list. Default is [] which means SI units will be used if no unit is given in <em>arg</em>.</p>
+</div></blockquote>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>arg</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>list</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="components.PCBTrackCurrentCapacity">
+<code class="sig-prename descclassname">components.</code><code class="sig-name descname">PCBTrackCurrentCapacity</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">arg</span></em>, <em class="sig-param"><span class="n">defaultunits</span><span class="o">=</span><span class="default_value">[]</span></em><span class="sig-paren">)</span><a class="headerlink" href="#components.PCBTrackCurrentCapacity" title="Permalink to this definition">¶</a></dt>
+<dd><p>PCB Track Current Capacity.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>arg</strong> (<em>list</em>) – <p>First 7 arguments are inputs.</p>
+<ol class="arabic simple">
+<li><p>Metal Width;  length</p></li>
+<li><p>PCB Height;     length</p></li>
+<li><p>Metal Thickness;        length</p></li>
+<li><p>Allowable Temperature Rise; temperature</p></li>
+<li><p>Thermal Conductivity;  thermal conductivity</p></li>
+<li><p>Electrical Conductivity; electrical conductivity</p></li>
+<li><p>External if 1, Internal if 0;</p></li>
+</ol>
+<p>8. Current ; current
+Reference:</p>
+</p></li>
+<li><p><strong>defaultunits</strong> (<em>list</em><em>, </em><em>optional</em>) – Default units for quantities in <em>arg</em> list. Default is [] which means SI units will be used if no unit is given in <em>arg</em>.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>arg</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>list</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="components.PCBTrackCurrentCapacityIPC">
+<code class="sig-prename descclassname">components.</code><code class="sig-name descname">PCBTrackCurrentCapacityIPC</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">arg</span></em>, <em class="sig-param"><span class="n">defaultunits</span><span class="o">=</span><span class="default_value">[]</span></em><span class="sig-paren">)</span><a class="headerlink" href="#components.PCBTrackCurrentCapacityIPC" title="Permalink to this definition">¶</a></dt>
+<dd><p>PCB Track Current Capacity, IPC.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>arg</strong> (<em>list</em>) – <p>First 4 arguments are inputs.</p>
+<ol class="arabic simple">
+<li><p>Metal Width;length</p></li>
+<li><p>Metal Thickness;length</p></li>
+<li><p>Allowable Temperature Rise; temperature</p></li>
+<li><p>External if 1, Internal if 0;</p></li>
+</ol>
+<p>5. Current ; current
+Reference:  IPC2221A</p>
+</p></li>
+<li><p><strong>defaultunits</strong> (<em>list</em><em>, </em><em>optional</em>) – Default units for quantities in <em>arg</em> list. Default is [] which means SI units will be used if no unit is given in <em>arg</em>.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>arg</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>list</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="components.ParallelPlateCap">
+<code class="sig-prename descclassname">components.</code><code class="sig-name descname">ParallelPlateCap</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">arg</span></em>, <em class="sig-param"><span class="n">defaultunits</span><span class="o">=</span><span class="default_value">[]</span></em><span class="sig-paren">)</span><a class="headerlink" href="#components.ParallelPlateCap" title="Permalink to this definition">¶</a></dt>
+<dd><p>Parallel Plate Capacitance.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>arg</strong> (<em>list</em>) – <p>First 4 arguments are inputs.</p>
+<ol class="arabic simple">
+<li><p>Width;length</p></li>
+<li><p>Length;length</p></li>
+<li><p>Height;length</p></li>
+<li><p>Dielectric Permittivity;</p></li>
+</ol>
+<p>5. Capacitance; capacitance
+Reference:</p>
+</p></li>
+<li><p><strong>defaultunits</strong> (<em>list</em><em>, </em><em>optional</em>) – Default units for quantities in <em>arg</em> list. Default is [] which means SI units will be used if no unit is given in <em>arg</em>.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>arg</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>list</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="components.Patch_Antenna_Analysis">
+<code class="sig-prename descclassname">components.</code><code class="sig-name descname">Patch_Antenna_Analysis</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">arg</span></em>, <em class="sig-param"><span class="n">defaultunits</span><span class="o">=</span><span class="default_value">[]</span></em><span class="sig-paren">)</span><a class="headerlink" href="#components.Patch_Antenna_Analysis" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculates performance and impedance values for an N-section Chebyshev Impedance Taper.
+Ref: Overview of Microstrip Antennas (Jackson) (Presentation)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>arg</strong> (<em>list</em>) – <p>First 6 arguments are inputs.</p>
+<ol class="arabic simple">
+<li><p>Width (W) ; length</p></li>
+<li><p>Length (L) ; length</p></li>
+<li><p>Substrate Thickness (h);length</p></li>
+<li><p>Dielectric Permittivity ;</p></li>
+<li><p>Dielectric Loss Tangent ;</p></li>
+<li><p>Metal Conductivity ; electrical conductivity</p></li>
+<li><p>Resonance Frequency (f) ; frequency</p></li>
+</ol>
+<p>8.  Bandwidth ; frequency
+Reference:  Foundations for Microwave Engineering, Collin</p>
+</p></li>
+<li><p><strong>defaultunits</strong> (<em>list</em><em>, </em><em>optional</em>) – Default units for quantities in <em>arg</em> list. Default is [] which means SI units will be used if no unit is given in <em>arg</em>.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>arg</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>list</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="components.Pi_Attenuator_Analysis">
+<code class="sig-prename descclassname">components.</code><code class="sig-name descname">Pi_Attenuator_Analysis</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">arg</span></em>, <em class="sig-param"><span class="n">defaultunits</span><span class="o">=</span><span class="default_value">[]</span></em><span class="sig-paren">)</span><a class="headerlink" href="#components.Pi_Attenuator_Analysis" title="Permalink to this definition">¶</a></dt>
+<dd><p>Pi Attenuator Analysis.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>arg</strong> (<em>list</em>) – <p>First 3 arguments are inputs.</p>
+<ol class="arabic simple">
+<li><p>Reference Impedance (Zo); impedance</p></li>
+<li><p>Series Impedance (Rs); impedance</p></li>
+<li><p>Parallel Impedance (Rp); impedance</p></li>
+<li><p>S(1,1) ;</p></li>
+<li><p>S(2,1) ;</p></li>
+<li><p>P1 ;</p></li>
+<li><p>P2 ;</p></li>
+</ol>
+<p>8. P3 ;
+Reference:</p>
+</p></li>
+<li><p><strong>defaultunits</strong> (<em>list</em><em>, </em><em>optional</em>) – Default units for quantities in <em>arg</em> list. Default is [] which means SI units will be used if no unit is given in <em>arg</em>.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>arg</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>list</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="components.Pi_Attenuator_Synthesis">
+<code class="sig-prename descclassname">components.</code><code class="sig-name descname">Pi_Attenuator_Synthesis</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">arg</span></em>, <em class="sig-param"><span class="n">defaultunits</span><span class="o">=</span><span class="default_value">[]</span></em><span class="sig-paren">)</span><a class="headerlink" href="#components.Pi_Attenuator_Synthesis" title="Permalink to this definition">¶</a></dt>
+<dd><p>Pi Attenuator Analysis.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>arg</strong> (<em>list</em>) – <p>First 3 arguments are inputs.</p>
+<ol class="arabic simple">
+<li><p>Reference Impedance (Zo); impedance</p></li>
+<li><p>Series Impedance (Rs); impedance</p></li>
+<li><p>Parallel Impedance (Rp); impedance</p></li>
+<li><p>S(1,1) ;</p></li>
+<li><p>S(2,1) ;</p></li>
+<li><p>P1 ;</p></li>
+<li><p>P2 ;</p></li>
+</ol>
+<p>8. P3 ;
+Reference:</p>
+</p></li>
+<li><p><strong>defaultunits</strong> (<em>list</em><em>, </em><em>optional</em>) – Default units for quantities in <em>arg</em> list. Default is [] which means SI units will be used if no unit is given in <em>arg</em>.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>arg</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>list</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="components.RectWG2EvanescentRectWGStep">
+<code class="sig-prename descclassname">components.</code><code class="sig-name descname">RectWG2EvanescentRectWGStep</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">a1</span></em>, <em class="sig-param"><span class="n">a2</span></em><span class="sig-paren">)</span><a class="headerlink" href="#components.RectWG2EvanescentRectWGStep" title="Permalink to this definition">¶</a></dt>
+<dd><p>Waveguide Width Step from Rectangular Waveguide to Evanescent Mode Rectangular Waveguide.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>arg</strong> (<em>list</em>) – <p>First 2 arguments are inputs.</p>
+<ol class="arabic simple">
+<li><p>Width of Rectangular Waveguide;length;</p></li>
+<li><p>Width of Evanescent Mode Rectangular Waveguide;length;</p></li>
+<li><p>Inductance; inductance</p></li>
+</ol>
+<p>4. Turns Ratio;
+Reference:  The Design of Evanescent Mode Waveguide Bandpass Filters for a Prescribed Insertion Loss Characteristic.pdf</p>
+</p></li>
+<li><p><strong>defaultunits</strong> (<em>list</em><em>, </em><em>optional</em>) – Default units for quantities in <em>arg</em> list. Default is [] which means SI units will be used if no unit is given in <em>arg</em>.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>arg</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>list</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="components.SIW_EquivalentWidth">
+<code class="sig-prename descclassname">components.</code><code class="sig-name descname">SIW_EquivalentWidth</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">w</span></em>, <em class="sig-param"><span class="n">d</span></em>, <em class="sig-param"><span class="n">s</span></em><span class="sig-paren">)</span><a class="headerlink" href="#components.SIW_EquivalentWidth" title="Permalink to this definition">¶</a></dt>
+<dd><p>Equivalent width of substrate integrated waveguide.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>w</strong> (<em>float</em>) – Distance between the centers of two via arrays.</p></li>
+<li><p><strong>d</strong> (<em>float</em>) – Diameter of vias.</p></li>
+<li><p><strong>s</strong> (<em>float</em>) – Distance between the centers of consecutive vias of via arrays.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Equivalent width of waveguide.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="components.Shorten90DegreeLine">
+<code class="sig-prename descclassname">components.</code><code class="sig-name descname">Shorten90DegreeLine</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">arg</span></em>, <em class="sig-param"><span class="n">defaultunits</span><span class="o">=</span><span class="default_value">[]</span></em><span class="sig-paren">)</span><a class="headerlink" href="#components.Shorten90DegreeLine" title="Permalink to this definition">¶</a></dt>
+<dd><p>Shortening 90 Degree Line with a capacitive load.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>arg</strong> (<em>list</em>) – <p>First 3 arguments are inputs.</p>
+<ol class="arabic simple">
+<li><p>Impedance (Zo); impedance</p></li>
+<li><p>Center Frequency ;  frequency</p></li>
+<li><p>Electrical Length (theta) ; angle</p></li>
+<li><p>Impedance (Z); impedance</p></li>
+</ol>
+<p>5. Capacitance ; capacitance
+Reference:</p>
+</p></li>
+<li><p><strong>defaultunits</strong> (<em>list</em><em>, </em><em>optional</em>) – Default units for quantities in <em>arg</em> list. Default is [] which means SI units will be used if no unit is given in <em>arg</em>.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>arg</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>list</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="components.Star2TriangleTransformation">
+<code class="sig-prename descclassname">components.</code><code class="sig-name descname">Star2TriangleTransformation</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">arg</span></em>, <em class="sig-param"><span class="n">defaultunits</span><span class="o">=</span><span class="default_value">[]</span></em><span class="sig-paren">)</span><a class="headerlink" href="#components.Star2TriangleTransformation" title="Permalink to this definition">¶</a></dt>
+<dd><p>Star network to Triangle network transformation.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>arg</strong> (<em>list</em>) – <p>First 3 arguments are inputs.</p>
+<ol class="arabic simple">
+<li><p>Z1; impedance</p></li>
+<li><p>Z2; impedance</p></li>
+<li><p>Z3; impedance</p></li>
+<li><p>Z1’; impedance</p></li>
+<li><p>Z2’; impedance</p></li>
+</ol>
+<p>6. Z3’; impedance
+Reference:
+At star, z1 is connected to A-node, z2 is connected to B-node, z3 is connected to C-node
+At triangle, z1 is between A-B, z2 is between A-C, z3 is between B-C</p>
+</p></li>
+<li><p><strong>defaultunits</strong> (<em>list</em><em>, </em><em>optional</em>) – Default units for quantities in <em>arg</em> list. Default is [] which means SI units will be used if no unit is given in <em>arg</em>.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>arg</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>list</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="components.SymmetricLangeCoupler">
+<code class="sig-prename descclassname">components.</code><code class="sig-name descname">SymmetricLangeCoupler</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">arg</span></em>, <em class="sig-param"><span class="n">defaultunits</span><span class="o">=</span><span class="default_value">[]</span></em><span class="sig-paren">)</span><a class="headerlink" href="#components.SymmetricLangeCoupler" title="Permalink to this definition">¶</a></dt>
+<dd><p>Symmetric Lange Coupler.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>arg</strong> (<em>list</em>) – <p>First 3 arguments are inputs.</p>
+<ol class="arabic simple">
+<li><p>C: Voltage coupling coefficient in dB (positive);</p></li>
+<li><p>n: Number of fingers (should be even);</p></li>
+<li><p>Reference Impedance;impedance</p></li>
+<li><p>Zoo;impedance</p></li>
+</ol>
+<p>5. Zoe;impedance
+Reference:  Microwave Circuits, Analysis and Computer-Aided Design, Fusco</p>
+</p></li>
+<li><p><strong>defaultunits</strong> (<em>list</em><em>, </em><em>optional</em>) – Default units for quantities in <em>arg</em> list. Default is [] which means SI units will be used if no unit is given in <em>arg</em>.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>arg</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>list</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="components.Tee_Attenuator_Analysis">
+<code class="sig-prename descclassname">components.</code><code class="sig-name descname">Tee_Attenuator_Analysis</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">arg</span></em>, <em class="sig-param"><span class="n">defaultunits</span><span class="o">=</span><span class="default_value">[]</span></em><span class="sig-paren">)</span><a class="headerlink" href="#components.Tee_Attenuator_Analysis" title="Permalink to this definition">¶</a></dt>
+<dd><p>Tee Attenuator Analysis.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>arg</strong> (<em>list</em>) – <p>First 3 arguments are inputs.</p>
+<ol class="arabic simple">
+<li><p>Reference Impedance (Zo); impedance</p></li>
+<li><p>Series Impedance (Rs); impedance</p></li>
+<li><p>Parallel Impedance (Rp); impedance</p></li>
+<li><p>S(1,1) ;</p></li>
+<li><p>S(2,1) ;</p></li>
+<li><p>P1 ;</p></li>
+<li><p>P2 ;</p></li>
+</ol>
+<p>8. P3 ;
+Reference:</p>
+</p></li>
+<li><p><strong>defaultunits</strong> (<em>list</em><em>, </em><em>optional</em>) – Default units for quantities in <em>arg</em> list. Default is [] which means SI units will be used if no unit is given in <em>arg</em>.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>arg</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>list</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="components.Tee_Attenuator_Synthesis">
+<code class="sig-prename descclassname">components.</code><code class="sig-name descname">Tee_Attenuator_Synthesis</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">arg</span></em>, <em class="sig-param"><span class="n">defaultunits</span><span class="o">=</span><span class="default_value">[]</span></em><span class="sig-paren">)</span><a class="headerlink" href="#components.Tee_Attenuator_Synthesis" title="Permalink to this definition">¶</a></dt>
+<dd><p>Tee Attenuator Synthesis.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>arg</strong> (<em>list</em>) – <p>First 5 arguments are inputs.</p>
+<ol class="arabic simple">
+<li><p>Reference Impedance (Zo); impedance</p></li>
+<li><p>Series Impedance (Rs); impedance</p></li>
+<li><p>Parallel Impedance (Rp); impedance</p></li>
+<li><p>S(1,1) ;</p></li>
+<li><p>S(2,1) ;</p></li>
+<li><p>P1 ;</p></li>
+<li><p>P2 ;</p></li>
+</ol>
+<p>8. P3 ;
+Reference:</p>
+</p></li>
+<li><p><strong>defaultunits</strong> (<em>list</em><em>, </em><em>optional</em>) – Default units for quantities in <em>arg</em> list. Default is [] which means SI units will be used if no unit is given in <em>arg</em>.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>arg</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>list</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="components.Triangle2StarTransformation">
+<code class="sig-prename descclassname">components.</code><code class="sig-name descname">Triangle2StarTransformation</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">arg</span></em>, <em class="sig-param"><span class="n">defaultunits</span><span class="o">=</span><span class="default_value">[]</span></em><span class="sig-paren">)</span><a class="headerlink" href="#components.Triangle2StarTransformation" title="Permalink to this definition">¶</a></dt>
+<dd><p>Triangle network to Star network transformation.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>arg</strong> (<em>list</em>) – <p>Last 3 arguments are inputs.</p>
+<ol class="arabic simple">
+<li><p>Z1; impedance</p></li>
+<li><p>Z2; impedance</p></li>
+<li><p>Z3; impedance</p></li>
+<li><p>Z1’; impedance</p></li>
+<li><p>Z2’; impedance</p></li>
+</ol>
+<p>6. Z3’; impedance
+Reference:
+At star, z1 is connected to A-node, z2 is connected to B-node, z3 is connected to C-node
+At triangle, z1’ is between A-B, z2’ is between A-C, z3’ is between B-C</p>
+</p></li>
+<li><p><strong>defaultunits</strong> (<em>list</em><em>, </em><em>optional</em>) – Default units for quantities in <em>arg</em> list. Default is [] which means SI units will be used if no unit is given in <em>arg</em>.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>arg</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>list</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="components.Triangular_Taper_Impedance_Transformer">
+<code class="sig-prename descclassname">components.</code><code class="sig-name descname">Triangular_Taper_Impedance_Transformer</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">arg</span></em>, <em class="sig-param"><span class="n">defaultunits</span><span class="o">=</span><span class="default_value">[]</span></em><span class="sig-paren">)</span><a class="headerlink" href="#components.Triangular_Taper_Impedance_Transformer" title="Permalink to this definition">¶</a></dt>
+<dd><p>Triangular Impedance Taper.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>arg</strong> (<em>list</em>) – <p>First 5 arguments are inputs.</p>
+<ol class="arabic simple">
+<li><p>Source Impedance ; impedance</p></li>
+<li><p>Load Impedance ; impedance</p></li>
+<li><p>Number Of Sections (Even) ;</p></li>
+<li><p>Fractional Bandwidth (F2/F1) ;</p></li>
+<li><p>Length (normalized to Lambda at fcenter) ;</p></li>
+<li><p>Impedances ; impedance</p></li>
+</ol>
+<p>7.  Return Loss ;
+Reference:  Foundations for Microwave Engineering, Collin</p>
+</p></li>
+<li><p><strong>defaultunits</strong> (<em>list</em><em>, </em><em>optional</em>) – Default units for quantities in <em>arg</em> list. Default is [] which means SI units will be used if no unit is given in <em>arg</em>.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>arg</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>list</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="components.Z_CWG">
+<code class="sig-prename descclassname">components.</code><code class="sig-name descname">Z_CWG</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">rad</span></em>, <em class="sig-param"><span class="n">freq</span></em>, <em class="sig-param"><span class="n">eps_r</span><span class="o">=</span><span class="default_value">1</span></em>, <em class="sig-param"><span class="n">v</span><span class="o">=</span><span class="default_value">0</span></em>, <em class="sig-param"><span class="n">n</span><span class="o">=</span><span class="default_value">1</span></em>, <em class="sig-param"><span class="n">mode</span><span class="o">=</span><span class="default_value">'TE'</span></em><span class="sig-paren">)</span><a class="headerlink" href="#components.Z_CWG" title="Permalink to this definition">¶</a></dt>
+<dd><p>Computes the wave impedance of circular waveguide.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>v</strong> (<em>int</em>) – Mode number of <span class="math notranslate nohighlight">\(\phi\)</span>.</p></li>
+<li><p><strong>n</strong> (<em>int</em>) – Radial mode number.</p></li>
+<li><p><strong>eps_r</strong> (<em>float</em>) – Permittivity of filling material.</p></li>
+<li><p><strong>freq</strong> (<em>float</em>) – Frequency (Hz).</p></li>
+<li><p><strong>mode</strong> (<em>str</em>) – “TE” or “TM”.</p></li>
+<li><p><strong>rad</strong> (<em>float</em>) – Radius.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Impedance.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>Z (float)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="components.Z_WG_TE10">
+<code class="sig-prename descclassname">components.</code><code class="sig-name descname">Z_WG_TE10</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">er</span></em>, <em class="sig-param"><span class="n">a</span></em>, <em class="sig-param"><span class="n">b</span></em>, <em class="sig-param"><span class="n">freq</span></em>, <em class="sig-param"><span class="n">formulation</span><span class="o">=</span><span class="default_value">1</span></em><span class="sig-paren">)</span><a class="headerlink" href="#components.Z_WG_TE10" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="components.Zo_eeff_StraightWireOverSubstrate">
+<code class="sig-prename descclassname">components.</code><code class="sig-name descname">Zo_eeff_StraightWireOverSubstrate</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">arg</span></em>, <em class="sig-param"><span class="n">defaultunits</span><span class="o">=</span><span class="default_value">[]</span></em><span class="sig-paren">)</span><a class="headerlink" href="#components.Zo_eeff_StraightWireOverSubstrate" title="Permalink to this definition">¶</a></dt>
+<dd><p>Impedance and Effective Permittivity of Straight Wire Over Substrate.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>arg</strong> (<em>list</em>) – <p>First 4 arguments are inputs.</p>
+<ol class="arabic simple">
+<li><p>Wire Diameter (d);length</p></li>
+<li><p>Height Of Wire Center Above Ground (h);length</p></li>
+<li><p>Dielectric Thickness (t);length</p></li>
+<li><p>Dielectric Permittivity ;</p></li>
+<li><p>Impedance ; impedance</p></li>
+</ol>
+<p>6.  Effective Diel. Permittivity ;
+Reference:  Transmission Line Design Handbook, Wadell, s.151</p>
+</p></li>
+<li><p><strong>defaultunits</strong> (<em>list</em><em>, </em><em>optional</em>) – Default units for quantities in <em>arg</em> list. Default is [] which means SI units will be used if no unit is given in <em>arg</em>.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>arg</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>list</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="components.Zo_eeff_WireOnGroundedSubstrate">
+<code class="sig-prename descclassname">components.</code><code class="sig-name descname">Zo_eeff_WireOnGroundedSubstrate</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">arg</span></em>, <em class="sig-param"><span class="n">defaultunits</span><span class="o">=</span><span class="default_value">[]</span></em><span class="sig-paren">)</span><a class="headerlink" href="#components.Zo_eeff_WireOnGroundedSubstrate" title="Permalink to this definition">¶</a></dt>
+<dd><p>Impedance and Effective Permittivity of Straight Wire Over Substrate.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>arg</strong> (<em>list</em>) – <p>First 4 arguments are inputs.</p>
+<ol class="arabic simple">
+<li><p>Wire Diameter (d);length</p></li>
+<li><p>Dielectric Thickness (t);length</p></li>
+<li><p>Dielectric Permittivity ;</p></li>
+<li><p>Impedance ; impedance</p></li>
+</ol>
+<p>5.  Effective Diel. Permittivity ;
+Reference:  Transmission Line Design Handbook, Wadell, s.151
+Note: eeff is the same as eeff of microstrip with w=2*d, t=0</p>
+</p></li>
+<li><p><strong>defaultunits</strong> (<em>list</em><em>, </em><em>optional</em>) – Default units for quantities in <em>arg</em> list. Default is [] which means SI units will be used if no unit is given in <em>arg</em>.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>arg</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>list</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="components.fcutoff_CWG">
+<code class="sig-prename descclassname">components.</code><code class="sig-name descname">fcutoff_CWG</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">rad</span></em>, <em class="sig-param"><span class="n">eps_r</span><span class="o">=</span><span class="default_value">1</span></em>, <em class="sig-param"><span class="n">v</span><span class="o">=</span><span class="default_value">0</span></em>, <em class="sig-param"><span class="n">n</span><span class="o">=</span><span class="default_value">1</span></em>, <em class="sig-param"><span class="n">mode</span><span class="o">=</span><span class="default_value">'TE'</span></em><span class="sig-paren">)</span><a class="headerlink" href="#components.fcutoff_CWG" title="Permalink to this definition">¶</a></dt>
+<dd><p>Computes the cutoff frequency of circular waveguide.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>v</strong> (<em>int</em>) – Mode number of <span class="math notranslate nohighlight">\(\phi\)</span>.</p></li>
+<li><p><strong>n</strong> (<em>int</em>) – Radial mode number.</p></li>
+<li><p><strong>eps_r</strong> (<em>float</em>) – Permittivity of filling material.</p></li>
+<li><p><strong>mode</strong> (<em>str</em>) – “TE” or “TM”.</p></li>
+<li><p><strong>rad</strong> (<em>float</em>) – Radius.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Cutoff frequency (Hz).</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>fc (float)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="components.thermal_conductance_of_via_farm">
+<code class="sig-prename descclassname">components.</code><code class="sig-name descname">thermal_conductance_of_via_farm</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">arg</span></em>, <em class="sig-param"><span class="n">defaultunits</span></em><span class="sig-paren">)</span><a class="headerlink" href="#components.thermal_conductance_of_via_farm" title="Permalink to this definition">¶</a></dt>
+<dd><p>Thermal conductance of an array of vias in PCB.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>arg</strong> (<em>list</em>) – <p>First 7 arguments are inputs.</p>
+<ol class="arabic simple">
+<li><p>Plated Via Diameter (d);length</p></li>
+<li><p>Plating Thickness (t);length</p></li>
+<li><p>Area Width (w);length</p></li>
+<li><p>Area Height (l);length</p></li>
+<li><p>Dielectric Height (h);length</p></li>
+<li><p>Number Of Vias (n);</p></li>
+<li><p>Dielectric Thermal Conductivity ;   thermal conductivity</p></li>
+<li><p>Metal Thermal Conductivity ; thermal conductivity</p></li>
+<li><p>Thermal Conductance (W/K) ;</p></li>
+<li><p>Thermal Resistance (K/W) ;</p></li>
+</ol>
+</p></li>
+<li><p><strong>defaultunits</strong> (<em>list</em><em>, </em><em>optional</em>) – Default units for quantities in <em>arg</em> list. Default is [] which means SI units will be used if no unit is given in <em>arg</em>.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>arg</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>list</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="components.thermal_conductance_of_via_farm_view">
+<code class="sig-prename descclassname">components.</code><code class="sig-name descname">thermal_conductance_of_via_farm_view</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">arg</span></em>, <em class="sig-param"><span class="n">defaultunits</span></em><span class="sig-paren">)</span><a class="headerlink" href="#components.thermal_conductance_of_via_farm_view" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="index.html">spfile</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="touchstone.html">touchstone module</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">components module</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="touchstone.html" title="previous chapter">touchstone module</a></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2020, Tuncay Erdöl.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 3.0.3</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="_sources/components.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

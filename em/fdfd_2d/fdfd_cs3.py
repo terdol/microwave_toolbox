@@ -9,7 +9,7 @@ import scipy.linalg
 import matplotlib.pyplot as plt
 import matplotlib.patches as mpatches
 # from grid import CartesianGrid
-from grid2 import CartesianGrid
+from .grid2 import CartesianGrid
 import scipy.sparse
 from copy import deepcopy
 from scipy.interpolate import griddata
@@ -181,8 +181,8 @@ def fdfd_mesh(boxwidth, boxheight, xres, yres, parts):
             cg.customgrid(0.5 * xres, yres, 0, 1.2, 1, 0, 0)
             cg.customgrid(0.5 * xres, yres, 2, 1.2, 0, 0, 0)
 
-    dx = list(cg.returndx())
-    dy = list(cg.returndy())
+    dx = list(cg.dx)
+    dy = list(cg.dy)
     print("dx= ", dx)
     print("dy= ", dy)
     Nx = len(dx)
@@ -829,11 +829,31 @@ def plot_parts(ekran, parts, solid=False, shift=(0,0)):
             if p[0] == "dielectric":
                 xo = p[2] - (p[4]/ 2.0)
                 yo = p[3] - (p[5]/ 2.0)
-                ekran.axes.add_patch(mpatches.Rectangle((xo+shift[0], yo+shift[1]), p[4], p[5], fill=solid, fc='red'))
+                ekran.axes.add_patch(mpatches.Rectangle((xo+shift[0], yo+shift[1]), p[4], p[5], fill=solid, fc='green'))
             elif p[0] == "metal":
                 xo = p[2] - (p[4]/ 2.0)
                 yo = p[3] - (p[5]/ 2.0)
                 ekran.axes.add_patch(mpatches.Rectangle((xo+shift[0], yo+shift[1]), p[4], p[5], fill=solid, fc='red'))
+
+
+def plot_pml(ekran, pmllayers, dx, dy, solid=False, shift=(0,0)):
+    """
+
+    :param solid: if 1, use fill=true, else fill=false
+    :type ekran: Matplotlib Axes object
+    """
+    # ekran.add_patch(Rectangle((0.0, 0.0), p[4], p[5], fc='r'))
+    x1,x2,y1,y2=tuple(pmllayers)
+    lx=np.sum(dx[:])
+    ly=np.sum(dy[:])
+    if x1>0:
+        ekran.axes.add_patch(mpatches.Rectangle((0, 0), np.sum(dx[:x1]),ly, fill=solid, fc='blue'))
+    if x2>0:
+        ekran.axes.add_patch(mpatches.Rectangle((lx-np.sum(dx[-x2:]), 0), np.sum(dx[-x2:]),ly, fill=solid, fc='blue'))
+    if y1>0:
+        ekran.axes.add_patch(mpatches.Rectangle((0, 0), lx, np.sum(dy[:y1]), fill=solid, fc='blue'))
+    if y2>0:
+        ekran.axes.add_patch(mpatches.Rectangle((0, ly-np.sum(dy[-y2:]), 0), lx, np.sum(dy[-y2:]), fill=solid, fc='blue'))
 
 
 def plot_grids(ekran, dx, dy):

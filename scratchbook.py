@@ -19,6 +19,11 @@ beta=sqrt(k**2-kc**2)
 lg=2*pi/beta
 print(str(lg/4))
 
+# %%
+from numpy import *
+# print(sqrt(2.05/2.075)*60)
+print(sqrt(0.28**2-0.165**2))
+
 
 # %%
 import quantities as pq
@@ -32,6 +37,16 @@ import matplotlib.pyplot as plt
 plt.plot([1,5,4])
 plt.show()
 
+# %%
+""" Calculation of s-parameters of a de-embed block for 2-port s-parameters """
+import sys
+sys.path.append(r"c:\\users\\erdoel\\documents\\works\\python_works\\microwave_toolbox")
+import networksym
+import sympy as sp
+s11, s12, s21, s22 = sp.symbols('s11 s12 s21 s22')
+smatrix=sp.Matrix([[s11,s12],[s21,s22]])
+sm = networksym.t2s(networksym.s2t(smatrix).inv())
+sp.pprint(sp.simplify(sm))
 
 # %%
 import matplotlib.pyplot as plt
@@ -204,6 +219,15 @@ m2.add(bottom)
 mainloop()
 
 # %%
+import matplotlib.pyplot as plt
+fig, ax = plt.subplots(1,3,sharey=True)
+fig.subplots_adjust(wspace=0)
+ax[0].plot([1,3,5])
+ax[1].plot([6,3,5])
+ax[2].plot([2,6,3])
+plt.show()
+
+# %%
 dd=[]
 def aa(bb):
     global dd
@@ -225,12 +249,27 @@ print(ee)
 
 # %%
 import numpy as np
-a=0.146628025*np.exp(1j*(-35.8358441/180*np.pi))
+a=0.343318106*np.exp(1j*(120.167384/180*np.pi))
 z=50.0*(1+a)/(1-a)
 print(z)
 a=-0.001071569567424 +0.070497997856861*1j
+z=(1+a)/(1-a)
+print(z)
+a=10**(-16.0683249029752/20)*np.exp(1j*(113.705383032897/180*np.pi))
 z=50.0*(1+a)/(1-a)
 print(z)
+
+#%%
+from touchstone import *
+import network
+import itertools
+import numpy as np
+net=spfile("CMOS_RFAMS2_ISO_M_RX1_deem.s2p")
+net=spfile("varM.s8p")
+s22=net.S(2,2)
+imp=(1+np.conj(s22))/(1-np.conj(s22))
+print(imp)
+# print(net.S(2,2,"DB"))
 
 # %%
 # Generating nonuniform grid from fine to coarse

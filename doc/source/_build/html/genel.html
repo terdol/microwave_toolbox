@@ -1,0 +1,303 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>genel module &#8212; spfile 0.1 documentation</title>
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="_static/graphviz.css" />
+    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/language_data.js"></script>
+    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <div class="section" id="module-genel">
+<span id="genel-module"></span><h1>genel module<a class="headerlink" href="#module-genel" title="Permalink to this headline">¶</a></h1>
+<p>General methods</p>
+<dl class="py class">
+<dt id="genel.Flexlist">
+<em class="property">class </em><code class="sig-prename descclassname">genel.</code><code class="sig-name descname">Flexlist</code><a class="headerlink" href="#genel.Flexlist" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code></p>
+<p>This is a list implementation that supports indexing by list to return some elements of the list</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="genel.blackman_window">
+<code class="sig-prename descclassname">genel.</code><code class="sig-name descname">blackman_window</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">N</span></em><span class="sig-paren">)</span><a class="headerlink" href="#genel.blackman_window" title="Permalink to this definition">¶</a></dt>
+<dd><p>Blackman-Harris window
+Also available in scipy.signal</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="genel.cmp">
+<code class="sig-prename descclassname">genel.</code><code class="sig-name descname">cmp</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">x</span></em>, <em class="sig-param"><span class="n">y</span></em><span class="sig-paren">)</span><a class="headerlink" href="#genel.cmp" title="Permalink to this definition">¶</a></dt>
+<dd><p>Replacement for built-in function cmp that was removed in Python 3</p>
+<p>Compare the two objects x and y and return an integer according to
+the outcome. The return value is negative if x &lt; y, zero if x == y
+and strictly positive if x &gt; y.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="genel.coef">
+<code class="sig-prename descclassname">genel.</code><code class="sig-name descname">coef</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">birim</span></em><span class="sig-paren">)</span><a class="headerlink" href="#genel.coef" title="Permalink to this definition">¶</a></dt>
+<dd><p>SI’dan Birim’e cevirmek icin katsayi</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="genel.convert2pq">
+<code class="sig-prename descclassname">genel.</code><code class="sig-name descname">convert2pq</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">sayilar</span></em>, <em class="sig-param"><span class="n">defaultunits</span><span class="o">=</span><span class="default_value">[]</span></em><span class="sig-paren">)</span><a class="headerlink" href="#genel.convert2pq" title="Permalink to this definition">¶</a></dt>
+<dd><p>Method to convert a string or string list to float after unit conversion to SI
+Units are extracted from strings.
+If there is not a unit in string, unit is taken from defaultunits</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="genel.convert_image">
+<code class="sig-prename descclassname">genel.</code><code class="sig-name descname">convert_image</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">filename</span></em>, <em class="sig-param"><span class="n">format</span></em><span class="sig-paren">)</span><a class="headerlink" href="#genel.convert_image" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="genel.do_cprofile">
+<code class="sig-prename descclassname">genel.</code><code class="sig-name descname">do_cprofile</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">func</span></em><span class="sig-paren">)</span><a class="headerlink" href="#genel.do_cprofile" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="genel.do_profile">
+<code class="sig-prename descclassname">genel.</code><code class="sig-name descname">do_profile</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">follow</span><span class="o">=</span><span class="default_value">[]</span></em><span class="sig-paren">)</span><a class="headerlink" href="#genel.do_profile" title="Permalink to this definition">¶</a></dt>
+<dd><p>Helpful if you accidentally leave in production!</p>
+</dd></dl>
+
+<dl class="py class">
+<dt id="genel.dotdict">
+<em class="property">class </em><code class="sig-prename descclassname">genel.</code><code class="sig-name descname">dotdict</code><a class="headerlink" href="#genel.dotdict" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code></p>
+<p>dot.notation access to dictionary attributes
+This class is not pickleable!!!
+objdict is pickleable, because it raises correct exceptions,
+dill instead of pickle does not work too.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="genel.ekpolyfit">
+<code class="sig-prename descclassname">genel.</code><code class="sig-name descname">ekpolyfit</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">x</span></em><span class="sig-paren">)</span><a class="headerlink" href="#genel.ekpolyfit" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="genel.flatten">
+<code class="sig-prename descclassname">genel.</code><code class="sig-name descname">flatten</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">x</span></em><span class="sig-paren">)</span><a class="headerlink" href="#genel.flatten" title="Permalink to this definition">¶</a></dt>
+<dd><p>Flatten (an irregular) list of lists</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="genel.flatten2">
+<code class="sig-prename descclassname">genel.</code><code class="sig-name descname">flatten2</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">l</span></em><span class="sig-paren">)</span><a class="headerlink" href="#genel.flatten2" title="Permalink to this definition">¶</a></dt>
+<dd><p>Flatten (an irregular) list of lists (yield version of flatten)</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="genel.gaussian_window">
+<code class="sig-prename descclassname">genel.</code><code class="sig-name descname">gaussian_window</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">sigma</span></em>, <em class="sig-param"><span class="n">N</span></em><span class="sig-paren">)</span><a class="headerlink" href="#genel.gaussian_window" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gaussian window
+sigma should be smaller than or equal to 0.5
+Also available in scipy.signal
+Ref: Wikipedia</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="genel.levenshtein_ratio_and_distance">
+<code class="sig-prename descclassname">genel.</code><code class="sig-name descname">levenshtein_ratio_and_distance</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">s</span></em>, <em class="sig-param"><span class="n">t</span></em>, <em class="sig-param"><span class="n">ratio_calc</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="headerlink" href="#genel.levenshtein_ratio_and_distance" title="Permalink to this definition">¶</a></dt>
+<dd><p>levenshtein_ratio_and_distance:
+Calculates levenshtein distance between two strings.
+If ratio_calc = True, the function computes the
+levenshtein distance ratio of similarity between two strings
+For all i and j, distance[i,j] will contain the Levenshtein
+distance between the first i characters of s and the
+first j characters of t</p>
+</dd></dl>
+
+<dl class="py class">
+<dt id="genel.objdict">
+<em class="property">class </em><code class="sig-prename descclassname">genel.</code><code class="sig-name descname">objdict</code><a class="headerlink" href="#genel.objdict" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code></p>
+</dd></dl>
+
+<dl class="py class">
+<dt id="genel.objectview">
+<em class="property">class </em><code class="sig-prename descclassname">genel.</code><code class="sig-name descname">objectview</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">d</span></em><span class="sig-paren">)</span><a class="headerlink" href="#genel.objectview" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="genel.peakdet">
+<code class="sig-prename descclassname">genel.</code><code class="sig-name descname">peakdet</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">v</span></em>, <em class="sig-param"><span class="n">delta</span></em>, <em class="sig-param"><span class="n">x</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#genel.peakdet" title="Permalink to this definition">¶</a></dt>
+<dd><p>Converted from MATLAB script at <a class="reference external" href="http://billauer.co.il/peakdet.html">http://billauer.co.il/peakdet.html</a></p>
+<p>Returns two arrays</p>
+<p>function [maxtab, mintab]=peakdet(v, delta, x)
+%PEAKDET Detect peaks in a vector
+%        [MAXTAB, MINTAB] = PEAKDET(V, DELTA) finds the local
+%        maxima and minima (“peaks”) in the vector V.
+%        MAXTAB and MINTAB consists of two columns. Column 1
+%        contains indices in V, and column 2 the found values.
+%
+%        With [MAXTAB, MINTAB] = PEAKDET(V, DELTA, X) the indices
+%        in MAXTAB and MINTAB are replaced with the corresponding
+%        X-values.
+%
+%        A point is considered a maximum peak if it has the maximal
+%        value, and was preceded (to the left) by a value lower by
+%        DELTA.</p>
+<p>% Eli Billauer, 3.4.05 (Explicitly not copyrighted).
+% This function is released to the public domain; Any use is allowed.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="genel.polarsample">
+<code class="sig-prename descclassname">genel.</code><code class="sig-name descname">polarsample</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">x</span></em><span class="sig-paren">)</span><a class="headerlink" href="#genel.polarsample" title="Permalink to this definition">¶</a></dt>
+<dd><p>Samples the Smith Chart uniformly and returns the reflection coefficient values
+x: approximate distance between the points</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="genel.prettystring">
+<code class="sig-prename descclassname">genel.</code><code class="sig-name descname">prettystring</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">miktarlar</span></em>, <em class="sig-param"><span class="n">birim</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#genel.prettystring" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="genel.printall">
+<code class="sig-prename descclassname">genel.</code><code class="sig-name descname">printall</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">isimler</span></em>, <em class="sig-param"><span class="n">args</span></em><span class="sig-paren">)</span><a class="headerlink" href="#genel.printall" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="genel.smooth">
+<code class="sig-prename descclassname">genel.</code><code class="sig-name descname">smooth</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">x</span></em>, <em class="sig-param"><span class="n">window_len</span><span class="o">=</span><span class="default_value">11</span></em>, <em class="sig-param"><span class="n">window</span><span class="o">=</span><span class="default_value">'hanning'</span></em><span class="sig-paren">)</span><a class="headerlink" href="#genel.smooth" title="Permalink to this definition">¶</a></dt>
+<dd><p>smooth the data using a window with requested size.</p>
+<p>This method is based on the convolution of a scaled window with the signal.
+The signal is prepared by introducing reflected copies of the signal
+(with the window size) in both ends so that transient parts are minimized
+in the begining and end part of the output signal.
+input:</p>
+<blockquote>
+<div><p>x: the input signal
+window_len: the dimension of the smoothing window; should be an odd integer
+window: the type of window from ‘flat’, ‘hanning’, ‘hamming’, ‘bartlett’, ‘blackman’</p>
+<blockquote>
+<div><p>flat window will produce a moving average smoothing.</p>
+</div></blockquote>
+</div></blockquote>
+<dl class="simple">
+<dt>output:</dt><dd><p>the smoothed signal</p>
+</dd>
+</dl>
+<p>example:
+t=linspace(-2,2,0.1)
+x=sin(t)+randn(len(t))*0.1
+y=smooth(x)
+see also:
+numpy.hanning, numpy.hamming, numpy.bartlett, numpy.blackman, numpy.convolve
+scipy.signal.lfilter</p>
+<p>TODO: the window parameter could be the window itself if an array instead of a string</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="genel.stripunit">
+<code class="sig-prename descclassname">genel.</code><code class="sig-name descname">stripunit</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">sayi</span></em><span class="sig-paren">)</span><a class="headerlink" href="#genel.stripunit" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="genel.tukey_window">
+<code class="sig-prename descclassname">genel.</code><code class="sig-name descname">tukey_window</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">alpha</span></em>, <em class="sig-param"><span class="n">N</span></em><span class="sig-paren">)</span><a class="headerlink" href="#genel.tukey_window" title="Permalink to this definition">¶</a></dt>
+<dd><p>Tukey window (also known as “tapered cosine window”)
+Also available in scipy.signal</p>
+</dd></dl>
+
+</div>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="index.html">spfile</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="touchstone.html">touchstone module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="components.html">components module</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2020, Tuncay Erdöl.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 3.0.3</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="_sources/genel.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>
