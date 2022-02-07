@@ -10,6 +10,7 @@ __pycache__/**
 .unotes/
 .unotes/*
 .unotes/**
+.vscode
 .vscode/
 .vscode/*
 .vscode/**
@@ -22,3 +23,4 @@ em/__pycache__/**
 em/fdfd_2d/__pycache__/
 em/fdfd_2d/__pycache__/*
 em/fdfd_2d/__pycache__/**
+*.bat
