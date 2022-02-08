@@ -10,6 +10,9 @@ __pycache__/**
 .unotes/
 .unotes/*
 .unotes/**
+.temp/
+.temp/*
+.temp/**
 .vscode
 .vscode/
 .vscode/*
