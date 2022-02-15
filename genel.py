@@ -324,8 +324,14 @@ def convert2pq(sayilar, defaultunits=[]):
 
     number = ""
     # unit = ""
+    if isinstance(sayilar, (float,int)):
+        return [float(sayilar)]
+    if isinstance(sayilar, str):
+        sayilar = [sayilar]
     if len(defaultunits)==0:
         defaultunits=[""]*len(sayilar)
+    if isinstance(defaultunits, str):
+        defaultunits = [defaultunits]
     sonuc = []
 
     if not hasattr(convert2pq, "sayilar"):   # make sayilar static variable
@@ -334,10 +340,8 @@ def convert2pq(sayilar, defaultunits=[]):
     elif (convert2pq.sayilar == sayilar) and convert2pq.defaultunits == defaultunits:
         return convert2pq.sonuc
 
-    if isinstance(sayilar, (float,int)):
-        return [float(sayilar)]
-    if isinstance(sayilar, str):
-        sayilar = [sayilar]
+    
+    
 
 #    if not hasattr(convert2pq, "regex"):
          # make regex static variable, did not provide any performance advantage
@@ -346,7 +350,6 @@ def convert2pq(sayilar, defaultunits=[]):
 #        convert2pq.regex = re.compile(pattern)
 
     sonuclar = []
-
     for i in range(len(sayilar)):
         sayi = sayilar[i]
         try:
@@ -385,7 +388,12 @@ def convert2pq(sayilar, defaultunits=[]):
                 sonuc = pq.Quantity(float(number), unit)
             else:
                 sonuc = None
-            sonuclar.append(float(sonuc.simplified.magnitude))
+            if sonuc:
+                sonuclar.append(float(sonuc.simplified.magnitude))
+            else: # sonuc = None
+                print("None input is detected and assumed to be 0!")
+                sonuclar.append(0.0)
+                
     convert2pq.sonuc = deepcopy(sonuclar)
     convert2pq.sayilar = deepcopy(sayilar)
     convert2pq.defaultunits=deepcopy(defaultunits)
@@ -594,18 +602,21 @@ if __name__ == "__main__":
     #a = np.array([12.1, 45.3])
     #print(prettystring(a, birim=""))
 
-    rr = polarsample(0.2)
-    print(rr)
-    for r in rr:
-        print(r)
-    import matplotlib.pyplot as plt
-    import pysmith
-    fig= plt.figure(figsize=(15,10))
-    ax = pysmith.get_smith(fig, 111)
-    for r in rr:
-        ax.plot([np.real(r)],[np.imag(r)],"*")
-    plt.savefig("Sample_points_02.png")
-    plt.show()
+    print(convert2pq("20","mm"))
+    print(convert2pq("20","mil"))
+    print(convert2pq(20,""))
+    #rr = polarsample(0.2)
+    #print(rr)
+    #for r in rr:
+    #    print(r)
+    #import matplotlib.pyplot as plt
+    #import pysmith
+    #fig= plt.figure(figsize=(15,10))
+    #ax = pysmith.get_smith(fig, 111)
+    #for r in rr:
+    #    ax.plot([np.real(r)],[np.imag(r)],"*")
+    #plt.savefig("Sample_points_02.png")
+    #plt.show()
 
    # arg = ["12.1", "34.2", "23.4"]
    # arg = [np.array([12.1, 15.2, 18.3]), "34.2", "23.4"]

@@ -5,11 +5,16 @@ A Compact 2-D FDFD Method for Modeling Microstrip Structures With Nonuniform Gri
 Lecture 12 -- Finite-Difference Analysis of Waveguides (CEM Lectures) (Sadece matris boyutunu küçültmekte kullanıldı)
 """
 import numpy as np
+from numpy import matlib
+import sys
 import scipy.linalg
 import matplotlib.pyplot as plt
 import matplotlib.patches as mpatches
-# from grid import CartesianGrid
-from .grid2 import CartesianGrid
+#from grid2 import CartesianGrid
+try:
+    from .grid2 import CartesianGrid
+except:
+    from grid2 import CartesianGrid
 import scipy.sparse
 from copy import deepcopy
 from scipy.interpolate import griddata
@@ -38,6 +43,18 @@ def getindice(cc, dizi, pml=0):
         count = count + 1
     return count+pml
 
+def getindiceordered(cc, cumsumarray):
+    return np.searchsorted(cumsumarray, cc* (1.0 - 1.0e-4), 'right')+1
+    #count = 0
+    #length = 0
+    #while (length < (cc * (1.0 - 1.0e-4))):
+    #    try:
+    #        length = length + dizi[count+pml]
+    #    except:
+    #        print("end of dizi")
+    #        return count
+    #    count = count + 1
+    #return count+pml
 
 def exn(i, j):
     """ indice of Ex(i,j) in field vector """
@@ -172,17 +189,28 @@ def fdfd_mesh(boxwidth, boxheight, xres, yres, parts):
                     break
             print("metal_y_subregion = ", metal_y_subregion)
             d1 = cg.return_subregion_params(1, metal_y_subregion)[0]
+            print("m1")
             d2 = cg.return_subregion_params(1, metal_y_subregion + 1)[1]
+            print("m2")
             cg.customgrid(d1, d2, metal_y_subregion + 1, 1.2, 0, 1, 0)
+            print("m3")
             d1 = cg.return_subregion_params(1, metal_y_subregion)[0]
+            print("m4")
             d2 = cg.return_subregion_params(1, metal_y_subregion - 1)[1]
+            print("m5")
             cg.customgrid(d1, d2, metal_y_subregion - 1, 1.2, 1, 1, 0)
+            print("m6")
             cg.customgrid(0.5 * xres, yres, 1, 1.2, 2, 0, 0)
+            print("m7")
             cg.customgrid(0.5 * xres, yres, 0, 1.2, 1, 0, 0)
+            print("m8")
             cg.customgrid(0.5 * xres, yres, 2, 1.2, 0, 0, 0)
+            print("m9")
 
     dx = list(cg.dx)
     dy = list(cg.dy)
+    dxcumsum = np.cumsum(cg.dx)
+    dycumsum = np.cumsum(cg.dy)
     print("dx= ", dx)
     print("dy= ", dy)
     Nx = len(dx)
@@ -190,7 +218,7 @@ def fdfd_mesh(boxwidth, boxheight, xres, yres, parts):
     exn.Nx = eyn.Nx = hxn.Nx = hyn.Nx = Nx
     exn.Ny = eyn.Ny = hxn.Ny = hyn.Ny = Ny
     # Hucrelerdeki maddelerin epsilonları
-    er = np.ones((Nx, Ny))
+    er = np.matrix(np.ones((Nx, Ny)))
     metalnodesx = []
     metalnodesy = []
     metalnodesz = []
@@ -269,27 +297,36 @@ def fdfd_mesh(boxwidth, boxheight, xres, yres, parts):
     erxx = np.matrix(np.ones((Nx, Ny + 1), float))
     eryy = np.matrix(np.ones((Nx + 1, Ny), float))
     erzz = np.matrix(np.ones((Nx + 1, Ny + 1), float))
+    print(np.shape(erxx))
+    print(np.shape(er))
+    erxx[:Nx, 0] = er[:Nx, 0]
+    erxx[:Nx, Ny] = er[:Nx, Ny - 1]
+    erxx[:Nx, 1:Ny] = 0.5 * (er[:Nx, :Ny - 1] + er[:Nx, 1:Ny])
+    #for i in range(Nx):
+    #    for j in range(1, Ny):
+    #        erxx[i, j] = 0.5 * (er[i, j - 1] + er[i, j])
 
-    for i in range(Nx):
-        erxx[i, 0] = er[i, 0]
-        erxx[i, Ny] = er[i, Ny - 1]
-        for j in range(1, Ny):
-            erxx[i, j] = 0.5 * (er[i, j - 1] + er[i, j])
-
-    for j in range(Ny):
-        eryy[0, j] = er[0, j]
-        eryy[Nx, j] = er[Nx - 1, j]
-        for i in range(1, Nx):
-            eryy[i, j] = 0.5 * (er[i - 1, j] + er[i, j])
-
-    for i in range(1, Nx):
-        for j in range(1, Ny):
-            erzz[i, j] = 0.25 * (er[i, j] + er[i, j - 1] + er[i - 1, j] + er[i - 1, j - 1])
-        erzz[i, 0] = 0.5 * (er[i, 0] + er[i - 1, 0])
-        erzz[i, Ny] = 0.5 * (er[i, Ny - 1] + er[i - 1, Ny - 1])
-    for j in range(1, Ny):
-        erzz[0, j] = 0.5 * (er[0, j] + er[0, j - 1])
-        erzz[Nx, j] = 0.5 * (er[Nx - 1, j] + er[Nx - 1, j - 1])
+    eryy[0, :Ny] = er[0, :Ny]
+    eryy[Nx, :Ny] = er[Nx - 1, :Ny]
+    eryy[1:Nx, :Ny] = 0.5 * (er[:Nx - 1, :Ny] + er[1:Nx, :Ny])
+    #for j in range(Ny):
+    #    eryy[0, j] = er[0, j]
+    #    eryy[Nx, j] = er[Nx - 1, j]
+    #    for i in range(1, Nx):
+    #        eryy[i, j] = 0.5 * (er[i - 1, j] + er[i, j])
+    erzz[1:Nx, 1:Ny] = 0.25 * (er[1:Nx, 1:Ny] + er[1:Nx, :Ny - 1] + er[:Nx - 1, 1:Ny] + er[:Nx - 1, :Ny - 1])
+    erzz[1:Nx, 0] = 0.5 * (er[1:Nx, 0] + er[:Nx - 1, 0])
+    erzz[1:Nx, Ny] = 0.5 * (er[1:Nx, Ny - 1] + er[:Nx - 1, Ny - 1])
+    erzz[0, 1:Ny] = 0.5 * (er[0, 1:Ny] + er[0, :Ny - 1])
+    erzz[Nx, 1:Ny] = 0.5 * (er[Nx - 1, 1:Ny] + er[Nx - 1, :Ny - 1])
+    #for i in range(1, Nx):
+    #    for j in range(1, Ny):
+    #        erzz[i, j] = 0.25 * (er[i, j] + er[i, j - 1] + er[i - 1, j] + er[i - 1, j - 1])
+    #    erzz[i, 0] = 0.5 * (er[i, 0] + er[i - 1, 0])
+    #    erzz[i, Ny] = 0.5 * (er[i, Ny - 1] + er[i - 1, Ny - 1])
+    #for j in range(1, Ny):
+    #    erzz[0, j] = 0.5 * (er[0, j] + er[0, j - 1])
+    #    erzz[Nx, j] = 0.5 * (er[Nx - 1, j] + er[Nx - 1, j - 1])
 
     erzz[0, 0] = er[0, 0]
     erzz[0, Ny] = er[0, Ny - 1]
@@ -377,13 +414,6 @@ def addpml(pmllayers,dx, dy, er, erxx, eryy, erzz, metalnodesx, metalnodesy, met
     newcurrentloops=[[(a,x1+i,y1+j,b) for (a,i,j,b) in cloops] for cloops in currentloops]
     newvlines=[(a,x1+i,y1+j1,y1+j2) for (a,i,j1,j2) in vlines]
 
-    print("newer= ", newer)
-    # print("erxx= ", erxx)
-    # print("eryy= ", eryy)
-    # print("erzz= ", erzz)
-    print("newerxx= ", newerxx)
-    print("neweryy= ", neweryy)
-    print("newerzz= ", newerzz)
     return (yenidx, yenidy, newer, newerxx, neweryy, newerzz, newmetalnodesx, newmetalnodesy, newmetalnodesz, newcurrentloops, newvlines)
 
 def sigma(i,dx,nlayer):
@@ -443,8 +473,8 @@ def fdfd_solve(dx, dy, er, erxx, eryy, erzz, metalnodesx, metalnodesy, metalnode
     Ny = len(dy)
     a = Nx * (Ny - 1)  # ExSayisi = HySayisi
     b = Ny * (Nx - 1)  # EySayisi = HxSayisi
-    #sparse= True
-
+    sparse= True
+    print("sparse= "+str(sparse))
     if sparse:
         P = scipy.sparse.lil_matrix((a + b, a + b), dtype=np.complex128)
         Q = scipy.sparse.lil_matrix((a + b, a + b), dtype=np.complex128)
@@ -452,10 +482,10 @@ def fdfd_solve(dx, dy, er, erxx, eryy, erzz, metalnodesx, metalnodesy, metalnode
         M1 = scipy.sparse.lil_matrix((a + b, a + b), dtype=np.complex128)
         # M1 = scipy.sparse.lil_matrix((2 * a + 2 * b, 2 * a + 2 * b), dtype=np.complex128)
     else:
-        P = np.matlib.zeros((a + b, a + b), dtype=np.complex128)
-        Q = np.matlib.zeros((a + b, a + b), dtype=np.complex128)
+        P = matlib.zeros((a + b, a + b), dtype=np.complex128)
+        Q = matlib.zeros((a + b, a + b), dtype=np.complex128)
         # A = np.zeros((2 * a + 2 * b, 2 * a + 2 * b), dtype=np.complex128)
-        M1 = np.matlib.zeros((a + b, a + b), dtype=np.complex128)
+        M1 = matlib.zeros((a + b, a + b), dtype=np.complex128)
         # M1 = np.zeros((2 * a + 2 * b, 2 * a + 2 * b), dtype=np.complex128)
 
     dx = dx + [dx[-1]] + [dx[0]]  # bu sayede dx[-1] dx[0]'a esit olacak ve dy[Nx], dy[Nx-1]'e esit olacak.
@@ -465,10 +495,10 @@ def fdfd_solve(dx, dy, er, erxx, eryy, erzz, metalnodesx, metalnodesy, metalnode
     dx = np.array(dx)
     dy = np.array(dy)
 
-    print("dx= ", dx)
-    print("dy= ", dy)
-    print("ddx= ", ddx)
-    print("ddy= ", ddy)
+    #print("dx= ", dx)
+    #print("dy= ", dy)
+    #print("ddx= ", ddx)
+    #print("ddy= ", ddy)
 
     # np.savetxt("erxx.txt", erxx)
     # np.savetxt("eryy.txt", eryy)
@@ -591,13 +621,13 @@ def fdfd_solve(dx, dy, er, erxx, eryy, erzz, metalnodesx, metalnodesy, metalnode
     for i, j in metalnodesx:
         r = exn(i, j)
         P[r, r] = P[r, r] * coef
-        # Q[r, r] = Q[r, r] * coef
+        Q[r, r] = Q[r, r] * coef
         M1[r, r] = M1[r, r] * coef
         # mdosya.write(str(r)+"\n")
     for i, j in metalnodesy:
         r = eyn(i, j)
         P[r, r] = P[r, r] * coef
-        # Q[r, r] = Q[r, r] * coef
+        Q[r, r] = Q[r, r] * coef
         M1[r, r] = M1[r, r] * coef
         # mdosya.write(str(r)+"\n")
     # matrisdosya.close()
@@ -611,7 +641,7 @@ def fdfd_solve(dx, dy, er, erxx, eryy, erzz, metalnodesx, metalnodesy, metalnode
     import scipy.linalg
     # A = A + coe*np.eye(2 * a + 2 * b)
     if sparse:
-        la, v = scipy.sparse.linalg.eigs(P*Q, k=100, M=M1, sigma=np.mean(er), tol=0.001, which="LM")
+        la, v = scipy.sparse.linalg.eigs(P*Q, k=100, M=M1, sigma=np.mean(er), tol=0.001, which="SR")
     else:
         cond_number=np.linalg.cond(P*Q)
         print("condition number= ",cond_number)
@@ -684,12 +714,13 @@ def fdfd_solve(dx, dy, er, erxx, eryy, erzz, metalnodesx, metalnodesy, metalnode
 
 
     for la, Ev in eigs:
+        # Length of eigs can be higher than 1, so choose appropriate mode.
         currents = []
         voltages = []
         ko = 2 * np.pi * freq / co
         eeff = la
-        lambda_g = 2 * np.pi / eeff / ko
-        Hv = Q*np.matrix(Ev).transpose()
+        lambda_g = 2 * np.pi / np.sqrt(eeff) / ko
+        Hv = Q*np.matrix(Ev).transpose()/np.sqrt(la+0j)
         Hv,=np.array(Hv.T)
         for cloop in cloops:
             print("cloop= ",cloop)
@@ -697,14 +728,45 @@ def fdfd_solve(dx, dy, er, erxx, eryy, erzz, metalnodesx, metalnodesy, metalnode
             cf = [Hv[i]*j for i,j in temp if i is not None]
             currents.append( np.sum(cf))
         for cc in range(len(vlines)):
-            func, i, j1, j2 = vlines[cc]
-            print("vline= ",i,j1,j2)
-            temp=[(eval("{}({},{})".format(func,i,j)),dy[j]) for j in range(j1,j2)]
-            voltages.append( np.sum([v[i]*j for i,j in temp if i is not None]))
-        Z = np.abs(np.sqrt((sabitler.mu_0/ sabitler.epsilon_0)) * np.array(voltages) / np.array(currents))
-        print("eeff ",eeff)
+            func, i0, j1, j2 = vlines[cc]
+            temp=[(eval("{}({},{})".format(func,i0,j)),dy[j]) for j in range(j1,j2)]
+            voltages.append( np.sum([Ev[i]*j for i,j in temp if i is not None]))
 
-        output.append((Z, eeff, lambda_g, la, (Ev,Hv) ))
+        Z1 = np.abs(np.sqrt((sabitler.mu_0/ sabitler.epsilon_0)) * np.array(voltages) / np.array(currents))
+        P = powerflow(dx[1:-1], dy[1:-1], (Ev,Hv))
+        print("Z1= "+str(Z1))
+        print("P= "+str(P))
+        Z2 = np.sqrt((sabitler.mu_0/ sabitler.epsilon_0)) *np.abs(np.array(voltages))**2/P
+        print("eeff ",eeff)
+        print("Z2= "+str(Z2))
+        print(Z2)
+        Z3 = np.max(np.abs(Ev))/np.max(np.abs(Hv))
+        print("Z3= "+str(Z3))
+        print(Z3)
+        print("voltage")
+        print(np.abs(np.array(voltages)))
+        print("maxEv")
+        print(np.abs(np.max(Ev)))
+
+        import xlsxwriter
+        #workbook = xlsxwriter.Workbook('Ey.xlsx')
+        #worksheet = workbook.add_worksheet()
+        #for i in range(len(dx)):
+        #    worksheet.write(0,i, str(i))
+        #    for j in range(len(dy)):
+        #        if eyn(i,j):
+        #            worksheet.write(j+1,i, str(np.abs(Ev[eyn(i,j)])).replace(".",","))
+        #workbook.close()
+        workbook = xlsxwriter.Workbook('Hx.xlsx')
+        worksheet = workbook.add_worksheet()
+        for i in range(len(dx)):
+            worksheet.write(0,i, str(i))
+            for j in range(len(dy)):
+                if hxn(i,j):
+                    worksheet.write(j+1,i, str(np.abs(Hv[hxn(i,j)])).replace(".",","))
+        workbook.close()
+
+        output.append((Z2, eeff, lambda_g, la, (Ev,Hv) ))
     return output
 
 
@@ -806,15 +868,17 @@ def waveguide(boxwidth, boxheight, dielthickness, metalheight, metalwidth, metal
         xres = resolution
     parts = []
     temp = 0
-    # for diel, eps in zip(dielthickness, epsilon):
-        # parts.append(("dielectric", "rect", boxwidth / 2.0, temp + diel / 2.0, boxwidth, diel, eps))
-        # temp = temp + diel
+    for diel, eps in zip(dielthickness, epsilon):
+        #parts.append(("dielectric", "rect", boxwidth / 2.0, temp + diel / 2.0, boxwidth, diel, eps))
+        parts.append(("dielectric", "rect", boxwidth / 2.0, temp + diel / 2.0, boxwidth, diel, eps))
+    #    temp = temp + diel
     # parts.append(("metal", "rect", boxwidth / 2.0, metalheight + metalthickness / 2.0, metalwidth, metalthickness))
     (dx, dy, er, erxx, eryy, erzz, metalnodesx, metalnodesy, metalnodesz, cloops, vlines) = fdfd_mesh(boxwidth, boxheight,
                                                                                                xres,yres, parts)
     (dx, dy, er, erxx, eryy, erzz, metalnodesx, metalnodesy, metalnodesz, cloops, vlines) = addpml(pmllayers,dx, dy, er, erxx, eryy, erzz, metalnodesx, metalnodesy, metalnodesz, cloops, vlines)
     cc = getindice((boxwidth/ 2.0), dx, pmllayers[0])
-    # vline = [(eyn(cc, i), dy[i]) for i in range(getindice(boxheight, dy, pmllayers[2]))]
+    #vline = [(eyn(cc, i), dy[i]) for i in range(getindice(boxheight, dy, pmllayers[2]))]
+    vlines = [("eyn",cc, 0, getindice(boxheight, dy, pmllayers[2])+1)]
     return (dx, dy, er, erxx, eryy, erzz, metalnodesx, metalnodesy, metalnodesz, cloops, vlines, parts)
 
 def plot_parts(ekran, parts, solid=False, shift=(0,0)):
@@ -854,6 +918,48 @@ def plot_pml(ekran, pmllayers, dx, dy, solid=False, shift=(0,0)):
         ekran.axes.add_patch(mpatches.Rectangle((0, 0), lx, np.sum(dy[:y1]), fill=solid, fc='blue'))
     if y2>0:
         ekran.axes.add_patch(mpatches.Rectangle((0, ly-np.sum(dy[-y2:]), 0), lx, np.sum(dy[-y2:]), fill=solid, fc='blue'))
+
+
+def plot_vline(ekran, dx, dy, vlines):
+    for vline in vlines:
+        func,i,j1,j2 = vline
+        print(f"vline {i} {j1} {j2}")
+        if func=="eyn":
+            xo = np.sum(dx[:i])
+            y1=np.sum(dy[:j1])
+            y2=np.sum(dy[:j2])
+            #ekran.axes.plot([xo, xo], [y1, y2], "red")
+            ekran.axes.arrow(xo, y1, 0, y2-y1, width=dx[i]/2,color="red",length_includes_head=True)
+
+def plot_cloops(ekran, dx, dy, cloops):
+    for cloop in cloops:
+        for loop in cloop:
+            func,i,j,dd = loop
+            print(f"loop {i} {j} {dd}")
+            px=[]
+            py=[]
+            if func=="hxn":
+                yo = np.sum(dy[:j+1])-dy[j]/2
+                x1 = np.sum(dx[:i])-dx[i-1]/2
+                x2 = np.sum(dx[:i])+dx[i]/2
+                px.append(x1)
+                px.append(x2)
+                py.append(yo)
+                py.append(yo)
+                if dd<0:
+                    px.reverse()
+            elif func=="hyn":
+                xo = np.sum(dx[:i+1])-dx[i]/2
+                y1 = np.sum(dy[:j])-dy[j-1]/2
+                y2 = np.sum(dy[:j])+dy[j]/2
+                px.append(xo)
+                px.append(xo)
+                py.append(y1)
+                py.append(y2)
+                if dd<0:
+                    py.reverse()
+            #ekran.axes.plot(px, py, "blue")
+            ekran.axes.arrow(px[0], py[0], px[1]-px[0], py[1]-py[0], width=np.abs(dd)/10,color="blue",length_includes_head=True)
 
 
 def plot_grids(ekran, dx, dy):
@@ -921,6 +1027,85 @@ def plot_fields(dx, dy, eigs, parts):
         # gca().add_patch(patches.Rectangle((boxwidth / 2.0 - metalwidth / 2.0, dielheight), metalwidth, metalthickness))
     legend(bbox_to_anchor=[1.0, 1.0])
     show()
+
+def powerflow(dx, dy, v):
+    """
+
+    :type comp: "Ex","Ey"...
+    :type surface: if 1, use contourf, else streamplot
+    v: (Ev, Hv)
+    """
+    # x1, x2, y1, y2 = tuple(pmllayers)
+    # dx = [dx[0]] * x1 + dx + [dx[-1]] * x2
+    # dy = [dy[0]] * y1 + dy + [dy[-1]] * y2
+
+    # Nx = len(dx)
+    # Ny = len(dy)
+    # exn.Nx = eyn.Nx = hxn.Nx = hyn.Nx = Nx
+    # exn.Ny = eyn.Ny = hxn.Ny = hyn.Ny = Ny
+    print("dude: ")
+    print(len(dx))
+    print(len(dy))
+    print(np.shape(v[0]))
+    print(np.shape(v[1]))
+    boxwidth = sum(dx)
+    boxheight = sum(dy)
+    nx=100
+    ny=100
+    xi = np.linspace(0, boxwidth, nx)
+    yi = np.linspace(0, boxheight, ny)
+    xp = deepcopy(dx)
+    yp = deepcopy(dy)
+    for i in range(1, len(dx)):
+        xp[i] = xp[i] + xp[i - 1]
+    for i in range(1, len(dy)):
+        yp[i] = yp[i] + yp[i - 1]
+    xtemp = []
+    ytemp = []
+    Ey = []
+    Hx=[]
+    for j in range(len(dy)):
+        xtemp += [0.0, boxwidth]
+        ytemp += [yp[j] - (dy[j]/ 2.0), yp[j] - (dy[j]/ 2.0)]
+        Ey += [0.0, 0.0]
+        Hx += [0.0, 0.0]
+        for i in range(1, len(dx)):
+            xtemp.append(xp[i - 1])
+            ytemp.append(yp[j] - (dy[j]/ 2.0))
+            Ey.append(v[0][eyn(i, j)])
+            Hx.append(v[1][hxn(i, j)])
+    Eyy = griddata((xtemp, ytemp), Ey, (xi[None, :], yi[:, None]), method='nearest')
+    Hxx = griddata((xtemp, ytemp), Hx, (xi[None, :], yi[:, None]), method='nearest')
+    xtemp = []
+    ytemp = []
+    Ex = []
+    Hy = []
+    TEx=[]
+    for i in range(len(dx)):
+        xtemp += [xp[i] - (dx[i]/ 2.0), xp[i] - (dx[i]/ 2.0)]
+        ytemp += [0.0, boxheight]
+        Ex += [0.0, 0.0]
+        Hy += [0.0, 0.0]
+        for j in range(1, len(dy)):
+            xtemp.append(xp[i] - (dx[i]/ 2.0))
+            ytemp.append(yp[j - 1])
+            Ex.append(v[0][exn(i, j)])
+            Hy.append(v[1][hyn(i, j)])
+    # np.savetxt("TEx.txt",np.array(TEx))
+    Exx = griddata((xtemp, ytemp), Ex, (xi[None, :], yi[:, None]), method='nearest')
+    Hyy = griddata((xtemp, ytemp), Hy, (xi[None, :], yi[:, None]), method='nearest')
+    #magE = np.sqrt(np.abs(Exx * Exx + Eyy * Eyy))
+    #magH = np.sqrt(np.abs(Hxx * Hxx + Hyy * Hyy))
+    print(np.shape(Exx))
+    print(np.shape(Hyy))
+    print(Exx)
+    print(Hyy)
+    a1 = np.trapz(np.trapz(np.real(Exx*np.conjugate(Hyy)))*boxwidth/(nx-1))*boxheight/(ny-1)
+    a2 = np.trapz(np.trapz(np.real(Eyy*np.conjugate(Hxx)))*boxwidth/(nx-1))*boxheight/(ny-1)
+    print(a1)
+    print(a2)
+    return np.abs(a2-a1)
+
 
 
 def plot_field(ekran, dx, dy, v, parts, pmllayers, surface=True, comp="Ex"):
@@ -1030,39 +1215,61 @@ def plot_field(ekran, dx, dy, v, parts, pmllayers, surface=True, comp="Ex"):
     else:
         if comp=="E_t":
             nz.autoscale(magE)
-            temp = ekran.axes.streamplot(xi, yi, np.real(Exx), np.real(Eyy), color=magE, density=10.0, cmap=cm.gist_rainbow,
+            temp = ekran.axes.streamplot(xi, yi, np.real(Exx), np.real(Eyy), color=magE, density=2.0, cmap=cm.gist_rainbow,
                               linewidth=1, arrowstyle='->')
         elif comp == "H_t":
             nz.autoscale(magH)
-            temp = ekran.axes.streamplot(xi, yi, np.real(Hxx), np.real(Hyy), color=magH, density=10.0, cmap=cm.gist_rainbow,
+            temp = ekran.axes.streamplot(xi, yi, np.real(Hxx), np.real(Hyy), color=magH, density=2.0, cmap=cm.gist_rainbow,
                                       linewidth=1, arrowstyle='->')    # ekran.axes.colorbar()
-        if plot_field.cb:
-            plot_field.cb.ax.clear()
-            plot_field.cb = ekran.figure.colorbar(temp, cax=plot_field.cb.ax)
-        else:
-            plot_field.cb = ekran.figure.colorbar(temp)
+        # if plot_field.cb:
+            # plot_field.cb.ax.clear()
+            # plot_field.cb = ekran.figure.colorbar(temp.lines, cax=plot_field.cb.ax)
+        # else:
+            # plot_field.cb = ekran.figure.colorbar(temp.lines)
 
 
 if __name__ == "__main__":
-    boxwidth = 0.03  # WG genişliği
-    boxheight = 0.03 # WG yüksekliği
-    dielheight = 0.014
+    #import time
+    #dd = np.ones(10)
+    #ddcs = np.cumsum(dd)
+    #cc=5.5
+    #print(getindice(cc,dd))
+    #print(getindiceordered(cc,ddcs))
+    #t1 = time.time()
+    #for i in range(5000):
+    #    getindice(4.9,dd)
+    #t2 = time.time()
+    #for i in range(5000):
+    #    getindiceordered(4.9,ddcs)
+    #t3 = time.time()
+    #print(t2-t1)
+    #print(t3-t2)
+    #sys.exit(0)
+    boxwidth = 3.1e-3  # WG genişliği
+    boxheight = 1.55e-3 # WG yüksekliği
+    dielheight = 1.55e-3
     metalwidth = 0.01
     metalthickness = 0.002
-    freq = 0.1e9
-    epsilon = 5.0
+    freq = 77e9
+    epsilon = 1.0
     pml_layers=[0,0,0,0]
     # ms = microstrip(boxwidth, boxheight, dielheight, metalwidth, metalthickness, epsilon, freq)
-    ms = multilayer(boxwidth, boxheight, [dielheight], [epsilon], [[dielheight, metalwidth, metalthickness,0.0]], freq, pml_layers,0.001,0.002)
-    #ms = waveguide(boxwidth, boxheight, [dielheight], dielheight, metalwidth, metalthickness, [epsilon], freq, pml_layers,0.001,0.001)
-    fig = plt.figure()
+    #ms = multilayer(boxwidth, boxheight, [dielheight], [epsilon], [[dielheight, metalwidth, metalthickness,0.0]], freq, pml_layers,0.001,0.002)
+    ms = waveguide(boxwidth, boxheight, [dielheight], dielheight, metalwidth, metalthickness, [epsilon], freq, pml_layers,0.000025,0.000025)
+    #fig = plt.figure()
     out = fdfd_solve(*(list(ms[:-1]) + [freq]+[pml_layers]))
-    plot_field(fig.gca(), ms[0], ms[1], out[0][-1], ms[-1],pml_layers, surface=True,comp="E_t")
+    #plot_field(fig.gca(), ms[0], ms[1], out[0][-1], ms[-1],pml_layers, surface=True,comp="Ey")
     # plot_field(fig.gca(), ms[0], ms[1], out[0][-1], ms[-1],pml_layers, surface=True,comp="H_t")
-    plot_grids(fig.gca(), ms[0], ms[1])
-    plot_parts(fig.gca(), ms[-1])
+    #plot_grids(fig.gca(), ms[0], ms[1])
+    #plot_parts(fig.gca(), ms[-1])
     print(out[0][0],out[0][1])
-
+    ko=2*np.pi*freq/3e8
+    kc=np.pi/boxwidth
+    beta = np.sqrt(-kc**2+ko**2)
+    print(beta/ko)
+    print(2*np.pi/beta)
+    #print(2*np.pi/(np.sqrt(np.real(out[0][0]))*ko))
+    print(out[0][2])
     # print "eigs "
     # for i in out:
     #     print "i= ", i[0], i[1]

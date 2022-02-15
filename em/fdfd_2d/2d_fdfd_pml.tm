@@ -1,6 +1,6 @@
-<TeXmacs|1.99.5>
+<TeXmacs|2.1>
 
-<style|old-generic>
+<style|<tuple|old-generic|old-spacing|old-dots|old-lengths>>
 
 <\body>
   <\equation*>
@@ -102,6 +102,10 @@
   </eqnarray*>
 
   \;
+
+  In fdfd_solve method, compact formulation is used which employs P,Q
+  matrices instead of A and solves only for E vector. Then H vector is
+  calculated from E vector.
 </body>
 
 <\initial>

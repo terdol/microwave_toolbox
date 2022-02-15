@@ -431,7 +431,7 @@ class CartesianGrid():
         grids = [length/N]*N
         return grids
     
-    def nugrid(self, delta1, delta2, rmax, length, shape,  policy=0):
+    def nugrid(self, delta1, delta2, rmax, length, shape,  policy=0,cc=0.99):
         """ rmax =      maximum ratio between neighboring grids
             length=     total length
             shape =      0- fine-coarse
@@ -442,8 +442,8 @@ class CartesianGrid():
                         1- minimum ratio, smoother transition
         """
         r=rmax
-        cc=0.999
-    
+        #cc=0.999
+        tol=1e-5
         if (shape==3):
             grids=self.ugrid(delta1,length)
         elif  (shape==2):
@@ -459,14 +459,15 @@ class CartesianGrid():
                 N=round(float(np.ceil(np.log(deltamax/deltamin)/np.log(r))))
                 while(1):
                     temp3=deltamin*(r**(N+1)-1)/(r-1)
-                    if (np.abs(temp3/length-1)<1e-9):
+                    if (np.abs(temp3/length-1)<tol):
                         break
                     elif (temp3>length):
                         r=r*cc
                     elif (temp3<length):
                         r=r*(2.0-cc)
-                
-                grids = grids + [deltamin*np.power(r,i) for i in range(N+1)]                
+                error = length-temp3           
+                grids = grids + [deltamin*np.power(r,i) for i in range(N+1)]
+                grids[-1]+=error #compensation
             elif (policy==0):
                 N=1+round(float(np.ceil(np.log(deltamax/deltamin)/np.log(rmax))))
                 temp2=deltamin*(np.power(rmax,N)-1)/(rmax-1)
@@ -474,27 +475,29 @@ class CartesianGrid():
                     N3=round(float(np.ceil((length-temp2)/deltamax)))
                     while(1):
                         temp3=deltamin*(np.power(r,N)-1)/(r-1)+N3*deltamin*np.power(r,N-1)
-                        if (np.abs(temp3/length-1)<1e-9):
+                        if (np.abs(temp3/length-1)<tol):
                             break
                         elif (temp3>length):
                             r=r*cc
                         elif (temp3<length):
                             r=r*(2.0-cc)
-                    
+                    error = length-temp3
                     grids = grids + [deltamin*np.power(r,i) for i in range(N)]
+                    grids[-1]+=error #compensation
                     grids = grids + [deltamin*np.power(r,N-1) for i in range(N3)]                
                 else:
                     N1=round(float(np.ceil(np.log(length*(rmax-1)/deltamin+1.)/np.log(rmax))))
                     while(1):
                         temp3=deltamin*(np.power(r,N1)-1)/(r-1)
-                        if (np.abs(temp3/length-1)<1e-9):
+                        if (np.abs(temp3/length-1)<tol):
                             break
                         elif (temp3>length):
                             r=r*cc
                         elif (temp3<length):
                             r=r*(2.0-cc)
-                    
+                    error = length-temp3                    
                     grids = grids + [deltamin*np.power(r,i) for i in range(N1)]
+                    grids[-1]+=error #compensation
             if (shape==1):
                 grids.reverse()
         return grids
@@ -512,8 +515,23 @@ class CartesianGrid():
         return 0
 
 if __name__ == "__main__":
-    inp=[0.1,0.1,0.2,0.2,0.3,0.4,0.5,0.6,0.6]
-    aa=refinearray(inp)
-    print(inp)
-    print(aa)
-    pass
+    cg = CartesianGrid()
+    import time
+    t1 = time.time()
+    cg.nugrid(1.0,2.0,1.2,20,0, 0,cc=0.999)
+    t2 = time.time()
+    cg.nugrid(1.0,2.0,1.2,20,0, 0,cc=0.99)
+    t3 = time.time()
+    cg.nugrid(1.0,2.0,1.2,20,0, 0,cc=0.9)
+    t4 = time.time()
+    cg.nugrid(1.0,2.0,1.2,20,0, 0,cc=0.5)
+    t5 = time.time()
+    print("t2-t1= "+str(t2-t1))
+    print("t3-t2= "+str(t3-t2))
+    print("t4-t3= "+str(t4-t3))
+    print("t5-t4= "+str(t5-t4))
+    #inp=[0.1,0.1,0.2,0.2,0.3,0.4,0.5,0.6,0.6]
+    #aa=refinearray(inp)
+    #print(inp)
+    #print(aa)
+    #pass

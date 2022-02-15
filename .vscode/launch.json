@@ -10,7 +10,7 @@
             "request": "launch",
             "program": "${file}",
             "console": "integratedTerminal",
-            "pythonPath":"C:\\Programlar\\Miniconda\\python.exe"
+            "python":"C:\\Users\\Erdoel\\Programlar\\Miniconda3\\python.exe"
         }
     ]
 }
