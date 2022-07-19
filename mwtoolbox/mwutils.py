@@ -2,7 +2,7 @@
 import csv
 import difflib
 # from numpy.lib.scimath import sqrt as csqrt
-from constants import *
+from myconstants import *
 import numpy as np
 
 def skin_depth(f, material):

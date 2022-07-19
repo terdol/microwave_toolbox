@@ -1,8 +1,8 @@
 #-*-coding:utf-8-*-
 
 # from constants import *
-import myconstants as mycons
-from genel import *
+import mwtoolbox.myconstants as mycons
+from .genel import *
 import sys
 # from scipy import *
 # from scipy.special import ellipk
@@ -66,9 +66,22 @@ def skin_depth(f, sigma, mu=1.0, er=0.0):
 
 def SentezBisection_1d(fonk, _args, k, target_value, init_value, limits = []):
     """
+    This function calculates x such that f(x)=y.
     This function is added because NLOPT version in Sentez function does not work fast.
     This function works faster because it employs the fact that all the fonk functions are monotonic functions,
     so bisection method can be used securely.
+
+    Args:
+        fonk(function): function whose parameter will be calculated
+        _args(list): initial parameter list of *fonk*
+        k(int): Index (0-based) of the parameter to be calculated in parameter list of *fonk*.
+        target_value(float): Target value to be achieved.
+        init_value(float): initial value of the parameter to calculated.
+        limits(list): 2-element list of limits for the parameter to be calculated
+
+    Returns:
+        float: The parameter value of *fonk* which results in an output close to target_value.
+
     """
     args=_args[:]
     args[k] = init_value
@@ -76,6 +89,7 @@ def SentezBisection_1d(fonk, _args, k, target_value, init_value, limits = []):
     lim = limits[:]
     tol = 1e-10
     tt=0
+    midpoint=0.5*(lim[0]+lim[1])
     while((fonk(*argsmid)-target_value)**2>tol):
         if tt!=2:
             argsmin=args[:]
@@ -106,15 +120,15 @@ def Sentez(fonk, _args, k, target_value = [],init_value = [], limits = []):
     NLOPT is added to avoid SciPy for smaller package size for packed applications.
 
     Args:
-        fonk (function): function to be used at optimization
-        _args (list): function arguments of fonk
-        k (int): list of indices of variables to be calculated by optimization
+        fonk (function): function to be used at optimization.
+        _args (list): function arguments of fonk.
+        k (int): list of indices of variables to be calculated by optimization.
         target_value (list, optional): target value of fonk. Defaults to [].
         init_value (list, optional): initial values of variables]. Defaults to [].
         limits (list, optional): constraints on variables. Defaults to [].
 
     Returns:
-        float: Calculated parameter
+        float: Calculated parameter.
     """
     # if isinstance(k,int):
     #     k=[k]

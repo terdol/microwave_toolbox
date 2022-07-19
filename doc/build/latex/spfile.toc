@@ -1,6 +1,6 @@
-\babel@toc {english}{}
+\babel@toc {english}{}\relax 
 \contentsline {chapter}{\numberline {1}touchstone module}{1}{chapter.1}%
-\contentsline {chapter}{\numberline {2}components module}{19}{chapter.2}%
-\contentsline {chapter}{\numberline {3}Indices and tables}{39}{chapter.3}%
-\contentsline {chapter}{Python Module Index}{41}{section*.150}%
-\contentsline {chapter}{Index}{43}{section*.151}%
+\contentsline {chapter}{\numberline {2}components module}{25}{chapter.2}%
+\contentsline {chapter}{\numberline {3}Indices and tables}{47}{chapter.3}%
+\contentsline {chapter}{Python Module Index}{49}{section*.160}%
+\contentsline {chapter}{Index}{51}{section*.161}%

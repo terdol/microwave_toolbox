@@ -25,6 +25,9 @@ author = 'Tuncay Erdöl'
 # The full version, including alpha/beta/rc tags
 release = '0.1'
 
+ditaa = "java"
+ditaa_args = ["-jar", r"C:\Users\Erdoel\Programlar\EmacsConfs\doom\.emacs.d\.local\straight\build-28.1\org-contrib\scripts\ditaa.jar"]
+ditaa_log_enable = True
 
 # -- General configuration ---------------------------------------------------
 
@@ -37,6 +40,7 @@ extensions = [
     'sphinx.ext.mathjax',
     'sphinx.ext.todo',
     'sphinx.ext.napoleon',
+    'sphinxcontrib.ditaa',
 ]
 napoleon_google_docstring = True
 napoleon_include_special_with_doc = True

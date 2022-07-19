@@ -1,0 +1,25 @@
+
+(base) C:\Users\Erdoel\Documents\Works\Python_Works\microwave_toolbox\doc>set PATH=C:\Users\Erdoel\Programlar\MiKTeX\miktex\bin\x64;C:\Users\Erdoel\Programlar\msys64\usr\bin;C:\Users\Erdoel\Programlar\MiKTeX\miktex\bin\x64;C:\Users\Erdoel\Programlar\msys64\usr\bin;C:\Users\Erdoel\Programlar\MiKTeX\miktex\bin\x64;C:\Users\Erdoel\Programlar\msys64\usr\bin;C:\Users\Erdoel\Programlar\MiKTeX\miktex\bin\x64;C:\Users\Erdoel\Programlar\msys64\usr\bin;C:\Users\Erdoel\Programlar\MiKTeX\miktex\bin\x64;C:\Users\Erdoel\Programlar\Miniconda;C:\Users\Erdoel\Programlar\Miniconda\Library\mingw-w64\bin;C:\Users\Erdoel\Programlar\Miniconda\Library\usr\bin;C:\Users\Erdoel\Programlar\Miniconda\Library\bin;C:\Users\Erdoel\Programlar\Miniconda\Scripts;C:\Users\Erdoel\Programlar\Miniconda\bin;c:\Users\Erdoel\Programlar\Miniconda\condabin;C:\Program Files (x86)\Common Files\Intel\Shared Files\cpp\bin\Intel64;C:\Program Files (x86)\Common Files\Oracle\Java\javapath;C:\WINDOWS\system32;C:\WINDOWS;C:\WINDOWS\System32\Wbem;C:\WINDOWS\System32\WindowsPowerShell\v1.0;C:\WINDOWS\System32\OpenSSH;C:\Program Files\dotnet;C:\Program Files (x86)\dotnet;C:\Program Files (x86)\FreeFem++;C:\Program Files\MatLab\R2019b\runtime\win64;C:\Program Files\MatLab\R2019b\bin;C:\Users\Erdoel\Programlar\mingw-w64\mingw64\bin;C:\Program Files (x86)\Webex\Plugins;C:\Program Files\Intel\WiFi\bin;C:\Program Files\Common Files\Intel\WirelessCommon;C:\Program Files\TortoiseGit\bin;C:\Program Files\TortoiseSVN\bin;C:\Users\Erdoel\Programlar\PortableGit\App\Git\cmd;C:\Users\Erdoel\Programlar\groff\bin;C:\Users\Erdoel\Programlar\mdocml-1.13.1-win32-embedeo-02\bin;C:\Users\Erdoel\Programlar\wget-1.21.2-win64;C:\Users\Erdoel\Programlar\VSCode;C:\Users\Erdoel\Programlar;C:\Users\Erdoel\Programlar\node;C:\Users\Erdoel\Programlar\pandoc;C:\Users\Erdoel\Programlar\PortableGit\App\Git\bin;C:\Users\Erdoel\Programlar\cmder\vendor\conemu-maximus5\ConEmu\Scripts;C:\Users\Erdoel\Programlar\cmder\vendor\conemu-maximus5;C:\Users\Erdoel\Programlar\cmder\vendor\conemu-maximus5\ConEmu;C:\Program Files (x86)\Common Files\Intel\Shared Files\cpp\bin\Intel64;C:\Program Files (x86)\Common Files\Oracle\Java\javap;C:\Users\Erdoel\Programlar\ripgrep;C:\Users\Erdoel\Programlar\emacs-28.1\bin;C:\Users\Erdoel\Programlar\PortableGit\App\Git\bin 
+
+(base) C:\Users\Erdoel\Documents\Works\Python_Works\microwave_toolbox\doc>call make.bat latexpdf 
+Running Sphinx v5.0.2
+loading pickled environment... done
+building [mo]: targets for 0 po files that are out of date
+building [latex]: all documents
+updating environment: 0 added, 2 changed, 2 removed
+reading sources... [ 50%] filters                                              reading sources... [100%] mwutils                                              
+looking for now-outdated files... none found
+pickling environment... done
+checking consistency... done
+processing spfile.tex... index touchstone components 
+resolving references...
+done
+writing... done
+copying TeX support files... copying TeX support files...
+done
+build succeeded, 3 warnings.
+
+The LaTeX files are in build\latex.
+Terminate batch job (Y/N)? 
+Terminate batch job (Y/N)? 
+Terminate batch job (Y/N)? Terminate batch job (Y/N)? Terminate batch job (Y/N)? Terminate batch job (Y/N)? 

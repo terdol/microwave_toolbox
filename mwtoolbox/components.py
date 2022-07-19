@@ -4,7 +4,7 @@ Created on Tue Nov 17 11:52:33 2009
 
 @author: Tuncay
 """
-from myconstants import *
+from .myconstants import *
 # from scipy.special import iv, scipy.special.ellipk, scipy.special.ellipe
 # from scipy.optimize import scipy.optimize.brentq
 # from scipy.integrate import scipy.integrate.quad
@@ -14,16 +14,16 @@ import scipy.integrate
 import re
 import os
 # from filters import *
-from network import *
+from .network import *
 # import numpy as np
 # from numpy import np.round, np.zeros, np.ones, sin, cos, shape, array, log, log10, exp
 # from numpy import fabs, pi, arange, linspace, power, arccosh, flipud, cosh, ceil, sqrt
 # from numpy import min as np.min
 # from numpy import max as np.max
 # from numpy import sum as np.sum
-from genel import *
+from .genel import *
 from numpy.lib.scimath import sqrt as csqrt #this works with negative real numbers unlike numpy.sqrt
-from transmission_lines import *
+from .transmission_lines import *
 # import visvis
 
 co = speed_of_light_in_freespace.simplified.magnitude
@@ -342,9 +342,9 @@ def Chebyshev_QWave_Impedance_Transformer(arg, defaultunits=[]):
     print("s ", r)
     print("s ", N)
     print("s ", thetam)
-#    max_gamma=abs((r-1)/(r+1)/chebyt(N-1)(1./np.cos(thetam)))
-    gamma = abs((r - 1) / (r + 1) * chebyt(N - 1)
-                ((np.cos(pi / (fmin + fmax) * ftest)/ np.cos(thetam))) / chebyt(N - 1)((1./ np.cos(thetam))))
+#    max_gamma=abs((r-1)/(r+1)/scipy.specialchebyt(N-1)(1./np.cos(thetam)))
+    gamma = abs((r - 1) / (r + 1) * scipy.special.chebyt(N - 1)
+                ((np.cos(pi / (fmin + fmax) * ftest)/ np.cos(thetam))) / scipy.special.chebyt(N - 1)((1./ np.cos(thetam))))
     arg.append(globsep2.join([prettystring(x, defaultunits[6]) for x in z]))
     arg.append(prettystring(20. * np.log10(gamma), defaultunits[7]))
     return arg
@@ -691,6 +691,7 @@ def SymmetricLangeCoupler(arg, defaultunits=[]):
 
 def AWG2Dia(arg, defaultunits=[]):
     """ Convert AWG to Diameter.
+    Reference:  Wikipedia, Current rating is calculated through curve fit from online data.
 
     Args:
         arg(list): First 1 arguments are inputs.
@@ -698,7 +699,6 @@ def AWG2Dia(arg, defaultunits=[]):
             1.  AWG ;
             2. Diameter ;length
             3. Current rating in still air ; current
-            Reference:  Wikipedia, Current rating is calculated through curve fit from online data
 
         defaultunits(list, optional): Default units for quantities in *arg* list. Default is [] which means SI units will be used if no unit is given in *arg*.
 
@@ -722,6 +722,7 @@ def AWG2Dia(arg, defaultunits=[]):
 
 def Dia2AWG(arg, defaultunits=[]):
     """ Convert Diameter to AWG.
+    Reference:  Wikipedia
 
     Args:
         arg(list): First 1 arguments are inputs.
@@ -729,7 +730,6 @@ def Dia2AWG(arg, defaultunits=[]):
             1. AWG ;
             2. Diameter ;length
             3. Current rating in still air ; current
-            Reference:  Wikipedia
 
         defaultunits(list, optional): Default units for quantities in *arg* list. Default is [] which means SI units will be used if no unit is given in *arg*.
 
@@ -752,6 +752,7 @@ def Dia2AWG(arg, defaultunits=[]):
 
 def PCBTrackCurrentCapacityIPC(arg, defaultunits=[]):
     """ PCB Track Current Capacity, IPC.
+    Reference: IPC2221A
 
     Args:
         arg(list): First 4 arguments are inputs.
@@ -761,7 +762,6 @@ def PCBTrackCurrentCapacityIPC(arg, defaultunits=[]):
             3. Allowable Temperature Rise; temperature
             4. External if 1, Internal if 0;
             5. Current ; current
-            Reference:  IPC2221A
 
         defaultunits(list, optional): Default units for quantities in *arg* list. Default is [] which means SI units will be used if no unit is given in *arg*.
 
@@ -794,7 +794,6 @@ def PCBTrackCurrentCapacity(arg, defaultunits=[]):
             6. Electrical Conductivity; electrical conductivity
             7. External if 1, Internal if 0;
             8. Current ; current
-            Reference:
 
         defaultunits(list, optional): Default units for quantities in *arg* list. Default is [] which means SI units will be used if no unit is given in *arg*.
 
@@ -815,6 +814,7 @@ def PCBTrackCurrentCapacity(arg, defaultunits=[]):
 
 def OptimumMitered90DegMicrostripBend(arg, defaultunits=[]):
     """ Optimum Mitered Microstrip Bend Parameters.
+    Reference: Tranmission line design handbook, p.290
 
     Args:
         arg(list): First 2 arguments are inputs.
@@ -822,7 +822,6 @@ def OptimumMitered90DegMicrostripBend(arg, defaultunits=[]):
             1.  Microstrip Width;length
             2.  Substrate Height;length
             3.  Miter Length; length
-            Reference: Tranmission line design handbook, p.290
 
         defaultunits(list, optional): Default units for quantities in *arg* list. Default is [] which means SI units will be used if no unit is given in *arg*.
 
@@ -844,6 +843,7 @@ def OptimumMitered90DegMicrostripBend(arg, defaultunits=[]):
 
 def OptimumMiteredArbitraryAngleMicrostripBend(arg, defaultunits=[]):
     r""" Optimum Mitered Microstrip Bend Parameters.
+    Reference: MWOHELP, MBENDA model
 
     Args:
         arg(list): First 2 arguments are inputs.
@@ -852,8 +852,6 @@ def OptimumMiteredArbitraryAngleMicrostripBend(arg, defaultunits=[]):
             2.  Substrate Height;length;
             3.  Angle (0-180 degrees); angle ;
             4.  Miter Length; length ;
-            Reference: MWOHELP, MBENDA model
-
 
     Burada scipy.interpolate.griddata kullanildi ve maalesef extrapolation yapmiyor. Sinir disi degerlerde dogrudan en yakin deger kullanildi.
 
@@ -901,7 +899,6 @@ def Interference_Phase_Amp_Error(arg, defaultunits=[]):
             1. Difference in dB ;
             2. Amplitude Error;
             3. Phase Error; angle
-            Reference:
 
         defaultunits(list, optional): Default units for quantities in *arg* list. Default is [] which means SI units will be used if no unit is given in *arg*.
 
@@ -929,8 +926,9 @@ def ParallelPlateCap(arg, defaultunits=[]):
             2. Length;length
             3. Height;length
             4. Dielectric Permittivity;
-            5. Capacitance; capacitance
-            Reference:
+            5. Frequency; frequency
+            6. Capacitance; capacitance
+            7. Impedance; impedance
 
         defaultunits(list, optional): Default units for quantities in *arg* list. Default is [] which means SI units will be used if no unit is given in *arg*.
 
@@ -939,11 +937,14 @@ def ParallelPlateCap(arg, defaultunits=[]):
     """
     if len(defaultunits) == 0:
         defaultunits = [""] * len(arg) * 2
-    arg = arg[:4]
+    arg = arg[:5]
     newargs = convert2pq(arg, defaultunits)
-    w, l, h, er = tuple(newargs)
+    w, l, h, er, freq = tuple(newargs)
     cap = er * eps0 * w * l / h
-    arg.append(prettystring(cap, defaultunits[4]))
+    cap += er * eps0 * w / np.pi * ( np.log(2 * np.pi * l / h) + 1) # Correction for edges, Ref: Edge corrections for parallel-plate capacitors (Ehud Yariv)
+    cap += er * eps0 * l / np.pi * ( np.log(2 * np.pi * w / h) + 1)
+    impedance = 1.0 / (2.0 * np.pi * freq * cap)
+    arg.extend([prettystring(cap, defaultunits[5]),prettystring(impedance, defaultunits[6])])
     return arg
 
 
@@ -956,8 +957,9 @@ def CircularPlateCap(arg, defaultunits=[]):
             1. Radius;length
             2. Height;length
             3. Dielectric Permittivity;
-            4. Capacitance; capacitance
-            Reference:
+            4. Frequency; frequency
+            5. Capacitance; capacitance
+            6. Impedance; impedance
 
         defaultunits(list, optional): Default units for quantities in *arg* list. Default is [] which means SI units will be used if no unit is given in *arg*.
 
@@ -966,11 +968,12 @@ def CircularPlateCap(arg, defaultunits=[]):
     """
     if len(defaultunits) == 0:
         defaultunits = [""] * len(arg) * 2
-    arg = arg[:3]
+    arg = arg[:4]
     newargs = convert2pq(arg, defaultunits)
-    r, h, er = tuple(newargs)
+    r, h, er, freq = tuple(newargs)
     cap = er * eps0 * pi * r ** 2 / h
-    arg.append(prettystring(cap, defaultunits[3]))
+    impedance = 1.0 / (2.0 * np.pi * freq * cap)
+    arg.extend([prettystring(cap, defaultunits[4]),prettystring(impedance, defaultunits[5])])
     return arg
 
 
@@ -985,7 +988,6 @@ def Shorten90DegreeLine(arg, defaultunits=[]):
             3. Electrical Length (theta) ; angle
             4. Impedance (Z); impedance
             5. Capacitance ; capacitance
-            Reference:
 
         defaultunits(list, optional): Default units for quantities in *arg* list. Default is [] which means SI units will be used if no unit is given in *arg*.
 
@@ -1020,6 +1022,7 @@ def Z_WG_TE10(er, a, b, freq, formulation=1):
 
 def HomogeneousRectWaveguideParameters_TE(arg, defaultunits=[]):
     """ Homogeneous Rectangular Waveguide Parameters.
+    Reference:  Marcuvitz Waveguide Handbook s.253
 
     Args:
         arg(list): First 10 arguments are inputs.
@@ -1040,8 +1043,8 @@ def HomogeneousRectWaveguideParameters_TE(arg, defaultunits=[]):
             14. Lambda_Guided;length
             15. Impedance; impedance
             16. Electrical Length; angle
-
-            Reference:  Marcuvitz Waveguide Handbook s.253
+            17. Group Velocity; 
+            17. Group Delay; time
 
         defaultunits(list, optional): Default units for quantities in *arg* list. Default is [] which means SI units will be used if no unit is given in *arg*.
 
@@ -1093,10 +1096,29 @@ def HomogeneousRectWaveguideParameters_TE(arg, defaultunits=[]):
     cutoff = co / 2.0 / csqrt(er) * csqrt((m/a) ** 2.0 + (n/b) ** 2.0)
     loss_cond = 20.0 * alpha_c * np.log10(np.exp(1))  # dB/m
     loss_diel = 20.0 * alpha_d * np.log10(np.exp(1))  # dB/m
+    groupvelocity = co / 2.0 / csqrt(er) * np.sqrt(1-(cutoff/freq)**2)
+    groupdelay = phy_length / groupvelocity
     argout = [loss_cond, loss_diel, cutoff,
-              2 * pi / beta, imp_te, phy_length * beta]
+              2 * pi / beta, imp_te, phy_length * beta, groupvelocity, groupdelay]
+    # units = [defaultunits[len(arg) + i] for i in range(len(argout))]
+    # for i in range(len(units)):
+        # units[i] = units[i].replace("loss per length",defaultunits["loss per length"])
+        # units[i] = units[i].replace("length",defaultunits["length"])
+        # units[i] = units[i].replace("frequency",defaultunits["frequency"])
+        # units[i] = units[i].replace("time",defaultunits["time"])
+        # units[i] = units[i].replace("electrical conductivity",defaultunits["electrical conductivity"])
+        # units[i] = units[i].replace("thermal conductivity",defaultunits["thermal conductivity"])
+        # units[i] = units[i].replace("impedance",defaultunits["impedance"])
+        # units[i] = units[i].replace("capacitance",defaultunits["capacitance"])
+        # units[i] = units[i].replace("inductance",defaultunits["inductance"])
+        # units[i] = units[i].replace("temperature",defaultunits["temperature"])
+        # units[i] = units[i].replace("current",defaultunits["current"])
+        # units[i] = units[i].replace("power",defaultunits["power"])
     arg = arg + [prettystring(argout[i], defaultunits[len(arg) + i])
                  for i in range(len(argout))]
+    # arg = arg + [prettystring(argout[i], units[i])
+                 # for i in range(len(argout))]
+    arg[-2]+=" m/s"
     return arg
 
 
@@ -1185,6 +1207,7 @@ def InductivePostInWaveguide(arg, defaultunits=[]):
 
 def InductiveWindowInWaveguide(arg, defaultunits=[]):
     """ Waveguide Width Step from Rectangular Waveguide to Evanescent Mode Rectangular Waveguide.
+    Reference:  Marcuvitz Waveguide Handbook s.253
 
     Args:
         arg(list): First 6 arguments are inputs.
@@ -1198,8 +1221,6 @@ def InductiveWindowInWaveguide(arg, defaultunits=[]):
             7. Inductance;inductance
             8. Capacitance; capacitance
             9. Impedance; impedance
-
-            Reference:  Marcuvitz Waveguide Handbook s.253
 
         defaultunits(list, optional): Default units for quantities in *arg* list. Default is [] which means SI units will be used if no unit is given in *arg*.
 
@@ -1256,6 +1277,9 @@ def InductiveWindowInWaveguide(arg, defaultunits=[]):
 
 def EvanescentWGEquivalent(arg, defaultunits=[]):
     """ Waveguide Width Step from Rectangular Waveguide to Evanescent Mode Rectangular Waveguide.
+    Reference:  The Design of Evanescent Mode Waveguide Bandpass Filters for a Prescribed Insertion Loss Characteristic.pdf
+            Model= Xp1,Xs1,Xp1 ya da Xs2,Xp2,Xs2 (p: shunt, s: series)
+            Zo=jXo
 
     Args:
         arg(list): First 5 arguments are inputs.
@@ -1270,9 +1294,6 @@ def EvanescentWGEquivalent(arg, defaultunits=[]):
             8. Series Inductance For Series-Shunt-Series Model; inductance
             9. Shunt Inductance For Series-Shunt-Series Model; inductance
             10. Characteristic Impedance; impedance
-            Reference:  The Design of Evanescent Mode Waveguide Bandpass Filters for a Prescribed Insertion Loss Characteristic.pdf
-            Model= Xp1,Xs1,Xp1 ya da Xs2,Xp2,Xs2 (p: shunt, s: series)
-            Zo=jXo
 
         defaultunits(list, optional): Default units for quantities in *arg* list. Default is [] which means SI units will be used if no unit is given in *arg*.
 
@@ -1352,6 +1373,7 @@ def SIW_EquivalentWidth(w, d, s):
 
 def RectWG2EvanescentRectWGStep(a1, a2):
     """ Waveguide Width Step from Rectangular Waveguide to Evanescent Mode Rectangular Waveguide.
+    Reference:  The Design of Evanescent Mode Waveguide Bandpass Filters for a Prescribed Insertion Loss Characteristic.pdf
 
     Args:
         arg(list): First 2 arguments are inputs.
@@ -1360,7 +1382,6 @@ def RectWG2EvanescentRectWGStep(a1, a2):
             2. Width of Evanescent Mode Rectangular Waveguide;length;
             3. Inductance; inductance
             4. Turns Ratio;
-            Reference:  The Design of Evanescent Mode Waveguide Bandpass Filters for a Prescribed Insertion Loss Characteristic.pdf
 
         defaultunits(list, optional): Default units for quantities in *arg* list. Default is [] which means SI units will be used if no unit is given in *arg*.
 
@@ -1415,6 +1436,8 @@ def Star2TriangleTransformation(arg, defaultunits=[]):
 
 def Triangle2StarTransformation(arg, defaultunits=[]):
     """ Triangle network to Star network transformation.
+    At star, z1 is connected to A-node, z2 is connected to B-node, z3 is connected to C-node
+    At triangle, z1' is between A-B, z2' is between A-C, z3' is between B-C
 
     Args:
         arg(list): Last 3 arguments are inputs.
@@ -1425,9 +1448,6 @@ def Triangle2StarTransformation(arg, defaultunits=[]):
             4. Z1'; impedance
             5. Z2'; impedance
             6. Z3'; impedance
-            Reference:
-            At star, z1 is connected to A-node, z2 is connected to B-node, z3 is connected to C-node
-            At triangle, z1' is between A-B, z2' is between A-C, z3' is between B-C
 
         defaultunits(list, optional): Default units for quantities in *arg* list. Default is [] which means SI units will be used if no unit is given in *arg*.
 
@@ -1451,6 +1471,17 @@ def Triangle2StarTransformation(arg, defaultunits=[]):
 
 def GyselPowerDivider(arg, defaultunits=[]):
     """ Triangle network to Star network transformation.
+    Reference:
+       Zo1: 1. port impedance
+       Zo2: 2. port impedance
+       Zo3: 3. port impedance
+       R1: first isolation resistor (2.porta yakin)
+       R2: second isolation resistor (3.porta yakin)
+       ratio: P2/P3 power ratio
+       Z1: impedance of transmission line between 1.port and 2.port
+       Z2: impedance of transmission line between 1.port and 3.port
+       Z3: impedance of transmission line between 2.port and isolation resistor
+       Z4: impedance of transmission line between 3.port and isolation resistor
 
     Args:
         arg(list): First 6 arguments are inputs.
@@ -1465,17 +1496,6 @@ def GyselPowerDivider(arg, defaultunits=[]):
             8. Z2; impedance
             9. Z3; impedance
             10. Z4; impedance
-            Reference:
-            Zo1: 1. port impedance
-            Zo2: 2. port impedance
-            Zo3: 3. port impedance
-            R1: first isolation resistor (2.porta yakin)
-            R2: second isolation resistor (3.porta yakin)
-            ratio: P2/P3 power ratio
-            Z1: impedance of transmission line between 1.port and 2.port
-            Z2: impedance of transmission line between 1.port and 3.port
-            Z3: impedance of transmission line between 2.port and isolation resistor
-            Z4: impedance of transmission line between 3.port and isolation resistor
 
         defaultunits(list, optional): Default units for quantities in *arg* list. Default is [] which means SI units will be used if no unit is given in *arg*.
 
@@ -1539,6 +1559,7 @@ def DualTransformation1(arg, defaultunits=[]):
 
 def DualTransformation2(arg, defaultunits=[]):
     """ Dual Transformation 1.
+    Reference:  Microstrip Filters for RF-Microwave Applications, s.25, Figure 2.6b
 
     Args:
         arg(list): First 4 arguments are inputs.
@@ -1551,7 +1572,6 @@ def DualTransformation2(arg, defaultunits=[]):
             6.  C1' ; capacitance
             7.  L2' ; inductance
             8.  C2' ; capacitance
-            Reference:  Microstrip Filters for RF-Microwave Applications, s.25, Figure 2.6b
 
         defaultunits(list, optional): Default units for quantities in *arg* list. Default is [] which means SI units will be used if no unit is given in *arg*.
 
@@ -1640,6 +1660,7 @@ def thermal_conductance_of_via_farm_view(arg, defaultunits):
 
 def Exponential_Taper_Impedance_Transformer(arg, defaultunits=[]):
     """ Exponential Impedance Taper.
+    Reference:  Foundations for Microwave Engineering, Collin
 
     Args:
         arg(list): First 5 arguments are inputs.
@@ -1651,7 +1672,6 @@ def Exponential_Taper_Impedance_Transformer(arg, defaultunits=[]):
             5.  Length (normalized to Lambda at fcenter) ;
             6.  Impedances ; impedance
             7.  Return Loss ;
-            Reference:  Foundations for Microwave Engineering, Collin
 
         defaultunits(list, optional): Default units for quantities in *arg* list. Default is [] which means SI units will be used if no unit is given in *arg*.
 
@@ -1681,6 +1701,7 @@ def Exponential_Taper_Impedance_Transformer(arg, defaultunits=[]):
 
 def Triangular_Taper_Impedance_Transformer(arg, defaultunits=[]):
     """ Triangular Impedance Taper.
+    Reference:  Foundations for Microwave Engineering, Collin
 
     Args:
         arg(list): First 5 arguments are inputs.
@@ -1692,7 +1713,6 @@ def Triangular_Taper_Impedance_Transformer(arg, defaultunits=[]):
             5.  Length (normalized to Lambda at fcenter) ;
             6.  Impedances ; impedance
             7.  Return Loss ;
-            Reference:  Foundations for Microwave Engineering, Collin
 
         defaultunits(list, optional): Default units for quantities in *arg* list. Default is [] which means SI units will be used if no unit is given in *arg*.
 
@@ -1727,6 +1747,7 @@ def Triangular_Taper_Impedance_Transformer(arg, defaultunits=[]):
 def Patch_Antenna_Analysis(arg, defaultunits=[]):
     """ Calculates performance and impedance values for an N-section Chebyshev Impedance Taper.
     Ref: Overview of Microstrip Antennas (Jackson) (Presentation)
+    Reference:  Foundations for Microwave Engineering, Collin
 
     Args:
         arg(list): First 6 arguments are inputs.
@@ -1739,7 +1760,6 @@ def Patch_Antenna_Analysis(arg, defaultunits=[]):
             6.  Metal Conductivity ; electrical conductivity
             7.  Resonance Frequency (f) ; frequency
             8.  Bandwidth ; frequency
-            Reference:  Foundations for Microwave Engineering, Collin
 
         defaultunits(list, optional): Default units for quantities in *arg* list. Default is [] which means SI units will be used if no unit is given in *arg*.
 
@@ -1777,6 +1797,7 @@ def Patch_Antenna_Analysis(arg, defaultunits=[]):
 
 def Chebyshev_Taper_Impedance_Transformer(arg, defaultunits=[]):
     """ Calculates performance and impedance values for an N-section Chebyshev Impedance Taper.
+    Reference:  Foundations for Microwave Engineering, Collin
 
     Args:
         arg(list): First 5 arguments are inputs.
@@ -1788,7 +1809,6 @@ def Chebyshev_Taper_Impedance_Transformer(arg, defaultunits=[]):
             5.  Length (normalized to Lambda at fcenter) ;
             6.  Impedances ; impedance
             7.  Return Loss ;
-            Reference:  Foundations for Microwave Engineering, Collin
 
         defaultunits(list, optional): Default units for quantities in *arg* list. Default is [] which means SI units will be used if no unit is given in *arg*.
 
@@ -1897,7 +1917,7 @@ def Klopfenstein_Taper_Impedance_Transformer(arg, defaultunits=[]):
     p = (np.arange(float(N + 1))/N)    # z/L
     Gamma_0 = ((ZL - Z0)/ (ZL + Z0))
     # Using this approximation method, there is no impedance jump at two ends of the taper,
-    # but there is a slight detoriation at performance at low frequency edge of the spectrum
+    # but there is a slight reduction at performance at low frequency edge of the spectrum
     Gamma_0 = 0.5 * np.log((ZL/ Z0))
     Gamma_Max = np.power(10.0, (-abs(G)/ 20.0))
     A = np.arccosh((Gamma_0/ Gamma_Max))

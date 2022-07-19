@@ -4,148 +4,158 @@
 \indexentry{cascade\_2ports() (in module touchstone)@\spxentry{cascade\_2ports()}\spxextra{in module touchstone}|hyperpage}{1}
 \indexentry{extract\_gamma\_ereff() (in module touchstone)@\spxentry{extract\_gamma\_ereff()}\spxextra{in module touchstone}|hyperpage}{1}
 \indexentry{extract\_gamma\_ereff\_all() (in module touchstone)@\spxentry{extract\_gamma\_ereff\_all()}\spxextra{in module touchstone}|hyperpage}{1}
-\indexentry{generate\_multiport\_spfile() (in module touchstone)@\spxentry{generate\_multiport\_spfile()}\spxextra{in module touchstone}|hyperpage}{1}
-\indexentry{parseformat() (in module touchstone)@\spxentry{parseformat()}\spxextra{in module touchstone}|hyperpage}{1}
-\indexentry{spfile (class in touchstone)@\spxentry{spfile}\spxextra{class in touchstone}|hyperpage}{1}
+\indexentry{extract\_rlgc() (in module touchstone)@\spxentry{extract\_rlgc()}\spxextra{in module touchstone}|hyperpage}{1}
+\indexentry{generate\_multiport\_spfile() (in module touchstone)@\spxentry{generate\_multiport\_spfile()}\spxextra{in module touchstone}|hyperpage}{2}
+\indexentry{parse\_format() (in module touchstone)@\spxentry{parse\_format()}\spxextra{in module touchstone}|hyperpage}{2}
+\indexentry{spfile (class in touchstone)@\spxentry{spfile}\spxextra{class in touchstone}|hyperpage}{2}
 \indexentry{Extraction() (touchstone.spfile method)@\spxentry{Extraction()}\spxextra{touchstone.spfile method}|hyperpage}{2}
 \indexentry{Ffunc() (touchstone.spfile method)@\spxentry{Ffunc()}\spxextra{touchstone.spfile method}|hyperpage}{2}
-\indexentry{ImpulseResponse() (touchstone.spfile method)@\spxentry{ImpulseResponse()}\spxextra{touchstone.spfile method}|hyperpage}{2}
-\indexentry{S() (touchstone.spfile method)@\spxentry{S()}\spxextra{touchstone.spfile method}|hyperpage}{3}
-\indexentry{T() (touchstone.spfile method)@\spxentry{T()}\spxextra{touchstone.spfile method}|hyperpage}{3}
-\indexentry{UniformDeembed() (touchstone.spfile method)@\spxentry{UniformDeembed()}\spxextra{touchstone.spfile method}|hyperpage}{3}
-\indexentry{Y() (touchstone.spfile method)@\spxentry{Y()}\spxextra{touchstone.spfile method}|hyperpage}{4}
-\indexentry{Z() (touchstone.spfile method)@\spxentry{Z()}\spxextra{touchstone.spfile method}|hyperpage}{4}
-\indexentry{Z\_conjmatch() (touchstone.spfile method)@\spxentry{Z\_conjmatch()}\spxextra{touchstone.spfile method}|hyperpage}{4}
-\indexentry{\_\_add\_\_() (touchstone.spfile method)@\spxentry{\_\_add\_\_()}\spxextra{touchstone.spfile method}|hyperpage}{4}
-\indexentry{\_\_neg\_\_() (touchstone.spfile method)@\spxentry{\_\_neg\_\_()}\spxextra{touchstone.spfile method}|hyperpage}{4}
-\indexentry{\_\_sub\_\_() (touchstone.spfile method)@\spxentry{\_\_sub\_\_()}\spxextra{touchstone.spfile method}|hyperpage}{5}
-\indexentry{add\_abs\_noise() (touchstone.spfile method)@\spxentry{add\_abs\_noise()}\spxextra{touchstone.spfile method}|hyperpage}{5}
-\indexentry{calc\_syz() (touchstone.spfile method)@\spxentry{calc\_syz()}\spxextra{touchstone.spfile method}|hyperpage}{5}
-\indexentry{calc\_t\_eigs() (touchstone.spfile method)@\spxentry{calc\_t\_eigs()}\spxextra{touchstone.spfile method}|hyperpage}{5}
-\indexentry{change\_formulation() (touchstone.spfile method)@\spxentry{change\_formulation()}\spxextra{touchstone.spfile method}|hyperpage}{5}
-\indexentry{change\_ref\_impedance() (touchstone.spfile method)@\spxentry{change\_ref\_impedance()}\spxextra{touchstone.spfile method}|hyperpage}{5}
-\indexentry{check\_passivity() (touchstone.spfile method)@\spxentry{check\_passivity()}\spxextra{touchstone.spfile method}|hyperpage}{5}
-\indexentry{column\_of\_data() (touchstone.spfile method)@\spxentry{column\_of\_data()}\spxextra{touchstone.spfile method}|hyperpage}{6}
-\indexentry{conj\_match\_uncoupled() (touchstone.spfile method)@\spxentry{conj\_match\_uncoupled()}\spxextra{touchstone.spfile method}|hyperpage}{6}
-\indexentry{connect\_2\_ports() (touchstone.spfile method)@\spxentry{connect\_2\_ports()}\spxextra{touchstone.spfile method}|hyperpage}{6}
-\indexentry{connect\_2\_ports\_list() (touchstone.spfile method)@\spxentry{connect\_2\_ports\_list()}\spxextra{touchstone.spfile method}|hyperpage}{6}
-\indexentry{connect\_2\_ports\_retain() (touchstone.spfile method)@\spxentry{connect\_2\_ports\_retain()}\spxextra{touchstone.spfile method}|hyperpage}{6}
-\indexentry{connect\_network\_1\_conn() (touchstone.spfile method)@\spxentry{connect\_network\_1\_conn()}\spxextra{touchstone.spfile method}|hyperpage}{7}
-\indexentry{connect\_network\_1\_conn\_retain() (touchstone.spfile method)@\spxentry{connect\_network\_1\_conn\_retain()}\spxextra{touchstone.spfile method}|hyperpage}{7}
-\indexentry{convert\_s1p\_to\_s2p() (touchstone.spfile method)@\spxentry{convert\_s1p\_to\_s2p()}\spxextra{touchstone.spfile method}|hyperpage}{7}
-\indexentry{copy() (touchstone.spfile method)@\spxentry{copy()}\spxextra{touchstone.spfile method}|hyperpage}{7}
-\indexentry{copy\_data\_from\_spfile() (touchstone.spfile method)@\spxentry{copy\_data\_from\_spfile()}\spxextra{touchstone.spfile method}|hyperpage}{7}
-\indexentry{cpwgline() (touchstone.spfile class method)@\spxentry{cpwgline()}\spxextra{touchstone.spfile class method}|hyperpage}{7}
-\indexentry{data\_array() (touchstone.spfile method)@\spxentry{data\_array()}\spxextra{touchstone.spfile method}|hyperpage}{8}
-\indexentry{dosyaoku() (touchstone.spfile method)@\spxentry{dosyaoku()}\spxextra{touchstone.spfile method}|hyperpage}{9}
-\indexentry{dosyayi\_tekrar\_oku() (touchstone.spfile method)@\spxentry{dosyayi\_tekrar\_oku()}\spxextra{touchstone.spfile method}|hyperpage}{9}
-\indexentry{gav() (touchstone.spfile method)@\spxentry{gav()}\spxextra{touchstone.spfile method}|hyperpage}{9}
-\indexentry{get\_formulation() (touchstone.spfile method)@\spxentry{get\_formulation()}\spxextra{touchstone.spfile method}|hyperpage}{9}
-\indexentry{get\_frequency\_list() (touchstone.spfile method)@\spxentry{get\_frequency\_list()}\spxextra{touchstone.spfile method}|hyperpage}{9}
-\indexentry{get\_no\_of\_ports() (touchstone.spfile method)@\spxentry{get\_no\_of\_ports()}\spxextra{touchstone.spfile method}|hyperpage}{9}
-\indexentry{get\_port\_names() (touchstone.spfile method)@\spxentry{get\_port\_names()}\spxextra{touchstone.spfile method}|hyperpage}{9}
-\indexentry{get\_port\_number\_from\_name() (touchstone.spfile method)@\spxentry{get\_port\_number\_from\_name()}\spxextra{touchstone.spfile method}|hyperpage}{9}
-\indexentry{get\_sym\_parameters() (touchstone.spfile method)@\spxentry{get\_sym\_parameters()}\spxextra{touchstone.spfile method}|hyperpage}{9}
-\indexentry{get\_sym\_smatrix() (touchstone.spfile method)@\spxentry{get\_sym\_smatrix()}\spxextra{touchstone.spfile method}|hyperpage}{9}
-\indexentry{get\_undefinedYindices() (touchstone.spfile method)@\spxentry{get\_undefinedYindices()}\spxextra{touchstone.spfile method}|hyperpage}{9}
-\indexentry{get\_undefinedZindices() (touchstone.spfile method)@\spxentry{get\_undefinedZindices()}\spxextra{touchstone.spfile method}|hyperpage}{9}
-\indexentry{getdataformat() (touchstone.spfile method)@\spxentry{getdataformat()}\spxextra{touchstone.spfile method}|hyperpage}{9}
-\indexentry{getfilename() (touchstone.spfile method)@\spxentry{getfilename()}\spxextra{touchstone.spfile method}|hyperpage}{9}
-\indexentry{gmax() (touchstone.spfile method)@\spxentry{gmax()}\spxextra{touchstone.spfile method}|hyperpage}{10}
-\indexentry{gop() (touchstone.spfile method)@\spxentry{gop()}\spxextra{touchstone.spfile method}|hyperpage}{10}
-\indexentry{gop2() (touchstone.spfile method)@\spxentry{gop2()}\spxextra{touchstone.spfile method}|hyperpage}{10}
-\indexentry{gt() (touchstone.spfile method)@\spxentry{gt()}\spxextra{touchstone.spfile method}|hyperpage}{10}
-\indexentry{input\_impedance() (touchstone.spfile method)@\spxentry{input\_impedance()}\spxextra{touchstone.spfile method}|hyperpage}{11}
-\indexentry{interpolate\_data() (touchstone.spfile method)@\spxentry{interpolate\_data()}\spxextra{touchstone.spfile method}|hyperpage}{11}
-\indexentry{inverse\_2port() (touchstone.spfile method)@\spxentry{inverse\_2port()}\spxextra{touchstone.spfile method}|hyperpage}{11}
-\indexentry{load\_impedance() (touchstone.spfile method)@\spxentry{load\_impedance()}\spxextra{touchstone.spfile method}|hyperpage}{11}
-\indexentry{microstripline() (touchstone.spfile class method)@\spxentry{microstripline()}\spxextra{touchstone.spfile class method}|hyperpage}{12}
-\indexentry{microstripstep() (touchstone.spfile class method)@\spxentry{microstripstep()}\spxextra{touchstone.spfile class method}|hyperpage}{12}
-\indexentry{prepare\_ref\_impedance\_array() (touchstone.spfile method)@\spxentry{prepare\_ref\_impedance\_array()}\spxextra{touchstone.spfile method}|hyperpage}{12}
-\indexentry{restore\_passivity() (touchstone.spfile method)@\spxentry{restore\_passivity()}\spxextra{touchstone.spfile method}|hyperpage}{12}
-\indexentry{restore\_passivity2() (touchstone.spfile method)@\spxentry{restore\_passivity2()}\spxextra{touchstone.spfile method}|hyperpage}{13}
-\indexentry{return\_s2p() (touchstone.spfile method)@\spxentry{return\_s2p()}\spxextra{touchstone.spfile method}|hyperpage}{13}
-\indexentry{s2abcd() (touchstone.spfile method)@\spxentry{s2abcd()}\spxextra{touchstone.spfile method}|hyperpage}{13}
-\indexentry{s2abcd2() (touchstone.spfile method)@\spxentry{s2abcd2()}\spxextra{touchstone.spfile method}|hyperpage}{13}
-\indexentry{s2t() (touchstone.spfile method)@\spxentry{s2t()}\spxextra{touchstone.spfile method}|hyperpage}{13}
-\indexentry{scaledata() (touchstone.spfile method)@\spxentry{scaledata()}\spxextra{touchstone.spfile method}|hyperpage}{13}
-\indexentry{set\_formulation() (touchstone.spfile method)@\spxentry{set\_formulation()}\spxextra{touchstone.spfile method}|hyperpage}{13}
-\indexentry{set\_frequencies\_wo\_recalc() (touchstone.spfile method)@\spxentry{set\_frequencies\_wo\_recalc()}\spxextra{touchstone.spfile method}|hyperpage}{13}
-\indexentry{set\_frequency\_limits() (touchstone.spfile method)@\spxentry{set\_frequency\_limits()}\spxextra{touchstone.spfile method}|hyperpage}{13}
-\indexentry{set\_frequency\_points() (touchstone.spfile method)@\spxentry{set\_frequency\_points()}\spxextra{touchstone.spfile method}|hyperpage}{14}
-\indexentry{set\_frequency\_points\_array() (touchstone.spfile method)@\spxentry{set\_frequency\_points\_array()}\spxextra{touchstone.spfile method}|hyperpage}{14}
-\indexentry{set\_inplace() (touchstone.spfile method)@\spxentry{set\_inplace()}\spxextra{touchstone.spfile method}|hyperpage}{14}
-\indexentry{set\_port\_name() (touchstone.spfile method)@\spxentry{set\_port\_name()}\spxextra{touchstone.spfile method}|hyperpage}{14}
-\indexentry{set\_port\_names() (touchstone.spfile method)@\spxentry{set\_port\_names()}\spxextra{touchstone.spfile method}|hyperpage}{14}
-\indexentry{set\_smatrix\_at\_frequency\_point() (touchstone.spfile method)@\spxentry{set\_smatrix\_at\_frequency\_point()}\spxextra{touchstone.spfile method}|hyperpage}{14}
-\indexentry{set\_sparam\_gen\_func() (touchstone.spfile method)@\spxentry{set\_sparam\_gen\_func()}\spxextra{touchstone.spfile method}|hyperpage}{14}
-\indexentry{set\_sparam\_mod\_func() (touchstone.spfile method)@\spxentry{set\_sparam\_mod\_func()}\spxextra{touchstone.spfile method}|hyperpage}{14}
-\indexentry{set\_sym\_parameters() (touchstone.spfile method)@\spxentry{set\_sym\_parameters()}\spxextra{touchstone.spfile method}|hyperpage}{15}
-\indexentry{set\_sym\_smatrix() (touchstone.spfile method)@\spxentry{set\_sym\_smatrix()}\spxextra{touchstone.spfile method}|hyperpage}{15}
-\indexentry{setdataformat() (touchstone.spfile method)@\spxentry{setdataformat()}\spxextra{touchstone.spfile method}|hyperpage}{15}
-\indexentry{setdatapoint() (touchstone.spfile method)@\spxentry{setdatapoint()}\spxextra{touchstone.spfile method}|hyperpage}{15}
-\indexentry{smoothing() (touchstone.spfile method)@\spxentry{smoothing()}\spxextra{touchstone.spfile method}|hyperpage}{15}
-\indexentry{snp2smp() (touchstone.spfile method)@\spxentry{snp2smp()}\spxextra{touchstone.spfile method}|hyperpage}{15}
-\indexentry{stability\_factor\_k() (touchstone.spfile method)@\spxentry{stability\_factor\_k()}\spxextra{touchstone.spfile method}|hyperpage}{16}
-\indexentry{stability\_factor\_mu1() (touchstone.spfile method)@\spxentry{stability\_factor\_mu1()}\spxextra{touchstone.spfile method}|hyperpage}{16}
-\indexentry{stability\_factor\_mu2() (touchstone.spfile method)@\spxentry{stability\_factor\_mu2()}\spxextra{touchstone.spfile method}|hyperpage}{16}
-\indexentry{stripline() (touchstone.spfile class method)@\spxentry{stripline()}\spxextra{touchstone.spfile class method}|hyperpage}{16}
-\indexentry{striplinestep() (touchstone.spfile class method)@\spxentry{striplinestep()}\spxextra{touchstone.spfile class method}|hyperpage}{16}
-\indexentry{write2file() (touchstone.spfile method)@\spxentry{write2file()}\spxextra{touchstone.spfile method}|hyperpage}{17}
-\indexentry{thru\_line\_deembedding() (in module touchstone)@\spxentry{thru\_line\_deembedding()}\spxextra{in module touchstone}|hyperpage}{17}
-\indexentry{trl\_launcher\_extraction() (in module touchstone)@\spxentry{trl\_launcher\_extraction()}\spxextra{in module touchstone}|hyperpage}{17}
-\indexentry{untermination\_method() (in module touchstone)@\spxentry{untermination\_method()}\spxextra{in module touchstone}|hyperpage}{18}
-\indexentry{module@\spxentry{module}!components@\spxentry{components}|hyperpage}{19}
-\indexentry{components@\spxentry{components}!module@\spxentry{module}|hyperpage}{19}
-\indexentry{AWG2Dia() (in module components)@\spxentry{AWG2Dia()}\spxextra{in module components}|hyperpage}{19}
-\indexentry{Absorptive\_Filter\_Equalizer() (in module components)@\spxentry{Absorptive\_Filter\_Equalizer()}\spxextra{in module components}|hyperpage}{19}
-\indexentry{Binomial\_QWave\_Impedance\_Transformer() (in module components)@\spxentry{Binomial\_QWave\_Impedance\_Transformer()}\spxextra{in module components}|hyperpage}{20}
-\indexentry{Bridged\_Tee\_Attenuator\_Analysis() (in module components)@\spxentry{Bridged\_Tee\_Attenuator\_Analysis()}\spxextra{in module components}|hyperpage}{20}
-\indexentry{Bridged\_Tee\_Attenuator\_Synthesis() (in module components)@\spxentry{Bridged\_Tee\_Attenuator\_Synthesis()}\spxextra{in module components}|hyperpage}{20}
-\indexentry{Chebyshev\_QWave\_Impedance\_Transformer() (in module components)@\spxentry{Chebyshev\_QWave\_Impedance\_Transformer()}\spxextra{in module components}|hyperpage}{21}
-\indexentry{Chebyshev\_Taper\_Impedance\_Transformer() (in module components)@\spxentry{Chebyshev\_Taper\_Impedance\_Transformer()}\spxextra{in module components}|hyperpage}{21}
-\indexentry{CircularPlateCap() (in module components)@\spxentry{CircularPlateCap()}\spxextra{in module components}|hyperpage}{21}
-\indexentry{Dia2AWG() (in module components)@\spxentry{Dia2AWG()}\spxextra{in module components}|hyperpage}{22}
-\indexentry{DualFrequencyTransformer() (in module components)@\spxentry{DualFrequencyTransformer()}\spxextra{in module components}|hyperpage}{22}
-\indexentry{DualTransformation1() (in module components)@\spxentry{DualTransformation1()}\spxextra{in module components}|hyperpage}{22}
-\indexentry{DualTransformation2() (in module components)@\spxentry{DualTransformation2()}\spxextra{in module components}|hyperpage}{23}
-\indexentry{EWG\_ABCD() (in module components)@\spxentry{EWG\_ABCD()}\spxextra{in module components}|hyperpage}{23}
-\indexentry{EWG\_inv() (in module components)@\spxentry{EWG\_inv()}\spxextra{in module components}|hyperpage}{23}
-\indexentry{EvanescentWGEquivalent() (in module components)@\spxentry{EvanescentWGEquivalent()}\spxextra{in module components}|hyperpage}{23}
-\indexentry{Exponential\_Taper\_Impedance\_Transformer() (in module components)@\spxentry{Exponential\_Taper\_Impedance\_Transformer()}\spxextra{in module components}|hyperpage}{24}
-\indexentry{GyselPowerDivider() (in module components)@\spxentry{GyselPowerDivider()}\spxextra{in module components}|hyperpage}{24}
-\indexentry{HomogeneousRectWaveguideParameters\_TE() (in module components)@\spxentry{HomogeneousRectWaveguideParameters\_TE()}\spxextra{in module components}|hyperpage}{25}
-\indexentry{InductivePostInWaveguide() (in module components)@\spxentry{InductivePostInWaveguide()}\spxextra{in module components}|hyperpage}{26}
-\indexentry{InductiveWindowInWaveguide() (in module components)@\spxentry{InductiveWindowInWaveguide()}\spxextra{in module components}|hyperpage}{26}
-\indexentry{Interference\_Phase\_Amp\_Error() (in module components)@\spxentry{Interference\_Phase\_Amp\_Error()}\spxextra{in module components}|hyperpage}{27}
-\indexentry{Klopfenstein\_Taper\_Impedance\_Transformer() (in module components)@\spxentry{Klopfenstein\_Taper\_Impedance\_Transformer()}\spxextra{in module components}|hyperpage}{27}
-\indexentry{LC\_Balun() (in module components)@\spxentry{LC\_Balun()}\spxextra{in module components}|hyperpage}{27}
-\indexentry{L\_BondWire() (in module components)@\spxentry{L\_BondWire()}\spxextra{in module components}|hyperpage}{28}
-\indexentry{L\_StraightFlatWire() (in module components)@\spxentry{L\_StraightFlatWire()}\spxextra{in module components}|hyperpage}{28}
-\indexentry{L\_StraightRoundWire() (in module components)@\spxentry{L\_StraightRoundWire()}\spxextra{in module components}|hyperpage}{28}
-\indexentry{L\_air\_core\_coil() (in module components)@\spxentry{L\_air\_core\_coil()}\spxextra{in module components}|hyperpage}{29}
-\indexentry{L\_microstrip\_via\_hole() (in module components)@\spxentry{L\_microstrip\_via\_hole()}\spxextra{in module components}|hyperpage}{29}
-\indexentry{OptimumMitered90DegMicrostripBend() (in module components)@\spxentry{OptimumMitered90DegMicrostripBend()}\spxextra{in module components}|hyperpage}{30}
-\indexentry{OptimumMiteredArbitraryAngleMicrostripBend() (in module components)@\spxentry{OptimumMiteredArbitraryAngleMicrostripBend()}\spxextra{in module components}|hyperpage}{30}
-\indexentry{PCBTrackCurrentCapacity() (in module components)@\spxentry{PCBTrackCurrentCapacity()}\spxextra{in module components}|hyperpage}{30}
-\indexentry{PCBTrackCurrentCapacityIPC() (in module components)@\spxentry{PCBTrackCurrentCapacityIPC()}\spxextra{in module components}|hyperpage}{31}
-\indexentry{ParallelPlateCap() (in module components)@\spxentry{ParallelPlateCap()}\spxextra{in module components}|hyperpage}{31}
-\indexentry{Patch\_Antenna\_Analysis() (in module components)@\spxentry{Patch\_Antenna\_Analysis()}\spxextra{in module components}|hyperpage}{31}
-\indexentry{Pi\_Attenuator\_Analysis() (in module components)@\spxentry{Pi\_Attenuator\_Analysis()}\spxextra{in module components}|hyperpage}{32}
-\indexentry{Pi\_Attenuator\_Synthesis() (in module components)@\spxentry{Pi\_Attenuator\_Synthesis()}\spxextra{in module components}|hyperpage}{32}
-\indexentry{RectWG2EvanescentRectWGStep() (in module components)@\spxentry{RectWG2EvanescentRectWGStep()}\spxextra{in module components}|hyperpage}{33}
-\indexentry{SIW\_EquivalentWidth() (in module components)@\spxentry{SIW\_EquivalentWidth()}\spxextra{in module components}|hyperpage}{33}
-\indexentry{Shorten90DegreeLine() (in module components)@\spxentry{Shorten90DegreeLine()}\spxextra{in module components}|hyperpage}{33}
-\indexentry{Star2TriangleTransformation() (in module components)@\spxentry{Star2TriangleTransformation()}\spxextra{in module components}|hyperpage}{34}
-\indexentry{SymmetricLangeCoupler() (in module components)@\spxentry{SymmetricLangeCoupler()}\spxextra{in module components}|hyperpage}{34}
-\indexentry{Tee\_Attenuator\_Analysis() (in module components)@\spxentry{Tee\_Attenuator\_Analysis()}\spxextra{in module components}|hyperpage}{34}
-\indexentry{Tee\_Attenuator\_Synthesis() (in module components)@\spxentry{Tee\_Attenuator\_Synthesis()}\spxextra{in module components}|hyperpage}{35}
-\indexentry{Triangle2StarTransformation() (in module components)@\spxentry{Triangle2StarTransformation()}\spxextra{in module components}|hyperpage}{35}
-\indexentry{Triangular\_Taper\_Impedance\_Transformer() (in module components)@\spxentry{Triangular\_Taper\_Impedance\_Transformer()}\spxextra{in module components}|hyperpage}{36}
-\indexentry{Z\_CWG() (in module components)@\spxentry{Z\_CWG()}\spxextra{in module components}|hyperpage}{36}
-\indexentry{Z\_WG\_TE10() (in module components)@\spxentry{Z\_WG\_TE10()}\spxextra{in module components}|hyperpage}{36}
-\indexentry{Zo\_eeff\_StraightWireOverSubstrate() (in module components)@\spxentry{Zo\_eeff\_StraightWireOverSubstrate()}\spxextra{in module components}|hyperpage}{36}
-\indexentry{Zo\_eeff\_WireOnGroundedSubstrate() (in module components)@\spxentry{Zo\_eeff\_WireOnGroundedSubstrate()}\spxextra{in module components}|hyperpage}{37}
-\indexentry{fcutoff\_CWG() (in module components)@\spxentry{fcutoff\_CWG()}\spxextra{in module components}|hyperpage}{37}
-\indexentry{thermal\_conductance\_of\_via\_farm() (in module components)@\spxentry{thermal\_conductance\_of\_via\_farm()}\spxextra{in module components}|hyperpage}{37}
-\indexentry{thermal\_conductance\_of\_via\_farm\_view() (in module components)@\spxentry{thermal\_conductance\_of\_via\_farm\_view()}\spxextra{in module components}|hyperpage}{38}
+\indexentry{ImpulseResponse() (touchstone.spfile method)@\spxentry{ImpulseResponse()}\spxextra{touchstone.spfile method}|hyperpage}{3}
+\indexentry{ImpulseResponseBanded() (touchstone.spfile method)@\spxentry{ImpulseResponseBanded()}\spxextra{touchstone.spfile method}|hyperpage}{3}
+\indexentry{S() (touchstone.spfile method)@\spxentry{S()}\spxextra{touchstone.spfile method}|hyperpage}{4}
+\indexentry{T() (touchstone.spfile method)@\spxentry{T()}\spxextra{touchstone.spfile method}|hyperpage}{4}
+\indexentry{UniformDeembed() (touchstone.spfile method)@\spxentry{UniformDeembed()}\spxextra{touchstone.spfile method}|hyperpage}{5}
+\indexentry{Y() (touchstone.spfile method)@\spxentry{Y()}\spxextra{touchstone.spfile method}|hyperpage}{5}
+\indexentry{Z() (touchstone.spfile method)@\spxentry{Z()}\spxextra{touchstone.spfile method}|hyperpage}{5}
+\indexentry{Z\_conjmatch() (touchstone.spfile method)@\spxentry{Z\_conjmatch()}\spxextra{touchstone.spfile method}|hyperpage}{6}
+\indexentry{\_\_add\_\_() (touchstone.spfile method)@\spxentry{\_\_add\_\_()}\spxextra{touchstone.spfile method}|hyperpage}{6}
+\indexentry{\_\_neg\_\_() (touchstone.spfile method)@\spxentry{\_\_neg\_\_()}\spxextra{touchstone.spfile method}|hyperpage}{6}
+\indexentry{\_\_sub\_\_() (touchstone.spfile method)@\spxentry{\_\_sub\_\_()}\spxextra{touchstone.spfile method}|hyperpage}{7}
+\indexentry{add\_abs\_noise() (touchstone.spfile method)@\spxentry{add\_abs\_noise()}\spxextra{touchstone.spfile method}|hyperpage}{7}
+\indexentry{calc\_syz() (touchstone.spfile method)@\spxentry{calc\_syz()}\spxextra{touchstone.spfile method}|hyperpage}{7}
+\indexentry{calc\_t\_eigs() (touchstone.spfile method)@\spxentry{calc\_t\_eigs()}\spxextra{touchstone.spfile method}|hyperpage}{7}
+\indexentry{change\_formulation() (touchstone.spfile method)@\spxentry{change\_formulation()}\spxextra{touchstone.spfile method}|hyperpage}{7}
+\indexentry{change\_ref\_impedance() (touchstone.spfile method)@\spxentry{change\_ref\_impedance()}\spxextra{touchstone.spfile method}|hyperpage}{7}
+\indexentry{check\_passivity() (touchstone.spfile method)@\spxentry{check\_passivity()}\spxextra{touchstone.spfile method}|hyperpage}{8}
+\indexentry{column\_of\_data() (touchstone.spfile method)@\spxentry{column\_of\_data()}\spxextra{touchstone.spfile method}|hyperpage}{8}
+\indexentry{conj\_match\_uncoupled() (touchstone.spfile method)@\spxentry{conj\_match\_uncoupled()}\spxextra{touchstone.spfile method}|hyperpage}{8}
+\indexentry{connect\_2\_ports() (touchstone.spfile method)@\spxentry{connect\_2\_ports()}\spxextra{touchstone.spfile method}|hyperpage}{8}
+\indexentry{connect\_2\_ports\_list() (touchstone.spfile method)@\spxentry{connect\_2\_ports\_list()}\spxextra{touchstone.spfile method}|hyperpage}{9}
+\indexentry{connect\_2\_ports\_retain() (touchstone.spfile method)@\spxentry{connect\_2\_ports\_retain()}\spxextra{touchstone.spfile method}|hyperpage}{9}
+\indexentry{connect\_network\_1\_conn() (touchstone.spfile method)@\spxentry{connect\_network\_1\_conn()}\spxextra{touchstone.spfile method}|hyperpage}{9}
+\indexentry{connect\_network\_1\_conn\_retain() (touchstone.spfile method)@\spxentry{connect\_network\_1\_conn\_retain()}\spxextra{touchstone.spfile method}|hyperpage}{10}
+\indexentry{convert\_s1p\_to\_s2p() (touchstone.spfile method)@\spxentry{convert\_s1p\_to\_s2p()}\spxextra{touchstone.spfile method}|hyperpage}{10}
+\indexentry{copy() (touchstone.spfile method)@\spxentry{copy()}\spxextra{touchstone.spfile method}|hyperpage}{10}
+\indexentry{copy\_data\_from\_spfile() (touchstone.spfile method)@\spxentry{copy\_data\_from\_spfile()}\spxextra{touchstone.spfile method}|hyperpage}{10}
+\indexentry{cpwgline() (touchstone.spfile class method)@\spxentry{cpwgline()}\spxextra{touchstone.spfile class method}|hyperpage}{10}
+\indexentry{crop\_with\_frequency() (touchstone.spfile method)@\spxentry{crop\_with\_frequency()}\spxextra{touchstone.spfile method}|hyperpage}{10}
+\indexentry{data\_array() (touchstone.spfile method)@\spxentry{data\_array()}\spxextra{touchstone.spfile method}|hyperpage}{11}
+\indexentry{gav() (touchstone.spfile method)@\spxentry{gav()}\spxextra{touchstone.spfile method}|hyperpage}{11}
+\indexentry{get\_formulation() (touchstone.spfile method)@\spxentry{get\_formulation()}\spxextra{touchstone.spfile method}|hyperpage}{12}
+\indexentry{get\_frequency\_list() (touchstone.spfile method)@\spxentry{get\_frequency\_list()}\spxextra{touchstone.spfile method}|hyperpage}{12}
+\indexentry{get\_no\_of\_ports() (touchstone.spfile method)@\spxentry{get\_no\_of\_ports()}\spxextra{touchstone.spfile method}|hyperpage}{12}
+\indexentry{get\_port\_names() (touchstone.spfile method)@\spxentry{get\_port\_names()}\spxextra{touchstone.spfile method}|hyperpage}{12}
+\indexentry{get\_port\_number\_from\_name() (touchstone.spfile method)@\spxentry{get\_port\_number\_from\_name()}\spxextra{touchstone.spfile method}|hyperpage}{12}
+\indexentry{get\_sym\_parameters() (touchstone.spfile method)@\spxentry{get\_sym\_parameters()}\spxextra{touchstone.spfile method}|hyperpage}{12}
+\indexentry{get\_sym\_smatrix() (touchstone.spfile method)@\spxentry{get\_sym\_smatrix()}\spxextra{touchstone.spfile method}|hyperpage}{12}
+\indexentry{get\_undefinedYindices() (touchstone.spfile method)@\spxentry{get\_undefinedYindices()}\spxextra{touchstone.spfile method}|hyperpage}{13}
+\indexentry{get\_undefinedZindices() (touchstone.spfile method)@\spxentry{get\_undefinedZindices()}\spxextra{touchstone.spfile method}|hyperpage}{13}
+\indexentry{getdata\_format() (touchstone.spfile method)@\spxentry{getdata\_format()}\spxextra{touchstone.spfile method}|hyperpage}{13}
+\indexentry{getfilename() (touchstone.spfile method)@\spxentry{getfilename()}\spxextra{touchstone.spfile method}|hyperpage}{13}
+\indexentry{gmax() (touchstone.spfile method)@\spxentry{gmax()}\spxextra{touchstone.spfile method}|hyperpage}{13}
+\indexentry{gop() (touchstone.spfile method)@\spxentry{gop()}\spxextra{touchstone.spfile method}|hyperpage}{13}
+\indexentry{gop2() (touchstone.spfile method)@\spxentry{gop2()}\spxextra{touchstone.spfile method}|hyperpage}{13}
+\indexentry{gt() (touchstone.spfile method)@\spxentry{gt()}\spxextra{touchstone.spfile method}|hyperpage}{14}
+\indexentry{input\_impedance() (touchstone.spfile method)@\spxentry{input\_impedance()}\spxextra{touchstone.spfile method}|hyperpage}{14}
+\indexentry{interpolate() (touchstone.spfile method)@\spxentry{interpolate()}\spxextra{touchstone.spfile method}|hyperpage}{14}
+\indexentry{interpolate\_data() (touchstone.spfile method)@\spxentry{interpolate\_data()}\spxextra{touchstone.spfile method}|hyperpage}{15}
+\indexentry{inverse\_2port() (touchstone.spfile method)@\spxentry{inverse\_2port()}\spxextra{touchstone.spfile method}|hyperpage}{15}
+\indexentry{load\_impedance() (touchstone.spfile method)@\spxentry{load\_impedance()}\spxextra{touchstone.spfile method}|hyperpage}{15}
+\indexentry{make\_symmetric() (touchstone.spfile method)@\spxentry{make\_symmetric()}\spxextra{touchstone.spfile method}|hyperpage}{15}
+\indexentry{microstripline() (touchstone.spfile class method)@\spxentry{microstripline()}\spxextra{touchstone.spfile class method}|hyperpage}{16}
+\indexentry{microstripstep() (touchstone.spfile class method)@\spxentry{microstripstep()}\spxextra{touchstone.spfile class method}|hyperpage}{16}
+\indexentry{prepare\_ref\_impedance\_array() (touchstone.spfile method)@\spxentry{prepare\_ref\_impedance\_array()}\spxextra{touchstone.spfile method}|hyperpage}{16}
+\indexentry{read\_file() (touchstone.spfile method)@\spxentry{read\_file()}\spxextra{touchstone.spfile method}|hyperpage}{16}
+\indexentry{read\_file\_again() (touchstone.spfile method)@\spxentry{read\_file\_again()}\spxextra{touchstone.spfile method}|hyperpage}{17}
+\indexentry{restore\_passivity() (touchstone.spfile method)@\spxentry{restore\_passivity()}\spxextra{touchstone.spfile method}|hyperpage}{17}
+\indexentry{restore\_passivity2() (touchstone.spfile method)@\spxentry{restore\_passivity2()}\spxextra{touchstone.spfile method}|hyperpage}{17}
+\indexentry{return\_s2p() (touchstone.spfile method)@\spxentry{return\_s2p()}\spxextra{touchstone.spfile method}|hyperpage}{17}
+\indexentry{s2abcd() (touchstone.spfile method)@\spxentry{s2abcd()}\spxextra{touchstone.spfile method}|hyperpage}{17}
+\indexentry{s2t() (touchstone.spfile method)@\spxentry{s2t()}\spxextra{touchstone.spfile method}|hyperpage}{17}
+\indexentry{scaledata() (touchstone.spfile method)@\spxentry{scaledata()}\spxextra{touchstone.spfile method}|hyperpage}{17}
+\indexentry{series\_impedance() (touchstone.spfile class method)@\spxentry{series\_impedance()}\spxextra{touchstone.spfile class method}|hyperpage}{17}
+\indexentry{set\_formulation() (touchstone.spfile method)@\spxentry{set\_formulation()}\spxextra{touchstone.spfile method}|hyperpage}{18}
+\indexentry{set\_frequencies\_wo\_recalc() (touchstone.spfile method)@\spxentry{set\_frequencies\_wo\_recalc()}\spxextra{touchstone.spfile method}|hyperpage}{18}
+\indexentry{set\_frequency\_limits() (touchstone.spfile method)@\spxentry{set\_frequency\_limits()}\spxextra{touchstone.spfile method}|hyperpage}{18}
+\indexentry{set\_frequency\_points() (touchstone.spfile method)@\spxentry{set\_frequency\_points()}\spxextra{touchstone.spfile method}|hyperpage}{18}
+\indexentry{set\_frequency\_points\_array() (touchstone.spfile method)@\spxentry{set\_frequency\_points\_array()}\spxextra{touchstone.spfile method}|hyperpage}{18}
+\indexentry{set\_inplace() (touchstone.spfile method)@\spxentry{set\_inplace()}\spxextra{touchstone.spfile method}|hyperpage}{19}
+\indexentry{set\_port\_name() (touchstone.spfile method)@\spxentry{set\_port\_name()}\spxextra{touchstone.spfile method}|hyperpage}{19}
+\indexentry{set\_port\_names() (touchstone.spfile method)@\spxentry{set\_port\_names()}\spxextra{touchstone.spfile method}|hyperpage}{19}
+\indexentry{set\_smatrix\_at\_frequency\_point() (touchstone.spfile method)@\spxentry{set\_smatrix\_at\_frequency\_point()}\spxextra{touchstone.spfile method}|hyperpage}{19}
+\indexentry{set\_sparam\_gen\_func() (touchstone.spfile method)@\spxentry{set\_sparam\_gen\_func()}\spxextra{touchstone.spfile method}|hyperpage}{19}
+\indexentry{set\_sparam\_mod\_func() (touchstone.spfile method)@\spxentry{set\_sparam\_mod\_func()}\spxextra{touchstone.spfile method}|hyperpage}{19}
+\indexentry{set\_sym\_parameters() (touchstone.spfile method)@\spxentry{set\_sym\_parameters()}\spxextra{touchstone.spfile method}|hyperpage}{19}
+\indexentry{set\_sym\_smatrix() (touchstone.spfile method)@\spxentry{set\_sym\_smatrix()}\spxextra{touchstone.spfile method}|hyperpage}{19}
+\indexentry{setdata\_format() (touchstone.spfile method)@\spxentry{setdata\_format()}\spxextra{touchstone.spfile method}|hyperpage}{19}
+\indexentry{setdatapoint() (touchstone.spfile method)@\spxentry{setdatapoint()}\spxextra{touchstone.spfile method}|hyperpage}{19}
+\indexentry{shunt\_impedance() (touchstone.spfile class method)@\spxentry{shunt\_impedance()}\spxextra{touchstone.spfile class method}|hyperpage}{20}
+\indexentry{smoothing() (touchstone.spfile method)@\spxentry{smoothing()}\spxextra{touchstone.spfile method}|hyperpage}{20}
+\indexentry{snp2smp() (touchstone.spfile method)@\spxentry{snp2smp()}\spxextra{touchstone.spfile method}|hyperpage}{20}
+\indexentry{sqrt\_network() (touchstone.spfile method)@\spxentry{sqrt\_network()}\spxextra{touchstone.spfile method}|hyperpage}{21}
+\indexentry{stability\_factor\_k() (touchstone.spfile method)@\spxentry{stability\_factor\_k()}\spxextra{touchstone.spfile method}|hyperpage}{21}
+\indexentry{stability\_factor\_mu1() (touchstone.spfile method)@\spxentry{stability\_factor\_mu1()}\spxextra{touchstone.spfile method}|hyperpage}{21}
+\indexentry{stability\_factor\_mu2() (touchstone.spfile method)@\spxentry{stability\_factor\_mu2()}\spxextra{touchstone.spfile method}|hyperpage}{21}
+\indexentry{stripline() (touchstone.spfile class method)@\spxentry{stripline()}\spxextra{touchstone.spfile class method}|hyperpage}{21}
+\indexentry{striplinestep() (touchstone.spfile class method)@\spxentry{striplinestep()}\spxextra{touchstone.spfile class method}|hyperpage}{22}
+\indexentry{write2file() (touchstone.spfile method)@\spxentry{write2file()}\spxextra{touchstone.spfile method}|hyperpage}{22}
+\indexentry{thru\_line\_deembedding() (in module touchstone)@\spxentry{thru\_line\_deembedding()}\spxextra{in module touchstone}|hyperpage}{22}
+\indexentry{trl\_launcher\_extraction() (in module touchstone)@\spxentry{trl\_launcher\_extraction()}\spxextra{in module touchstone}|hyperpage}{23}
+\indexentry{untermination\_method() (in module touchstone)@\spxentry{untermination\_method()}\spxextra{in module touchstone}|hyperpage}{23}
+\indexentry{untermination\_method\_old() (in module touchstone)@\spxentry{untermination\_method\_old()}\spxextra{in module touchstone}|hyperpage}{24}
+\indexentry{write\_impedance\_as\_s1p() (in module touchstone)@\spxentry{write\_impedance\_as\_s1p()}\spxextra{in module touchstone}|hyperpage}{24}
+\indexentry{write\_impedance\_as\_table() (in module touchstone)@\spxentry{write\_impedance\_as\_table()}\spxextra{in module touchstone}|hyperpage}{24}
+\indexentry{module@\spxentry{module}!components@\spxentry{components}|hyperpage}{25}
+\indexentry{components@\spxentry{components}!module@\spxentry{module}|hyperpage}{25}
+\indexentry{AWG2Dia() (in module components)@\spxentry{AWG2Dia()}\spxextra{in module components}|hyperpage}{25}
+\indexentry{Absorptive\_Filter\_Equalizer() (in module components)@\spxentry{Absorptive\_Filter\_Equalizer()}\spxextra{in module components}|hyperpage}{25}
+\indexentry{Binomial\_QWave\_Impedance\_Transformer() (in module components)@\spxentry{Binomial\_QWave\_Impedance\_Transformer()}\spxextra{in module components}|hyperpage}{26}
+\indexentry{Bridged\_Tee\_Attenuator\_Analysis() (in module components)@\spxentry{Bridged\_Tee\_Attenuator\_Analysis()}\spxextra{in module components}|hyperpage}{26}
+\indexentry{Bridged\_Tee\_Attenuator\_Synthesis() (in module components)@\spxentry{Bridged\_Tee\_Attenuator\_Synthesis()}\spxextra{in module components}|hyperpage}{26}
+\indexentry{Chebyshev\_QWave\_Impedance\_Transformer() (in module components)@\spxentry{Chebyshev\_QWave\_Impedance\_Transformer()}\spxextra{in module components}|hyperpage}{27}
+\indexentry{Chebyshev\_Taper\_Impedance\_Transformer() (in module components)@\spxentry{Chebyshev\_Taper\_Impedance\_Transformer()}\spxextra{in module components}|hyperpage}{27}
+\indexentry{CircularPlateCap() (in module components)@\spxentry{CircularPlateCap()}\spxextra{in module components}|hyperpage}{28}
+\indexentry{Dia2AWG() (in module components)@\spxentry{Dia2AWG()}\spxextra{in module components}|hyperpage}{28}
+\indexentry{DualFrequencyTransformer() (in module components)@\spxentry{DualFrequencyTransformer()}\spxextra{in module components}|hyperpage}{28}
+\indexentry{DualTransformation1() (in module components)@\spxentry{DualTransformation1()}\spxextra{in module components}|hyperpage}{29}
+\indexentry{DualTransformation2() (in module components)@\spxentry{DualTransformation2()}\spxextra{in module components}|hyperpage}{29}
+\indexentry{EWG\_ABCD() (in module components)@\spxentry{EWG\_ABCD()}\spxextra{in module components}|hyperpage}{30}
+\indexentry{EWG\_inv() (in module components)@\spxentry{EWG\_inv()}\spxextra{in module components}|hyperpage}{30}
+\indexentry{EvanescentWGEquivalent() (in module components)@\spxentry{EvanescentWGEquivalent()}\spxextra{in module components}|hyperpage}{30}
+\indexentry{Exponential\_Taper\_Impedance\_Transformer() (in module components)@\spxentry{Exponential\_Taper\_Impedance\_Transformer()}\spxextra{in module components}|hyperpage}{31}
+\indexentry{GyselPowerDivider() (in module components)@\spxentry{GyselPowerDivider()}\spxextra{in module components}|hyperpage}{31}
+\indexentry{HomogeneousRectWaveguideParameters\_TE() (in module components)@\spxentry{HomogeneousRectWaveguideParameters\_TE()}\spxextra{in module components}|hyperpage}{32}
+\indexentry{InductivePostInWaveguide() (in module components)@\spxentry{InductivePostInWaveguide()}\spxextra{in module components}|hyperpage}{32}
+\indexentry{InductiveWindowInWaveguide() (in module components)@\spxentry{InductiveWindowInWaveguide()}\spxextra{in module components}|hyperpage}{33}
+\indexentry{Interference\_Phase\_Amp\_Error() (in module components)@\spxentry{Interference\_Phase\_Amp\_Error()}\spxextra{in module components}|hyperpage}{33}
+\indexentry{Klopfenstein\_Taper\_Impedance\_Transformer() (in module components)@\spxentry{Klopfenstein\_Taper\_Impedance\_Transformer()}\spxextra{in module components}|hyperpage}{34}
+\indexentry{LC\_Balun() (in module components)@\spxentry{LC\_Balun()}\spxextra{in module components}|hyperpage}{34}
+\indexentry{L\_BondWire() (in module components)@\spxentry{L\_BondWire()}\spxextra{in module components}|hyperpage}{35}
+\indexentry{L\_StraightFlatWire() (in module components)@\spxentry{L\_StraightFlatWire()}\spxextra{in module components}|hyperpage}{35}
+\indexentry{L\_StraightRoundWire() (in module components)@\spxentry{L\_StraightRoundWire()}\spxextra{in module components}|hyperpage}{36}
+\indexentry{L\_air\_core\_coil() (in module components)@\spxentry{L\_air\_core\_coil()}\spxextra{in module components}|hyperpage}{36}
+\indexentry{L\_microstrip\_via\_hole() (in module components)@\spxentry{L\_microstrip\_via\_hole()}\spxextra{in module components}|hyperpage}{36}
+\indexentry{OptimumMitered90DegMicrostripBend() (in module components)@\spxentry{OptimumMitered90DegMicrostripBend()}\spxextra{in module components}|hyperpage}{37}
+\indexentry{OptimumMiteredArbitraryAngleMicrostripBend() (in module components)@\spxentry{OptimumMiteredArbitraryAngleMicrostripBend()}\spxextra{in module components}|hyperpage}{37}
+\indexentry{PCBTrackCurrentCapacity() (in module components)@\spxentry{PCBTrackCurrentCapacity()}\spxextra{in module components}|hyperpage}{38}
+\indexentry{PCBTrackCurrentCapacityIPC() (in module components)@\spxentry{PCBTrackCurrentCapacityIPC()}\spxextra{in module components}|hyperpage}{38}
+\indexentry{ParallelPlateCap() (in module components)@\spxentry{ParallelPlateCap()}\spxextra{in module components}|hyperpage}{38}
+\indexentry{Patch\_Antenna\_Analysis() (in module components)@\spxentry{Patch\_Antenna\_Analysis()}\spxextra{in module components}|hyperpage}{39}
+\indexentry{Pi\_Attenuator\_Analysis() (in module components)@\spxentry{Pi\_Attenuator\_Analysis()}\spxextra{in module components}|hyperpage}{39}
+\indexentry{Pi\_Attenuator\_Synthesis() (in module components)@\spxentry{Pi\_Attenuator\_Synthesis()}\spxextra{in module components}|hyperpage}{40}
+\indexentry{RectWG2EvanescentRectWGStep() (in module components)@\spxentry{RectWG2EvanescentRectWGStep()}\spxextra{in module components}|hyperpage}{40}
+\indexentry{SIW\_EquivalentWidth() (in module components)@\spxentry{SIW\_EquivalentWidth()}\spxextra{in module components}|hyperpage}{41}
+\indexentry{Shorten90DegreeLine() (in module components)@\spxentry{Shorten90DegreeLine()}\spxextra{in module components}|hyperpage}{41}
+\indexentry{Star2TriangleTransformation() (in module components)@\spxentry{Star2TriangleTransformation()}\spxextra{in module components}|hyperpage}{41}
+\indexentry{SymmetricLangeCoupler() (in module components)@\spxentry{SymmetricLangeCoupler()}\spxextra{in module components}|hyperpage}{42}
+\indexentry{Tee\_Attenuator\_Analysis() (in module components)@\spxentry{Tee\_Attenuator\_Analysis()}\spxextra{in module components}|hyperpage}{42}
+\indexentry{Tee\_Attenuator\_Synthesis() (in module components)@\spxentry{Tee\_Attenuator\_Synthesis()}\spxextra{in module components}|hyperpage}{43}
+\indexentry{Triangle2StarTransformation() (in module components)@\spxentry{Triangle2StarTransformation()}\spxextra{in module components}|hyperpage}{43}
+\indexentry{Triangular\_Taper\_Impedance\_Transformer() (in module components)@\spxentry{Triangular\_Taper\_Impedance\_Transformer()}\spxextra{in module components}|hyperpage}{43}
+\indexentry{Z\_CWG() (in module components)@\spxentry{Z\_CWG()}\spxextra{in module components}|hyperpage}{44}
+\indexentry{Z\_WG\_TE10() (in module components)@\spxentry{Z\_WG\_TE10()}\spxextra{in module components}|hyperpage}{44}
+\indexentry{Zo\_eeff\_StraightWireOverSubstrate() (in module components)@\spxentry{Zo\_eeff\_StraightWireOverSubstrate()}\spxextra{in module components}|hyperpage}{44}
+\indexentry{Zo\_eeff\_WireOnGroundedSubstrate() (in module components)@\spxentry{Zo\_eeff\_WireOnGroundedSubstrate()}\spxextra{in module components}|hyperpage}{45}
+\indexentry{fcutoff\_CWG() (in module components)@\spxentry{fcutoff\_CWG()}\spxextra{in module components}|hyperpage}{45}
+\indexentry{thermal\_conductance\_of\_via\_farm() (in module components)@\spxentry{thermal\_conductance\_of\_via\_farm()}\spxextra{in module components}|hyperpage}{45}
+\indexentry{thermal\_conductance\_of\_via\_farm\_view() (in module components)@\spxentry{thermal\_conductance\_of\_via\_farm\_view()}\spxextra{in module components}|hyperpage}{46}

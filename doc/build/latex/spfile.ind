@@ -5,243 +5,253 @@
 \let\spxextra \sphinxstyleindexextra
 
   \bigletter {\sphinxsymbolsname}
-  \item \spxentry{\_\_add\_\_()}\spxextra{touchstone.spfile method}, \hyperpage{4}
-  \item \spxentry{\_\_neg\_\_()}\spxextra{touchstone.spfile method}, \hyperpage{4}
-  \item \spxentry{\_\_sub\_\_()}\spxextra{touchstone.spfile method}, \hyperpage{5}
+  \item \spxentry{\_\_add\_\_()}\spxextra{touchstone.spfile method}, \hyperpage{6}
+  \item \spxentry{\_\_neg\_\_()}\spxextra{touchstone.spfile method}, \hyperpage{6}
+  \item \spxentry{\_\_sub\_\_()}\spxextra{touchstone.spfile method}, \hyperpage{7}
 
   \indexspace
   \bigletter A
-  \item \spxentry{Absorptive\_Filter\_Equalizer()}\spxextra{in module components}, \hyperpage{19}
-  \item \spxentry{add\_abs\_noise()}\spxextra{touchstone.spfile method}, \hyperpage{5}
+  \item \spxentry{Absorptive\_Filter\_Equalizer()}\spxextra{in module components}, \hyperpage{25}
+  \item \spxentry{add\_abs\_noise()}\spxextra{touchstone.spfile method}, \hyperpage{7}
   \item \spxentry{average\_networks()}\spxextra{in module touchstone}, \hyperpage{1}
-  \item \spxentry{AWG2Dia()}\spxextra{in module components}, \hyperpage{19}
+  \item \spxentry{AWG2Dia()}\spxextra{in module components}, \hyperpage{25}
 
   \indexspace
   \bigletter B
   \item \spxentry{Binomial\_QWave\_Impedance\_Transformer()}\spxextra{in module components}, 
-		\hyperpage{20}
+		\hyperpage{26}
   \item \spxentry{Bridged\_Tee\_Attenuator\_Analysis()}\spxextra{in module components}, 
-		\hyperpage{20}
+		\hyperpage{26}
   \item \spxentry{Bridged\_Tee\_Attenuator\_Synthesis()}\spxextra{in module components}, 
-		\hyperpage{20}
+		\hyperpage{26}
 
   \indexspace
   \bigletter C
-  \item \spxentry{calc\_syz()}\spxextra{touchstone.spfile method}, \hyperpage{5}
-  \item \spxentry{calc\_t\_eigs()}\spxextra{touchstone.spfile method}, \hyperpage{5}
+  \item \spxentry{calc\_syz()}\spxextra{touchstone.spfile method}, \hyperpage{7}
+  \item \spxentry{calc\_t\_eigs()}\spxextra{touchstone.spfile method}, \hyperpage{7}
   \item \spxentry{cascade\_2ports()}\spxextra{in module touchstone}, \hyperpage{1}
-  \item \spxentry{change\_formulation()}\spxextra{touchstone.spfile method}, \hyperpage{5}
-  \item \spxentry{change\_ref\_impedance()}\spxextra{touchstone.spfile method}, \hyperpage{5}
+  \item \spxentry{change\_formulation()}\spxextra{touchstone.spfile method}, \hyperpage{7}
+  \item \spxentry{change\_ref\_impedance()}\spxextra{touchstone.spfile method}, \hyperpage{7}
   \item \spxentry{Chebyshev\_QWave\_Impedance\_Transformer()}\spxextra{in module components}, 
-		\hyperpage{21}
+		\hyperpage{27}
   \item \spxentry{Chebyshev\_Taper\_Impedance\_Transformer()}\spxextra{in module components}, 
-		\hyperpage{21}
-  \item \spxentry{check\_passivity()}\spxextra{touchstone.spfile method}, \hyperpage{5}
-  \item \spxentry{CircularPlateCap()}\spxextra{in module components}, \hyperpage{21}
-  \item \spxentry{column\_of\_data()}\spxextra{touchstone.spfile method}, \hyperpage{6}
+		\hyperpage{27}
+  \item \spxentry{check\_passivity()}\spxextra{touchstone.spfile method}, \hyperpage{8}
+  \item \spxentry{CircularPlateCap()}\spxextra{in module components}, \hyperpage{28}
+  \item \spxentry{column\_of\_data()}\spxextra{touchstone.spfile method}, \hyperpage{8}
   \item \spxentry{components}
-    \subitem \spxentry{module}, \hyperpage{19}
-  \item \spxentry{conj\_match\_uncoupled()}\spxextra{touchstone.spfile method}, \hyperpage{6}
-  \item \spxentry{connect\_2\_ports()}\spxextra{touchstone.spfile method}, \hyperpage{6}
-  \item \spxentry{connect\_2\_ports\_list()}\spxextra{touchstone.spfile method}, \hyperpage{6}
-  \item \spxentry{connect\_2\_ports\_retain()}\spxextra{touchstone.spfile method}, \hyperpage{6}
-  \item \spxentry{connect\_network\_1\_conn()}\spxextra{touchstone.spfile method}, \hyperpage{7}
+    \subitem \spxentry{module}, \hyperpage{25}
+  \item \spxentry{conj\_match\_uncoupled()}\spxextra{touchstone.spfile method}, \hyperpage{8}
+  \item \spxentry{connect\_2\_ports()}\spxextra{touchstone.spfile method}, \hyperpage{8}
+  \item \spxentry{connect\_2\_ports\_list()}\spxextra{touchstone.spfile method}, \hyperpage{9}
+  \item \spxentry{connect\_2\_ports\_retain()}\spxextra{touchstone.spfile method}, \hyperpage{9}
+  \item \spxentry{connect\_network\_1\_conn()}\spxextra{touchstone.spfile method}, \hyperpage{9}
   \item \spxentry{connect\_network\_1\_conn\_retain()}\spxextra{touchstone.spfile method}, 
-		\hyperpage{7}
-  \item \spxentry{convert\_s1p\_to\_s2p()}\spxextra{touchstone.spfile method}, \hyperpage{7}
-  \item \spxentry{copy()}\spxextra{touchstone.spfile method}, \hyperpage{7}
-  \item \spxentry{copy\_data\_from\_spfile()}\spxextra{touchstone.spfile method}, \hyperpage{7}
-  \item \spxentry{cpwgline()}\spxextra{touchstone.spfile class method}, \hyperpage{7}
+		\hyperpage{10}
+  \item \spxentry{convert\_s1p\_to\_s2p()}\spxextra{touchstone.spfile method}, \hyperpage{10}
+  \item \spxentry{copy()}\spxextra{touchstone.spfile method}, \hyperpage{10}
+  \item \spxentry{copy\_data\_from\_spfile()}\spxextra{touchstone.spfile method}, \hyperpage{10}
+  \item \spxentry{cpwgline()}\spxextra{touchstone.spfile class method}, \hyperpage{10}
+  \item \spxentry{crop\_with\_frequency()}\spxextra{touchstone.spfile method}, \hyperpage{10}
 
   \indexspace
   \bigletter D
-  \item \spxentry{data\_array()}\spxextra{touchstone.spfile method}, \hyperpage{8}
-  \item \spxentry{Dia2AWG()}\spxextra{in module components}, \hyperpage{22}
-  \item \spxentry{dosyaoku()}\spxextra{touchstone.spfile method}, \hyperpage{9}
-  \item \spxentry{dosyayi\_tekrar\_oku()}\spxextra{touchstone.spfile method}, \hyperpage{9}
-  \item \spxentry{DualFrequencyTransformer()}\spxextra{in module components}, \hyperpage{22}
-  \item \spxentry{DualTransformation1()}\spxextra{in module components}, \hyperpage{22}
-  \item \spxentry{DualTransformation2()}\spxextra{in module components}, \hyperpage{23}
+  \item \spxentry{data\_array()}\spxextra{touchstone.spfile method}, \hyperpage{11}
+  \item \spxentry{Dia2AWG()}\spxextra{in module components}, \hyperpage{28}
+  \item \spxentry{DualFrequencyTransformer()}\spxextra{in module components}, \hyperpage{28}
+  \item \spxentry{DualTransformation1()}\spxextra{in module components}, \hyperpage{29}
+  \item \spxentry{DualTransformation2()}\spxextra{in module components}, \hyperpage{29}
 
   \indexspace
   \bigletter E
-  \item \spxentry{EvanescentWGEquivalent()}\spxextra{in module components}, \hyperpage{23}
-  \item \spxentry{EWG\_ABCD()}\spxextra{in module components}, \hyperpage{23}
-  \item \spxentry{EWG\_inv()}\spxextra{in module components}, \hyperpage{23}
+  \item \spxentry{EvanescentWGEquivalent()}\spxextra{in module components}, \hyperpage{30}
+  \item \spxentry{EWG\_ABCD()}\spxextra{in module components}, \hyperpage{30}
+  \item \spxentry{EWG\_inv()}\spxextra{in module components}, \hyperpage{30}
   \item \spxentry{Exponential\_Taper\_Impedance\_Transformer()}\spxextra{in module components}, 
-		\hyperpage{24}
+		\hyperpage{31}
   \item \spxentry{extract\_gamma\_ereff()}\spxextra{in module touchstone}, \hyperpage{1}
   \item \spxentry{extract\_gamma\_ereff\_all()}\spxextra{in module touchstone}, \hyperpage{1}
+  \item \spxentry{extract\_rlgc()}\spxextra{in module touchstone}, \hyperpage{1}
   \item \spxentry{Extraction()}\spxextra{touchstone.spfile method}, \hyperpage{2}
 
   \indexspace
   \bigletter F
-  \item \spxentry{fcutoff\_CWG()}\spxextra{in module components}, \hyperpage{37}
+  \item \spxentry{fcutoff\_CWG()}\spxextra{in module components}, \hyperpage{45}
   \item \spxentry{Ffunc()}\spxextra{touchstone.spfile method}, \hyperpage{2}
 
   \indexspace
   \bigletter G
-  \item \spxentry{gav()}\spxextra{touchstone.spfile method}, \hyperpage{9}
-  \item \spxentry{generate\_multiport\_spfile()}\spxextra{in module touchstone}, \hyperpage{1}
-  \item \spxentry{get\_formulation()}\spxextra{touchstone.spfile method}, \hyperpage{9}
-  \item \spxentry{get\_frequency\_list()}\spxextra{touchstone.spfile method}, \hyperpage{9}
-  \item \spxentry{get\_no\_of\_ports()}\spxextra{touchstone.spfile method}, \hyperpage{9}
-  \item \spxentry{get\_port\_names()}\spxextra{touchstone.spfile method}, \hyperpage{9}
+  \item \spxentry{gav()}\spxextra{touchstone.spfile method}, \hyperpage{11}
+  \item \spxentry{generate\_multiport\_spfile()}\spxextra{in module touchstone}, \hyperpage{2}
+  \item \spxentry{get\_formulation()}\spxextra{touchstone.spfile method}, \hyperpage{12}
+  \item \spxentry{get\_frequency\_list()}\spxextra{touchstone.spfile method}, \hyperpage{12}
+  \item \spxentry{get\_no\_of\_ports()}\spxextra{touchstone.spfile method}, \hyperpage{12}
+  \item \spxentry{get\_port\_names()}\spxextra{touchstone.spfile method}, \hyperpage{12}
   \item \spxentry{get\_port\_number\_from\_name()}\spxextra{touchstone.spfile method}, 
-		\hyperpage{9}
-  \item \spxentry{get\_sym\_parameters()}\spxextra{touchstone.spfile method}, \hyperpage{9}
-  \item \spxentry{get\_sym\_smatrix()}\spxextra{touchstone.spfile method}, \hyperpage{9}
-  \item \spxentry{get\_undefinedYindices()}\spxextra{touchstone.spfile method}, \hyperpage{9}
-  \item \spxentry{get\_undefinedZindices()}\spxextra{touchstone.spfile method}, \hyperpage{9}
-  \item \spxentry{getdataformat()}\spxextra{touchstone.spfile method}, \hyperpage{9}
-  \item \spxentry{getfilename()}\spxextra{touchstone.spfile method}, \hyperpage{9}
-  \item \spxentry{gmax()}\spxextra{touchstone.spfile method}, \hyperpage{10}
-  \item \spxentry{gop()}\spxextra{touchstone.spfile method}, \hyperpage{10}
-  \item \spxentry{gop2()}\spxextra{touchstone.spfile method}, \hyperpage{10}
-  \item \spxentry{gt()}\spxextra{touchstone.spfile method}, \hyperpage{10}
-  \item \spxentry{GyselPowerDivider()}\spxextra{in module components}, \hyperpage{24}
+		\hyperpage{12}
+  \item \spxentry{get\_sym\_parameters()}\spxextra{touchstone.spfile method}, \hyperpage{12}
+  \item \spxentry{get\_sym\_smatrix()}\spxextra{touchstone.spfile method}, \hyperpage{12}
+  \item \spxentry{get\_undefinedYindices()}\spxextra{touchstone.spfile method}, \hyperpage{13}
+  \item \spxentry{get\_undefinedZindices()}\spxextra{touchstone.spfile method}, \hyperpage{13}
+  \item \spxentry{getdata\_format()}\spxextra{touchstone.spfile method}, \hyperpage{13}
+  \item \spxentry{getfilename()}\spxextra{touchstone.spfile method}, \hyperpage{13}
+  \item \spxentry{gmax()}\spxextra{touchstone.spfile method}, \hyperpage{13}
+  \item \spxentry{gop()}\spxextra{touchstone.spfile method}, \hyperpage{13}
+  \item \spxentry{gop2()}\spxextra{touchstone.spfile method}, \hyperpage{13}
+  \item \spxentry{gt()}\spxextra{touchstone.spfile method}, \hyperpage{14}
+  \item \spxentry{GyselPowerDivider()}\spxextra{in module components}, \hyperpage{31}
 
   \indexspace
   \bigletter H
   \item \spxentry{HomogeneousRectWaveguideParameters\_TE()}\spxextra{in module components}, 
-		\hyperpage{25}
+		\hyperpage{32}
 
   \indexspace
   \bigletter I
-  \item \spxentry{ImpulseResponse()}\spxextra{touchstone.spfile method}, \hyperpage{2}
-  \item \spxentry{InductivePostInWaveguide()}\spxextra{in module components}, \hyperpage{26}
-  \item \spxentry{InductiveWindowInWaveguide()}\spxextra{in module components}, \hyperpage{26}
-  \item \spxentry{input\_impedance()}\spxextra{touchstone.spfile method}, \hyperpage{11}
-  \item \spxentry{Interference\_Phase\_Amp\_Error()}\spxextra{in module components}, \hyperpage{27}
-  \item \spxentry{interpolate\_data()}\spxextra{touchstone.spfile method}, \hyperpage{11}
-  \item \spxentry{inverse\_2port()}\spxextra{touchstone.spfile method}, \hyperpage{11}
+  \item \spxentry{ImpulseResponse()}\spxextra{touchstone.spfile method}, \hyperpage{3}
+  \item \spxentry{ImpulseResponseBanded()}\spxextra{touchstone.spfile method}, \hyperpage{3}
+  \item \spxentry{InductivePostInWaveguide()}\spxextra{in module components}, \hyperpage{32}
+  \item \spxentry{InductiveWindowInWaveguide()}\spxextra{in module components}, \hyperpage{33}
+  \item \spxentry{input\_impedance()}\spxextra{touchstone.spfile method}, \hyperpage{14}
+  \item \spxentry{Interference\_Phase\_Amp\_Error()}\spxextra{in module components}, \hyperpage{33}
+  \item \spxentry{interpolate()}\spxextra{touchstone.spfile method}, \hyperpage{14}
+  \item \spxentry{interpolate\_data()}\spxextra{touchstone.spfile method}, \hyperpage{15}
+  \item \spxentry{inverse\_2port()}\spxextra{touchstone.spfile method}, \hyperpage{15}
 
   \indexspace
   \bigletter K
   \item \spxentry{Klopfenstein\_Taper\_Impedance\_Transformer()}\spxextra{in module components}, 
-		\hyperpage{27}
+		\hyperpage{34}
 
   \indexspace
   \bigletter L
-  \item \spxentry{L\_air\_core\_coil()}\spxextra{in module components}, \hyperpage{29}
-  \item \spxentry{L\_BondWire()}\spxextra{in module components}, \hyperpage{28}
-  \item \spxentry{L\_microstrip\_via\_hole()}\spxextra{in module components}, \hyperpage{29}
-  \item \spxentry{L\_StraightFlatWire()}\spxextra{in module components}, \hyperpage{28}
-  \item \spxentry{L\_StraightRoundWire()}\spxextra{in module components}, \hyperpage{28}
-  \item \spxentry{LC\_Balun()}\spxextra{in module components}, \hyperpage{27}
-  \item \spxentry{load\_impedance()}\spxextra{touchstone.spfile method}, \hyperpage{11}
+  \item \spxentry{L\_air\_core\_coil()}\spxextra{in module components}, \hyperpage{36}
+  \item \spxentry{L\_BondWire()}\spxextra{in module components}, \hyperpage{35}
+  \item \spxentry{L\_microstrip\_via\_hole()}\spxextra{in module components}, \hyperpage{36}
+  \item \spxentry{L\_StraightFlatWire()}\spxextra{in module components}, \hyperpage{35}
+  \item \spxentry{L\_StraightRoundWire()}\spxextra{in module components}, \hyperpage{36}
+  \item \spxentry{LC\_Balun()}\spxextra{in module components}, \hyperpage{34}
+  \item \spxentry{load\_impedance()}\spxextra{touchstone.spfile method}, \hyperpage{15}
 
   \indexspace
   \bigletter M
-  \item \spxentry{microstripline()}\spxextra{touchstone.spfile class method}, \hyperpage{12}
-  \item \spxentry{microstripstep()}\spxextra{touchstone.spfile class method}, \hyperpage{12}
+  \item \spxentry{make\_symmetric()}\spxextra{touchstone.spfile method}, \hyperpage{15}
+  \item \spxentry{microstripline()}\spxextra{touchstone.spfile class method}, \hyperpage{16}
+  \item \spxentry{microstripstep()}\spxextra{touchstone.spfile class method}, \hyperpage{16}
   \item \spxentry{module}
-    \subitem \spxentry{components}, \hyperpage{19}
+    \subitem \spxentry{components}, \hyperpage{25}
     \subitem \spxentry{touchstone}, \hyperpage{1}
 
   \indexspace
   \bigletter O
   \item \spxentry{OptimumMitered90DegMicrostripBend()}\spxextra{in module components}, 
-		\hyperpage{30}
+		\hyperpage{37}
   \item \spxentry{OptimumMiteredArbitraryAngleMicrostripBend()}\spxextra{in module components}, 
-		\hyperpage{30}
+		\hyperpage{37}
 
   \indexspace
   \bigletter P
-  \item \spxentry{ParallelPlateCap()}\spxextra{in module components}, \hyperpage{31}
-  \item \spxentry{parseformat()}\spxextra{in module touchstone}, \hyperpage{1}
-  \item \spxentry{Patch\_Antenna\_Analysis()}\spxextra{in module components}, \hyperpage{31}
-  \item \spxentry{PCBTrackCurrentCapacity()}\spxextra{in module components}, \hyperpage{30}
-  \item \spxentry{PCBTrackCurrentCapacityIPC()}\spxextra{in module components}, \hyperpage{31}
-  \item \spxentry{Pi\_Attenuator\_Analysis()}\spxextra{in module components}, \hyperpage{32}
-  \item \spxentry{Pi\_Attenuator\_Synthesis()}\spxextra{in module components}, \hyperpage{32}
+  \item \spxentry{ParallelPlateCap()}\spxextra{in module components}, \hyperpage{38}
+  \item \spxentry{parse\_format()}\spxextra{in module touchstone}, \hyperpage{2}
+  \item \spxentry{Patch\_Antenna\_Analysis()}\spxextra{in module components}, \hyperpage{39}
+  \item \spxentry{PCBTrackCurrentCapacity()}\spxextra{in module components}, \hyperpage{38}
+  \item \spxentry{PCBTrackCurrentCapacityIPC()}\spxextra{in module components}, \hyperpage{38}
+  \item \spxentry{Pi\_Attenuator\_Analysis()}\spxextra{in module components}, \hyperpage{39}
+  \item \spxentry{Pi\_Attenuator\_Synthesis()}\spxextra{in module components}, \hyperpage{40}
   \item \spxentry{prepare\_ref\_impedance\_array()}\spxextra{touchstone.spfile method}, 
-		\hyperpage{12}
+		\hyperpage{16}
 
   \indexspace
   \bigletter R
-  \item \spxentry{RectWG2EvanescentRectWGStep()}\spxextra{in module components}, \hyperpage{33}
-  \item \spxentry{restore\_passivity()}\spxextra{touchstone.spfile method}, \hyperpage{12}
-  \item \spxentry{restore\_passivity2()}\spxextra{touchstone.spfile method}, \hyperpage{13}
-  \item \spxentry{return\_s2p()}\spxextra{touchstone.spfile method}, \hyperpage{13}
+  \item \spxentry{read\_file()}\spxextra{touchstone.spfile method}, \hyperpage{16}
+  \item \spxentry{read\_file\_again()}\spxextra{touchstone.spfile method}, \hyperpage{17}
+  \item \spxentry{RectWG2EvanescentRectWGStep()}\spxextra{in module components}, \hyperpage{40}
+  \item \spxentry{restore\_passivity()}\spxextra{touchstone.spfile method}, \hyperpage{17}
+  \item \spxentry{restore\_passivity2()}\spxextra{touchstone.spfile method}, \hyperpage{17}
+  \item \spxentry{return\_s2p()}\spxextra{touchstone.spfile method}, \hyperpage{17}
 
   \indexspace
   \bigletter S
-  \item \spxentry{S()}\spxextra{touchstone.spfile method}, \hyperpage{3}
-  \item \spxentry{s2abcd()}\spxextra{touchstone.spfile method}, \hyperpage{13}
-  \item \spxentry{s2abcd2()}\spxextra{touchstone.spfile method}, \hyperpage{13}
-  \item \spxentry{s2t()}\spxextra{touchstone.spfile method}, \hyperpage{13}
-  \item \spxentry{scaledata()}\spxextra{touchstone.spfile method}, \hyperpage{13}
-  \item \spxentry{set\_formulation()}\spxextra{touchstone.spfile method}, \hyperpage{13}
+  \item \spxentry{S()}\spxextra{touchstone.spfile method}, \hyperpage{4}
+  \item \spxentry{s2abcd()}\spxextra{touchstone.spfile method}, \hyperpage{17}
+  \item \spxentry{s2t()}\spxextra{touchstone.spfile method}, \hyperpage{17}
+  \item \spxentry{scaledata()}\spxextra{touchstone.spfile method}, \hyperpage{17}
+  \item \spxentry{series\_impedance()}\spxextra{touchstone.spfile class method}, \hyperpage{17}
+  \item \spxentry{set\_formulation()}\spxextra{touchstone.spfile method}, \hyperpage{18}
   \item \spxentry{set\_frequencies\_wo\_recalc()}\spxextra{touchstone.spfile method}, 
-		\hyperpage{13}
-  \item \spxentry{set\_frequency\_limits()}\spxextra{touchstone.spfile method}, \hyperpage{13}
-  \item \spxentry{set\_frequency\_points()}\spxextra{touchstone.spfile method}, \hyperpage{14}
+		\hyperpage{18}
+  \item \spxentry{set\_frequency\_limits()}\spxextra{touchstone.spfile method}, \hyperpage{18}
+  \item \spxentry{set\_frequency\_points()}\spxextra{touchstone.spfile method}, \hyperpage{18}
   \item \spxentry{set\_frequency\_points\_array()}\spxextra{touchstone.spfile method}, 
-		\hyperpage{14}
-  \item \spxentry{set\_inplace()}\spxextra{touchstone.spfile method}, \hyperpage{14}
-  \item \spxentry{set\_port\_name()}\spxextra{touchstone.spfile method}, \hyperpage{14}
-  \item \spxentry{set\_port\_names()}\spxextra{touchstone.spfile method}, \hyperpage{14}
+		\hyperpage{18}
+  \item \spxentry{set\_inplace()}\spxextra{touchstone.spfile method}, \hyperpage{19}
+  \item \spxentry{set\_port\_name()}\spxextra{touchstone.spfile method}, \hyperpage{19}
+  \item \spxentry{set\_port\_names()}\spxextra{touchstone.spfile method}, \hyperpage{19}
   \item \spxentry{set\_smatrix\_at\_frequency\_point()}\spxextra{touchstone.spfile method}, 
-		\hyperpage{14}
-  \item \spxentry{set\_sparam\_gen\_func()}\spxextra{touchstone.spfile method}, \hyperpage{14}
-  \item \spxentry{set\_sparam\_mod\_func()}\spxextra{touchstone.spfile method}, \hyperpage{14}
-  \item \spxentry{set\_sym\_parameters()}\spxextra{touchstone.spfile method}, \hyperpage{15}
-  \item \spxentry{set\_sym\_smatrix()}\spxextra{touchstone.spfile method}, \hyperpage{15}
-  \item \spxentry{setdataformat()}\spxextra{touchstone.spfile method}, \hyperpage{15}
-  \item \spxentry{setdatapoint()}\spxextra{touchstone.spfile method}, \hyperpage{15}
-  \item \spxentry{Shorten90DegreeLine()}\spxextra{in module components}, \hyperpage{33}
-  \item \spxentry{SIW\_EquivalentWidth()}\spxextra{in module components}, \hyperpage{33}
-  \item \spxentry{smoothing()}\spxextra{touchstone.spfile method}, \hyperpage{15}
-  \item \spxentry{snp2smp()}\spxextra{touchstone.spfile method}, \hyperpage{15}
-  \item \spxentry{spfile}\spxextra{class in touchstone}, \hyperpage{1}
-  \item \spxentry{stability\_factor\_k()}\spxextra{touchstone.spfile method}, \hyperpage{16}
-  \item \spxentry{stability\_factor\_mu1()}\spxextra{touchstone.spfile method}, \hyperpage{16}
-  \item \spxentry{stability\_factor\_mu2()}\spxextra{touchstone.spfile method}, \hyperpage{16}
-  \item \spxentry{Star2TriangleTransformation()}\spxextra{in module components}, \hyperpage{34}
-  \item \spxentry{stripline()}\spxextra{touchstone.spfile class method}, \hyperpage{16}
-  \item \spxentry{striplinestep()}\spxextra{touchstone.spfile class method}, \hyperpage{16}
-  \item \spxentry{SymmetricLangeCoupler()}\spxextra{in module components}, \hyperpage{34}
+		\hyperpage{19}
+  \item \spxentry{set\_sparam\_gen\_func()}\spxextra{touchstone.spfile method}, \hyperpage{19}
+  \item \spxentry{set\_sparam\_mod\_func()}\spxextra{touchstone.spfile method}, \hyperpage{19}
+  \item \spxentry{set\_sym\_parameters()}\spxextra{touchstone.spfile method}, \hyperpage{19}
+  \item \spxentry{set\_sym\_smatrix()}\spxextra{touchstone.spfile method}, \hyperpage{19}
+  \item \spxentry{setdata\_format()}\spxextra{touchstone.spfile method}, \hyperpage{19}
+  \item \spxentry{setdatapoint()}\spxextra{touchstone.spfile method}, \hyperpage{19}
+  \item \spxentry{Shorten90DegreeLine()}\spxextra{in module components}, \hyperpage{41}
+  \item \spxentry{shunt\_impedance()}\spxextra{touchstone.spfile class method}, \hyperpage{20}
+  \item \spxentry{SIW\_EquivalentWidth()}\spxextra{in module components}, \hyperpage{41}
+  \item \spxentry{smoothing()}\spxextra{touchstone.spfile method}, \hyperpage{20}
+  \item \spxentry{snp2smp()}\spxextra{touchstone.spfile method}, \hyperpage{20}
+  \item \spxentry{spfile}\spxextra{class in touchstone}, \hyperpage{2}
+  \item \spxentry{sqrt\_network()}\spxextra{touchstone.spfile method}, \hyperpage{21}
+  \item \spxentry{stability\_factor\_k()}\spxextra{touchstone.spfile method}, \hyperpage{21}
+  \item \spxentry{stability\_factor\_mu1()}\spxextra{touchstone.spfile method}, \hyperpage{21}
+  \item \spxentry{stability\_factor\_mu2()}\spxextra{touchstone.spfile method}, \hyperpage{21}
+  \item \spxentry{Star2TriangleTransformation()}\spxextra{in module components}, \hyperpage{41}
+  \item \spxentry{stripline()}\spxextra{touchstone.spfile class method}, \hyperpage{21}
+  \item \spxentry{striplinestep()}\spxextra{touchstone.spfile class method}, \hyperpage{22}
+  \item \spxentry{SymmetricLangeCoupler()}\spxextra{in module components}, \hyperpage{42}
 
   \indexspace
   \bigletter T
-  \item \spxentry{T()}\spxextra{touchstone.spfile method}, \hyperpage{3}
-  \item \spxentry{Tee\_Attenuator\_Analysis()}\spxextra{in module components}, \hyperpage{34}
-  \item \spxentry{Tee\_Attenuator\_Synthesis()}\spxextra{in module components}, \hyperpage{35}
+  \item \spxentry{T()}\spxextra{touchstone.spfile method}, \hyperpage{4}
+  \item \spxentry{Tee\_Attenuator\_Analysis()}\spxextra{in module components}, \hyperpage{42}
+  \item \spxentry{Tee\_Attenuator\_Synthesis()}\spxextra{in module components}, \hyperpage{43}
   \item \spxentry{thermal\_conductance\_of\_via\_farm()}\spxextra{in module components}, 
-		\hyperpage{37}
+		\hyperpage{45}
   \item \spxentry{thermal\_conductance\_of\_via\_farm\_view()}\spxextra{in module components}, 
-		\hyperpage{38}
-  \item \spxentry{thru\_line\_deembedding()}\spxextra{in module touchstone}, \hyperpage{17}
+		\hyperpage{46}
+  \item \spxentry{thru\_line\_deembedding()}\spxextra{in module touchstone}, \hyperpage{22}
   \item \spxentry{touchstone}
     \subitem \spxentry{module}, \hyperpage{1}
-  \item \spxentry{Triangle2StarTransformation()}\spxextra{in module components}, \hyperpage{35}
+  \item \spxentry{Triangle2StarTransformation()}\spxextra{in module components}, \hyperpage{43}
   \item \spxentry{Triangular\_Taper\_Impedance\_Transformer()}\spxextra{in module components}, 
-		\hyperpage{36}
-  \item \spxentry{trl\_launcher\_extraction()}\spxextra{in module touchstone}, \hyperpage{17}
+		\hyperpage{43}
+  \item \spxentry{trl\_launcher\_extraction()}\spxextra{in module touchstone}, \hyperpage{23}
 
   \indexspace
   \bigletter U
-  \item \spxentry{UniformDeembed()}\spxextra{touchstone.spfile method}, \hyperpage{3}
-  \item \spxentry{untermination\_method()}\spxextra{in module touchstone}, \hyperpage{18}
+  \item \spxentry{UniformDeembed()}\spxextra{touchstone.spfile method}, \hyperpage{5}
+  \item \spxentry{untermination\_method()}\spxextra{in module touchstone}, \hyperpage{23}
+  \item \spxentry{untermination\_method\_old()}\spxextra{in module touchstone}, \hyperpage{24}
 
   \indexspace
   \bigletter W
-  \item \spxentry{write2file()}\spxextra{touchstone.spfile method}, \hyperpage{17}
+  \item \spxentry{write2file()}\spxextra{touchstone.spfile method}, \hyperpage{22}
+  \item \spxentry{write\_impedance\_as\_s1p()}\spxextra{in module touchstone}, \hyperpage{24}
+  \item \spxentry{write\_impedance\_as\_table()}\spxextra{in module touchstone}, \hyperpage{24}
 
   \indexspace
   \bigletter Y
-  \item \spxentry{Y()}\spxextra{touchstone.spfile method}, \hyperpage{4}
+  \item \spxentry{Y()}\spxextra{touchstone.spfile method}, \hyperpage{5}
 
   \indexspace
   \bigletter Z
-  \item \spxentry{Z()}\spxextra{touchstone.spfile method}, \hyperpage{4}
-  \item \spxentry{Z\_conjmatch()}\spxextra{touchstone.spfile method}, \hyperpage{4}
-  \item \spxentry{Z\_CWG()}\spxextra{in module components}, \hyperpage{36}
-  \item \spxentry{Z\_WG\_TE10()}\spxextra{in module components}, \hyperpage{36}
+  \item \spxentry{Z()}\spxextra{touchstone.spfile method}, \hyperpage{5}
+  \item \spxentry{Z\_conjmatch()}\spxextra{touchstone.spfile method}, \hyperpage{6}
+  \item \spxentry{Z\_CWG()}\spxextra{in module components}, \hyperpage{44}
+  \item \spxentry{Z\_WG\_TE10()}\spxextra{in module components}, \hyperpage{44}
   \item \spxentry{Zo\_eeff\_StraightWireOverSubstrate()}\spxextra{in module components}, 
-		\hyperpage{36}
+		\hyperpage{44}
   \item \spxentry{Zo\_eeff\_WireOnGroundedSubstrate()}\spxextra{in module components}, 
-		\hyperpage{37}
+		\hyperpage{45}
 
 \end{sphinxtheindex}

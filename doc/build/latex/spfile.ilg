@@ -1,7 +1,7 @@
-This is makeindex, version 2.15 [MiKTeX 2.9.7300 64-bit] (kpathsea + Thai support).
+This is makeindex, version 2.16 [MiKTeX 21.12.10].
 Scanning style file ./python.ist.......done (7 attributes redefined, 0 ignored).
-Scanning input file spfile.idx....done (151 entries accepted, 0 rejected).
-Sorting entries....done (1119 comparisons).
-Generating output file spfile.ind....done (247 lines written, 0 warnings).
+Scanning input file spfile.idx....done (161 entries accepted, 0 rejected).
+Sorting entries....done (1195 comparisons).
+Generating output file spfile.ind....done (257 lines written, 0 warnings).
 Output written in spfile.ind.
 Transcript written in spfile.ilg.

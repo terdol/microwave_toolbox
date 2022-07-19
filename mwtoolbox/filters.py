@@ -1,11 +1,6 @@
 #-*-coding:utf-8-*-
-from __future__ import print_function
-from __future__ import division
-# from builtins import str
-# from builtins import range
-# from past.utils import old_div
-from constants import *
-#from Components import *
+from .myconstants import *
+from .components import Z_WG_TE10
 from scipy import sin,sinh,arcsin,arcsinh,cos,cosh,arccos,arccosh,tan,arctan,tanh,arctanh,log,log10,power
 from scipy.special import *
 from scipy.optimize import brentq
@@ -14,25 +9,26 @@ from string import *
 import re
 import numpy as np
 from numpy.lib.scimath import sqrt as csqrt
-from network import *
+from .network import *
 co=speed_of_light_in_freespace.simplified.magnitude
 eta0=free_space_wave_impedance.simplified.magnitude
 mu0=free_space_permeability.simplified.magnitude
 eps0=free_space_permittivity.simplified.magnitude
 
-def Z_WG_TE10_1(er,a,b,freq):
+def Z_WG_TE10(er,a,b,freq):
     kc=(pi/a)
     k=2*pi*freq*csqrt(er)/co
     beta=csqrt(k*k-kc*kc+1.0j)
     imp=csqrt(mu0/eps0/er)*k/beta*2.*b/a
     return imp
+    
 def EWG_ABCD(a,b,er,length,frek):
     #Referans:"The Design of Evanescent Mode Waveguide Bandpass Filters for a Prescribed Insertion Loss Characteristic.pdf"
     # Model= Xp1,Xs1,Xp1 ya da Xs2,Xp2,Xs2 (p: shunt, s: series)
     #Zo=jXo
     lcutoff=2*a
     wavelength=co/csqrt(er)/frek
-    Xo=abs(Z_WG_TE10_1(er,a,b,frek))
+    Xo=abs(Z_WG_TE10(er,a,b,frek))
     gamma=2.*pi/wavelength*csqrt(((wavelength/lcutoff))**2.0-1.)
     Xs1=Xo*sinh(gamma*length)
     Xs2=Xo*tanh(gamma*length/2.0)
@@ -272,8 +268,8 @@ def EvanescentWGFilter_3(g,n,Lj,a,a1,b,er, fcenter,fbw,alpha):
     lcutoff=2*a1
     wavelength=co/csqrt(er)/fcenter
     w0=2.0*pi*fcenter
-    Xo=abs(Z_WG_TE10_1(er,a1,b,fcenter))
-    Zo=abs(Z_WG_TE10_1(er,a,b,fcenter))
+    Xo=abs(Z_WG_TE10(er,a1,b,fcenter))
+    Zo=abs(Z_WG_TE10(er,a,b,fcenter))
     #Zo=100.0
     C2=g[0]*g[1]*alpha/fbw/w0/n/n/Zo
     C1=g[0]*g[1]/fbw/w0/n/n/Zo
@@ -388,9 +384,8 @@ if __name__ == "__main__":
         networks.append(transformer((1./n)))
         networks.append(shunt_z(2.0j*pi*frek*X))
         abcd=cascade_networks(networks)
-        sonuc.append(abcd2s(abcd,Z_WG_TE10_1(er,a,b,frek))[0,1])
+        sonuc.append(abcd2s(abcd,Z_WG_TE10(er,a,b,frek))[0,1])
     #sonuc.append(abcd2s(abcd,Z_WG_TE10(er,a,b,8.5e9))[0,1])
-    #print sonuc
     plot(linspace(6e9,10e9,101),20.0*log10(abs(array(sonuc))))
     grid()
     xlabel("Frequency")
@@ -399,4 +394,4 @@ if __name__ == "__main__":
     else:
         ylabel("Isolation")
     show()
-    # print filter_with_inverter2(ButterworthFilterPrototype(3),16,8.5e9,0.125,[0.1e-12,0.5e-12,0.1e-12])
+    print(filter_with_inverter2(ButterworthFilterPrototype(3),16,8.5e9,0.125,[0.1e-12,0.5e-12,0.1e-12]))
