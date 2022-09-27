@@ -1,11 +1,11 @@
 import sys
 sys.path.append(r"c:\\users\\erdoel\\documents\\works\\python_works\\microwave_toolbox")
-from touchstone import *
+from mwtoolbox.touchstone import *
 import network
 import itertools
 import numpy as np
 from icecream import ic
-from components import Z_WG_TE10
+from mwtoolbox.components import Z_WG_TE10
 freq_high=83
 freq_low=74
 frequencies=np.linspace(freq_low*1e9,freq_high*1e9,10,endpoint=True)

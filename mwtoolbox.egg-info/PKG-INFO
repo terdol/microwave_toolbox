@@ -1,0 +1,15 @@
+Metadata-Version: 2.1
+Name: mwtoolbox
+Version: 0.1.0
+Summary: Microwave Toolbox
+Home-page: https://github.com/terdol/microwave_toolbox
+Author: Tuncay Erdöl
+Author-email: terdol@hotmail.com
+License: BSD 2-clause
+Classifier: Development Status :: 3 - Alpha
+Classifier: Intended Audience :: Science/Research
+Classifier: License :: OSI Approved :: GNU Lesser General Public License v3 or later (LGPLv3+)
+Classifier: Operating System :: POSIX :: Linux
+Classifier: Programming Language :: Python :: 3.4
+Classifier: Programming Language :: Python :: 3.5
+License-File: license_text_to_include_to_source_files.txt

@@ -6,7 +6,7 @@ Created on Thu Oct 28 11:13:47 2021
 """
 
 
-from touchstone import *
+from mwtoolbox.touchstone import *
 
 spf = spfile("Chip_impedance_average_allboards_allports.s1p")
 spfsmoothed = spf.smoothing(smoothing_length=5,inplace=0)

@@ -83,7 +83,7 @@ a[tuple(b)]
 import os, sys
 os.chdir(r"C:\\Users\\Erdoel\\Documents\\Works\\AFiP\\Simulations\\Analiz\\Foam")
 sys.path.append(r"C:\\Users\\Erdoel\\Documents\\Works\\Python_Works\\microwave_toolbox")
-from touchstone import spfile
+from mwtoolbox.touchstone import spfile
 sp = spfile("Transition1_Foam_tolerance_Isolation_Rect_xo_0um_yo_400um_zo_0um_unnormalized.s4p")
 print(sp.params)
 
@@ -260,7 +260,7 @@ z=50.0*(1+a)/(1-a)
 print(z)
 
 #%%
-from touchstone import *
+from mwtoolbox.touchstone import *
 import network
 import itertools
 import numpy as np

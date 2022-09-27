@@ -1,6 +1,6 @@
 import sys
 sys.path.append(r"c:\\users\\erdoel\\documents\\works\\python_works\\microwave_toolbox")
-from touchstone import *
+from mwtoolbox.touchstone import *
 import network
 from constants import *
 import itertools
