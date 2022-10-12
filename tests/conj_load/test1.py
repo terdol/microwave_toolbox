@@ -7,9 +7,7 @@ import numpy as np
 
 sp = spfile("HalfModel_CPW5_DEMSB_RX1.s2p")
 frequencies = sp.get_frequency_list()
-gs, gl = sp.Z_conjmatch()
-zs=50.0*(1+gs)/(1-gs)
-zl=50.0*(1+gl)/(1-gl)
+zs, zl = sp.Z_conjmatch()
 import matplotlib.pyplot as plt
 plt.plot(frequencies,np.real(zs),label="Zs Real")
 plt.plot(frequencies,np.real(zl),label="Zl Real")

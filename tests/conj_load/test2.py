@@ -10,9 +10,7 @@ frequencies = sp.get_frequency_list()
 sp1 = sp.conj_match_uncoupled2(inplace=0, noofiters=1)
 sp2 = sp.conj_match_uncoupled2(inplace=0, noofiters=50)
 
-gs, gl = sp.Z_conjmatch()
-zs=50.0*(1+gs)/(1-gs)
-zl=50.0*(1+gl)/(1-gl)
+zs, zl = sp.Z_conjmatch()
 zs1=sp1.prepare_ref_impedance_array(sp1.refimpedance)[0]
 zs2=sp2.prepare_ref_impedance_array(sp2.refimpedance)[0]
 zl1=sp1.prepare_ref_impedance_array(sp1.refimpedance)[1]

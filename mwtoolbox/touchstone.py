@@ -1,5 +1,6 @@
 #-*-coding:utf-8-*-
 # pragma pylint: disable=too-many-function-args
+from os import system
 import numpy as np
 from numpy.linalg import eig
 try:
@@ -20,10 +21,8 @@ from .genel import *
 from .myconstants import *
 import inspect
 import re
-
 from collections import defaultdict
 import mwtoolbox.transmission_lines as tlines
-
 fcoef={"HZ":1.0, "KHZ":1e3, "MHZ":1e6, "GHZ":1e9}
 
 def extract_rlgc(spr,length):
@@ -624,10 +623,6 @@ class spfile:
     def copy(self):
         return deepcopy(self)
 
-    def set_inplace(self, inplace):
-        self.inplace = inplace
-        return self
-
     def set_smatrix_type(self, smatrix_type):
         self.smatrix_type = smatrix_type
         return self
@@ -660,10 +655,6 @@ class spfile:
             freqs (list or ndarray): New frequency values
         """
         self.freqs=np.array(freqs)
-
-    # def set_data_format(self,data_format):
-    #     self.file_data_format=data_format
-    #     return self
 
     def port_numbers_from_names(self, *names):
         return [self.port_names.index(n)+1 if isinstance(n,str) else n for n in names]
@@ -737,8 +728,9 @@ class spfile:
             func (function, optional): function to be set. Defaults to None.
         """
         self.sparam_gen_func = func
-        for i,f in enumerate(self.freqs):
-            self.set_smatrix_at_frequency_point(i,func(f))
+        if func:
+            for i,f in enumerate(self.freqs):
+                self.set_smatrix_at_frequency_point(i,func(f))
 
     def set_sparam_mod_func(self,func = None):
         """This function is used to set the function that generates s-parameters from frequency.
@@ -773,7 +765,7 @@ class spfile:
             spfile: Modified spfile object
         """
         if inplace==-1: inplace=self.inplace
-        if inplace==0:  obj = deepcopy(self); obj.set_inplace(1)
+        if inplace==0:  obj = deepcopy(self); obj.inplace=1
         else:           obj = self
         sdata=obj.sdata # to speed-up
         new_sdata=deepcopy(sdata)
@@ -801,7 +793,7 @@ class spfile:
             spfile: Modified spfile object
         """
         if inplace==-1: inplace=self.inplace
-        if inplace==0:  obj = deepcopy(self); obj.set_inplace(1)
+        if inplace==0:  obj = deepcopy(self); obj.inplace=1
         else:           obj = self
         ns = len(obj.freqs)
         ps=obj.n_ports
@@ -1171,7 +1163,7 @@ class spfile:
             spfile: SPFILE object
         """
         from scipy.linalg import sqrtm
-        obj = deepcopy(self); obj.set_inplace(1)
+        obj = deepcopy(self); obj.inplace=1
         ns=len(obj.freqs)
         obj.tdata=np.zeros((ns,obj.n_ports**2),complex)
         for i in range(ns):
@@ -1183,7 +1175,7 @@ class spfile:
         obj.z_ok, obj.y_ok, obj.t_ok, obj.abcd_ok = False, False, False, False
         return obj
         # from scipy.linalg import sqrtm
-        # obj = deepcopy(self); obj.set_inplace(1)
+        # obj = deepcopy(self); obj.inplace=1
 
         # faz = np.pi+np.pi/180.0* self.S(i=2,j=1,data_format="UPHASE")
         # mag = self.S(i=2,j=1,data_format="MAG")
@@ -1201,7 +1193,7 @@ class spfile:
             spfile: Inverted 2-port spfile
         """
         if inplace==-1: inplace=self.inplace
-        if inplace==0:  obj = deepcopy(self); obj.set_inplace(1)
+        if inplace==0:  obj = deepcopy(self); obj.inplace=1
         else:           obj = self
         imp = obj.refimpedance[:]
         obj.change_ref_impedance(50.0)
@@ -1325,14 +1317,6 @@ class spfile:
         """
         self.port_names[i-1]=name
 
-    def set_port_names(self, names):
-        """Set port names with a list.
-
-        Args:
-            names(list): List of new names of the ports
-        """
-        self.port_names=names[:]
-
     def get_port_number_from_name(self,isim):
         """Index of first port index with name *isim*
 
@@ -1342,9 +1326,9 @@ class spfile:
         Returns:
             int: Port index if port is found, 0 otherwise
         """
-        if self.port_names.count(isim)>0:
+        try:
             return self.port_names.index(isim)+1
-        else:
+        except:
             return 0
 
     def gav(self,port1=1,port2=2, ZS=[], dB=True):
@@ -1444,7 +1428,6 @@ class spfile:
         else:
             return gain
 
-
     def conj_match_uncoupled(self,ports=[],inplace=-1, noofiters=50):
         """Sets the reference impedance for given ports as the complex conjugate of output impedance at each port.
         The ports are assumed to be uncoupled. Coupling is taken care of by doing the same operation multiple times.
@@ -1458,7 +1441,7 @@ class spfile:
             spfile object with new s-parameters
         """
         if inplace==-1: inplace=self.inplace
-        if inplace==0:  obj = deepcopy(self); obj.set_inplace(1)
+        if inplace==0:  obj = deepcopy(self); obj.inplace=1
         else:           obj = self
         if ports==[]:
             ports=list(range(1,self.n_ports+1))
@@ -1470,7 +1453,7 @@ class spfile:
         return obj
 
     def Z_conjmatch(self,port1=1,port2=2):
-        """Calculates source and load reflection coefficients for simultaneous conjugate match.
+        """Calculates source and load impedances for simultaneous conjugate match.
 
         Args:
             port1 (int, optional): [description]. Defaults to 1.
@@ -1481,7 +1464,8 @@ class spfile:
                 - GS: Reflection coefficient of Port-1 Impedance
                 - GL: Reflection coefficient of Port-2 Impedance
         """
-        s11,s12,s21,s22 = self.return_s2p(port1,port2)
+        obj = self.change_ref_impedance(50.0, 0)
+        s11,s12,s21,s22 = obj.return_s2p(port1,port2)
         D=s11*s22-s12*s21
         c1=s11-D*s22.conj()
         c2=s22-D*s11.conj()
@@ -1493,7 +1477,9 @@ class spfile:
         GL=b2/2/c2
         bool2=np.array([2*(cc>0)-1 for cc in b2])
         GL=GL-np.sqrt(b2**2-4*np.abs(c2)**2+0j)/2/c2*bool2
-        return (GS,GL)
+        ZS=50.0*(1+GS)/(1-GS)
+        ZL=50.0*(1+GL)/(1-GL)
+        return (ZS,ZL)
 
     def gt(self,port1=1,port2=2, ZS=[], ZL=[], dB=True):
         """This method calculates transducer gain (GT) from port1 to port2. Source and load impedances can be specified independently. If any one of them is not specified, current reference impedance is used for that port. Other ports are terminated by reference impedances. This calculation can also be done using impedance renormalization.
@@ -1568,6 +1554,8 @@ class spfile:
             return np.interp(freqs, self.freqs, np.real(data))+1j*np.interp(freqs, self.freqs, np.imag(data))
 
     def return_s2p(self,port1=1,port2=2):
+        """Return 2-port s-parameters tuple between port1- and port-2."""
+
         i21=(port1-1)*self.n_ports+(port2-1)
         i12=(port2-1)*self.n_ports+(port1-1)
         i11=(port1-1)*self.n_ports+(port1-1)
@@ -1637,7 +1625,7 @@ class spfile:
         """
         Znew=deepcopy(Znewinput)
         if inplace==-1: inplace=self.inplace
-        if inplace==0:  obj = deepcopy(self); obj.set_inplace(1)
+        if inplace==0:  obj = deepcopy(self); obj.inplace=1
         else:           obj = self
         if isinstance(Znew, (list,np.ndarray)):
             for i in range(len(Znew)):
@@ -1904,7 +1892,7 @@ class spfile:
             print("Network should be two-port")
             return None
         output = deepcopy(self)
-        output.set_inplace(1)
+        output.inplace = 1
         output.inverse_2port()
         return output
 
@@ -1931,7 +1919,7 @@ class spfile:
             print("Both networks should be two-port")
             return 0
         sonuc=deepcopy(self)
-        sonuc.set_inplace(1)
+        sonuc.inplace = 1
         refimp_port1 = sonuc.refimpedance[0]
         if len(sonuc.freqs)>len(SP2.freqs):
             print("Number of frequency points of first network is larger than second network's!")
@@ -1983,7 +1971,7 @@ class spfile:
             spfile: Passive network object
         """
         if inplace==-1: inplace=self.inplace
-        if inplace==0:  obj = deepcopy(self); obj.set_inplace(1)
+        if inplace==0:  obj = deepcopy(self); obj.inplace=1
         else:           obj = self
         frequencies=[] # frequency points at which the network is non-passive
         indices=[]    # frequency indices at which the network is non-passive
@@ -2179,7 +2167,7 @@ class spfile:
             spfile: New spfile object
         """
         if inplace==-1: inplace=self.inplace
-        if inplace==0:  obj = deepcopy(self); obj.set_inplace(1)
+        if inplace==0:  obj = deepcopy(self); obj.inplace=1
         else:           obj = self
         for i in range(len(conns)):
             k,m = conns[i]
@@ -2202,7 +2190,7 @@ class spfile:
             spfile: New spfile object
         """
         if inplace==-1: inplace=self.inplace
-        if inplace==0:  obj = deepcopy(self); obj.set_inplace(1)
+        if inplace==0:  obj = deepcopy(self); obj.inplace=1
         else:           obj = self
         k,m=min(k,m),max(k,m)
         newrefimpedance = list(obj.refimpedance[:k-1])+list(obj.refimpedance[k:m-1])+list(obj.refimpedance[m:])
@@ -2242,7 +2230,7 @@ class spfile:
             spfile: New *spfile* object
         """
         if inplace==-1: inplace=self.inplace
-        if inplace==0:  obj = deepcopy(self); obj.set_inplace(1)
+        if inplace==0:  obj = deepcopy(self); obj.inplace=1
         else:           obj = self
         ideal3port = spfile(freqs=obj.freqs,n_ports=3)
         ideal3port.set_smatrix_at_frequency_point(range(len(ideal3port.freqs)),network.idealNport(3))
@@ -2267,7 +2255,7 @@ class spfile:
             spfile: Connected network
         """
         if inplace==-1: inplace=self.inplace
-        if inplace==0:  obj = deepcopy(self); obj.set_inplace(1)
+        if inplace==0:  obj = deepcopy(self); obj.inplace=1
         else:           obj = self
         ideal3port = spfile(freqs=obj.freqs,n_ports=3)
         ideal3port.set_smatrix_at_frequency_point(list(range(len(ideal3port.freqs))),network.idealNport(3))
@@ -2294,7 +2282,7 @@ class spfile:
             spfile: Connected network
         """
         if inplace==-1: inplace=self.inplace
-        if inplace==0:  obj = deepcopy(self); obj.set_inplace(1)
+        if inplace==0:  obj = deepcopy(self); obj.inplace=1
         else:           obj = self
         newrefimpedance=list(obj.refimpedance[:k-1])+list(obj.refimpedance[k:])+list(EX.refimpedance[:m-1])+list(EX.refimpedance[m:])
         newgammas=list(obj.gammas[:k-1])+list(obj.gammas[k:])+list(EX.gammas[:m-1])+list(EX.gammas[m:])
@@ -2357,7 +2345,7 @@ class spfile:
             spfile: object with noisy data
         """
         if inplace==-1: inplace=self.inplace
-        if inplace==0:  obj = deepcopy(self); obj.set_inplace(1)
+        if inplace==0:  obj = deepcopy(self); obj.inplace=1
         else:           obj = self
         n=obj.n_ports**2
         ynew=[]
@@ -2385,7 +2373,7 @@ class spfile:
             spfile: Network object with smooth data
         """
         if inplace==-1: inplace=self.inplace
-        if inplace==0:  obj = deepcopy(self); obj.set_inplace(1)
+        if inplace==0:  obj = deepcopy(self); obj.inplace=1
         else:           obj = self
         n=obj.n_ports**2
         ynew=[]
@@ -2413,7 +2401,7 @@ class spfile:
             spfile: Network object with smooth data
         """
         if inplace==-1: inplace=self.inplace
-        if inplace==0:  obj = deepcopy(self); obj.set_inplace(1)
+        if inplace==0:  obj = deepcopy(self); obj.inplace=1
         else:           obj = self
         n=obj.n_ports**2
         frequencies=self.freqs
@@ -2654,7 +2642,7 @@ class spfile:
             spfile: De-embedded spfile
         """
         if inplace==-1: inplace=self.inplace
-        if inplace==0:  obj = deepcopy(self); obj.set_inplace(1)
+        if inplace==0:  obj = deepcopy(self); obj.inplace=1
         else:           obj = self
         ps = obj.n_ports
 
@@ -2793,7 +2781,7 @@ class spfile:
             spfile: spfile object with new frequency points.
         """
         if inplace==-1: inplace=self.inplace
-        if inplace==0:  obj = deepcopy(self); obj.set_inplace(1)
+        if inplace==0:  obj = deepcopy(self); obj.inplace=1
         else:           obj = self
         if not fstart:
             fstart=obj.freqs[0]*0.999999
@@ -2826,7 +2814,7 @@ class spfile:
             spfile: spfile object with new frequency points.
         """
         if inplace==-1: inplace=self.inplace
-        if inplace==0:  obj = deepcopy(self); obj.set_inplace(1)
+        if inplace==0:  obj = deepcopy(self); obj.inplace=1
         else:           obj = self
         if isinstance(frequencies, list):
             frequencies = np.ndarray(frequencies)

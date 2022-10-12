@@ -171,7 +171,7 @@ def s2t(M):
     s11, s12, s21, s22 = M[0, 0], M[0, 1], M[1, 0], M[1, 1]
     delta=s11*s22-s12*s21
     return np.matrix([[ -delta/s21,  s11/s21], [-s22/s21,  1./s21]])
-    
+
 def s2t_list(M):
     """
     S-Parameters to Transfer scattering parameters conversion
@@ -239,7 +239,7 @@ def abcd2t(M, Zo=50.0):
     ABCD parameters to T - Parameters conversion
 
     ABCD: [V1 I1]=ABCD*[V2 -I2]
-    Pseudo-Wave or Power-Wave? Don't use.
+    Pseudo-Wave or Power-Wave? Don't use for complex impedances.
     """
     X = abcd2s(M, Zo)
     return s2t(M)
