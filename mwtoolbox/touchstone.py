@@ -35,7 +35,7 @@ def extract_rlgc(spr,length):
     Returns:
         tuple: tuple of two complex numpy arrays (Inductance per unit length, Characteristic impedance of the line).
     """
-    freqs = np.array(spr.freqs)
+    freqs = np.aray(spr.freqs)
     spr.s2abcd()
     spr.s2t()
     T11=np.array(spr.tdata[:,0])
