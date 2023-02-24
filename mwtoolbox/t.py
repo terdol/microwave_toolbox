@@ -95,7 +95,7 @@ def generate_multiport_spfile( conf_filename, output_filename ):
         i,j ? filename ? is, js
         meaning:
         S(is,js) of touchstone file filename is S(i,j) of output_filename
-    
+
     Args:
         conf_filename(str): Name of the configuration filename.
         output_filename(str): Name of the output filename.
@@ -1217,7 +1217,7 @@ class spfile:
         self.abcddata = abcddata
         return abcddata
 
-    def input_impedance( self, k ):
+    def z_in( self, k ):
         """Input impedance at port k. All ports are terminated with reference impedances.
 
         Args:
@@ -1439,7 +1439,7 @@ class spfile:
         for _ in range( noofiters ):
             imp = list( obj.refimpedance )
             for p in ports:
-                imp[ p - 1 ] = np.conj( obj.input_impedance( p ) )
+                imp[ p - 1 ] = np.conj( obj.z_in( p ) )
             obj.change_ref_impedance( imp )
         return obj
 
@@ -2629,7 +2629,7 @@ class spfile:
         Args:
             quantity (float or list): Quantity to be deembedded.
                 - If a number is given, it is used for all frequencies and ports
-                - If a list is given, if its size is 1, its element is used for all ports. If its size is equal to number of ports, the list is used for all frequencies. 
+                - If a list is given, if its size is 1, its element is used for all ports. If its size is equal to number of ports, the list is used for all frequencies.
                 Otherwise its size should be equal to the number of frequencies. If an element of list is number, it is used for all ports. If an element of the list is also a list, the elements size should be same as the number of ports.
             ports (list, optional): List of port numbers to be deembedded. If not given all ports are deembedded.
             kind (string, optional): One of the following values, "degrees", "radians", "length" and "delay". Defaults to "degrees".

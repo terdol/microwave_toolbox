@@ -104,24 +104,24 @@ def tline_lossy(Zo, gamma):
     """
     return np.matrix([[np.cosh(gamma), Zo * np.sinh(gamma)], [1.0/Zo * np.sinh(gamma), np.cosh(gamma)]])
 
-
 def tline_list(Zo, theta):
     """
     ABCD parameters of ideal transmission line,  theta = radian
     """
     return tuple([np.cos(theta), 1.0j * Zo * np.sin(theta), 1.0j/Zo * np.sin(theta), np.cos(theta)])
 
-
 def transformer(N):
     """
     ABCD parameters of ideal transformer (1:N)
     """
-    return np.matrix([[1./N, 0], [0, N]])
+    return np.matrix([[1./N, 0], [0, N]]
+                     )
 def t_network(Zs1, Zp, Zs2):
     """
     ABCD parameters of Tee network
     """
     return np.matrix([[1 + Zs1/Zp, Zs1 + Zs2 + Zs1 * Zs2/Zp], [1./Zp, 1. + Zs2/Zp]])
+
 def pi_network(Zp1, Zs, Zp2):
     """
     ABCD parameters of Pi network
@@ -130,7 +130,7 @@ def pi_network(Zp1, Zs, Zp2):
 
 def abcd2y(M):
     """
-    ABCD parameters to Y - Parameters conversion
+    ABCD parameters to Y-Parameters conversion
     """
     a, b, c, d = M[0, 0], M[0, 1], M[1, 0], M[1, 1]
     return np.matrix([[d/b, (b * c - a * d)/b], [ -1./b, a/b]])
@@ -220,7 +220,7 @@ def abcd2s_list(M, Zo=50.0):
     s22 = (( - a + b/Zo - c * Zo + d)/(a + b/Zo + c * Zo + d))
     return [s11, s12, s21, s22]
 
-def s2abcd(M, Z=[50.0, 50.0]):
+def s2abcd(M, Z=(50.0, 50.0)):
     """
     S-Parameters to ABCD parameters conversion
     Valid for real Z values
@@ -251,7 +251,7 @@ def abcd_change_ports(M):
     M = M.I
     np.matrix([[M[0, 0],  - M[0, 1]], [ - M[1, 0], M[1, 1]]])
 
-def t2abcd(M, Z=[50.0,50.0]):
+def t2abcd(M, Z=(50.0,50.0)):
     """
     T-parameters to ABCD parameters conversion
     """

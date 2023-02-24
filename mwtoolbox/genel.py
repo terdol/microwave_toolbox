@@ -39,7 +39,7 @@ pq.microinch = pq.UnitQuantity('microinch', pq.inch / 1e6, symbol='microinch')
 pq.dB = pq.UnitQuantity('dB', pq.dimensionless, symbol='dB')
 
 def ekpolyfit(x):
-    #polynomial fit for ellipk function. works from 0 to 0.98 with good accuracy.
+    """Polynomial fit for ellipk function. works from 0 to 0.98 with good accuracy."""
     p1 =       36.94
     p2 =        -114
     p3 =       148.9
@@ -331,7 +331,7 @@ def stripunit(sayi):
     return float(number)
 
 # @lru_cache did not work with arguments of type list since lists are not hashable
-def convert2pq(sayilar, defaultunits=[]):
+def convert2pq(sayilar, defaultunits=None):
     """
     Method to convert a string or string list to float after unit conversion to SI
     Units are extracted from strings.
@@ -344,7 +344,7 @@ def convert2pq(sayilar, defaultunits=[]):
         return [float(sayilar)]
     if isinstance(sayilar, str):
         sayilar = [sayilar]
-    if len(defaultunits)==0:
+    if not defaultunits:
         defaultunits=[""]*len(sayilar)
     if isinstance(defaultunits, str):
         defaultunits = [defaultunits]
@@ -356,8 +356,8 @@ def convert2pq(sayilar, defaultunits=[]):
     elif (convert2pq.sayilar == sayilar) and convert2pq.defaultunits == defaultunits:
         return convert2pq.sonuc
 
-    
-    
+
+
 
 #    if not hasattr(convert2pq, "regex"):
          # make regex static variable, did not provide any performance advantage
@@ -409,7 +409,7 @@ def convert2pq(sayilar, defaultunits=[]):
             else: # sonuc = None
                 print("None input is detected and assumed to be 0!")
                 sonuclar.append(0.0)
-                
+
     convert2pq.sonuc = deepcopy(sonuclar)
     convert2pq.sayilar = deepcopy(sayilar)
     convert2pq.defaultunits=deepcopy(defaultunits)
@@ -466,7 +466,7 @@ def heatmap(data, row_labels, col_labels, ax=None,
                    cmap="YlGn", cbarlabel="harvest [t/year]")
     texts = annotate_heatmap(im, valfmt="{x:.1f} t")
     """
-
+    import matplotlib.pyplot as plt
     if not ax:
         ax = plt.gca()
 
@@ -535,6 +535,7 @@ def annotate_heatmap(im, data=None, valfmt="{x:.2f}",
                    cmap="YlGn", cbarlabel="harvest [t/year]")
     texts = annotate_heatmap(im, valfmt="{x:.1f} t")
     """
+    import matplotlib
 
     if not isinstance(data, (list, np.ndarray)):
         data = im.get_array()
@@ -573,7 +574,8 @@ def smooth(x, window_len=11, window='hanning'):
     The signal is prepared by introducing reflected copies of the signal
     (with the window size) in both ends so that transient parts are minimized
     in the begining and end part of the output signal.
-    input:
+
+    Args:
         x: the input signal
         window_len: the dimension of the smoothing window; should be an odd integer
         window: either
@@ -581,15 +583,17 @@ def smooth(x, window_len=11, window='hanning'):
                 or
                     the type of window from 'flat', 'hanning', 'hamming', 'bartlett', 'blackman'
             flat window will produce a moving average smoothing.
-    output:
+
+    Returns:
         the smoothed signal
-    example:
-    t=linspace(-2,2,0.1)
-    x=sin(t)+randn(len(t))*0.1
-    y=smooth(x)
-    see also:
-    numpy.hanning, numpy.hamming, numpy.bartlett, numpy.blackman, numpy.convolve
-    scipy.signal.lfilter
+
+    Example:
+        t=linspace(-2,2,0.1)
+        x=sin(t)+randn(len(t))*0.1
+        y=smooth(x)
+        see also:
+        numpy.hanning, numpy.hamming, numpy.bartlett, numpy.blackman, numpy.convolve
+        scipy.signal.lfilter
 
     """
 
@@ -784,4 +788,3 @@ if __name__ == "__main__":
     # print convert2pq([10.0], defaultunits=["MHz"])
     # print convert2pq([100.0], defaultunits=["MHz"])
     pass
-

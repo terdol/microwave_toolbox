@@ -31,7 +31,7 @@ eta0 = free_space_wave_impedance.simplified.magnitude
 mu0 = free_space_permeability.simplified.magnitude
 eps0 = free_space_permittivity.simplified.magnitude
 
-def Zo_eeff_WireOnGroundedSubstrate(arg, defaultunits=[]):
+def Zo_eeff_WireOnGroundedSubstrate(arg, defaultunits=None):
     """ Impedance and Effective Permittivity of Straight Wire Over Substrate.
 
     Args:
@@ -50,7 +50,7 @@ def Zo_eeff_WireOnGroundedSubstrate(arg, defaultunits=[]):
     Returns:
         list: arg
     """
-    if len(defaultunits) == 0:
+    if not defaultunits:
         defaultunits = [""] * len(arg) * 2
     arg = arg[:3]
     newargs = convert2pq(arg, defaultunits)
@@ -63,7 +63,7 @@ def Zo_eeff_WireOnGroundedSubstrate(arg, defaultunits=[]):
     return arg
 
 
-def L_StraightRoundWire(arg, defaultunits=[]):
+def L_StraightRoundWire(arg, defaultunits=None):
     """ Inductance of a straight round wire.
 
     Args:
@@ -84,7 +84,7 @@ def L_StraightRoundWire(arg, defaultunits=[]):
         list: arg
     """
 
-    if len(defaultunits) == 0:
+    if not defaultunits:
         defaultunits = [""] * len(arg) * 2
     arg = arg[:5]
     newargs = convert2pq(arg, defaultunits)
@@ -102,7 +102,7 @@ def L_StraightRoundWire(arg, defaultunits=[]):
     return arg
 
 
-def Zo_eeff_StraightWireOverSubstrate(arg, defaultunits=[]):
+def Zo_eeff_StraightWireOverSubstrate(arg, defaultunits=None):
     """ Impedance and Effective Permittivity of Straight Wire Over Substrate.
 
     Args:
@@ -121,7 +121,7 @@ def Zo_eeff_StraightWireOverSubstrate(arg, defaultunits=[]):
     Returns:
         list: arg
     """
-    if len(defaultunits) == 0:
+    if not defaultunits:
         defaultunits = [""] * len(arg) * 2
     arg = arg[:4]
     newargs = convert2pq(arg, defaultunits)
@@ -135,7 +135,7 @@ def Zo_eeff_StraightWireOverSubstrate(arg, defaultunits=[]):
     return arg
 
 
-def L_StraightFlatWire(arg, defaultunits=[]):
+def L_StraightFlatWire(arg, defaultunits=None):
     """ Inductance of a flat wire.
 
     Args:
@@ -156,7 +156,7 @@ def L_StraightFlatWire(arg, defaultunits=[]):
     Returns:
         list: arg
     """
-    if len(defaultunits) == 0:
+    if not defaultunits:
         defaultunits = [""] * len(arg) * 2
     arg = arg[:6]
     newargs = convert2pq(arg, defaultunits)
@@ -174,7 +174,7 @@ def L_StraightFlatWire(arg, defaultunits=[]):
     return arg
 
 
-def L_microstrip_via_hole(arg, defaultunits=[]):
+def L_microstrip_via_hole(arg, defaultunits=None):
     """ Inductance of a via hole in microstrip.
 
     Args:
@@ -190,7 +190,7 @@ def L_microstrip_via_hole(arg, defaultunits=[]):
     Returns:
         list: arg
     """
-    if len(defaultunits) == 0:
+    if not defaultunits:
         defaultunits = [""] * len(arg) * 2
     arg = arg[:2]
     newargs = convert2pq(arg, defaultunits)
@@ -202,7 +202,7 @@ def L_microstrip_via_hole(arg, defaultunits=[]):
     return arg
 
 
-def L_air_core_coil(arg, defaultunits=[]):
+def L_air_core_coil(arg, defaultunits=None):
     """ Inductance of a via hole in microstrip.
 
     Args:
@@ -221,7 +221,7 @@ def L_air_core_coil(arg, defaultunits=[]):
     Returns:
         list: arg
     """
-    if len(defaultunits) == 0:
+    if not defaultunits:
         defaultunits = [""] * len(arg) * 2
     arg = arg[:4]
     newargs = convert2pq(arg, defaultunits)
@@ -240,7 +240,7 @@ def L_air_core_coil(arg, defaultunits=[]):
     return arg
 
 
-def L_BondWire(arg, defaultunits=[]):
+def L_BondWire(arg, defaultunits=None):
     """ Inductance of a bond wire.
 
     Args:
@@ -258,7 +258,7 @@ def L_BondWire(arg, defaultunits=[]):
     Returns:
         list: arg
     """
-    if len(defaultunits) == 0:
+    if not defaultunits:
         defaultunits = [""] * len(arg) * 2
     arg = arg[:4]
     newargs = convert2pq(arg, defaultunits)
@@ -274,7 +274,7 @@ def L_BondWire(arg, defaultunits=[]):
     return arg
 
 
-def Chebyshev_QWave_Impedance_Transformer(arg, defaultunits=[]):
+def Chebyshev_QWave_Impedance_Transformer(arg, defaultunits=None):
     """ Chebyshev Quarter Wave Impedance Transformer.
 
     Args:
@@ -295,7 +295,7 @@ def Chebyshev_QWave_Impedance_Transformer(arg, defaultunits=[]):
     Returns:
         list: arg
     """
-    if len(defaultunits) == 0:
+    if not defaultunits:
         defaultunits = [""] * len(arg) * 2
     arg = arg[:6]
     newargs = convert2pq(arg, defaultunits)
@@ -350,7 +350,7 @@ def Chebyshev_QWave_Impedance_Transformer(arg, defaultunits=[]):
     return arg
 
 
-def Binomial_QWave_Impedance_Transformer(arg, defaultunits=[]):
+def Binomial_QWave_Impedance_Transformer(arg, defaultunits=None):
     """ Binomial Quarter Wave Impedance Transformer.
 
     Args:
@@ -370,7 +370,7 @@ def Binomial_QWave_Impedance_Transformer(arg, defaultunits=[]):
     Returns:
         list: arg
     """
-    if len(defaultunits) == 0:
+    if not defaultunits:
         defaultunits = [""] * len(arg) * 2
     arg = arg[:5]
     newargs = convert2pq(arg, defaultunits)
@@ -394,7 +394,7 @@ def Binomial_QWave_Impedance_Transformer(arg, defaultunits=[]):
     return arg
 
 
-def Tee_Attenuator_Synthesis(arg, defaultunits=[]):
+def Tee_Attenuator_Synthesis(arg, defaultunits=None):
     """ Tee Attenuator Synthesis.
 
     Args:
@@ -415,7 +415,7 @@ def Tee_Attenuator_Synthesis(arg, defaultunits=[]):
     Returns:
         list: arg
     """
-    if len(defaultunits) == 0:
+    if not defaultunits:
         defaultunits = [""] * len(arg) * 2
     arg = arg[:5]
     newargs = convert2pq(arg, defaultunits)
@@ -428,7 +428,7 @@ def Tee_Attenuator_Synthesis(arg, defaultunits=[]):
     return arg
 
 
-def Tee_Attenuator_Analysis(arg, defaultunits=[]):
+def Tee_Attenuator_Analysis(arg, defaultunits=None):
     """ Tee Attenuator Analysis.
 
     Args:
@@ -449,7 +449,7 @@ def Tee_Attenuator_Analysis(arg, defaultunits=[]):
     Returns:
         list: arg
     """
-    if len(defaultunits) == 0:
+    if not defaultunits:
         defaultunits = [""] * len(arg) * 3
     arg = arg[:3]
     newargs = convert2pq(arg, defaultunits)
@@ -469,7 +469,7 @@ def Tee_Attenuator_Analysis(arg, defaultunits=[]):
     return arg
 
 
-def Pi_Attenuator_Synthesis(arg, defaultunits=[]):
+def Pi_Attenuator_Synthesis(arg, defaultunits=None):
     """ Pi Attenuator Analysis.
 
     Args:
@@ -490,7 +490,7 @@ def Pi_Attenuator_Synthesis(arg, defaultunits=[]):
     Returns:
         list: arg
     """
-    if len(defaultunits) == 0:
+    if not defaultunits:
         defaultunits = [""] * len(arg) * 2
     arg = arg[:5]
     newargs = convert2pq(arg, defaultunits)
@@ -504,7 +504,7 @@ def Pi_Attenuator_Synthesis(arg, defaultunits=[]):
     return arg
 
 
-def Pi_Attenuator_Analysis(arg, defaultunits=[]):
+def Pi_Attenuator_Analysis(arg, defaultunits=None):
     """ Pi Attenuator Analysis.
 
     Args:
@@ -525,7 +525,7 @@ def Pi_Attenuator_Analysis(arg, defaultunits=[]):
     Returns:
         list: arg
     """
-    if len(defaultunits) == 0:
+    if not defaultunits:
         defaultunits = [""] * len(arg) * 3
     arg = arg[:3]
     newargs = convert2pq(arg, defaultunits)
@@ -548,7 +548,7 @@ def Pi_Attenuator_Analysis(arg, defaultunits=[]):
     return arg
 
 
-def Bridged_Tee_Attenuator_Synthesis(arg, defaultunits=[]):
+def Bridged_Tee_Attenuator_Synthesis(arg, defaultunits=None):
     """ Bridged Tee Attenuator Synthesis.
 
     Args:
@@ -566,7 +566,7 @@ def Bridged_Tee_Attenuator_Synthesis(arg, defaultunits=[]):
     Returns:
         list: arg
     """
-    if len(defaultunits) == 0:
+    if not defaultunits:
         defaultunits = [""] * len(arg) * 2
     arg = arg[:5]
     newargs = convert2pq(arg, defaultunits)
@@ -579,7 +579,7 @@ def Bridged_Tee_Attenuator_Synthesis(arg, defaultunits=[]):
     return arg
 
 
-def Bridged_Tee_Attenuator_Analysis(arg, defaultunits=[]):
+def Bridged_Tee_Attenuator_Analysis(arg, defaultunits=None):
     """ Bridged Tee Attenuator Analysis.
 
     Args:
@@ -597,7 +597,7 @@ def Bridged_Tee_Attenuator_Analysis(arg, defaultunits=[]):
     Returns:
         list: arg
     """
-    if len(defaultunits) == 0:
+    if not defaultunits:
         defaultunits = [""] * len(arg) * 2
     arg = arg[:3]
     newargs = convert2pq(arg, defaultunits)
@@ -617,7 +617,7 @@ def Bridged_Tee_Attenuator_Analysis(arg, defaultunits=[]):
     return arg
 
 
-def DualFrequencyTransformer(arg, defaultunits=[]):
+def DualFrequencyTransformer(arg, defaultunits=None):
     """ Dual Frequency Transformer.
 
     Args:
@@ -637,7 +637,7 @@ def DualFrequencyTransformer(arg, defaultunits=[]):
     Returns:
         list: arg
     """
-    if len(defaultunits) == 0:
+    if not defaultunits:
         defaultunits = [""] * len(arg) * 2
     arg = arg[:4]
     newargs = convert2pq(arg, defaultunits)
@@ -652,7 +652,7 @@ def DualFrequencyTransformer(arg, defaultunits=[]):
                  for i in range(len(argout))]
     return arg
 
-def SymmetricLangeCoupler(arg, defaultunits=[]):
+def SymmetricLangeCoupler(arg, defaultunits=None):
     """ Symmetric Lange Coupler.
 
     Args:
@@ -670,7 +670,7 @@ def SymmetricLangeCoupler(arg, defaultunits=[]):
     Returns:
         list: arg
     """
-    if len(defaultunits) == 0:
+    if not defaultunits:
         defaultunits = [""] * len(arg) * 2
     arg = arg[:3]
     newargs = convert2pq(arg, defaultunits)
@@ -689,7 +689,7 @@ def SymmetricLangeCoupler(arg, defaultunits=[]):
     return arg
 
 
-def AWG2Dia(arg, defaultunits=[]):
+def AWG2Dia(arg, defaultunits=None):
     """ Convert AWG to Diameter.
     Reference:  Wikipedia, Current rating is calculated through curve fit from online data.
 
@@ -705,7 +705,7 @@ def AWG2Dia(arg, defaultunits=[]):
     Returns:
         list: arg
     """
-    if len(defaultunits) == 0:
+    if not defaultunits:
         defaultunits = [""] * len(arg) * 2
     arg = arg[:1]
     newargs = convert2pq(arg, defaultunits)
@@ -720,7 +720,7 @@ def AWG2Dia(arg, defaultunits=[]):
     return arg
 
 
-def Dia2AWG(arg, defaultunits=[]):
+def Dia2AWG(arg, defaultunits=None):
     """ Convert Diameter to AWG.
     Reference:  Wikipedia
 
@@ -736,7 +736,7 @@ def Dia2AWG(arg, defaultunits=[]):
     Returns:
         list: arg
     """
-    if len(defaultunits) == 0:
+    if not defaultunits:
         defaultunits = [""] * len(arg) * 2
     arg = arg[:2]
     newargs = convert2pq(arg, defaultunits)
@@ -750,7 +750,7 @@ def Dia2AWG(arg, defaultunits=[]):
     return arg
 
 
-def PCBTrackCurrentCapacityIPC(arg, defaultunits=[]):
+def PCBTrackCurrentCapacityIPC(arg, defaultunits=None):
     """ PCB Track Current Capacity, IPC.
     Reference: IPC2221A
 
@@ -768,7 +768,7 @@ def PCBTrackCurrentCapacityIPC(arg, defaultunits=[]):
     Returns:
         list: arg
     """
-    if len(defaultunits) == 0:
+    if not defaultunits:
         defaultunits = [""] * len(arg) * 2
     arg = arg[:4]
     newargs = convert2pq(arg, defaultunits)
@@ -780,7 +780,7 @@ def PCBTrackCurrentCapacityIPC(arg, defaultunits=[]):
     return arg
 
 
-def PCBTrackCurrentCapacity(arg, defaultunits=[]):
+def PCBTrackCurrentCapacity(arg, defaultunits=None):
     """ PCB Track Current Capacity.
 
     Args:
@@ -800,7 +800,7 @@ def PCBTrackCurrentCapacity(arg, defaultunits=[]):
     Returns:
         list: arg
     """
-    if len(defaultunits) == 0:
+    if not defaultunits:
         defaultunits = [""] * len(arg) * 2
     arg = arg[:7]
     newargs = convert2pq(arg, defaultunits)
@@ -812,7 +812,7 @@ def PCBTrackCurrentCapacity(arg, defaultunits=[]):
     return arg
 
 
-def OptimumMitered90DegMicrostripBend(arg, defaultunits=[]):
+def OptimumMitered90DegMicrostripBend(arg, defaultunits=None):
     """ Optimum Mitered Microstrip Bend Parameters.
     Reference: Tranmission line design handbook, p.290
 
@@ -828,7 +828,7 @@ def OptimumMitered90DegMicrostripBend(arg, defaultunits=[]):
     Returns:
         list: arg
     """
-    if len(defaultunits) == 0:
+    if not defaultunits:
         defaultunits = [""] * len(arg) * 2
     arg = arg[:2]
     newargs = convert2pq(arg, defaultunits)
@@ -841,7 +841,7 @@ def OptimumMitered90DegMicrostripBend(arg, defaultunits=[]):
     return arg
 
 
-def OptimumMiteredArbitraryAngleMicrostripBend(arg, defaultunits=[]):
+def OptimumMiteredArbitraryAngleMicrostripBend(arg, defaultunits=None):
     r""" Optimum Mitered Microstrip Bend Parameters.
     Reference: MWOHELP, MBENDA model
 
@@ -860,7 +860,7 @@ def OptimumMiteredArbitraryAngleMicrostripBend(arg, defaultunits=[]):
     Returns:
         list: arg
     """
-    if len(defaultunits) == 0:
+    if not defaultunits:
         defaultunits = [""] * len(arg) * 2
     arg = arg[:3]
     newargs = convert2pq(arg, defaultunits)
@@ -890,7 +890,7 @@ def OptimumMiteredArbitraryAngleMicrostripBend(arg, defaultunits=[]):
     return arg
 
 
-def Interference_Phase_Amp_Error(arg, defaultunits=[]):
+def Interference_Phase_Amp_Error(arg, defaultunits=None):
     r""" Maximum phase and amplitude variation of a signal in presence of an interfering signal.
 
     Args:
@@ -905,7 +905,7 @@ def Interference_Phase_Amp_Error(arg, defaultunits=[]):
     Returns:
         list: arg
     """
-    if len(defaultunits) == 0:
+    if not defaultunits:
         defaultunits = [""] * len(arg) * 2
     arg = arg[:1]
     newargs = convert2pq(arg, defaultunits)
@@ -916,7 +916,7 @@ def Interference_Phase_Amp_Error(arg, defaultunits=[]):
     return arg
 
 
-def ParallelPlateCap(arg, defaultunits=[]):
+def ParallelPlateCap(arg, defaultunits=None):
     """ Parallel Plate Capacitance.
 
     Args:
@@ -935,20 +935,25 @@ def ParallelPlateCap(arg, defaultunits=[]):
     Returns:
         list: arg
     """
-    if len(defaultunits) == 0:
+    if not defaultunits:
         defaultunits = [""] * len(arg) * 2
     arg = arg[:5]
     newargs = convert2pq(arg, defaultunits)
     w, l, h, er, freq = tuple(newargs)
     cap = er * eps0 * w * l / h
-    cap += er * eps0 * w / np.pi * ( np.log(2 * np.pi * l / h) + 1) # Correction for edges, Ref: Edge corrections for parallel-plate capacitors (Ehud Yariv)
-    cap += er * eps0 * l / np.pi * ( np.log(2 * np.pi * w / h) + 1)
+
+    # Correction for edges, Ref: Edge corrections for parallel-plate capacitors (Ehud Yariv)
+    corr = eps0 * w / np.pi * ( np.log(2 * np.pi * l / h) + 1) + eps0 * l / np.pi * ( np.log(2 * np.pi * w / h) + 1)
+    # Surrounding space is assumed to be vacuum. If it is dielectric, corr should be multiplied by er.
+
+    cap += corr
+
     impedance = 1.0 / (2.0 * np.pi * freq * cap)
     arg.extend([prettystring(cap, defaultunits[5]),prettystring(impedance, defaultunits[6])])
     return arg
 
 
-def CircularPlateCap(arg, defaultunits=[]):
+def CircularPlateCap(arg, defaultunits=None):
     """ Circular Plate Capacitance.
 
     Args:
@@ -966,7 +971,7 @@ def CircularPlateCap(arg, defaultunits=[]):
     Returns:
         list: arg
     """
-    if len(defaultunits) == 0:
+    if not defaultunits:
         defaultunits = [""] * len(arg) * 2
     arg = arg[:4]
     newargs = convert2pq(arg, defaultunits)
@@ -977,7 +982,7 @@ def CircularPlateCap(arg, defaultunits=[]):
     return arg
 
 
-def Shorten90DegreeLine(arg, defaultunits=[]):
+def Shorten90DegreeLine(arg, defaultunits=None):
     """ Shortening 90 Degree Line with a capacitive load.
 
     Args:
@@ -994,7 +999,7 @@ def Shorten90DegreeLine(arg, defaultunits=[]):
     Returns:
         list: arg
     """
-    if len(defaultunits) == 0:
+    if not defaultunits:
         defaultunits = [""] * len(arg) * 2
     arg = arg[:3]
     newargs = convert2pq(arg, defaultunits)
@@ -1020,7 +1025,7 @@ def Z_WG_TE10(er, a, b, freq, formulation=1):
     return imp
 
 
-def HomogeneousRectWaveguideParameters_TE(arg, defaultunits=[]):
+def HomogeneousRectWaveguideParameters_TE(arg, defaultunits=None):
     """ Homogeneous Rectangular Waveguide Parameters.
     Reference:  Marcuvitz Waveguide Handbook s.253
 
@@ -1043,7 +1048,7 @@ def HomogeneousRectWaveguideParameters_TE(arg, defaultunits=[]):
             14. Lambda_Guided;length
             15. Impedance; impedance
             16. Electrical Length; angle
-            17. Group Velocity; 
+            17. Group Velocity;
             17. Group Delay; time
 
         defaultunits(list, optional): Default units for quantities in *arg* list. Default is [] which means SI units will be used if no unit is given in *arg*.
@@ -1122,7 +1127,7 @@ def HomogeneousRectWaveguideParameters_TE(arg, defaultunits=[]):
     return arg
 
 
-def InductivePostInWaveguide(arg, defaultunits=[]):
+def InductivePostInWaveguide(arg, defaultunits=None):
     """ Inductive Post In Waveguide.
 
     Args:
@@ -1144,7 +1149,7 @@ def InductivePostInWaveguide(arg, defaultunits=[]):
     Returns:
         list: arg
     """
-    if len(defaultunits) == 0:
+    if not defaultunits:
         defaultunits = [""] * len(arg) * 2
     arg = arg[:6]
     newargs = convert2pq(arg, defaultunits)
@@ -1205,7 +1210,7 @@ def InductivePostInWaveguide(arg, defaultunits=[]):
     return arg
 
 
-def InductiveWindowInWaveguide(arg, defaultunits=[]):
+def InductiveWindowInWaveguide(arg, defaultunits=None):
     """ Waveguide Width Step from Rectangular Waveguide to Evanescent Mode Rectangular Waveguide.
     Reference:  Marcuvitz Waveguide Handbook s.253
 
@@ -1227,7 +1232,7 @@ def InductiveWindowInWaveguide(arg, defaultunits=[]):
     Returns:
         list: arg
     """
-    if len(defaultunits) == 0:
+    if not defaultunits:
         defaultunits = [""] * len(arg) * 2
     arg = arg[:6]
     newargs = convert2pq(arg, defaultunits)
@@ -1275,7 +1280,7 @@ def InductiveWindowInWaveguide(arg, defaultunits=[]):
     return arg
 
 
-def EvanescentWGEquivalent(arg, defaultunits=[]):
+def EvanescentWGEquivalent(arg, defaultunits=None):
     """ Waveguide Width Step from Rectangular Waveguide to Evanescent Mode Rectangular Waveguide.
     Reference:  The Design of Evanescent Mode Waveguide Bandpass Filters for a Prescribed Insertion Loss Characteristic.pdf
             Model= Xp1,Xs1,Xp1 ya da Xs2,Xp2,Xs2 (p: shunt, s: series)
@@ -1300,7 +1305,7 @@ def EvanescentWGEquivalent(arg, defaultunits=[]):
     Returns:
         list: arg
     """
-    if len(defaultunits) == 0:
+    if not defaultunits:
         defaultunits = [""] * len(arg) * 2
     arg = arg[:5]
     newargs = convert2pq(arg, defaultunits)
@@ -1388,7 +1393,7 @@ def RectWG2EvanescentRectWGStep(a1, a2):
     Returns:
         list: arg
     """
-    if len(defaultunits) == 0:
+    if not defaultunits:
         defaultunits = [""] * len(arg) * 2
     arg = arg[:2]
     newargs = convert2pq(arg, defaultunits)
@@ -1401,7 +1406,7 @@ def RectWG2EvanescentRectWGStep(a1, a2):
     return arg
 
 
-def Star2TriangleTransformation(arg, defaultunits=[]):
+def Star2TriangleTransformation(arg, defaultunits=None):
     """ Star network to Triangle network transformation.
 
     Args:
@@ -1422,7 +1427,7 @@ def Star2TriangleTransformation(arg, defaultunits=[]):
     Returns:
         list: arg
     """
-    if len(defaultunits) == 0:
+    if not defaultunits:
         defaultunits = [""] * len(arg) * 2
     arg = arg[:3]
     newargs = convert2pq(arg, defaultunits)
@@ -1434,7 +1439,7 @@ def Star2TriangleTransformation(arg, defaultunits=[]):
     return arg
 
 
-def Triangle2StarTransformation(arg, defaultunits=[]):
+def Triangle2StarTransformation(arg, defaultunits=None):
     """ Triangle network to Star network transformation.
     At star, z1 is connected to A-node, z2 is connected to B-node, z3 is connected to C-node
     At triangle, z1' is between A-B, z2' is between A-C, z3' is between B-C
@@ -1454,7 +1459,7 @@ def Triangle2StarTransformation(arg, defaultunits=[]):
     Returns:
         list: arg
     """
-    if len(defaultunits) == 0:
+    if not defaultunits:
         defaultunits = [""] * len(arg) * 2
     arg1 = arg[3:6]
     newargs = convert2pq(arg1, defaultunits)
@@ -1469,7 +1474,7 @@ def Triangle2StarTransformation(arg, defaultunits=[]):
     return arg
 
 
-def GyselPowerDivider(arg, defaultunits=[]):
+def GyselPowerDivider(arg, defaultunits=None):
     """ Triangle network to Star network transformation.
     Reference:
        Zo1: 1. port impedance
@@ -1502,7 +1507,7 @@ def GyselPowerDivider(arg, defaultunits=[]):
     Returns:
         list: arg
     """
-    if len(defaultunits) == 0:
+    if not defaultunits:
         defaultunits = [""] * len(arg) * 2
     arg = arg[:6]
     newargs = convert2pq(arg, defaultunits)
@@ -1518,7 +1523,7 @@ def GyselPowerDivider(arg, defaultunits=[]):
     return arg
 
 
-def DualTransformation1(arg, defaultunits=[]):
+def DualTransformation1(arg, defaultunits=None):
     """ Dual Transformation 1.
 
     Args:
@@ -1557,7 +1562,7 @@ def DualTransformation1(arg, defaultunits=[]):
     return arg
 
 
-def DualTransformation2(arg, defaultunits=[]):
+def DualTransformation2(arg, defaultunits=None):
     """ Dual Transformation 1.
     Reference:  Microstrip Filters for RF-Microwave Applications, s.25, Figure 2.6b
 
@@ -1658,7 +1663,7 @@ def thermal_conductance_of_via_farm_view(arg, defaultunits):
     # gnd1.faceColor="r"
     return
 
-def Exponential_Taper_Impedance_Transformer(arg, defaultunits=[]):
+def Exponential_Taper_Impedance_Transformer(arg, defaultunits=None):
     """ Exponential Impedance Taper.
     Reference:  Foundations for Microwave Engineering, Collin
 
@@ -1678,7 +1683,7 @@ def Exponential_Taper_Impedance_Transformer(arg, defaultunits=[]):
     Returns:
         list: arg
     """
-    if len(defaultunits) == 0:
+    if not defaultunits:
         defaultunits = [""] * len(arg) * 2
     arg = arg[:5]
     newargs = convert2pq(arg, defaultunits)
@@ -1699,7 +1704,7 @@ def Exponential_Taper_Impedance_Transformer(arg, defaultunits=[]):
     return arg
 
 
-def Triangular_Taper_Impedance_Transformer(arg, defaultunits=[]):
+def Triangular_Taper_Impedance_Transformer(arg, defaultunits=None):
     """ Triangular Impedance Taper.
     Reference:  Foundations for Microwave Engineering, Collin
 
@@ -1719,7 +1724,7 @@ def Triangular_Taper_Impedance_Transformer(arg, defaultunits=[]):
     Returns:
         list: arg
     """
-    if len(defaultunits) == 0:
+    if not defaultunits:
         defaultunits = [""] * len(arg) * 2
     arg = arg[:5]
     newargs = convert2pq(arg, defaultunits)
@@ -1744,7 +1749,7 @@ def Triangular_Taper_Impedance_Transformer(arg, defaultunits=[]):
     arg.append(prettystring(max_gamma, defaultunits[6]))
     return arg
 
-def Patch_Antenna_Analysis(arg, defaultunits=[]):
+def Patch_Antenna_Analysis(arg, defaultunits=None):
     """ Calculates performance and impedance values for an N-section Chebyshev Impedance Taper.
     Ref: Overview of Microstrip Antennas (Jackson) (Presentation)
     Reference:  Foundations for Microwave Engineering, Collin
@@ -1766,7 +1771,7 @@ def Patch_Antenna_Analysis(arg, defaultunits=[]):
     Returns:
         list: arg
     """
-    if len(defaultunits) == 0:
+    if not defaultunits:
         defaultunits = [""] * len(arg) * 2
     arg = arg[:6]
     newargs = convert2pq(arg, defaultunits)
@@ -1795,7 +1800,7 @@ def Patch_Antenna_Analysis(arg, defaultunits=[]):
     return arg
 
 
-def Chebyshev_Taper_Impedance_Transformer(arg, defaultunits=[]):
+def Chebyshev_Taper_Impedance_Transformer(arg, defaultunits=None):
     """ Calculates performance and impedance values for an N-section Chebyshev Impedance Taper.
     Reference:  Foundations for Microwave Engineering, Collin
 
@@ -1815,7 +1820,7 @@ def Chebyshev_Taper_Impedance_Transformer(arg, defaultunits=[]):
     Returns:
         list: arg
     """
-    if len(defaultunits) == 0:
+    if not defaultunits:
         defaultunits = [""] * len(arg) * 2
     arg = arg[:5]
     newargs = convert2pq(arg, defaultunits)
@@ -1880,7 +1885,7 @@ def Z_CWG(rad,freq, eps_r=1, v=0, n=1, mode="TE"):
         Z= beta*eta0/sqrt(eps_r)/k
     return Z
 
-def Klopfenstein_Taper_Impedance_Transformer(arg, defaultunits=[]):
+def Klopfenstein_Taper_Impedance_Transformer(arg, defaultunits=None):
     r""" Calculates performance and impedance values for an N-section Klopfenstein Impedance Taper.
 
     Args:
@@ -1902,7 +1907,7 @@ def Klopfenstein_Taper_Impedance_Transformer(arg, defaultunits=[]):
     Returns:
         list: arg
     """
-    if len(defaultunits) == 0:
+    if not defaultunits:
         defaultunits = [""] * len(arg) * 2
     arg = arg[:6]
     newargs = convert2pq(arg, defaultunits)
@@ -1926,7 +1931,7 @@ def Klopfenstein_Taper_Impedance_Transformer(arg, defaultunits=[]):
     if (ZL1 < Z01):
         z_n = np.flipud(z_n)  # numpy dizisini ters cevirme
 
-def Absorptive_Filter_Equalizer(arg, defaultunits=[]):
+def Absorptive_Filter_Equalizer(arg, defaultunits=None):
     r""" Equalizer using an absorptive filter composed of two coupled lines.
 
     Args:
@@ -1947,7 +1952,7 @@ def Absorptive_Filter_Equalizer(arg, defaultunits=[]):
     Returns:
         list: arg
     """
-    if len(defaultunits) == 0:
+    if not defaultunits:
         defaultunits = [""] * len(arg) * 2
     arg = arg[:4]
     newargs = convert2pq(arg, defaultunits)
@@ -1964,7 +1969,7 @@ def Absorptive_Filter_Equalizer(arg, defaultunits=[]):
                  for i in range(len(argout))]
     return arg
 
-def LC_Balun(arg, defaultunits=[]):
+def LC_Balun(arg, defaultunits=None):
     r""" Calculate LC Balun.
 
     Args:
@@ -1986,7 +1991,7 @@ def LC_Balun(arg, defaultunits=[]):
     Returns:
         list: arg
     """
-    if len(defaultunits) == 0:
+    if not defaultunits:
         defaultunits = [""] * len(arg) * 2
     arg = arg[:6]
     newargs = convert2pq(arg, defaultunits)

@@ -1,6 +1,6 @@
 #-*-coding:utf-8-*-
 # pragma pylint: disable=too-many-function-args
-from os import system
+import sys
 import numpy as np
 from numpy.linalg import eig
 try:
@@ -17,8 +17,8 @@ import sympy as sp
 from copy import deepcopy
 import mwtoolbox.network as network
 import itertools
-from .genel import *
-from .myconstants import *
+from .genel import smooth, flatten, blackman_window, cmp
+from .myconstants import c0, mu0, eps0
 import inspect
 import re
 from collections import defaultdict
@@ -382,8 +382,8 @@ def thru_line_deembedding(thru_filename, line_filename, make_symmetric=True):
         Tthru.make_symmetric()
         Tline.make_symmetric()
 
-    TT = Tthru.s2t()
-    TL = Tline.s2t()
+    # TT = Tthru.s2t()
+    # TL = Tline.s2t()
 
     A = Tthru.T(1,1)
     B = Tthru.T(1,2)
@@ -588,7 +588,7 @@ class spfile:
         self.smatrix_type=1  # 1: "power-wave"
                             # 2: "pseudo-wave"
                             # 3: "HFSS pseudo-wave"
-        self.comments=[] # comments in the file before the format line
+        self.header=[] # comments in the file before the format line
         self.sparam_gen_func = None # this function generates smatrix of the network given the frequency
         self.sparam_mod_func = None # this function modifies smatrix of the network given the frequency
         self.params = {}
@@ -597,7 +597,7 @@ class spfile:
             self.read_file(filename,skiplines, only_port_number)
         else:
             self.refimpedance=[50.0]*n_ports
-            self.frequency_points=np.array(freqs)
+            self.frequency_points=np.asarray(freqs)
             self.n_ports=n_ports
             ns = len(self.frequency_points)
             self.normalized=1 # normalized to 50 ohm if 1
@@ -652,14 +652,14 @@ class spfile:
         """Directly sets the frequencies of this network, but does not re-calculate s-parameters.
 
         Args:
-            freqs (list or ndarray): New frequency values
+            freqs (list or ndarray): New frequency yvalues
         """
         self.freqs=np.array(freqs)
 
     def port_numbers_from_names(self, *names):
         return [self.port_names.index(n)+1 if isinstance(n,str) else n for n in names]
 
-    def setdatapoint(self, m, indices, x):
+    def set_data_points(self, m, indices, x):
         """Set the value for some part of S-Parameter data.
 
             .. math:: S_{i j}[m:m+len(x)]=x
@@ -672,9 +672,12 @@ class spfile:
         if isinstance(x,(int, float,complex)):
             x=[x]
         (i,j) = indices
-        for k in range(len(x)):
-            self.sdata[k+m,(i-1)*self.n_ports+(j-1)] = x[k]
-        obj.z_ok, obj.y_ok, obj.t_ok, obj.abcd_ok = False, False, False, False
+        # for k in range(len(x)):
+        #     self.sdata[k+m,(i-1)*self.n_ports+(j-1)] = x[k]
+        self.sdata[m:(m+len(x)),(i-1)*self.n_ports+(j-1)] = x[:]
+        # obj.z_ok, obj.y_ok, obj.t_ok, obj.abcd_ok = False, False, False, False
+        self.z_ok, self.y_ok, self.t_ok, self.abcd_ok = False, False, False, False
+
 
     def column_of_data(self,i,j):
         """Gets the indice of column at *sdata* matrix corresponding to :math:`S_{i j}`
@@ -752,7 +755,7 @@ class spfile:
         if isinstance(indices,int):
             indices=[indices]
         for i in indices:
-            self.sdata[i,:]=np.array(smatrix)
+            self.sdata[i,:]=np.asarray(smatrix)
         self.z_ok, self.y_ok, self.abcd_ok, self.t_ok = False, False, False, False
 
     def make_symmetric(self, kind=1, inplace=-1):
@@ -859,6 +862,7 @@ class spfile:
             print("Error opening the file: "+file_name+"\n")
             return 0
         linesread=f.readlines()[skiplines:]
+        self.header = [l for l in linesread if ( l.startswith("! ") and not (l.startswith("! Port Impedance") or l.startswith("! Gamma")) )]
         lsonuc=[]
         lines=[]
         lfrekans=[]
@@ -885,7 +889,7 @@ class spfile:
                     m = re.search(r"\[\s*(.+)\s*\](.+)",x)
                     if m:
                         if m.group(1)=="Number of Ports" and version==2:
-                            self.n_ports = ps = int(m-group(2))
+                            self.n_ports = ps = int(m.group(2))
                             if only_port_number:
                                 return 1
                         elif m.group(1)=="Two-Port Data Order" and version==2:
@@ -934,6 +938,9 @@ class spfile:
                             tempportimp=[tempportimp[i*i-1] for i in range(1,ps+1)]
                         imps.append(tempportimp)
             index=index+1
+        if len(portnames.keys())>ps:
+            print("Port names read from file is larger than the port quantity!")
+            return
         if len(imps)>0:
             imps2=[[arr[i] for arr in imps] for i in range(ps)]
         if len(gammas)>0:
@@ -1237,11 +1244,12 @@ class spfile:
         self.abcd_ok = True
         return abcddata
 
-    def input_impedance(self,k):
+    def z_in(self,k, data_format="complex"):
         """Input impedance at port k. All ports are terminated with reference impedances.
 
         Args:
             port (int): Port number for input impedance.
+            data_format (str, optional): Data format of output. Alternatives are "complex", "real", "imag", "mag", "phase", "uphase". Default is "complex".
 
         Returns:
             numpy.ndarray: Array of impedance values for all frequencies
@@ -1253,7 +1261,43 @@ class spfile:
             Z=(Zr.conj()+Zr*T)/(1-T)
         else:
             Z=Zr*(1+T)/(1-T)
-        return Z
+        data_format = data_format.lower()
+        if data_format=="complex":
+            return Z
+        elif data_format=="real":
+            return np.real(Z)
+        elif data_format=="imag":
+            return np.imag(Z)
+        elif data_format=="mag":
+            return np.abs(Z)
+        elif data_format=="phase":
+            return np.angle(Z, deg=True)
+        elif data_format=="uphase":
+            return np.unwrap(np.angle(Z))*180.0/np.pi
+
+    def y_in(self,k, data_format="complex"):
+        """Input admittance at port k. All ports are terminated with reference impedances.
+
+        Args:
+            port (int): Port number for input impedance.
+            data_format (str, optional): Data format of output. Alternatives are "complex", "real", "imag", "mag", "phase", "uphase". Default is "complex".
+
+        Returns:
+            numpy.ndarray: Array of impedance values for all frequencies
+        """
+        Y = 1.0/self.z_in(k)
+        if data_format=="complex":
+            return Y
+        elif data_format=="real":
+            return np.real(Y)
+        elif data_format=="imag":
+            return np.imag(Y)
+        elif data_format=="mag":
+            return np.abs(Y)
+        elif data_format=="phase":
+            return np.angle(Y, deg=True)
+        elif data_format=="uphase":
+            return np.unwrap(np.angle(Y))*180.0/np.pi
 
     def load_impedance(self,Gamma_in,port1=1,port2=2):
         """Calculates termination impedance at port2 that gives Gamma_in reflection coefficient at port1.
@@ -1448,7 +1492,7 @@ class spfile:
         for _ in range(noofiters):
             imp = list(obj.refimpedance)
             for p in ports:
-                imp[p-1]=np.conj(obj.input_impedance(p))
+                imp[p-1]=np.conj(obj.z_in(p))
             obj.change_ref_impedance(imp)
         return obj
 
@@ -1957,7 +2001,7 @@ class spfile:
             eigs,_=eig(tempmatrix)
             if np.max(np.abs(eigs)) > 1:
                 indices.append(i)
-                eigenvalues.append(sort(eigs))
+                eigenvalues.append(sorted(eigs))
         return  indices,self.freqs(indices),eigenvalues
 
     def restore_passivity(self, inplace=-1):
@@ -2195,7 +2239,6 @@ class spfile:
         k,m=min(k,m),max(k,m)
         newrefimpedance = list(obj.refimpedance[:k-1])+list(obj.refimpedance[k:m-1])+list(obj.refimpedance[m:])
         port_names = obj.port_names[:k-1]+obj.port_names[k:m-1]+obj.port_names[m:]
-        names=defaultdict(str)
         obj.change_ref_impedance(50.0)
         ns = len(obj.freqs)
         ps=obj.n_ports
@@ -2408,7 +2451,7 @@ class spfile:
         if number_of_points > 0:
             frekstep = frequencies[1]-frequencies[0]
             frequencies = np.array(list(range((len(frequencies)-1)*number_of_points+1)))*frekstep/number_of_points+frequencies[0]
-        ynew=[]
+
         sdata=np.zeros((len(frequencies),n),dtype=complex)
         for j in range(n):
             #ydb=np.array([20*np.log10(abs(obj.sdata[k,j])) for k in range(len(obj.freqs))])
@@ -2544,8 +2587,8 @@ class spfile:
                 ynew_db = np.interp(frequencies, x, ydb)
                 ynew_ph = np.interp(frequencies, x, yph) #  degrees
         else:
-            ynew_db=array(ydb*len(frequencies))
-            ynew_ph=array(yph*len(frequencies))
+            ynew_db = np.array(ydb*len(frequencies))
+            ynew_ph = np.array(yph*len(frequencies))
 
         if not ref==None:
             ynew_db=ynew_db-ref.data_array("DB",M,i,j,frequencies)
@@ -2633,7 +2676,7 @@ class spfile:
             quantity (float or list): Quantity to be deembedded.
                 - If a number is given, it is used for all frequencies and ports
                 - If a list is given, if its size is 1, its element is used for all ports. If its size is equal to number of ports, the list is used for all frequencies.
-                Otherwise its size should be equal to the number of frequencies. If an element of list is number, it is used for all ports. If an element of the list is also a list, the elements size should be same as the number of ports.
+                If size>1, then size should be equal to the number of frequencies. If an element of list is number, it is used for all ports. If an element of the list is also a list, the elements size should be same as the number of ports.
             ports (list, optional): List of port numbers to be deembedded. If not given all ports are deembedded.
             kind (string, optional): One of the following values, "degrees", "radians", "length" and "delay". Defaults to "degrees".
             inplace (int, optional): Object editing mode. Defaults to -1.
@@ -2817,7 +2860,7 @@ class spfile:
         if inplace==0:  obj = deepcopy(self); obj.inplace=1
         else:           obj = self
         if isinstance(frequencies, list):
-            frequencies = np.ndarray(frequencies)
+            frequencies = np.array(frequencies)
 
         if isinstance(obj.refimpedance,(list,np.ndarray)):
             for i in range(obj.n_ports):

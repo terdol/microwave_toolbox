@@ -11,6 +11,7 @@ setup(
     packages=['mwtoolbox'],
     install_requires=['quantities',
                       'numpy',
+                      'scipy',
                       'sympy',
                       ],
 

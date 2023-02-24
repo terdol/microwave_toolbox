@@ -114,19 +114,19 @@
 Extraction of complex propagation constant (gamma) and complex effective permittivity from the S\sphinxhyphen{}Parameters of 2 uniform transmission lines with different lengths.
 \begin{quote}\begin{description}
 \sphinxlineitem{Parameters}\begin{itemize}
-\item {} 
+\item {}
 \sphinxAtStartPar
 \sphinxstyleliteralstrong{\sphinxupquote{filename\_long\_line}} (\sphinxstyleliteralemphasis{\sphinxupquote{str}}) \textendash{} S\sphinxhyphen{}Parameter filename of longer line.
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 \sphinxstyleliteralstrong{\sphinxupquote{filename\_short\_line}} (\sphinxstyleliteralemphasis{\sphinxupquote{str}}) \textendash{} S\sphinxhyphen{}Parameter filename of shorter line. If None is given, only long line is used for extraction.
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 \sphinxstyleliteralstrong{\sphinxupquote{dL}} (\sphinxstyleliteralemphasis{\sphinxupquote{float}}) \textendash{} Difference of lengths of two lines (positive in meter). If filename\_short\_line is None, then this is the length of long line.
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 \sphinxstyleliteralstrong{\sphinxupquote{sm}} (\sphinxstyleliteralemphasis{\sphinxupquote{int}}\sphinxstyleliteralemphasis{\sphinxupquote{, }}\sphinxstyleliteralemphasis{\sphinxupquote{optional}}) \textendash{} If this is larger than 1, this is used as number of points for smoothing. Defaults to 1.
 
@@ -155,15 +155,15 @@ tuple
 Extraction of average complex propagation constant (gamma) and complex effective permittivity from the S\sphinxhyphen{}Parameters of multiple uniform transmission lines with different lengths.
 \begin{quote}\begin{description}
 \sphinxlineitem{Parameters}\begin{itemize}
-\item {} 
+\item {}
 \sphinxAtStartPar
 \sphinxstyleliteralstrong{\sphinxupquote{files}} (\sphinxstyleliteralemphasis{\sphinxupquote{list}}) \textendash{} List of S\sphinxhyphen{}Parameter filenames of transmission lines.
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 \sphinxstyleliteralstrong{\sphinxupquote{Ls}} (\sphinxstyleliteralemphasis{\sphinxupquote{list}}) \textendash{} List of lengths of transmission lines in the same order as \sphinxstyleemphasis{files} parameter.
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 \sphinxstyleliteralstrong{\sphinxupquote{sm}} (\sphinxstyleliteralemphasis{\sphinxupquote{int}}\sphinxstyleliteralemphasis{\sphinxupquote{, }}\sphinxstyleliteralemphasis{\sphinxupquote{optional}}) \textendash{} If this is larger than 1, this is used as number of points for smoothing. Defaults to 1.
 
@@ -192,11 +192,11 @@ tuple
 Extraction of RLGC parameters from S\sphinxhyphen{}parameters of a uniform transmission line.
 \begin{quote}\begin{description}
 \sphinxlineitem{Parameters}\begin{itemize}
-\item {} 
+\item {}
 \sphinxAtStartPar
 \sphinxstyleliteralstrong{\sphinxupquote{spr}} (\sphinxstyleliteralemphasis{\sphinxupquote{SPFILE}}) \textendash{} SPFILE object of two port network.
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 \sphinxstyleliteralstrong{\sphinxupquote{length}} (\sphinxstyleliteralemphasis{\sphinxupquote{float}}) \textendash{} Length of transmission line.
 
@@ -234,11 +234,11 @@ S(is,js) of touchstone file filename is S(i,j) of output\_filename
 \end{quote}
 \begin{quote}\begin{description}
 \sphinxlineitem{Parameters}\begin{itemize}
-\item {} 
+\item {}
 \sphinxAtStartPar
 \sphinxstyleliteralstrong{\sphinxupquote{conf\_filename}} (\sphinxstyleliteralemphasis{\sphinxupquote{str}}) \textendash{} Name of the configuration filename.
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 \sphinxstyleliteralstrong{\sphinxupquote{output\_filename}} (\sphinxstyleliteralemphasis{\sphinxupquote{str}}) \textendash{} Name of the output filename.
 
@@ -348,31 +348,31 @@ numpy.matrix
 Calculates impulse response of \(S_{i j}\)
 \begin{quote}\begin{description}
 \sphinxlineitem{Parameters}\begin{itemize}
-\item {} 
+\item {}
 \sphinxAtStartPar
 \sphinxstyleliteralstrong{\sphinxupquote{i}} (\sphinxstyleliteralemphasis{\sphinxupquote{int}}\sphinxstyleliteralemphasis{\sphinxupquote{, }}\sphinxstyleliteralemphasis{\sphinxupquote{optional}}) \textendash{} Port\sphinxhyphen{}1. Defaults to 2.
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 \sphinxstyleliteralstrong{\sphinxupquote{j}} (\sphinxstyleliteralemphasis{\sphinxupquote{int}}\sphinxstyleliteralemphasis{\sphinxupquote{, }}\sphinxstyleliteralemphasis{\sphinxupquote{optional}}) \textendash{} Port\sphinxhyphen{}2. Defaults to 1.
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 \sphinxstyleliteralstrong{\sphinxupquote{dc\_interp}} (\sphinxstyleliteralemphasis{\sphinxupquote{int}}\sphinxstyleliteralemphasis{\sphinxupquote{, }}\sphinxstyleliteralemphasis{\sphinxupquote{optional}}) \textendash{} If 1, add DC point to interpolation. Defaults to 1.
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 \sphinxstyleliteralstrong{\sphinxupquote{dc\_value}} (\sphinxstyleliteralemphasis{\sphinxupquote{float}}\sphinxstyleliteralemphasis{\sphinxupquote{, }}\sphinxstyleliteralemphasis{\sphinxupquote{optional}}) \textendash{} dc\_value to be used at interpolation if \sphinxstyleemphasis{dc\_interp=0}. Defaults to 0.0. This value is appended to \(S_{i j}\) and the rest is left to interpolation in \sphinxstyleemphasis{data\_array} function.
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 \sphinxstyleliteralstrong{\sphinxupquote{max\_time\_step}} (\sphinxstyleliteralemphasis{\sphinxupquote{float}}\sphinxstyleliteralemphasis{\sphinxupquote{, }}\sphinxstyleliteralemphasis{\sphinxupquote{optional}}) \textendash{} Not used for now. Defaults to 1.0.
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 \sphinxstyleliteralstrong{\sphinxupquote{freq\_res\_coef}} (\sphinxstyleliteralemphasis{\sphinxupquote{float}}\sphinxstyleliteralemphasis{\sphinxupquote{, }}\sphinxstyleliteralemphasis{\sphinxupquote{optional}}) \textendash{} Coeeficient to increase the frequency resolution by interpolation. Defaults to 1.0 (no interpolation).
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 \sphinxstyleliteralstrong{\sphinxupquote{window}} (\sphinxstyleliteralemphasis{\sphinxupquote{str}}\sphinxstyleliteralemphasis{\sphinxupquote{, }}\sphinxstyleliteralemphasis{\sphinxupquote{optional}}) \textendash{} Windows function to prevent ringing. Defaults to “blackman”. Other windows will be added later.
 
@@ -383,39 +383,39 @@ Calculates impulse response of \(S_{i j}\)
 \begin{description}
 \sphinxlineitem{The elements of the tuple are the following in order:}\begin{enumerate}
 \sphinxsetlistlabels{\arabic}{enumi}{enumii}{}{.}%
-\item {} 
+\item {}
 \sphinxAtStartPar
 Raw frequency data used as input
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 Window array
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 Time array
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 Time\sphinxhyphen{}Domain Waveform of Impulse Response
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 Time\sphinxhyphen{}Domain Waveform of Impulse Input
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 Time step
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 Frequency step
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 Size of input array
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 Max Value of Impulse Input
 
@@ -443,31 +443,31 @@ Max Value of Impulse Input
 Calculates impulse response of \(S_{i j}\)
 \begin{quote}\begin{description}
 \sphinxlineitem{Parameters}\begin{itemize}
-\item {} 
+\item {}
 \sphinxAtStartPar
 \sphinxstyleliteralstrong{\sphinxupquote{i}} (\sphinxstyleliteralemphasis{\sphinxupquote{int}}\sphinxstyleliteralemphasis{\sphinxupquote{, }}\sphinxstyleliteralemphasis{\sphinxupquote{optional}}) \textendash{} Port\sphinxhyphen{}1. Defaults to 2.
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 \sphinxstyleliteralstrong{\sphinxupquote{j}} (\sphinxstyleliteralemphasis{\sphinxupquote{int}}\sphinxstyleliteralemphasis{\sphinxupquote{, }}\sphinxstyleliteralemphasis{\sphinxupquote{optional}}) \textendash{} Port\sphinxhyphen{}2. Defaults to 1.
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 \sphinxstyleliteralstrong{\sphinxupquote{dc\_interp}} (\sphinxstyleliteralemphasis{\sphinxupquote{int}}\sphinxstyleliteralemphasis{\sphinxupquote{, }}\sphinxstyleliteralemphasis{\sphinxupquote{optional}}) \textendash{} If 1, add DC point to interpolation. Defaults to 1.
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 \sphinxstyleliteralstrong{\sphinxupquote{dc\_value}} (\sphinxstyleliteralemphasis{\sphinxupquote{float}}\sphinxstyleliteralemphasis{\sphinxupquote{, }}\sphinxstyleliteralemphasis{\sphinxupquote{optional}}) \textendash{} dc\_value to be used at interpolation if \sphinxstyleemphasis{dc\_interp=0}. Defaults to 0.0. This value is appended to \(S_{i j}\) and the rest is left to interpolation in \sphinxstyleemphasis{data\_array} function.
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 \sphinxstyleliteralstrong{\sphinxupquote{max\_time\_step}} (\sphinxstyleliteralemphasis{\sphinxupquote{float}}\sphinxstyleliteralemphasis{\sphinxupquote{, }}\sphinxstyleliteralemphasis{\sphinxupquote{optional}}) \textendash{} Not used for now. Defaults to 1.0.
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 \sphinxstyleliteralstrong{\sphinxupquote{freq\_res\_coef}} (\sphinxstyleliteralemphasis{\sphinxupquote{float}}\sphinxstyleliteralemphasis{\sphinxupquote{, }}\sphinxstyleliteralemphasis{\sphinxupquote{optional}}) \textendash{} Coeeficient to increase the frequency resolution by interpolation. Defaults to 1.0 (no interpolation).
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 \sphinxstyleliteralstrong{\sphinxupquote{Window}} (\sphinxstyleliteralemphasis{\sphinxupquote{str}}\sphinxstyleliteralemphasis{\sphinxupquote{, }}\sphinxstyleliteralemphasis{\sphinxupquote{optional}}) \textendash{} Windows function to prevent ringing. Defaults to “blackman”. Other windows will be added later.
 
@@ -478,39 +478,39 @@ Calculates impulse response of \(S_{i j}\)
 \begin{description}
 \sphinxlineitem{The elements of the tuple are the following in order:}\begin{enumerate}
 \sphinxsetlistlabels{\arabic}{enumi}{enumii}{}{.}%
-\item {} 
+\item {}
 \sphinxAtStartPar
 Raw frequency data used as input
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 Window array
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 Time array
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 Time\sphinxhyphen{}Domain Waveform of Impulse Response
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 Time\sphinxhyphen{}Domain Waveform of Impulse Input
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 Time step
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 Frequency step
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 Size of input array
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 Max Value of Impulse Input
 
@@ -539,15 +539,15 @@ Return \(S_{i j}\) in format \sphinxstyleemphasis{data\_format}
 Uses \sphinxstyleemphasis{data\_array} method internally. A convenience function for practical use.
 \begin{quote}\begin{description}
 \sphinxlineitem{Parameters}\begin{itemize}
-\item {} 
+\item {}
 \sphinxAtStartPar
 \sphinxstyleliteralstrong{\sphinxupquote{i}} (\sphinxstyleliteralemphasis{\sphinxupquote{int}}\sphinxstyleliteralemphasis{\sphinxupquote{, }}\sphinxstyleliteralemphasis{\sphinxupquote{optional}}) \textendash{} Port\sphinxhyphen{}1. Defaults to 1.
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 \sphinxstyleliteralstrong{\sphinxupquote{j}} (\sphinxstyleliteralemphasis{\sphinxupquote{int}}\sphinxstyleliteralemphasis{\sphinxupquote{, }}\sphinxstyleliteralemphasis{\sphinxupquote{optional}}) \textendash{} Port\sphinxhyphen{}2. Defaults to 1.
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 \sphinxstyleliteralstrong{\sphinxupquote{data\_format}} (\sphinxstyleliteralemphasis{\sphinxupquote{str}}\sphinxstyleliteralemphasis{\sphinxupquote{, }}\sphinxstyleliteralemphasis{\sphinxupquote{optional}}) \textendash{} See \sphinxstyleemphasis{data\_format} parameter of \sphinxstyleemphasis{data\_array} method. Defaults to “COMPLEX”.
 
@@ -577,15 +577,15 @@ Return \(T_{i j}\) in format \sphinxstyleemphasis{data\_format}
 Uses \sphinxstyleemphasis{data\_array} method internally. A convenience function for practical use.
 \begin{quote}\begin{description}
 \sphinxlineitem{Parameters}\begin{itemize}
-\item {} 
+\item {}
 \sphinxAtStartPar
 \sphinxstyleliteralstrong{\sphinxupquote{i}} (\sphinxstyleliteralemphasis{\sphinxupquote{int}}\sphinxstyleliteralemphasis{\sphinxupquote{, }}\sphinxstyleliteralemphasis{\sphinxupquote{optional}}) \textendash{} Port\sphinxhyphen{}1. Defaults to 1.
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 \sphinxstyleliteralstrong{\sphinxupquote{j}} (\sphinxstyleliteralemphasis{\sphinxupquote{int}}\sphinxstyleliteralemphasis{\sphinxupquote{, }}\sphinxstyleliteralemphasis{\sphinxupquote{optional}}) \textendash{} Port\sphinxhyphen{}2. Defaults to 1.
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 \sphinxstyleliteralstrong{\sphinxupquote{data\_format}} (\sphinxstyleliteralemphasis{\sphinxupquote{str}}\sphinxstyleliteralemphasis{\sphinxupquote{, }}\sphinxstyleliteralemphasis{\sphinxupquote{optional}}) \textendash{} See \sphinxstyleemphasis{data\_format} parameter of \sphinxstyleemphasis{data\_array} method. Defaults to “COMPLEX”.
 
@@ -611,19 +611,19 @@ numpy.array
 \pysiglinewithargsret{\sphinxbfcode{\sphinxupquote{UniformDeembed}}}{\emph{\DUrole{n}{quantity}}, \emph{\DUrole{n}{ports}\DUrole{o}{=}\DUrole{default_value}{\textquotesingle{}all\textquotesingle{}}}, \emph{\DUrole{n}{kind}\DUrole{o}{=}\DUrole{default_value}{\textquotesingle{}degrees\textquotesingle{}}}, \emph{\DUrole{n}{inplace}\DUrole{o}{=}\DUrole{default_value}{\sphinxhyphen{} 1}}}{}
 \pysigstopsignatures\begin{description}
 \sphinxlineitem{This function deembeds some of the ports of S\sphinxhyphen{}Parameters. Deembedding quantity can be:}\begin{itemize}
-\item {} 
+\item {}
 \sphinxAtStartPar
 Phase in degrees
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 Phase in radians
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 Length in meters
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 Delay in seconds
 
@@ -636,22 +636,22 @@ A positive quantity means deembedding into the circuit.
 The Zc of de\sphinxhyphen{}embedding lines is the reference impedances of each port.
 \begin{quote}\begin{description}
 \sphinxlineitem{Parameters}\begin{itemize}
-\item {} 
+\item {}
 \sphinxAtStartPar
 \sphinxstyleliteralstrong{\sphinxupquote{quantity}} (\sphinxstyleliteralemphasis{\sphinxupquote{float}}\sphinxstyleliteralemphasis{\sphinxupquote{ or }}\sphinxstyleliteralemphasis{\sphinxupquote{list}}) \textendash{} Quantity to be deembedded.
 \sphinxhyphen{} If a number is given, it is used for all frequencies and ports
 \sphinxhyphen{} If a list is given, if its size is 1, its element is used for all ports. If its size is equal to number of ports, the list is used for all frequencies.
 Otherwise its size should be equal to the number of frequencies. If an element of list is number, it is used for all ports. If an element of the list is also a list, the elements size should be same as the number of ports.
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 \sphinxstyleliteralstrong{\sphinxupquote{ports}} (\sphinxstyleliteralemphasis{\sphinxupquote{list}}\sphinxstyleliteralemphasis{\sphinxupquote{, }}\sphinxstyleliteralemphasis{\sphinxupquote{optional}}) \textendash{} List of port numbers to be deembedded. If not given all ports are deembedded.
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 \sphinxstyleliteralstrong{\sphinxupquote{kind}} (\sphinxstyleliteralemphasis{\sphinxupquote{string}}\sphinxstyleliteralemphasis{\sphinxupquote{, }}\sphinxstyleliteralemphasis{\sphinxupquote{optional}}) \textendash{} One of the following values, “degrees”, “radians”, “length” and “delay”. Defaults to “degrees”.
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 \sphinxstyleliteralstrong{\sphinxupquote{inplace}} (\sphinxstyleliteralemphasis{\sphinxupquote{int}}\sphinxstyleliteralemphasis{\sphinxupquote{, }}\sphinxstyleliteralemphasis{\sphinxupquote{optional}}) \textendash{} Object editing mode. Defaults to \sphinxhyphen{}1.
 
@@ -681,15 +681,15 @@ Return \(Y_{i j}\) in format \sphinxstyleemphasis{data\_format}
 Uses \sphinxstyleemphasis{data\_array} method internally. A convenience function for practical use.
 \begin{quote}\begin{description}
 \sphinxlineitem{Parameters}\begin{itemize}
-\item {} 
+\item {}
 \sphinxAtStartPar
 \sphinxstyleliteralstrong{\sphinxupquote{i}} (\sphinxstyleliteralemphasis{\sphinxupquote{int}}\sphinxstyleliteralemphasis{\sphinxupquote{, }}\sphinxstyleliteralemphasis{\sphinxupquote{optional}}) \textendash{} Port\sphinxhyphen{}1. Defaults to 1.
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 \sphinxstyleliteralstrong{\sphinxupquote{j}} (\sphinxstyleliteralemphasis{\sphinxupquote{int}}\sphinxstyleliteralemphasis{\sphinxupquote{, }}\sphinxstyleliteralemphasis{\sphinxupquote{optional}}) \textendash{} Port\sphinxhyphen{}2. Defaults to 1.
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 \sphinxstyleliteralstrong{\sphinxupquote{data\_format}} (\sphinxstyleliteralemphasis{\sphinxupquote{str}}\sphinxstyleliteralemphasis{\sphinxupquote{, }}\sphinxstyleliteralemphasis{\sphinxupquote{optional}}) \textendash{} See \sphinxstyleemphasis{data\_format} parameter of \sphinxstyleemphasis{data\_array} method. Defaults to “COMPLEX”.
 
@@ -719,15 +719,15 @@ Return \(Z_{i j}\) in format \sphinxstyleemphasis{data\_format}
 Uses \sphinxstyleemphasis{data\_array} method internally. A convenience function for practical use.
 \begin{quote}\begin{description}
 \sphinxlineitem{Parameters}\begin{itemize}
-\item {} 
+\item {}
 \sphinxAtStartPar
 \sphinxstyleliteralstrong{\sphinxupquote{i}} (\sphinxstyleliteralemphasis{\sphinxupquote{int}}\sphinxstyleliteralemphasis{\sphinxupquote{, }}\sphinxstyleliteralemphasis{\sphinxupquote{optional}}) \textendash{} Port\sphinxhyphen{}1. Defaults to 1.
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 \sphinxstyleliteralstrong{\sphinxupquote{j}} (\sphinxstyleliteralemphasis{\sphinxupquote{int}}\sphinxstyleliteralemphasis{\sphinxupquote{, }}\sphinxstyleliteralemphasis{\sphinxupquote{optional}}) \textendash{} Port\sphinxhyphen{}2. Defaults to 1.
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 \sphinxstyleliteralstrong{\sphinxupquote{data\_format}} (\sphinxstyleliteralemphasis{\sphinxupquote{str}}\sphinxstyleliteralemphasis{\sphinxupquote{, }}\sphinxstyleliteralemphasis{\sphinxupquote{optional}}) \textendash{} See \sphinxstyleemphasis{data\_format} parameter of \sphinxstyleemphasis{data\_array} method. Defaults to “COMPLEX”.
 
@@ -756,11 +756,11 @@ numpy.array
 Calculates source and load reflection coefficients for simultaneous conjugate match.
 \begin{quote}\begin{description}
 \sphinxlineitem{Parameters}\begin{itemize}
-\item {} 
+\item {}
 \sphinxAtStartPar
 \sphinxstyleliteralstrong{\sphinxupquote{port1}} (\sphinxstyleliteralemphasis{\sphinxupquote{int}}\sphinxstyleliteralemphasis{\sphinxupquote{, }}\sphinxstyleliteralemphasis{\sphinxupquote{optional}}) \textendash{} {[}description{]}. Defaults to 1.
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 \sphinxstyleliteralstrong{\sphinxupquote{port2}} (\sphinxstyleliteralemphasis{\sphinxupquote{int}}\sphinxstyleliteralemphasis{\sphinxupquote{, }}\sphinxstyleliteralemphasis{\sphinxupquote{optional}}) \textendash{} {[}description{]}. Defaults to 2.
 
@@ -769,11 +769,11 @@ Calculates source and load reflection coefficients for simultaneous conjugate ma
 \sphinxlineitem{Returns}
 \sphinxAtStartPar
 \begin{itemize}
-\item {} 
+\item {}
 \sphinxAtStartPar
 GS: Reflection coefficient at Port\sphinxhyphen{}1
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 GL: Reflection coefficient at Port\sphinxhyphen{}2
 
@@ -833,11 +833,11 @@ Calculates an spfile object for two\sphinxhyphen{}port networks which is the inv
 \sphinxAtStartPar
 \begin{enumerate}
 \sphinxsetlistlabels{\arabic}{enumi}{enumii}{}{.}%
-\item {} 
+\item {}
 \sphinxAtStartPar
 \sphinxstyleemphasis{None} if number of ports is not 2.
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 \sphinxstyleemphasis{spfile} which is the inverse of the spfile object operated on.
 
@@ -894,15 +894,15 @@ This method adds random amplitude and phase noise to the s\sphinxhyphen{}paramet
 Mean value for both noises are 0.
 \begin{quote}\begin{description}
 \sphinxlineitem{Parameters}\begin{itemize}
-\item {} 
+\item {}
 \sphinxAtStartPar
 \sphinxstyleliteralstrong{\sphinxupquote{dbnoise}} (\sphinxstyleliteralemphasis{\sphinxupquote{float}}\sphinxstyleliteralemphasis{\sphinxupquote{, }}\sphinxstyleliteralemphasis{\sphinxupquote{optional}}) \textendash{} Standard deviation of amplitude noise in dB. Defaults to 0.1.
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 \sphinxstyleliteralstrong{\sphinxupquote{phasenoise}} (\sphinxstyleliteralemphasis{\sphinxupquote{float}}\sphinxstyleliteralemphasis{\sphinxupquote{, }}\sphinxstyleliteralemphasis{\sphinxupquote{optional}}) \textendash{} Standard deviation of phase noise in degrees. Defaults to 0.1.
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 \sphinxstyleliteralstrong{\sphinxupquote{inplace}} (\sphinxstyleliteralemphasis{\sphinxupquote{int}}\sphinxstyleliteralemphasis{\sphinxupquote{, }}\sphinxstyleliteralemphasis{\sphinxupquote{optional}}) \textendash{} object editing mode. Defaults to \sphinxhyphen{}1.
 
@@ -932,11 +932,11 @@ This function calculates 2 of S, Y and Z parameters using the remaining paramete
 Y and Z\sphinxhyphen{}matrices calculated separately instead of calculating one and taking inverse. Because one of them may be undefined for some circuits.
 \begin{quote}\begin{description}
 \sphinxlineitem{Parameters}\begin{itemize}
-\item {} 
+\item {}
 \sphinxAtStartPar
 \sphinxstyleliteralstrong{\sphinxupquote{input}} (\sphinxstyleliteralemphasis{\sphinxupquote{str}}\sphinxstyleliteralemphasis{\sphinxupquote{, }}\sphinxstyleliteralemphasis{\sphinxupquote{optional}}) \textendash{} Input parameter type (should be S, Y or Z). Defaults to “S”.
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 \sphinxstyleliteralstrong{\sphinxupquote{indices}} (\sphinxstyleliteralemphasis{\sphinxupquote{list}}\sphinxstyleliteralemphasis{\sphinxupquote{, }}\sphinxstyleliteralemphasis{\sphinxupquote{optional}}) \textendash{} If given, output matrices are calculated only at the indices given by this list. If it is None, then output matrices are calculated at all frequencies. Defaults to None.
 
@@ -1032,11 +1032,11 @@ Gets the indice of column at \sphinxstyleemphasis{sdata} matrix corresponding to
 For internal use of the library.
 \begin{quote}\begin{description}
 \sphinxlineitem{Parameters}\begin{itemize}
-\item {} 
+\item {}
 \sphinxAtStartPar
 \sphinxstyleliteralstrong{\sphinxupquote{i}} (\sphinxstyleliteralemphasis{\sphinxupquote{int}}) \textendash{} First index
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 \sphinxstyleliteralstrong{\sphinxupquote{j}} (\sphinxstyleliteralemphasis{\sphinxupquote{int}}) \textendash{} Second index
 
@@ -1066,15 +1066,15 @@ Sets the reference impedance for given ports as the complex conjugate of output 
 The ports are assumed to be uncoupled. Coupling is taken care of by doing the same operation multiple times.
 \begin{quote}\begin{description}
 \sphinxlineitem{Parameters}\begin{itemize}
-\item {} 
+\item {}
 \sphinxAtStartPar
 \sphinxstyleliteralstrong{\sphinxupquote{ports}} (\sphinxstyleliteralemphasis{\sphinxupquote{list}}\sphinxstyleliteralemphasis{\sphinxupquote{,}}\sphinxstyleliteralemphasis{\sphinxupquote{optional}}) \textendash{} {[}description{]}. Defaults to all ports.
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 \sphinxstyleliteralstrong{\sphinxupquote{inplace}} (\sphinxstyleliteralemphasis{\sphinxupquote{int}}\sphinxstyleliteralemphasis{\sphinxupquote{, }}\sphinxstyleliteralemphasis{\sphinxupquote{optional}}) \textendash{} Object editing mode. Defaults to \sphinxhyphen{}1.
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 \sphinxstyleliteralstrong{\sphinxupquote{noofiters}} (\sphinxstyleliteralemphasis{\sphinxupquote{int}}\sphinxstyleliteralemphasis{\sphinxupquote{, }}\sphinxstyleliteralemphasis{\sphinxupquote{optional}}) \textendash{} Numberof iterations. Defaults to 50.
 
@@ -1100,15 +1100,15 @@ Port\sphinxhyphen{}m is connected to port\sphinxhyphen{}k and both ports are rem
 Reference: QUCS technical.pdf, S\sphinxhyphen{}parameters in CAE programs, p.29
 \begin{quote}\begin{description}
 \sphinxlineitem{Parameters}\begin{itemize}
-\item {} 
+\item {}
 \sphinxAtStartPar
 \sphinxstyleliteralstrong{\sphinxupquote{k}} (\sphinxstyleliteralemphasis{\sphinxupquote{int}}) \textendash{} First port index to be connected.
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 \sphinxstyleliteralstrong{\sphinxupquote{m}} (\sphinxstyleliteralemphasis{\sphinxupquote{int}}) \textendash{} Second port index to be connected.
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 \sphinxstyleliteralstrong{\sphinxupquote{inplace}} (\sphinxstyleliteralemphasis{\sphinxupquote{int}}\sphinxstyleliteralemphasis{\sphinxupquote{, }}\sphinxstyleliteralemphasis{\sphinxupquote{optional}}) \textendash{} Object editing mode. Defaults to \sphinxhyphen{}1.
 
@@ -1141,11 +1141,11 @@ The order of remaining ports is kept.
 Reference: QUCS technical.pdf, S\sphinxhyphen{}parameters in CAE programs, p.29
 \begin{quote}\begin{description}
 \sphinxlineitem{Parameters}\begin{itemize}
-\item {} 
+\item {}
 \sphinxAtStartPar
 \sphinxstyleliteralstrong{\sphinxupquote{conns}} (\sphinxstyleliteralemphasis{\sphinxupquote{list of tuples}}) \textendash{} A list of 2\sphinxhyphen{}tuples of integers showing the ports connected
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 \sphinxstyleliteralstrong{\sphinxupquote{inplace}} (\sphinxstyleliteralemphasis{\sphinxupquote{int}}\sphinxstyleliteralemphasis{\sphinxupquote{, }}\sphinxstyleliteralemphasis{\sphinxupquote{optional}}) \textendash{} Object editing mode. Defaults to \sphinxhyphen{}1.
 
@@ -1175,15 +1175,15 @@ Port\sphinxhyphen{}m is connected to port\sphinxhyphen{}k and both ports are rem
 Reference: QUCS technical.pdf, S\sphinxhyphen{}parameters in CAE programs, p.29
 \begin{quote}\begin{description}
 \sphinxlineitem{Parameters}\begin{itemize}
-\item {} 
+\item {}
 \sphinxAtStartPar
 \sphinxstyleliteralstrong{\sphinxupquote{k}} (\sphinxstyleliteralemphasis{\sphinxupquote{int}}) \textendash{} First port index to be connected.
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 \sphinxstyleliteralstrong{\sphinxupquote{m}} (\sphinxstyleliteralemphasis{\sphinxupquote{int}}) \textendash{} Second port index to be connected.
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 \sphinxstyleliteralstrong{\sphinxupquote{inplace}} (\sphinxstyleliteralemphasis{\sphinxupquote{int}}\sphinxstyleliteralemphasis{\sphinxupquote{, }}\sphinxstyleliteralemphasis{\sphinxupquote{optional}}) \textendash{} Object editing mode. Defaults to \sphinxhyphen{}1.
 
@@ -1214,23 +1214,23 @@ Remaining ports of EX are added to the port list of this circuit in order.
 Reference: QUCS technical.pdf, S\sphinxhyphen{}parameters in CAE programs, p.29
 \begin{quote}\begin{description}
 \sphinxlineitem{Parameters}\begin{itemize}
-\item {} 
+\item {}
 \sphinxAtStartPar
 \sphinxstyleliteralstrong{\sphinxupquote{EX}} ({\hyperref[\detokenize{touchstone:touchstone.spfile}]{\sphinxcrossref{\sphinxstyleliteralemphasis{\sphinxupquote{spfile}}}}}) \textendash{} External network to be connected to this.
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 \sphinxstyleliteralstrong{\sphinxupquote{k}} (\sphinxstyleliteralemphasis{\sphinxupquote{int}}) \textendash{} Port number of self to be connected.
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 \sphinxstyleliteralstrong{\sphinxupquote{m}} (\sphinxstyleliteralemphasis{\sphinxupquote{int}}) \textendash{} Port number of EX to be connected.
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 \sphinxstyleliteralstrong{\sphinxupquote{inplace}} (\sphinxstyleliteralemphasis{\sphinxupquote{int}}\sphinxstyleliteralemphasis{\sphinxupquote{, }}\sphinxstyleliteralemphasis{\sphinxupquote{optional}}) \textendash{} Object editing mode. Defaults to \sphinxhyphen{}1.
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 \sphinxstyleliteralstrong{\sphinxupquote{preserveportnumbers}} (\sphinxstyleliteralemphasis{\sphinxupquote{bool}}\sphinxstyleliteralemphasis{\sphinxupquote{, }}\sphinxstyleliteralemphasis{\sphinxupquote{optional}}) \textendash{} if True, the number of the first added port will be k. Defaults to False.
 
@@ -1260,23 +1260,23 @@ Port\sphinxhyphen{}m of EX circuit is connected to port\sphinxhyphen{}k of this 
 Reference: QUCS technical.pdf, S\sphinxhyphen{}parameters in CAE programs, p.29
 \begin{quote}\begin{description}
 \sphinxlineitem{Parameters}\begin{itemize}
-\item {} 
+\item {}
 \sphinxAtStartPar
 \sphinxstyleliteralstrong{\sphinxupquote{EX}} ({\hyperref[\detokenize{touchstone:touchstone.spfile}]{\sphinxcrossref{\sphinxstyleliteralemphasis{\sphinxupquote{spfile}}}}}) \textendash{} External network to be connected to this.
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 \sphinxstyleliteralstrong{\sphinxupquote{k}} (\sphinxstyleliteralemphasis{\sphinxupquote{int}}) \textendash{} Port number of self to be connected.
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 \sphinxstyleliteralstrong{\sphinxupquote{m}} (\sphinxstyleliteralemphasis{\sphinxupquote{int}}) \textendash{} Port number of EX to be connected.
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 \sphinxstyleliteralstrong{\sphinxupquote{inplace}} (\sphinxstyleliteralemphasis{\sphinxupquote{int}}\sphinxstyleliteralemphasis{\sphinxupquote{, }}\sphinxstyleliteralemphasis{\sphinxupquote{optional}}) \textendash{} Object editing mode. Defaults to \sphinxhyphen{}1.
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 \sphinxstyleliteralstrong{\sphinxupquote{preserveportnumbers1}} (\sphinxstyleliteralemphasis{\sphinxupquote{bool}}\sphinxstyleliteralemphasis{\sphinxupquote{, }}\sphinxstyleliteralemphasis{\sphinxupquote{optional}}) \textendash{} if True, the number of the first added port will be k. Defaults to False.
 
@@ -1335,31 +1335,31 @@ This method copies S\sphinxhyphen{}Parameter data from another SPFILE object
 Create an \sphinxcode{\sphinxupquote{spfile}} object corresponding to a cpwg transmission line.
 \begin{quote}\begin{description}
 \sphinxlineitem{Parameters}\begin{itemize}
-\item {} 
+\item {}
 \sphinxAtStartPar
 \sphinxstyleliteralstrong{\sphinxupquote{length}} (\sphinxstyleliteralemphasis{\sphinxupquote{float}}) \textendash{} Length of cpwg line.
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 \sphinxstyleliteralstrong{\sphinxupquote{w}} (\sphinxstyleliteralemphasis{\sphinxupquote{float}}) \textendash{} Width of cpwg line.
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 \sphinxstyleliteralstrong{\sphinxupquote{th}} (\sphinxstyleliteralemphasis{\sphinxupquote{float}}) \textendash{} Thickness of metal.
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 \sphinxstyleliteralstrong{\sphinxupquote{er}} (\sphinxstyleliteralemphasis{\sphinxupquote{float}}) \textendash{} Relative permittivity of substrate.
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 \sphinxstyleliteralstrong{\sphinxupquote{s}} (\sphinxstyleliteralemphasis{\sphinxupquote{float}}) \textendash{} Gap of cpwg line.
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 \sphinxstyleliteralstrong{\sphinxupquote{h}} (\sphinxstyleliteralemphasis{\sphinxupquote{float}}) \textendash{} Thickness of substrate.
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 \sphinxstyleliteralstrong{\sphinxupquote{freqs}} (\sphinxstyleliteralemphasis{\sphinxupquote{float}}\sphinxstyleliteralemphasis{\sphinxupquote{, }}\sphinxstyleliteralemphasis{\sphinxupquote{optional}}) \textendash{} Frequency list of object. Defaults to None. If None, frequencies should be set later.
 
@@ -1388,15 +1388,15 @@ An spfile object.
 Crop the points below fstart and above fstop. No recalculation or interpolation occurs.
 \begin{quote}\begin{description}
 \sphinxlineitem{Parameters}\begin{itemize}
-\item {} 
+\item {}
 \sphinxAtStartPar
 \sphinxstyleliteralstrong{\sphinxupquote{fstart}} (\sphinxstyleliteralemphasis{\sphinxupquote{float}}\sphinxstyleliteralemphasis{\sphinxupquote{, }}\sphinxstyleliteralemphasis{\sphinxupquote{optional}}) \textendash{} Lower frequency for cropping. Default value is None which means no cropping will occur at lower frequency side.
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 \sphinxstyleliteralstrong{\sphinxupquote{fstop}} (\sphinxstyleliteralemphasis{\sphinxupquote{float}}\sphinxstyleliteralemphasis{\sphinxupquote{, }}\sphinxstyleliteralemphasis{\sphinxupquote{optional}}) \textendash{} Higher frequency for cropping. Default value is None which means no cropping will occur at higher frequency side.
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 \sphinxstyleliteralstrong{\sphinxupquote{inplace}} (\sphinxstyleliteralemphasis{\sphinxupquote{int}}\sphinxstyleliteralemphasis{\sphinxupquote{, }}\sphinxstyleliteralemphasis{\sphinxupquote{optional}}) \textendash{} Object editing mode. Defaults to \sphinxhyphen{}1.
 
@@ -1425,7 +1425,7 @@ spfile object with new frequency points.
 Return a network parameter between ports \sphinxstyleemphasis{i} and \sphinxstyleemphasis{j} (\(M_{i j}\)) at specified frequencies in specified format.
 \begin{quote}\begin{description}
 \sphinxlineitem{Parameters}\begin{itemize}
-\item {} 
+\item {}
 \sphinxAtStartPar
 \sphinxstyleliteralstrong{\sphinxupquote{data\_format}} (\sphinxstyleliteralemphasis{\sphinxupquote{str}}\sphinxstyleliteralemphasis{\sphinxupquote{, }}\sphinxstyleliteralemphasis{\sphinxupquote{optional}}) \textendash{} Defaults to “DB”. The format of the data returned. Possible values (case insensitive):
 \sphinxhyphen{}   “K”: Stability factor of 2\sphinxhyphen{}port
@@ -1440,7 +1440,7 @@ Return a network parameter between ports \sphinxstyleemphasis{i} and \sphinxstyl
 \sphinxhyphen{}   “UNWRAPPEDPHASE”: Unwrapped Phase of \(M_{i j}\) in degrees
 \sphinxhyphen{}   “GROUPDELAY”: Group Delay of \(M_{i j}\) in degrees
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 \sphinxstyleliteralstrong{\sphinxupquote{M}} (\sphinxstyleliteralemphasis{\sphinxupquote{str}}\sphinxstyleliteralemphasis{\sphinxupquote{, }}\sphinxstyleliteralemphasis{\sphinxupquote{optional}}) \textendash{} Defaults to “S”. Possible values (case insensitive):
 \sphinxhyphen{}   “S”: Return S\sphinxhyphen{}parameter data
@@ -1448,35 +1448,35 @@ Return a network parameter between ports \sphinxstyleemphasis{i} and \sphinxstyl
 \sphinxhyphen{}   “Z”: Return Z\sphinxhyphen{}parameter data
 \sphinxhyphen{}   “ABCD”: Return ABCD\sphinxhyphen{}parameter data
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 \sphinxstyleliteralstrong{\sphinxupquote{i}} (\sphinxstyleliteralemphasis{\sphinxupquote{int}}\sphinxstyleliteralemphasis{\sphinxupquote{, }}\sphinxstyleliteralemphasis{\sphinxupquote{optional}}) \textendash{} First port number. Defaults to 1.
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 \sphinxstyleliteralstrong{\sphinxupquote{j}} (\sphinxstyleliteralemphasis{\sphinxupquote{int}}\sphinxstyleliteralemphasis{\sphinxupquote{, }}\sphinxstyleliteralemphasis{\sphinxupquote{optional}}) \textendash{} Second port number. Defaults to 1. Ignored for {\color{red}\bfseries{}*}data\_format*=”VSWR”
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 \sphinxstyleliteralstrong{\sphinxupquote{frequencies}} (\sphinxstyleliteralemphasis{\sphinxupquote{list}}\sphinxstyleliteralemphasis{\sphinxupquote{, }}\sphinxstyleliteralemphasis{\sphinxupquote{optional}}) \textendash{} Defaults to {[}{]}. List of frequencies in Hz. If an empty list is given, networks whole frequency range is used.
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 \sphinxstyleliteralstrong{\sphinxupquote{ref}} ({\hyperref[\detokenize{touchstone:touchstone.spfile}]{\sphinxcrossref{\sphinxstyleliteralemphasis{\sphinxupquote{spfile}}}}}\sphinxstyleliteralemphasis{\sphinxupquote{, }}\sphinxstyleliteralemphasis{\sphinxupquote{optional}}) \textendash{} Defaults to None. If given the data of this network is subtracted from the same data of \sphinxstyleemphasis{ref} object.
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 \sphinxstyleliteralstrong{\sphinxupquote{DCInt}} (\sphinxstyleliteralemphasis{\sphinxupquote{int}}\sphinxstyleliteralemphasis{\sphinxupquote{, }}\sphinxstyleliteralemphasis{\sphinxupquote{optional}}) \textendash{} Defaults to 0. If 1, DC point given by \sphinxstyleemphasis{DCValue} is used at frequency interpolation if \sphinxstyleemphasis{frequencies} is not {[}{]}.
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 \sphinxstyleliteralstrong{\sphinxupquote{DCValue}} (\sphinxstyleliteralemphasis{\sphinxupquote{complex}}\sphinxstyleliteralemphasis{\sphinxupquote{, }}\sphinxstyleliteralemphasis{\sphinxupquote{optional}}) \textendash{} Defaults to 0.0. DCValue that can be used for interpolation over frequency.
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 \sphinxstyleliteralstrong{\sphinxupquote{smoothing}} (\sphinxstyleliteralemphasis{\sphinxupquote{int}}\sphinxstyleliteralemphasis{\sphinxupquote{, }}\sphinxstyleliteralemphasis{\sphinxupquote{optional}}) \textendash{} Defaults to 0. if this is higher than 0, it is used as the number of points for smoothing.
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 \sphinxstyleliteralstrong{\sphinxupquote{InterpolationConstant}} (\sphinxstyleliteralemphasis{\sphinxupquote{int}}\sphinxstyleliteralemphasis{\sphinxupquote{, }}\sphinxstyleliteralemphasis{\sphinxupquote{optional}}) \textendash{} Defaults to 0. If this is higher than 0, it is taken as the number of frequencies that will be added between 2 consecutive frequency points. By this way, number of frequencies is increased by interpolation.
 
@@ -1509,19 +1509,19 @@ Available gain from port1 to port2. If dB=True, output is in dB, otherwise it is
 \end{equation*}\end{quote}
 \begin{quote}\begin{description}
 \sphinxlineitem{Parameters}\begin{itemize}
-\item {} 
+\item {}
 \sphinxAtStartPar
 \sphinxstyleliteralstrong{\sphinxupquote{port1}} (\sphinxstyleliteralemphasis{\sphinxupquote{int}}\sphinxstyleliteralemphasis{\sphinxupquote{, }}\sphinxstyleliteralemphasis{\sphinxupquote{optional}}) \textendash{} Index of input port. Defaults to 1.
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 \sphinxstyleliteralstrong{\sphinxupquote{port2}} (\sphinxstyleliteralemphasis{\sphinxupquote{int}}\sphinxstyleliteralemphasis{\sphinxupquote{, }}\sphinxstyleliteralemphasis{\sphinxupquote{optional}}) \textendash{} Index of output port. Defaults to 2.
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 \sphinxstyleliteralstrong{\sphinxupquote{ZS}} (\sphinxstyleliteralemphasis{\sphinxupquote{list}}\sphinxstyleliteralemphasis{\sphinxupquote{ or }}\sphinxstyleliteralemphasis{\sphinxupquote{numpy.ndarray}}\sphinxstyleliteralemphasis{\sphinxupquote{, }}\sphinxstyleliteralemphasis{\sphinxupquote{optional}}) \textendash{} Impedance of input port. Defaults to current reference impedance.
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 \sphinxstyleliteralstrong{\sphinxupquote{dB}} (\sphinxstyleliteralemphasis{\sphinxupquote{bool}}\sphinxstyleliteralemphasis{\sphinxupquote{, }}\sphinxstyleliteralemphasis{\sphinxupquote{optional}}) \textendash{} Enable dB output. Defaults to True.
 
@@ -1695,15 +1695,15 @@ dict
 Calculates Gmax from port1 to port2. Other ports are terminated with current reference impedances. If dB=True, output is in dB, otherwise it is a power ratio.
 \begin{quote}\begin{description}
 \sphinxlineitem{Parameters}\begin{itemize}
-\item {} 
+\item {}
 \sphinxAtStartPar
 \sphinxstyleliteralstrong{\sphinxupquote{port1}} (\sphinxstyleliteralemphasis{\sphinxupquote{int}}\sphinxstyleliteralemphasis{\sphinxupquote{, }}\sphinxstyleliteralemphasis{\sphinxupquote{optional}}) \textendash{} Index of input port. Defaults to 1.
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 \sphinxstyleliteralstrong{\sphinxupquote{port2}} (\sphinxstyleliteralemphasis{\sphinxupquote{int}}\sphinxstyleliteralemphasis{\sphinxupquote{, }}\sphinxstyleliteralemphasis{\sphinxupquote{optional}}) \textendash{} Index of output port. Defaults to 2.
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 \sphinxstyleliteralstrong{\sphinxupquote{dB}} (\sphinxstyleliteralemphasis{\sphinxupquote{bool}}\sphinxstyleliteralemphasis{\sphinxupquote{, }}\sphinxstyleliteralemphasis{\sphinxupquote{optional}}) \textendash{} Enable dB output. Defaults to True.
 
@@ -1736,19 +1736,19 @@ Operating power gain from port1 to port2 with load impedance of ZL. If dB=True, 
 \end{equation*}\end{quote}
 \begin{quote}\begin{description}
 \sphinxlineitem{Parameters}\begin{itemize}
-\item {} 
+\item {}
 \sphinxAtStartPar
 \sphinxstyleliteralstrong{\sphinxupquote{port1}} (\sphinxstyleliteralemphasis{\sphinxupquote{int}}\sphinxstyleliteralemphasis{\sphinxupquote{, }}\sphinxstyleliteralemphasis{\sphinxupquote{optional}}) \textendash{} Index of input port. Defaults to 1.
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 \sphinxstyleliteralstrong{\sphinxupquote{port2}} (\sphinxstyleliteralemphasis{\sphinxupquote{int}}\sphinxstyleliteralemphasis{\sphinxupquote{, }}\sphinxstyleliteralemphasis{\sphinxupquote{optional}}) \textendash{} Index of output port. Defaults to 2.
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 \sphinxstyleliteralstrong{\sphinxupquote{ZL}} (\sphinxstyleliteralemphasis{\sphinxupquote{ndarray}}\sphinxstyleliteralemphasis{\sphinxupquote{ or }}\sphinxstyleliteralemphasis{\sphinxupquote{float}}\sphinxstyleliteralemphasis{\sphinxupquote{, }}\sphinxstyleliteralemphasis{\sphinxupquote{optional}}) \textendash{} Load impedance. Defaults to current port impedance at port2.
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 \sphinxstyleliteralstrong{\sphinxupquote{dB}} (\sphinxstyleliteralemphasis{\sphinxupquote{bool}}\sphinxstyleliteralemphasis{\sphinxupquote{, }}\sphinxstyleliteralemphasis{\sphinxupquote{optional}}) \textendash{} Enable dB output. Defaults to True.
 
@@ -1781,19 +1781,19 @@ Operating power gain from port1 to port2 with load impedance of ZL. If dB=True, 
 \end{equation*}\end{quote}
 \begin{quote}\begin{description}
 \sphinxlineitem{Parameters}\begin{itemize}
-\item {} 
+\item {}
 \sphinxAtStartPar
 \sphinxstyleliteralstrong{\sphinxupquote{port1}} (\sphinxstyleliteralemphasis{\sphinxupquote{int}}\sphinxstyleliteralemphasis{\sphinxupquote{, }}\sphinxstyleliteralemphasis{\sphinxupquote{optional}}) \textendash{} Index of input port. Defaults to 1.
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 \sphinxstyleliteralstrong{\sphinxupquote{port2}} (\sphinxstyleliteralemphasis{\sphinxupquote{int}}\sphinxstyleliteralemphasis{\sphinxupquote{, }}\sphinxstyleliteralemphasis{\sphinxupquote{optional}}) \textendash{} Index of output port. Defaults to 2.
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 \sphinxstyleliteralstrong{\sphinxupquote{ZL}} (\sphinxstyleliteralemphasis{\sphinxupquote{ndarray}}\sphinxstyleliteralemphasis{\sphinxupquote{ or }}\sphinxstyleliteralemphasis{\sphinxupquote{float}}\sphinxstyleliteralemphasis{\sphinxupquote{, }}\sphinxstyleliteralemphasis{\sphinxupquote{optional}}) \textendash{} Load impedance. Defaults to current port impedance at port2.
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 \sphinxstyleliteralstrong{\sphinxupquote{dB}} (\sphinxstyleliteralemphasis{\sphinxupquote{bool}}\sphinxstyleliteralemphasis{\sphinxupquote{, }}\sphinxstyleliteralemphasis{\sphinxupquote{optional}}) \textendash{} Enable dB output. Defaults to True.
 
@@ -1826,23 +1826,23 @@ This method calculates transducer gain (GT) from port1 to port2. Source and load
 \end{equation*}\end{quote}
 \begin{quote}\begin{description}
 \sphinxlineitem{Parameters}\begin{itemize}
-\item {} 
+\item {}
 \sphinxAtStartPar
 \sphinxstyleliteralstrong{\sphinxupquote{port1}} (\sphinxstyleliteralemphasis{\sphinxupquote{int}}\sphinxstyleliteralemphasis{\sphinxupquote{, }}\sphinxstyleliteralemphasis{\sphinxupquote{optional}}) \textendash{} Index of source port. Defaults to 1.
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 \sphinxstyleliteralstrong{\sphinxupquote{port2}} (\sphinxstyleliteralemphasis{\sphinxupquote{int}}\sphinxstyleliteralemphasis{\sphinxupquote{, }}\sphinxstyleliteralemphasis{\sphinxupquote{optional}}) \textendash{} Index of load port. Defaults to 2.
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 \sphinxstyleliteralstrong{\sphinxupquote{dB}} (\sphinxstyleliteralemphasis{\sphinxupquote{bool}}\sphinxstyleliteralemphasis{\sphinxupquote{, }}\sphinxstyleliteralemphasis{\sphinxupquote{optional}}) \textendash{} Enable dB output. Defaults to True.
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 \sphinxstyleliteralstrong{\sphinxupquote{ZS}} (\sphinxstyleliteralemphasis{\sphinxupquote{float}}\sphinxstyleliteralemphasis{\sphinxupquote{, }}\sphinxstyleliteralemphasis{\sphinxupquote{optional}}) \textendash{} Source impedance. Defaults to 50.0.
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 \sphinxstyleliteralstrong{\sphinxupquote{ZL}} (\sphinxstyleliteralemphasis{\sphinxupquote{float}}\sphinxstyleliteralemphasis{\sphinxupquote{, }}\sphinxstyleliteralemphasis{\sphinxupquote{optional}}) \textendash{} Load impedance. Defaults to 50.0.
 
@@ -1863,7 +1863,7 @@ numpy.ndarray
 \index{input\_impedance() (touchstone.spfile method)@\spxentry{input\_impedance()}\spxextra{touchstone.spfile method}}
 
 \begin{fulllineitems}
-\phantomsection\label{\detokenize{touchstone:touchstone.spfile.input_impedance}}
+\phantomsection\label{\detokenize{touchstone:touchstone.spfile.z_in}}
 \pysigstartsignatures
 \pysiglinewithargsret{\sphinxbfcode{\sphinxupquote{input\_impedance}}}{\emph{\DUrole{n}{k}}}{}
 \pysigstopsignatures
@@ -1897,11 +1897,11 @@ numpy.ndarray
 This method increases the number of frequencies through interpolation.
 \begin{quote}\begin{description}
 \sphinxlineitem{Parameters}\begin{itemize}
-\item {} 
+\item {}
 \sphinxAtStartPar
 \sphinxstyleliteralstrong{\sphinxupquote{number\_of\_points}} (\sphinxstyleliteralemphasis{\sphinxupquote{int}}\sphinxstyleliteralemphasis{\sphinxupquote{, }}\sphinxstyleliteralemphasis{\sphinxupquote{optional}}) \textendash{} Number of points used for interpolation. Defaults to 5.
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 \sphinxstyleliteralstrong{\sphinxupquote{inplace}} (\sphinxstyleliteralemphasis{\sphinxupquote{int}}\sphinxstyleliteralemphasis{\sphinxupquote{, }}\sphinxstyleliteralemphasis{\sphinxupquote{optional}}) \textendash{} object editing mode. Defaults to \sphinxhyphen{}1.
 
@@ -1930,11 +1930,11 @@ Network object with smooth data
 Calculate new data corresponding to new frequency points \sphinxstyleemphasis{freqs} by interpolation from original data corresponding to current frequency points of the network.
 \begin{quote}\begin{description}
 \sphinxlineitem{Parameters}\begin{itemize}
-\item {} 
+\item {}
 \sphinxAtStartPar
 \sphinxstyleliteralstrong{\sphinxupquote{data}} (\sphinxstyleliteralemphasis{\sphinxupquote{numpy.ndarray}}\sphinxstyleliteralemphasis{\sphinxupquote{ or }}\sphinxstyleliteralemphasis{\sphinxupquote{list}}) \textendash{} Original data specified at current frequency points of the network.
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 \sphinxstyleliteralstrong{\sphinxupquote{freqs}} (\sphinxstyleliteralemphasis{\sphinxupquote{numpy.ndarray}}\sphinxstyleliteralemphasis{\sphinxupquote{ or }}\sphinxstyleliteralemphasis{\sphinxupquote{list}}) \textendash{} New frequency list.
 
@@ -1989,15 +1989,15 @@ Inverted 2\sphinxhyphen{}port spfile
 Calculates termination impedance at port2 that gives Gamma\_in reflection coefficient at port1.
 \begin{quote}\begin{description}
 \sphinxlineitem{Parameters}\begin{itemize}
-\item {} 
+\item {}
 \sphinxAtStartPar
 \sphinxstyleliteralstrong{\sphinxupquote{Gamma\_in}} (\sphinxstyleliteralemphasis{\sphinxupquote{float}}\sphinxstyleliteralemphasis{\sphinxupquote{,}}\sphinxstyleliteralemphasis{\sphinxupquote{ndarray}}) \textendash{} Required reflection coefficient.
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 \sphinxstyleliteralstrong{\sphinxupquote{port1}} (\sphinxstyleliteralemphasis{\sphinxupquote{int}}) \textendash{} Source port.
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 \sphinxstyleliteralstrong{\sphinxupquote{port2}} (\sphinxstyleliteralemphasis{\sphinxupquote{int}}) \textendash{} Load port.
 
@@ -2052,27 +2052,27 @@ Modified spfile object
 Create an \sphinxcode{\sphinxupquote{spfile}} object corresponding to a microstrip line.
 \begin{quote}\begin{description}
 \sphinxlineitem{Parameters}\begin{itemize}
-\item {} 
+\item {}
 \sphinxAtStartPar
 \sphinxstyleliteralstrong{\sphinxupquote{length}} (\sphinxstyleliteralemphasis{\sphinxupquote{float}}) \textendash{} Length of microstrip line.
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 \sphinxstyleliteralstrong{\sphinxupquote{w}} (\sphinxstyleliteralemphasis{\sphinxupquote{float}}) \textendash{} Width of microstrip line.
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 \sphinxstyleliteralstrong{\sphinxupquote{h}} (\sphinxstyleliteralemphasis{\sphinxupquote{float}}) \textendash{} Thickness of substrate.
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 \sphinxstyleliteralstrong{\sphinxupquote{t}} (\sphinxstyleliteralemphasis{\sphinxupquote{float}}) \textendash{} Thickness of metal.
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 \sphinxstyleliteralstrong{\sphinxupquote{er}} (\sphinxstyleliteralemphasis{\sphinxupquote{float}}) \textendash{} Relative permittivity of microstrip substrate.
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 \sphinxstyleliteralstrong{\sphinxupquote{freqs}} (\sphinxstyleliteralemphasis{\sphinxupquote{float}}\sphinxstyleliteralemphasis{\sphinxupquote{, }}\sphinxstyleliteralemphasis{\sphinxupquote{optional}}) \textendash{} Frequency list of object. Defaults to None. If None, frequencies should be set later.
 
@@ -2101,19 +2101,19 @@ An spfile object.
 Create an \sphinxcode{\sphinxupquote{spfile}} object corresponding to a microstrip step.
 \begin{quote}\begin{description}
 \sphinxlineitem{Parameters}\begin{itemize}
-\item {} 
+\item {}
 \sphinxAtStartPar
 \sphinxstyleliteralstrong{\sphinxupquote{w1}} (\sphinxstyleliteralemphasis{\sphinxupquote{float}}) \textendash{} Width of microstrip line at port\sphinxhyphen{}1.
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 \sphinxstyleliteralstrong{\sphinxupquote{w2}} (\sphinxstyleliteralemphasis{\sphinxupquote{float}}) \textendash{} Width of microstrip line at port\sphinxhyphen{}2.
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 \sphinxstyleliteralstrong{\sphinxupquote{t}} (\sphinxstyleliteralemphasis{\sphinxupquote{float}}) \textendash{} Thickness of metal.
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 \sphinxstyleliteralstrong{\sphinxupquote{freqs}} (\sphinxstyleliteralemphasis{\sphinxupquote{float}}\sphinxstyleliteralemphasis{\sphinxupquote{, }}\sphinxstyleliteralemphasis{\sphinxupquote{optional}}) \textendash{} Frequency list of object. Defaults to None. If None, frequencies should be set later.
 
@@ -2172,11 +2172,11 @@ numpy.ndarray: Calculated impedance array
 Network data is read from file. \sphinxstyleemphasis{filename} attribute of object is set with given argument.
 \begin{quote}\begin{description}
 \sphinxlineitem{Parameters}\begin{itemize}
-\item {} 
+\item {}
 \sphinxAtStartPar
 \sphinxstyleliteralstrong{\sphinxupquote{filename}} (\sphinxstyleliteralemphasis{\sphinxupquote{str}}) \textendash{} Name of the file to be read. Its extension should be either “ts” of in the form of “sNp” or “sN”.
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 \sphinxstyleliteralstrong{\sphinxupquote{skiplines}} (\sphinxstyleliteralemphasis{\sphinxupquote{int}}\sphinxstyleliteralemphasis{\sphinxupquote{, }}\sphinxstyleliteralemphasis{\sphinxupquote{optional}}) \textendash{} This option is used if some beginning lines will be ignored. Default value is 0.
 
@@ -2262,11 +2262,11 @@ Restoration of Passivity In S\sphinxhyphen{}parameter Data of Microwave Measurem
 S\sphinxhyphen{}Matrix to ABCD matrix conversion between 2 chosen ports. Other ports are terminated with reference impedances
 \begin{quote}\begin{description}
 \sphinxlineitem{Parameters}\begin{itemize}
-\item {} 
+\item {}
 \sphinxAtStartPar
 \sphinxstyleliteralstrong{\sphinxupquote{port1}} (\sphinxstyleliteralemphasis{\sphinxupquote{int}}\sphinxstyleliteralemphasis{\sphinxupquote{, }}\sphinxstyleliteralemphasis{\sphinxupquote{optional}}) \textendash{} Index of Port\sphinxhyphen{}1. Defaults to 1.
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 \sphinxstyleliteralstrong{\sphinxupquote{port2}} (\sphinxstyleliteralemphasis{\sphinxupquote{int}}\sphinxstyleliteralemphasis{\sphinxupquote{, }}\sphinxstyleliteralemphasis{\sphinxupquote{optional}}) \textendash{} Index of Port\sphinxhyphen{}2. Defaults to 2.
 
@@ -2326,11 +2326,11 @@ SPFILE object
 Create an \sphinxcode{\sphinxupquote{spfile}} object corresponding to a stripline step
 \begin{quote}\begin{description}
 \sphinxlineitem{Parameters}\begin{itemize}
-\item {} 
+\item {}
 \sphinxAtStartPar
 \sphinxstyleliteralstrong{\sphinxupquote{R}} (\sphinxstyleliteralemphasis{\sphinxupquote{float}}) \textendash{} Shunt resistance.
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 \sphinxstyleliteralstrong{\sphinxupquote{freqs}} (\sphinxstyleliteralemphasis{\sphinxupquote{float}}\sphinxstyleliteralemphasis{\sphinxupquote{, }}\sphinxstyleliteralemphasis{\sphinxupquote{optional}}) \textendash{} Frequency list of object. Defaults to None. If None, frequencies should be set later.
 
@@ -2386,15 +2386,15 @@ Directly sets the frequencies of this network, but does not re\sphinxhyphen{}cal
 Remove frequency points higher than \sphinxstyleemphasis{fhigh} and lower than \sphinxstyleemphasis{flow}.
 \begin{quote}\begin{description}
 \sphinxlineitem{Parameters}\begin{itemize}
-\item {} 
+\item {}
 \sphinxAtStartPar
 \sphinxstyleliteralstrong{\sphinxupquote{flow}} (\sphinxstyleliteralemphasis{\sphinxupquote{float}}) \textendash{} Lowest Frequency (Hz)
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 \sphinxstyleliteralstrong{\sphinxupquote{fhigh}} (\sphinxstyleliteralemphasis{\sphinxupquote{float}}) \textendash{} Highest Frequency (Hz)
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 \sphinxstyleliteralstrong{\sphinxupquote{inplace}} (\sphinxstyleliteralemphasis{\sphinxupquote{int}}\sphinxstyleliteralemphasis{\sphinxupquote{, }}\sphinxstyleliteralemphasis{\sphinxupquote{optional}}) \textendash{} Object editing mode. Defaults to \sphinxhyphen{}1.
 
@@ -2426,11 +2426,11 @@ interpolation/extrapolation. For new frequency points, S\sphinxhyphen{}Parameter
 and reference impedances which are in the form of array are re\sphinxhyphen{}calculated.
 \begin{quote}\begin{description}
 \sphinxlineitem{Parameters}\begin{itemize}
-\item {} 
+\item {}
 \sphinxAtStartPar
 \sphinxstyleliteralstrong{\sphinxupquote{frequencies}} (\sphinxstyleliteralemphasis{\sphinxupquote{list}}) \textendash{} New frequency array
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 \sphinxstyleliteralstrong{\sphinxupquote{inplace}} (\sphinxstyleliteralemphasis{\sphinxupquote{int}}\sphinxstyleliteralemphasis{\sphinxupquote{, }}\sphinxstyleliteralemphasis{\sphinxupquote{optional}}) \textendash{} Object editing mode. Defaults to \sphinxhyphen{}1.
 
@@ -2459,19 +2459,19 @@ spfile object with new frequency points.
 Set the frequencies of the object using start\sphinxhyphen{}end frequencies and number of points.
 \begin{quote}\begin{description}
 \sphinxlineitem{Parameters}\begin{itemize}
-\item {} 
+\item {}
 \sphinxAtStartPar
 \sphinxstyleliteralstrong{\sphinxupquote{fstart}} (\sphinxstyleliteralemphasis{\sphinxupquote{{[}}}\sphinxstyleliteralemphasis{\sphinxupquote{type}}\sphinxstyleliteralemphasis{\sphinxupquote{{]}}}) \textendash{} Start frequency.
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 \sphinxstyleliteralstrong{\sphinxupquote{fstop}} (\sphinxstyleliteralemphasis{\sphinxupquote{{[}}}\sphinxstyleliteralemphasis{\sphinxupquote{type}}\sphinxstyleliteralemphasis{\sphinxupquote{{]}}}) \textendash{} End frequency.
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 \sphinxstyleliteralstrong{\sphinxupquote{NumberOfPoints}} (\sphinxstyleliteralemphasis{\sphinxupquote{int}}) \textendash{} Number of frequencies.
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 \sphinxstyleliteralstrong{\sphinxupquote{inplace}} (\sphinxstyleliteralemphasis{\sphinxupquote{int}}\sphinxstyleliteralemphasis{\sphinxupquote{, }}\sphinxstyleliteralemphasis{\sphinxupquote{optional}}) \textendash{} Object editing mode. Defaults to \sphinxhyphen{}1.
 
@@ -2509,11 +2509,11 @@ spfile object with new frequency points.
 Set name of a specific port.
 \begin{quote}\begin{description}
 \sphinxlineitem{Parameters}\begin{itemize}
-\item {} 
+\item {}
 \sphinxAtStartPar
 \sphinxstyleliteralstrong{\sphinxupquote{name}} (\sphinxstyleliteralemphasis{\sphinxupquote{str}}) \textendash{} New name of the port
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 \sphinxstyleliteralstrong{\sphinxupquote{i}} (\sphinxstyleliteralemphasis{\sphinxupquote{int}}) \textendash{} Port number
 
@@ -2552,11 +2552,11 @@ Set port names with a list.
 Set S\sphinxhyphen{}Matrix at frequency indices
 \begin{quote}\begin{description}
 \sphinxlineitem{Parameters}\begin{itemize}
-\item {} 
+\item {}
 \sphinxAtStartPar
 \sphinxstyleliteralstrong{\sphinxupquote{indices}} (\sphinxstyleliteralemphasis{\sphinxupquote{list}}) \textendash{} List of frequency indices
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 \sphinxstyleliteralstrong{\sphinxupquote{smatrix}} (\sphinxstyleliteralemphasis{\sphinxupquote{numpy.matrix}}) \textendash{} New S\sphinxhyphen{}Matrix value which is to be set at all \sphinxstyleemphasis{indices}
 
@@ -2662,15 +2662,15 @@ Set the value for some part of S\sphinxhyphen{}Parameter data.
 \end{equation*}\end{quote}
 \begin{quote}\begin{description}
 \sphinxlineitem{Parameters}\begin{itemize}
-\item {} 
+\item {}
 \sphinxAtStartPar
 \sphinxstyleliteralstrong{\sphinxupquote{m}} (\sphinxstyleliteralemphasis{\sphinxupquote{int}}) \textendash{} Starting frequency indice
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 \sphinxstyleliteralstrong{\sphinxupquote{indices}} (\sphinxstyleliteralemphasis{\sphinxupquote{tuple of int}}) \textendash{} Parameters to be set (i,j)
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 \sphinxstyleliteralstrong{\sphinxupquote{x}} (\sphinxstyleliteralemphasis{\sphinxupquote{number}}\sphinxstyleliteralemphasis{\sphinxupquote{ or }}\sphinxstyleliteralemphasis{\sphinxupquote{list}}) \textendash{} New value. If this is a number, it is converted to a list.
 
@@ -2691,11 +2691,11 @@ Set the value for some part of S\sphinxhyphen{}Parameter data.
 Create an \sphinxcode{\sphinxupquote{spfile}} object corresponding to a stripline step
 \begin{quote}\begin{description}
 \sphinxlineitem{Parameters}\begin{itemize}
-\item {} 
+\item {}
 \sphinxAtStartPar
 \sphinxstyleliteralstrong{\sphinxupquote{R}} (\sphinxstyleliteralemphasis{\sphinxupquote{float}}) \textendash{} Shunt resistance.
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 \sphinxstyleliteralstrong{\sphinxupquote{freqs}} (\sphinxstyleliteralemphasis{\sphinxupquote{float}}\sphinxstyleliteralemphasis{\sphinxupquote{, }}\sphinxstyleliteralemphasis{\sphinxupquote{optional}}) \textendash{} Frequency list of object. Defaults to None. If None, frequencies should be set later.
 
@@ -2724,11 +2724,11 @@ An spfile object.
 This method applies moving average smoothing to the s\sphinxhyphen{}parameter data
 \begin{quote}\begin{description}
 \sphinxlineitem{Parameters}\begin{itemize}
-\item {} 
+\item {}
 \sphinxAtStartPar
 \sphinxstyleliteralstrong{\sphinxupquote{smoothing\_length}} (\sphinxstyleliteralemphasis{\sphinxupquote{int}}\sphinxstyleliteralemphasis{\sphinxupquote{, }}\sphinxstyleliteralemphasis{\sphinxupquote{optional}}) \textendash{} Number of points used for smoothing. Defaults to 5.
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 \sphinxstyleliteralstrong{\sphinxupquote{inplace}} (\sphinxstyleliteralemphasis{\sphinxupquote{int}}\sphinxstyleliteralemphasis{\sphinxupquote{, }}\sphinxstyleliteralemphasis{\sphinxupquote{optional}}) \textendash{} object editing mode. Defaults to \sphinxhyphen{}1.
 
@@ -2761,11 +2761,11 @@ port j of new network corresponds to ports{[}j{]} in old network.
 if the length of “ports” argument is lower than number of ports, remaining ports are terminated with current reference impedances and number of ports are reduced.
 \begin{quote}\begin{description}
 \sphinxlineitem{Parameters}\begin{itemize}
-\item {} 
+\item {}
 \sphinxAtStartPar
 \sphinxstyleliteralstrong{\sphinxupquote{ports}} (\sphinxstyleliteralemphasis{\sphinxupquote{list}}) \textendash{} New port order
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 \sphinxstyleliteralstrong{\sphinxupquote{inplace}} (\sphinxstyleliteralemphasis{\sphinxupquote{int}}\sphinxstyleliteralemphasis{\sphinxupquote{, }}\sphinxstyleliteralemphasis{\sphinxupquote{optional}}) \textendash{} Object editing mode. Defaults to \sphinxhyphen{}1.
 
@@ -2816,11 +2816,11 @@ SPFILE object
 Calculates \sphinxstyleemphasis{k} stability factor, from port1 to port2. Other ports are terminated with reference impedances.
 \begin{quote}\begin{description}
 \sphinxlineitem{Parameters}\begin{itemize}
-\item {} 
+\item {}
 \sphinxAtStartPar
 \sphinxstyleliteralstrong{\sphinxupquote{port1}} (\sphinxstyleliteralemphasis{\sphinxupquote{int}}\sphinxstyleliteralemphasis{\sphinxupquote{, }}\sphinxstyleliteralemphasis{\sphinxupquote{optional}}) \textendash{} Index of source port. Defaults to 1.
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 \sphinxstyleliteralstrong{\sphinxupquote{port2}} (\sphinxstyleliteralemphasis{\sphinxupquote{int}}\sphinxstyleliteralemphasis{\sphinxupquote{, }}\sphinxstyleliteralemphasis{\sphinxupquote{optional}}) \textendash{} Index of load port. Defaults to 2.
 
@@ -2849,11 +2849,11 @@ numpy.ndarray
 Calculates \(\mu_1\) stability factor, from port1 to port2. Other ports are terminated with reference impedances.
 \begin{quote}\begin{description}
 \sphinxlineitem{Parameters}\begin{itemize}
-\item {} 
+\item {}
 \sphinxAtStartPar
 \sphinxstyleliteralstrong{\sphinxupquote{port1}} (\sphinxstyleliteralemphasis{\sphinxupquote{int}}\sphinxstyleliteralemphasis{\sphinxupquote{, }}\sphinxstyleliteralemphasis{\sphinxupquote{optional}}) \textendash{} Index of source port. Defaults to 1.
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 \sphinxstyleliteralstrong{\sphinxupquote{port2}} (\sphinxstyleliteralemphasis{\sphinxupquote{int}}\sphinxstyleliteralemphasis{\sphinxupquote{, }}\sphinxstyleliteralemphasis{\sphinxupquote{optional}}) \textendash{} Index of load port. Defaults to 2.
 
@@ -2882,11 +2882,11 @@ numpy.ndarray
 Calculates \(\mu_2\) stability factor, from port1 to port2. Other ports are terminated with reference impedances.
 \begin{quote}\begin{description}
 \sphinxlineitem{Parameters}\begin{itemize}
-\item {} 
+\item {}
 \sphinxAtStartPar
 \sphinxstyleliteralstrong{\sphinxupquote{port1}} (\sphinxstyleliteralemphasis{\sphinxupquote{int}}\sphinxstyleliteralemphasis{\sphinxupquote{, }}\sphinxstyleliteralemphasis{\sphinxupquote{optional}}) \textendash{} Index of source port. Defaults to 1.
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 \sphinxstyleliteralstrong{\sphinxupquote{port2}} (\sphinxstyleliteralemphasis{\sphinxupquote{int}}\sphinxstyleliteralemphasis{\sphinxupquote{, }}\sphinxstyleliteralemphasis{\sphinxupquote{optional}}) \textendash{} Index of load port. Defaults to 2.
 
@@ -2915,31 +2915,31 @@ numpy.ndarray
 Create an \sphinxcode{\sphinxupquote{spfile}} object corresponding to a stripline transmission line.
 \begin{quote}\begin{description}
 \sphinxlineitem{Parameters}\begin{itemize}
-\item {} 
+\item {}
 \sphinxAtStartPar
 \sphinxstyleliteralstrong{\sphinxupquote{length}} (\sphinxstyleliteralemphasis{\sphinxupquote{float}}) \textendash{} Length of cpwg line.
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 \sphinxstyleliteralstrong{\sphinxupquote{w}} (\sphinxstyleliteralemphasis{\sphinxupquote{float}}) \textendash{} Width of stripline.
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 \sphinxstyleliteralstrong{\sphinxupquote{er}} (\sphinxstyleliteralemphasis{\sphinxupquote{float}}) \textendash{} Relative permittivity of substrate.
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 \sphinxstyleliteralstrong{\sphinxupquote{h1}} (\sphinxstyleliteralemphasis{\sphinxupquote{float}}) \textendash{} Thickness of substrate from bottom ground to bottom of line.
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 \sphinxstyleliteralstrong{\sphinxupquote{h2}} (\sphinxstyleliteralemphasis{\sphinxupquote{float}}) \textendash{} Thickness of substrate from top line to top ground.
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 \sphinxstyleliteralstrong{\sphinxupquote{t}} (\sphinxstyleliteralemphasis{\sphinxupquote{float}}) \textendash{} Thickness of metal.
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 \sphinxstyleliteralstrong{\sphinxupquote{freqs}} (\sphinxstyleliteralemphasis{\sphinxupquote{float}}\sphinxstyleliteralemphasis{\sphinxupquote{, }}\sphinxstyleliteralemphasis{\sphinxupquote{optional}}) \textendash{} Frequency list of object. Defaults to None. If None, frequencies should be set later.
 
@@ -2968,27 +2968,27 @@ An spfile object.
 Create an \sphinxcode{\sphinxupquote{spfile}} object corresponding to a stripline step
 \begin{quote}\begin{description}
 \sphinxlineitem{Parameters}\begin{itemize}
-\item {} 
+\item {}
 \sphinxAtStartPar
 \sphinxstyleliteralstrong{\sphinxupquote{w1}} (\sphinxstyleliteralemphasis{\sphinxupquote{float}}) \textendash{} Width of stripline line at port\sphinxhyphen{}1.
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 \sphinxstyleliteralstrong{\sphinxupquote{w2}} (\sphinxstyleliteralemphasis{\sphinxupquote{float}}) \textendash{} Width of stripline line at port\sphinxhyphen{}2.
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 \sphinxstyleliteralstrong{\sphinxupquote{eps\_r}} (\sphinxstyleliteralemphasis{\sphinxupquote{float}}) \textendash{} Relative permittivity of stripline substrate.
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 \sphinxstyleliteralstrong{\sphinxupquote{h}} (\sphinxstyleliteralemphasis{\sphinxupquote{float}}) \textendash{} Thickness of stripline substrate.
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 \sphinxstyleliteralstrong{\sphinxupquote{t}} (\sphinxstyleliteralemphasis{\sphinxupquote{float}}) \textendash{} Thickness of metal.
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 \sphinxstyleliteralstrong{\sphinxupquote{freqs}} (\sphinxstyleliteralemphasis{\sphinxupquote{float}}\sphinxstyleliteralemphasis{\sphinxupquote{, }}\sphinxstyleliteralemphasis{\sphinxupquote{optional}}) \textendash{} Frequency list of object. Defaults to None. If None, frequencies should be set later.
 
@@ -3017,19 +3017,19 @@ An spfile object.
 This function writes a parameter (S, Y or Z) file. If the filename given does not have the proper filename extension, it is corrected.
 \begin{quote}\begin{description}
 \sphinxlineitem{Parameters}\begin{itemize}
-\item {} 
+\item {}
 \sphinxAtStartPar
 \sphinxstyleliteralstrong{\sphinxupquote{filename}} (\sphinxstyleliteralemphasis{\sphinxupquote{str}}\sphinxstyleliteralemphasis{\sphinxupquote{, }}\sphinxstyleliteralemphasis{\sphinxupquote{optional}}) \textendash{} Filename to be written. Defaults to “”.
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 \sphinxstyleliteralstrong{\sphinxupquote{parameter}} (\sphinxstyleliteralemphasis{\sphinxupquote{str}}\sphinxstyleliteralemphasis{\sphinxupquote{, }}\sphinxstyleliteralemphasis{\sphinxupquote{optional}}) \textendash{} Parameter to be written (S, Y or Z). Defaults to “S”.
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 \sphinxstyleliteralstrong{\sphinxupquote{freq\_unit}} (\sphinxstyleliteralemphasis{\sphinxupquote{str}}\sphinxstyleliteralemphasis{\sphinxupquote{, }}\sphinxstyleliteralemphasis{\sphinxupquote{optional}}) \textendash{} Frequency unit (GHz, MHz, kHz or Hz). Defaults to “Hz”.
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 \sphinxstyleliteralstrong{\sphinxupquote{data\_format}} (\sphinxstyleliteralemphasis{\sphinxupquote{str}}\sphinxstyleliteralemphasis{\sphinxupquote{, }}\sphinxstyleliteralemphasis{\sphinxupquote{optional}}) \textendash{} Format of file DB, RI or MA. Defaults to “”.
 
@@ -3054,11 +3054,11 @@ Extraction of transition s\sphinxhyphen{}parameters from THRU and LINE measureme
 The reference impedance for the 2. port of the transition should be the same as the characteristic impedance of the interconnecting line. So the reference impedances of the output \sphinxstyleemphasis{spfile} should be adjusted (without renormalizing s\sphinxhyphen{}parameters) after calling this function. The minimum frequency in the S\sphinxhyphen{}Parameter files should be such that the phase difference between the measurements should be smaller than 2:math:\sphinxtitleref{pi}.
 \begin{quote}\begin{description}
 \sphinxlineitem{Parameters}\begin{itemize}
-\item {} 
+\item {}
 \sphinxAtStartPar
 \sphinxstyleliteralstrong{\sphinxupquote{thru\_filename}} (\sphinxstyleliteralemphasis{\sphinxupquote{str}}) \textendash{} 2\sphinxhyphen{}Port S\sphinxhyphen{}Parameter filename of THRU measurement
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 \sphinxstyleliteralstrong{\sphinxupquote{line\_filename}} (\sphinxstyleliteralemphasis{\sphinxupquote{str}}) \textendash{} 2\sphinxhyphen{}Port S\sphinxhyphen{}Parameter filename of LINE measurement
 
@@ -3088,19 +3088,19 @@ Extraction of launcher s\sphinxhyphen{}parameters by THRU, LINE, REFLECT calibra
 Reference: TRL algorithm to de\sphinxhyphen{}embed a RF test fixture.pdf (Note that the T\sphinxhyphen{}Matrix definiton in the reference document is different than this library.)
 \begin{quote}\begin{description}
 \sphinxlineitem{Parameters}\begin{itemize}
-\item {} 
+\item {}
 \sphinxAtStartPar
 \sphinxstyleliteralstrong{\sphinxupquote{thru\_file}} (\sphinxstyleliteralemphasis{\sphinxupquote{str}}) \textendash{} 2\sphinxhyphen{}Port S\sphinxhyphen{}Parameter filename or \sphinxstyleemphasis{spfile} of THRU measurement
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 \sphinxstyleliteralstrong{\sphinxupquote{line\_file}} (\sphinxstyleliteralemphasis{\sphinxupquote{str}}) \textendash{} 2\sphinxhyphen{}Port S\sphinxhyphen{}Parameter filename or \sphinxstyleemphasis{spfile} of LINE measurement
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 \sphinxstyleliteralstrong{\sphinxupquote{reflect\_file}} (\sphinxstyleliteralemphasis{\sphinxupquote{str}}) \textendash{} 2\sphinxhyphen{}Port S\sphinxhyphen{}Parameter filename or \sphinxstyleemphasis{spfile} of REFLECT measurement
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 \sphinxstyleliteralstrong{\sphinxupquote{refstd}} (\sphinxstyleliteralemphasis{\sphinxupquote{boolean}}) \textendash{} True if OPEN is used as REFLECT standard and False (default) if SHORT is used
 
@@ -3133,35 +3133,35 @@ Port\sphinxhyphen{}1: Input port.
 Port\sphinxhyphen{}2: Output port where load impedances are switched.
 \begin{quote}\begin{description}
 \sphinxlineitem{Parameters}\begin{itemize}
-\item {} 
+\item {}
 \sphinxAtStartPar
 \sphinxstyleliteralstrong{\sphinxupquote{g1}} (\sphinxstyleliteralemphasis{\sphinxupquote{float}}\sphinxstyleliteralemphasis{\sphinxupquote{, }}\sphinxstyleliteralemphasis{\sphinxupquote{complex}}\sphinxstyleliteralemphasis{\sphinxupquote{ or }}\sphinxstyleliteralemphasis{\sphinxupquote{ndarray}}) \textendash{} Reflection coefficient at port\sphinxhyphen{}1 when port\sphinxhyphen{}2 is terminated by a load with reflection coefficient gL1
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 \sphinxstyleliteralstrong{\sphinxupquote{g2}} (\sphinxstyleliteralemphasis{\sphinxupquote{float}}\sphinxstyleliteralemphasis{\sphinxupquote{, }}\sphinxstyleliteralemphasis{\sphinxupquote{complex}}\sphinxstyleliteralemphasis{\sphinxupquote{ or }}\sphinxstyleliteralemphasis{\sphinxupquote{ndarray}}) \textendash{} Reflection coefficient at port\sphinxhyphen{}1 when port\sphinxhyphen{}2 is terminated by a load with reflection coefficient gL2
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 \sphinxstyleliteralstrong{\sphinxupquote{g3}} (\sphinxstyleliteralemphasis{\sphinxupquote{float}}\sphinxstyleliteralemphasis{\sphinxupquote{, }}\sphinxstyleliteralemphasis{\sphinxupquote{complex}}\sphinxstyleliteralemphasis{\sphinxupquote{ or }}\sphinxstyleliteralemphasis{\sphinxupquote{ndarray}}) \textendash{} Reflection coefficient at port\sphinxhyphen{}1 when port\sphinxhyphen{}2 is terminated by a load with reflection coefficient gL3
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 \sphinxstyleliteralstrong{\sphinxupquote{gL1}} (\sphinxstyleliteralemphasis{\sphinxupquote{float}}\sphinxstyleliteralemphasis{\sphinxupquote{, }}\sphinxstyleliteralemphasis{\sphinxupquote{complex}}\sphinxstyleliteralemphasis{\sphinxupquote{ or }}\sphinxstyleliteralemphasis{\sphinxupquote{ndarray}}) \textendash{} Reflection coefficient of load at port\sphinxhyphen{}2 that gives g1 reflection coefficient at port\sphinxhyphen{}1
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 \sphinxstyleliteralstrong{\sphinxupquote{gL2}} (\sphinxstyleliteralemphasis{\sphinxupquote{float}}\sphinxstyleliteralemphasis{\sphinxupquote{, }}\sphinxstyleliteralemphasis{\sphinxupquote{complex}}\sphinxstyleliteralemphasis{\sphinxupquote{ or }}\sphinxstyleliteralemphasis{\sphinxupquote{ndarray}}) \textendash{} Reflection coefficient of load at port\sphinxhyphen{}2 that gives g2 reflection coefficient at port\sphinxhyphen{}1
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 \sphinxstyleliteralstrong{\sphinxupquote{gL3}} (\sphinxstyleliteralemphasis{\sphinxupquote{float}}\sphinxstyleliteralemphasis{\sphinxupquote{, }}\sphinxstyleliteralemphasis{\sphinxupquote{complex}}\sphinxstyleliteralemphasis{\sphinxupquote{ or }}\sphinxstyleliteralemphasis{\sphinxupquote{ndarray}}) \textendash{} Reflection coefficient of load at port\sphinxhyphen{}2 that gives g3 reflection coefficient at port\sphinxhyphen{}1
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 \sphinxstyleliteralstrong{\sphinxupquote{returnS2P}} (\sphinxstyleliteralemphasis{\sphinxupquote{boolean}}) \textendash{} If True, function returns an \sphinxstyleemphasis{spfile} object of the 2\sphinxhyphen{}port network, if False, it returns 3\sphinxhyphen{}tuple of S\sphinxhyphen{}Parameter arrays. Default is False.
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 \sphinxstyleliteralstrong{\sphinxupquote{freqs}} (\sphinxstyleliteralemphasis{\sphinxupquote{numpy.ndarray}}\sphinxstyleliteralemphasis{\sphinxupquote{, }}\sphinxstyleliteralemphasis{\sphinxupquote{list}}) \textendash{} If returnS2P is True, this input is used as the frequency points of the returned \sphinxstyleemphasis{spfile} object. Default is None.
 
@@ -3194,35 +3194,35 @@ Port\sphinxhyphen{}1: Input port.
 Port\sphinxhyphen{}2: Output port where load impedances are switched.
 \begin{quote}\begin{description}
 \sphinxlineitem{Parameters}\begin{itemize}
-\item {} 
+\item {}
 \sphinxAtStartPar
 \sphinxstyleliteralstrong{\sphinxupquote{g1}} (\sphinxstyleliteralemphasis{\sphinxupquote{float}}\sphinxstyleliteralemphasis{\sphinxupquote{, }}\sphinxstyleliteralemphasis{\sphinxupquote{complex}}\sphinxstyleliteralemphasis{\sphinxupquote{ or }}\sphinxstyleliteralemphasis{\sphinxupquote{ndarray}}) \textendash{} Reflection coefficient at port\sphinxhyphen{}1 when port\sphinxhyphen{}2 is terminated by a load with reflection coefficient gL1
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 \sphinxstyleliteralstrong{\sphinxupquote{g2}} (\sphinxstyleliteralemphasis{\sphinxupquote{float}}\sphinxstyleliteralemphasis{\sphinxupquote{, }}\sphinxstyleliteralemphasis{\sphinxupquote{complex}}\sphinxstyleliteralemphasis{\sphinxupquote{ or }}\sphinxstyleliteralemphasis{\sphinxupquote{ndarray}}) \textendash{} Reflection coefficient at port\sphinxhyphen{}1 when port\sphinxhyphen{}2 is terminated by a load with reflection coefficient gL2
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 \sphinxstyleliteralstrong{\sphinxupquote{g3}} (\sphinxstyleliteralemphasis{\sphinxupquote{float}}\sphinxstyleliteralemphasis{\sphinxupquote{, }}\sphinxstyleliteralemphasis{\sphinxupquote{complex}}\sphinxstyleliteralemphasis{\sphinxupquote{ or }}\sphinxstyleliteralemphasis{\sphinxupquote{ndarray}}) \textendash{} Reflection coefficient at port\sphinxhyphen{}1 when port\sphinxhyphen{}2 is terminated by a load with reflection coefficient gL3
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 \sphinxstyleliteralstrong{\sphinxupquote{gL1}} (\sphinxstyleliteralemphasis{\sphinxupquote{float}}\sphinxstyleliteralemphasis{\sphinxupquote{, }}\sphinxstyleliteralemphasis{\sphinxupquote{complex}}\sphinxstyleliteralemphasis{\sphinxupquote{ or }}\sphinxstyleliteralemphasis{\sphinxupquote{ndarray}}) \textendash{} Reflection coefficient of load at port\sphinxhyphen{}2 that gives g1 reflection coefficient at port\sphinxhyphen{}1
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 \sphinxstyleliteralstrong{\sphinxupquote{gL2}} (\sphinxstyleliteralemphasis{\sphinxupquote{float}}\sphinxstyleliteralemphasis{\sphinxupquote{, }}\sphinxstyleliteralemphasis{\sphinxupquote{complex}}\sphinxstyleliteralemphasis{\sphinxupquote{ or }}\sphinxstyleliteralemphasis{\sphinxupquote{ndarray}}) \textendash{} Reflection coefficient of load at port\sphinxhyphen{}2 that gives g2 reflection coefficient at port\sphinxhyphen{}1
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 \sphinxstyleliteralstrong{\sphinxupquote{gL3}} (\sphinxstyleliteralemphasis{\sphinxupquote{float}}\sphinxstyleliteralemphasis{\sphinxupquote{, }}\sphinxstyleliteralemphasis{\sphinxupquote{complex}}\sphinxstyleliteralemphasis{\sphinxupquote{ or }}\sphinxstyleliteralemphasis{\sphinxupquote{ndarray}}) \textendash{} Reflection coefficient of load at port\sphinxhyphen{}2 that gives g3 reflection coefficient at port\sphinxhyphen{}1
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 \sphinxstyleliteralstrong{\sphinxupquote{returnS2P}} (\sphinxstyleliteralemphasis{\sphinxupquote{boolean}}) \textendash{} If True, function returns an \sphinxstyleemphasis{spfile} object of the 2\sphinxhyphen{}port network, if False, it returns 3\sphinxhyphen{}tuple of S\sphinxhyphen{}Parameter arrays. Default is False.
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 \sphinxstyleliteralstrong{\sphinxupquote{freqs}} (\sphinxstyleliteralemphasis{\sphinxupquote{numpy.ndarray}}\sphinxstyleliteralemphasis{\sphinxupquote{, }}\sphinxstyleliteralemphasis{\sphinxupquote{list}}) \textendash{} If returnS2P is True, this input is used as the frequency points of the returned \sphinxstyleemphasis{spfile} object. Default is None.
 
@@ -3281,29 +3281,29 @@ Convert AWG to Diameter.
 Reference:  Wikipedia, Current rating is calculated through curve fit from online data.
 \begin{quote}\begin{description}
 \sphinxlineitem{Parameters}\begin{itemize}
-\item {} 
+\item {}
 \sphinxAtStartPar
-\sphinxstyleliteralstrong{\sphinxupquote{arg}} (\sphinxstyleliteralemphasis{\sphinxupquote{list}}) \textendash{} 
+\sphinxstyleliteralstrong{\sphinxupquote{arg}} (\sphinxstyleliteralemphasis{\sphinxupquote{list}}) \textendash{}
 \sphinxAtStartPar
 First 1 arguments are inputs.
 \begin{enumerate}
 \sphinxsetlistlabels{\arabic}{enumi}{enumii}{}{.}%
-\item {} 
+\item {}
 \sphinxAtStartPar
 AWG ;
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 Diameter ;length
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 Current rating in still air ; current
 
 \end{enumerate}
 
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 \sphinxstyleliteralstrong{\sphinxupquote{defaultunits}} (\sphinxstyleliteralemphasis{\sphinxupquote{list}}\sphinxstyleliteralemphasis{\sphinxupquote{, }}\sphinxstyleliteralemphasis{\sphinxupquote{optional}}) \textendash{} Default units for quantities in \sphinxstyleemphasis{arg} list. Default is {[}{]} which means SI units will be used if no unit is given in \sphinxstyleemphasis{arg}.
 
@@ -3332,38 +3332,38 @@ list
 Equalizer using an absorptive filter composed of two coupled lines.
 \begin{quote}\begin{description}
 \sphinxlineitem{Parameters}\begin{itemize}
-\item {} 
+\item {}
 \sphinxAtStartPar
-\sphinxstyleliteralstrong{\sphinxupquote{arg}} (\sphinxstyleliteralemphasis{\sphinxupquote{list}}) \textendash{} 
+\sphinxstyleliteralstrong{\sphinxupquote{arg}} (\sphinxstyleliteralemphasis{\sphinxupquote{list}}) \textendash{}
 \sphinxAtStartPar
 First 4 arguments are inputs.
 \begin{enumerate}
 \sphinxsetlistlabels{\arabic}{enumi}{enumii}{}{.}%
-\item {} 
+\item {}
 \sphinxAtStartPar
 Reference Impedance ; impedance
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 Coupling (dB) ;
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 Center Frequency ; frequency
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 Test Frequency ; frequency
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 S21 (dB) ;
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 Zeven ;  impedance
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 Zodd ;  impedance
 
@@ -3373,7 +3373,7 @@ Zodd ;  impedance
 Reference:
 
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 \sphinxstyleliteralstrong{\sphinxupquote{defaultunits}} (\sphinxstyleliteralemphasis{\sphinxupquote{list}}\sphinxstyleliteralemphasis{\sphinxupquote{, }}\sphinxstyleliteralemphasis{\sphinxupquote{optional}}) \textendash{} Default units for quantities in \sphinxstyleemphasis{arg} list. Default is {[}{]} which means SI units will be used if no unit is given in \sphinxstyleemphasis{arg}.
 
@@ -3402,34 +3402,34 @@ list
 Binomial Quarter Wave Impedance Transformer.
 \begin{quote}\begin{description}
 \sphinxlineitem{Parameters}\begin{itemize}
-\item {} 
+\item {}
 \sphinxAtStartPar
-\sphinxstyleliteralstrong{\sphinxupquote{arg}} (\sphinxstyleliteralemphasis{\sphinxupquote{list}}) \textendash{} 
+\sphinxstyleliteralstrong{\sphinxupquote{arg}} (\sphinxstyleliteralemphasis{\sphinxupquote{list}}) \textendash{}
 \sphinxAtStartPar
 First 5 arguments are inputs.
 \begin{enumerate}
 \sphinxsetlistlabels{\arabic}{enumi}{enumii}{}{.}%
-\item {} 
+\item {}
 \sphinxAtStartPar
 Source Impedance;impedance
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 Load Impedance;impedance
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 Number Of Matching Sections;
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 Max(dB(S\textless{}sub\textgreater{}11\textless{}/sub\textgreater{})) In Frequency Band ;
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 Center Frequency ; frequency
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 Impedances ; impedance
 
@@ -3440,7 +3440,7 @@ Impedances ; impedance
 Reference:  Impedance Matching and Transformation.pdf
 
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 \sphinxstyleliteralstrong{\sphinxupquote{defaultunits}} (\sphinxstyleliteralemphasis{\sphinxupquote{list}}\sphinxstyleliteralemphasis{\sphinxupquote{, }}\sphinxstyleliteralemphasis{\sphinxupquote{optional}}) \textendash{} Default units for quantities in \sphinxstyleemphasis{arg} list. Default is {[}{]} which means SI units will be used if no unit is given in \sphinxstyleemphasis{arg}.
 
@@ -3469,26 +3469,26 @@ list
 Bridged Tee Attenuator Analysis.
 \begin{quote}\begin{description}
 \sphinxlineitem{Parameters}\begin{itemize}
-\item {} 
+\item {}
 \sphinxAtStartPar
-\sphinxstyleliteralstrong{\sphinxupquote{arg}} (\sphinxstyleliteralemphasis{\sphinxupquote{list}}) \textendash{} 
+\sphinxstyleliteralstrong{\sphinxupquote{arg}} (\sphinxstyleliteralemphasis{\sphinxupquote{list}}) \textendash{}
 \sphinxAtStartPar
 First 3 arguments are inputs.
 \begin{enumerate}
 \sphinxsetlistlabels{\arabic}{enumi}{enumii}{}{.}%
-\item {} 
+\item {}
 \sphinxAtStartPar
 Reference Impedance (Zo); impedance
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 Series Impedance (Rs); impedance
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 Parallel Impedance (Rp); impedance
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 S(1,1) ;
 
@@ -3499,7 +3499,7 @@ S(1,1) ;
 Reference:
 
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 \sphinxstyleliteralstrong{\sphinxupquote{defaultunits}} (\sphinxstyleliteralemphasis{\sphinxupquote{list}}\sphinxstyleliteralemphasis{\sphinxupquote{, }}\sphinxstyleliteralemphasis{\sphinxupquote{optional}}) \textendash{} Default units for quantities in \sphinxstyleemphasis{arg} list. Default is {[}{]} which means SI units will be used if no unit is given in \sphinxstyleemphasis{arg}.
 
@@ -3528,26 +3528,26 @@ list
 Bridged Tee Attenuator Synthesis.
 \begin{quote}\begin{description}
 \sphinxlineitem{Parameters}\begin{itemize}
-\item {} 
+\item {}
 \sphinxAtStartPar
-\sphinxstyleliteralstrong{\sphinxupquote{arg}} (\sphinxstyleliteralemphasis{\sphinxupquote{list}}) \textendash{} 
+\sphinxstyleliteralstrong{\sphinxupquote{arg}} (\sphinxstyleliteralemphasis{\sphinxupquote{list}}) \textendash{}
 \sphinxAtStartPar
 First 3 arguments are inputs.
 \begin{enumerate}
 \sphinxsetlistlabels{\arabic}{enumi}{enumii}{}{.}%
-\item {} 
+\item {}
 \sphinxAtStartPar
 Reference Impedance (Zo); impedance
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 Series Impedance (Rs); impedance
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 Parallel Impedance (Rp); impedance
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 S(1,1) ;
 
@@ -3558,7 +3558,7 @@ S(1,1) ;
 Reference:
 
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 \sphinxstyleliteralstrong{\sphinxupquote{defaultunits}} (\sphinxstyleliteralemphasis{\sphinxupquote{list}}\sphinxstyleliteralemphasis{\sphinxupquote{, }}\sphinxstyleliteralemphasis{\sphinxupquote{optional}}) \textendash{} Default units for quantities in \sphinxstyleemphasis{arg} list. Default is {[}{]} which means SI units will be used if no unit is given in \sphinxstyleemphasis{arg}.
 
@@ -3587,38 +3587,38 @@ list
 Chebyshev Quarter Wave Impedance Transformer.
 \begin{quote}\begin{description}
 \sphinxlineitem{Parameters}\begin{itemize}
-\item {} 
+\item {}
 \sphinxAtStartPar
-\sphinxstyleliteralstrong{\sphinxupquote{arg}} (\sphinxstyleliteralemphasis{\sphinxupquote{list}}) \textendash{} 
+\sphinxstyleliteralstrong{\sphinxupquote{arg}} (\sphinxstyleliteralemphasis{\sphinxupquote{list}}) \textendash{}
 \sphinxAtStartPar
 First 6 arguments are inputs.
 \begin{enumerate}
 \sphinxsetlistlabels{\arabic}{enumi}{enumii}{}{.}%
-\item {} 
+\item {}
 \sphinxAtStartPar
 Source Impedance ; impedance
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 Load Impedance ; impedance
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 Number Of Matching Sections ;
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 Minimum Frequency ; frequency
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 Maximum Frequency ; frequency
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 Test Frequency ; frequency
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 Impedances ; impedance
 
@@ -3629,7 +3629,7 @@ Impedances ; impedance
 Reference:  Impedance Matching and Transformation.pdf + eski kod
 
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 \sphinxstyleliteralstrong{\sphinxupquote{defaultunits}} (\sphinxstyleliteralemphasis{\sphinxupquote{list}}\sphinxstyleliteralemphasis{\sphinxupquote{, }}\sphinxstyleliteralemphasis{\sphinxupquote{optional}}) \textendash{} Default units for quantities in \sphinxstyleemphasis{arg} list. Default is {[}{]} which means SI units will be used if no unit is given in \sphinxstyleemphasis{arg}.
 
@@ -3659,45 +3659,45 @@ Calculates performance and impedance values for an N\sphinxhyphen{}section Cheby
 Reference:  Foundations for Microwave Engineering, Collin
 \begin{quote}\begin{description}
 \sphinxlineitem{Parameters}\begin{itemize}
-\item {} 
+\item {}
 \sphinxAtStartPar
-\sphinxstyleliteralstrong{\sphinxupquote{arg}} (\sphinxstyleliteralemphasis{\sphinxupquote{list}}) \textendash{} 
+\sphinxstyleliteralstrong{\sphinxupquote{arg}} (\sphinxstyleliteralemphasis{\sphinxupquote{list}}) \textendash{}
 \sphinxAtStartPar
 First 5 arguments are inputs.
 \begin{enumerate}
 \sphinxsetlistlabels{\arabic}{enumi}{enumii}{}{.}%
-\item {} 
+\item {}
 \sphinxAtStartPar
 Source Impedance ; impedance
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 Load Impedance ; impedance
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 Number Of Sections (Even) ;
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 Fractional Bandwidth (F2/F1) ;
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 Length (normalized to Lambda at fcenter) ;
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 Impedances ; impedance
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 Return Loss ;
 
 \end{enumerate}
 
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 \sphinxstyleliteralstrong{\sphinxupquote{defaultunits}} (\sphinxstyleliteralemphasis{\sphinxupquote{list}}\sphinxstyleliteralemphasis{\sphinxupquote{, }}\sphinxstyleliteralemphasis{\sphinxupquote{optional}}) \textendash{} Default units for quantities in \sphinxstyleemphasis{arg} list. Default is {[}{]} which means SI units will be used if no unit is given in \sphinxstyleemphasis{arg}.
 
@@ -3726,41 +3726,41 @@ list
 Circular Plate Capacitance.
 \begin{quote}\begin{description}
 \sphinxlineitem{Parameters}\begin{itemize}
-\item {} 
+\item {}
 \sphinxAtStartPar
-\sphinxstyleliteralstrong{\sphinxupquote{arg}} (\sphinxstyleliteralemphasis{\sphinxupquote{list}}) \textendash{} 
+\sphinxstyleliteralstrong{\sphinxupquote{arg}} (\sphinxstyleliteralemphasis{\sphinxupquote{list}}) \textendash{}
 \sphinxAtStartPar
 First 3 arguments are inputs.
 \begin{enumerate}
 \sphinxsetlistlabels{\arabic}{enumi}{enumii}{}{.}%
-\item {} 
+\item {}
 \sphinxAtStartPar
 Radius;length
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 Height;length
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 Dielectric Permittivity;
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 Frequency; frequency
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 Capacitance; capacitance
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 Impedance; impedance
 
 \end{enumerate}
 
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 \sphinxstyleliteralstrong{\sphinxupquote{defaultunits}} (\sphinxstyleliteralemphasis{\sphinxupquote{list}}\sphinxstyleliteralemphasis{\sphinxupquote{, }}\sphinxstyleliteralemphasis{\sphinxupquote{optional}}) \textendash{} Default units for quantities in \sphinxstyleemphasis{arg} list. Default is {[}{]} which means SI units will be used if no unit is given in \sphinxstyleemphasis{arg}.
 
@@ -3790,29 +3790,29 @@ Convert Diameter to AWG.
 Reference:  Wikipedia
 \begin{quote}\begin{description}
 \sphinxlineitem{Parameters}\begin{itemize}
-\item {} 
+\item {}
 \sphinxAtStartPar
-\sphinxstyleliteralstrong{\sphinxupquote{arg}} (\sphinxstyleliteralemphasis{\sphinxupquote{list}}) \textendash{} 
+\sphinxstyleliteralstrong{\sphinxupquote{arg}} (\sphinxstyleliteralemphasis{\sphinxupquote{list}}) \textendash{}
 \sphinxAtStartPar
 First 1 arguments are inputs.
 \begin{enumerate}
 \sphinxsetlistlabels{\arabic}{enumi}{enumii}{}{.}%
-\item {} 
+\item {}
 \sphinxAtStartPar
 AWG ;
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 Diameter ;length
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 Current rating in still air ; current
 
 \end{enumerate}
 
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 \sphinxstyleliteralstrong{\sphinxupquote{defaultunits}} (\sphinxstyleliteralemphasis{\sphinxupquote{list}}\sphinxstyleliteralemphasis{\sphinxupquote{, }}\sphinxstyleliteralemphasis{\sphinxupquote{optional}}) \textendash{} Default units for quantities in \sphinxstyleemphasis{arg} list. Default is {[}{]} which means SI units will be used if no unit is given in \sphinxstyleemphasis{arg}.
 
@@ -3841,34 +3841,34 @@ list
 Dual Frequency Transformer.
 \begin{quote}\begin{description}
 \sphinxlineitem{Parameters}\begin{itemize}
-\item {} 
+\item {}
 \sphinxAtStartPar
-\sphinxstyleliteralstrong{\sphinxupquote{arg}} (\sphinxstyleliteralemphasis{\sphinxupquote{list}}) \textendash{} 
+\sphinxstyleliteralstrong{\sphinxupquote{arg}} (\sphinxstyleliteralemphasis{\sphinxupquote{list}}) \textendash{}
 \sphinxAtStartPar
 First 4 arguments are inputs.
 \begin{enumerate}
 \sphinxsetlistlabels{\arabic}{enumi}{enumii}{}{.}%
-\item {} 
+\item {}
 \sphinxAtStartPar
 Source Impedance; impedance
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 Load Impedance; impedance
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 f1 Lower Frequency; frequency
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 f2 Higher Frequency; frequency
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 Z1; impedance
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 Z2; impedance
 
@@ -3879,7 +3879,7 @@ Z2; impedance
 Reference:  A Small Dual Frequency Transformer in Two Sections
 
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 \sphinxstyleliteralstrong{\sphinxupquote{defaultunits}} (\sphinxstyleliteralemphasis{\sphinxupquote{list}}\sphinxstyleliteralemphasis{\sphinxupquote{, }}\sphinxstyleliteralemphasis{\sphinxupquote{optional}}) \textendash{} Default units for quantities in \sphinxstyleemphasis{arg} list. Default is {[}{]} which means SI units will be used if no unit is given in \sphinxstyleemphasis{arg}.
 
@@ -3908,38 +3908,38 @@ list
 Dual Transformation 1.
 \begin{quote}\begin{description}
 \sphinxlineitem{Parameters}\begin{itemize}
-\item {} 
+\item {}
 \sphinxAtStartPar
-\sphinxstyleliteralstrong{\sphinxupquote{arg}} (\sphinxstyleliteralemphasis{\sphinxupquote{list}}) \textendash{} 
+\sphinxstyleliteralstrong{\sphinxupquote{arg}} (\sphinxstyleliteralemphasis{\sphinxupquote{list}}) \textendash{}
 \sphinxAtStartPar
 First 4 arguments are inputs.
 \begin{enumerate}
 \sphinxsetlistlabels{\arabic}{enumi}{enumii}{}{.}%
-\item {} 
+\item {}
 \sphinxAtStartPar
 L1 ; inductance
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 C1 ; capacitance
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 L2 ; inductance
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 C2 ; capacitance
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 L1’ ; inductance
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 C1’ ; capacitance
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 L2’ ; inductance
 
@@ -3950,7 +3950,7 @@ L2’ ; inductance
 Reference:  Microstrip Filters for RF\sphinxhyphen{}Microwave Applications, s.25, Figure 2.6a
 
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 \sphinxstyleliteralstrong{\sphinxupquote{defaultunits}} (\sphinxstyleliteralemphasis{\sphinxupquote{list}}\sphinxstyleliteralemphasis{\sphinxupquote{, }}\sphinxstyleliteralemphasis{\sphinxupquote{optional}}) \textendash{} Default units for quantities in \sphinxstyleemphasis{arg} list. Default is {[}{]} which means SI units will be used if no unit is given in \sphinxstyleemphasis{arg}.
 
@@ -3980,49 +3980,49 @@ Dual Transformation 1.
 Reference:  Microstrip Filters for RF\sphinxhyphen{}Microwave Applications, s.25, Figure 2.6b
 \begin{quote}\begin{description}
 \sphinxlineitem{Parameters}\begin{itemize}
-\item {} 
+\item {}
 \sphinxAtStartPar
-\sphinxstyleliteralstrong{\sphinxupquote{arg}} (\sphinxstyleliteralemphasis{\sphinxupquote{list}}) \textendash{} 
+\sphinxstyleliteralstrong{\sphinxupquote{arg}} (\sphinxstyleliteralemphasis{\sphinxupquote{list}}) \textendash{}
 \sphinxAtStartPar
 First 4 arguments are inputs.
 \begin{enumerate}
 \sphinxsetlistlabels{\arabic}{enumi}{enumii}{}{.}%
-\item {} 
+\item {}
 \sphinxAtStartPar
 L1 ; inductance
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 C1 ; capacitance
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 L2 ; inductance
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 C2 ; capacitance
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 L1’ ; inductance
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 C1’ ; capacitance
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 L2’ ; inductance
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 C2’ ; capacitance
 
 \end{enumerate}
 
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 \sphinxstyleliteralstrong{\sphinxupquote{defaultunits}} (\sphinxstyleliteralemphasis{\sphinxupquote{list}}\sphinxstyleliteralemphasis{\sphinxupquote{, }}\sphinxstyleliteralemphasis{\sphinxupquote{optional}}) \textendash{} Default units for quantities in \sphinxstyleemphasis{arg} list. Default is {[}{]} which means SI units will be used if no unit is given in \sphinxstyleemphasis{arg}.
 
@@ -4076,57 +4076,57 @@ Zo=jXo
 \end{quote}
 \begin{quote}\begin{description}
 \sphinxlineitem{Parameters}\begin{itemize}
-\item {} 
+\item {}
 \sphinxAtStartPar
-\sphinxstyleliteralstrong{\sphinxupquote{arg}} (\sphinxstyleliteralemphasis{\sphinxupquote{list}}) \textendash{} 
+\sphinxstyleliteralstrong{\sphinxupquote{arg}} (\sphinxstyleliteralemphasis{\sphinxupquote{list}}) \textendash{}
 \sphinxAtStartPar
 First 5 arguments are inputs.
 \begin{enumerate}
 \sphinxsetlistlabels{\arabic}{enumi}{enumii}{}{.}%
-\item {} 
+\item {}
 \sphinxAtStartPar
 Waveguide Width;length
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 Waveguide Height;length
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 Dielectric Permittivity;
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 Waveguide Length;length
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 Frequency; frequency
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 Series Inductance For Shunt\sphinxhyphen{}Series\sphinxhyphen{}Shunt Model; inductance
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 Shunt Inductance For Shunt\sphinxhyphen{}Series\sphinxhyphen{}Shunt Model; inductance
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 Series Inductance For Series\sphinxhyphen{}Shunt\sphinxhyphen{}Series Model; inductance
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 Shunt Inductance For Series\sphinxhyphen{}Shunt\sphinxhyphen{}Series Model; inductance
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 Characteristic Impedance; impedance
 
 \end{enumerate}
 
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 \sphinxstyleliteralstrong{\sphinxupquote{defaultunits}} (\sphinxstyleliteralemphasis{\sphinxupquote{list}}\sphinxstyleliteralemphasis{\sphinxupquote{, }}\sphinxstyleliteralemphasis{\sphinxupquote{optional}}) \textendash{} Default units for quantities in \sphinxstyleemphasis{arg} list. Default is {[}{]} which means SI units will be used if no unit is given in \sphinxstyleemphasis{arg}.
 
@@ -4156,45 +4156,45 @@ Exponential Impedance Taper.
 Reference:  Foundations for Microwave Engineering, Collin
 \begin{quote}\begin{description}
 \sphinxlineitem{Parameters}\begin{itemize}
-\item {} 
+\item {}
 \sphinxAtStartPar
-\sphinxstyleliteralstrong{\sphinxupquote{arg}} (\sphinxstyleliteralemphasis{\sphinxupquote{list}}) \textendash{} 
+\sphinxstyleliteralstrong{\sphinxupquote{arg}} (\sphinxstyleliteralemphasis{\sphinxupquote{list}}) \textendash{}
 \sphinxAtStartPar
 First 5 arguments are inputs.
 \begin{enumerate}
 \sphinxsetlistlabels{\arabic}{enumi}{enumii}{}{.}%
-\item {} 
+\item {}
 \sphinxAtStartPar
 Source Impedance ; impedance
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 Load Impedance ; impedance
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 Number Of Sections ;
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 Fractional Bandwidth (F2/F1) ;
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 Length (normalized to Lambda at fcenter) ;
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 Impedances ; impedance
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 Return Loss ;
 
 \end{enumerate}
 
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 \sphinxstyleliteralstrong{\sphinxupquote{defaultunits}} (\sphinxstyleliteralemphasis{\sphinxupquote{list}}\sphinxstyleliteralemphasis{\sphinxupquote{, }}\sphinxstyleliteralemphasis{\sphinxupquote{optional}}) \textendash{} Default units for quantities in \sphinxstyleemphasis{arg} list. Default is {[}{]} which means SI units will be used if no unit is given in \sphinxstyleemphasis{arg}.
 
@@ -4238,57 +4238,57 @@ Z4: impedance of transmission line between 3.port and isolation resistor
 \end{quote}
 \begin{quote}\begin{description}
 \sphinxlineitem{Parameters}\begin{itemize}
-\item {} 
+\item {}
 \sphinxAtStartPar
-\sphinxstyleliteralstrong{\sphinxupquote{arg}} (\sphinxstyleliteralemphasis{\sphinxupquote{list}}) \textendash{} 
+\sphinxstyleliteralstrong{\sphinxupquote{arg}} (\sphinxstyleliteralemphasis{\sphinxupquote{list}}) \textendash{}
 \sphinxAtStartPar
 First 6 arguments are inputs.
 \begin{enumerate}
 \sphinxsetlistlabels{\arabic}{enumi}{enumii}{}{.}%
-\item {} 
+\item {}
 \sphinxAtStartPar
 Zo1;  impedance
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 Zo2;  impedance
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 Zo3;  impedance
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 R1; impedance
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 R2; impedance
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 P2/P3 ratio;
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 Z1; impedance
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 Z2; impedance
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 Z3; impedance
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 Z4; impedance
 
 \end{enumerate}
 
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 \sphinxstyleliteralstrong{\sphinxupquote{defaultunits}} (\sphinxstyleliteralemphasis{\sphinxupquote{list}}\sphinxstyleliteralemphasis{\sphinxupquote{, }}\sphinxstyleliteralemphasis{\sphinxupquote{optional}}) \textendash{} Default units for quantities in \sphinxstyleemphasis{arg} list. Default is {[}{]} which means SI units will be used if no unit is given in \sphinxstyleemphasis{arg}.
 
@@ -4318,74 +4318,74 @@ Homogeneous Rectangular Waveguide Parameters.
 Reference:  Marcuvitz Waveguide Handbook s.253
 \begin{quote}\begin{description}
 \sphinxlineitem{Parameters}\begin{itemize}
-\item {} 
+\item {}
 \sphinxAtStartPar
-\sphinxstyleliteralstrong{\sphinxupquote{arg}} (\sphinxstyleliteralemphasis{\sphinxupquote{list}}) \textendash{} 
+\sphinxstyleliteralstrong{\sphinxupquote{arg}} (\sphinxstyleliteralemphasis{\sphinxupquote{list}}) \textendash{}
 \sphinxAtStartPar
 First 10 arguments are inputs.
 \begin{enumerate}
 \sphinxsetlistlabels{\arabic}{enumi}{enumii}{}{.}%
-\item {} 
+\item {}
 \sphinxAtStartPar
 Dielectric Permittivity in Waveguide;
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 Waveguide Width;length
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 Waveguide Height;length
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 Mode (0: Te, 1: Tm);
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 M;
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 N;
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 Tand Of Dielectric;
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 Electrical Conductivity Of Walls; electrical conductivity
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 Frequency; frequency
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 Physical Length;length
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 Cond Loss; loss per length
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 Diel Loss; loss per length
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 Cutoff Freq; frequency
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 Lambda\_Guided;length
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 Impedance; impedance
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 Electrical Length; angle
 
@@ -4396,7 +4396,7 @@ Electrical Length; angle
 17. Group Delay; time
 
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 \sphinxstyleliteralstrong{\sphinxupquote{defaultunits}} (\sphinxstyleliteralemphasis{\sphinxupquote{list}}\sphinxstyleliteralemphasis{\sphinxupquote{, }}\sphinxstyleliteralemphasis{\sphinxupquote{optional}}) \textendash{} Default units for quantities in \sphinxstyleemphasis{arg} list. Default is {[}{]} which means SI units will be used if no unit is given in \sphinxstyleemphasis{arg}.
 
@@ -4425,42 +4425,42 @@ list
 Inductive Post In Waveguide.
 \begin{quote}\begin{description}
 \sphinxlineitem{Parameters}\begin{itemize}
-\item {} 
+\item {}
 \sphinxAtStartPar
-\sphinxstyleliteralstrong{\sphinxupquote{arg}} (\sphinxstyleliteralemphasis{\sphinxupquote{list}}) \textendash{} 
+\sphinxstyleliteralstrong{\sphinxupquote{arg}} (\sphinxstyleliteralemphasis{\sphinxupquote{list}}) \textendash{}
 \sphinxAtStartPar
 First 6 arguments are inputs.
 \begin{enumerate}
 \sphinxsetlistlabels{\arabic}{enumi}{enumii}{}{.}%
-\item {} 
+\item {}
 \sphinxAtStartPar
 Dielectric Permittivity in Waveguide ;
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 Waveguide Width (a);length
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 Waveguide Height (b);length
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 Post Diameter (d);length
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 Waveguide Sidewall To Post Center (s);length
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 Frequency; frequency
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 Inductance;inductance
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 Capacitance; capacitance
 
@@ -4471,7 +4471,7 @@ Capacitance; capacitance
 Reference:  Marcuvitz Waveguide Handbook s.257
 
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 \sphinxstyleliteralstrong{\sphinxupquote{defaultunits}} (\sphinxstyleliteralemphasis{\sphinxupquote{list}}\sphinxstyleliteralemphasis{\sphinxupquote{, }}\sphinxstyleliteralemphasis{\sphinxupquote{optional}}) \textendash{} Default units for quantities in \sphinxstyleemphasis{arg} list. Default is {[}{]} which means SI units will be used if no unit is given in \sphinxstyleemphasis{arg}.
 
@@ -4501,53 +4501,53 @@ Waveguide Width Step from Rectangular Waveguide to Evanescent Mode Rectangular W
 Reference:  Marcuvitz Waveguide Handbook s.253
 \begin{quote}\begin{description}
 \sphinxlineitem{Parameters}\begin{itemize}
-\item {} 
+\item {}
 \sphinxAtStartPar
-\sphinxstyleliteralstrong{\sphinxupquote{arg}} (\sphinxstyleliteralemphasis{\sphinxupquote{list}}) \textendash{} 
+\sphinxstyleliteralstrong{\sphinxupquote{arg}} (\sphinxstyleliteralemphasis{\sphinxupquote{list}}) \textendash{}
 \sphinxAtStartPar
 First 6 arguments are inputs.
 \begin{enumerate}
 \sphinxsetlistlabels{\arabic}{enumi}{enumii}{}{.}%
-\item {} 
+\item {}
 \sphinxAtStartPar
 Dielectric Permittivity in Waveguide ;
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 Waveguide Width (a);length
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 Waveguide Height (b);length
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 Difference Of Waveguide Width To Window Width;length
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 Window Thickness;length
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 Frequency; frequency
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 Inductance;inductance
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 Capacitance; capacitance
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 Impedance; impedance
 
 \end{enumerate}
 
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 \sphinxstyleliteralstrong{\sphinxupquote{defaultunits}} (\sphinxstyleliteralemphasis{\sphinxupquote{list}}\sphinxstyleliteralemphasis{\sphinxupquote{, }}\sphinxstyleliteralemphasis{\sphinxupquote{optional}}) \textendash{} Default units for quantities in \sphinxstyleemphasis{arg} list. Default is {[}{]} which means SI units will be used if no unit is given in \sphinxstyleemphasis{arg}.
 
@@ -4576,29 +4576,29 @@ list
 Maximum phase and amplitude variation of a signal in presence of an interfering signal.
 \begin{quote}\begin{description}
 \sphinxlineitem{Parameters}\begin{itemize}
-\item {} 
+\item {}
 \sphinxAtStartPar
-\sphinxstyleliteralstrong{\sphinxupquote{arg}} (\sphinxstyleliteralemphasis{\sphinxupquote{list}}) \textendash{} 
+\sphinxstyleliteralstrong{\sphinxupquote{arg}} (\sphinxstyleliteralemphasis{\sphinxupquote{list}}) \textendash{}
 \sphinxAtStartPar
 First 1 arguments are inputs.
 \begin{enumerate}
 \sphinxsetlistlabels{\arabic}{enumi}{enumii}{}{.}%
-\item {} 
+\item {}
 \sphinxAtStartPar
 Difference in dB ;
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 Amplitude Error;
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 Phase Error; angle
 
 \end{enumerate}
 
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 \sphinxstyleliteralstrong{\sphinxupquote{defaultunits}} (\sphinxstyleliteralemphasis{\sphinxupquote{list}}\sphinxstyleliteralemphasis{\sphinxupquote{, }}\sphinxstyleliteralemphasis{\sphinxupquote{optional}}) \textendash{} Default units for quantities in \sphinxstyleemphasis{arg} list. Default is {[}{]} which means SI units will be used if no unit is given in \sphinxstyleemphasis{arg}.
 
@@ -4627,42 +4627,42 @@ list
 Calculates performance and impedance values for an N\sphinxhyphen{}section Klopfenstein Impedance Taper.
 \begin{quote}\begin{description}
 \sphinxlineitem{Parameters}\begin{itemize}
-\item {} 
+\item {}
 \sphinxAtStartPar
-\sphinxstyleliteralstrong{\sphinxupquote{arg}} (\sphinxstyleliteralemphasis{\sphinxupquote{list}}) \textendash{} 
+\sphinxstyleliteralstrong{\sphinxupquote{arg}} (\sphinxstyleliteralemphasis{\sphinxupquote{list}}) \textendash{}
 \sphinxAtStartPar
 First 6 arguments are inputs.
 \begin{enumerate}
 \sphinxsetlistlabels{\arabic}{enumi}{enumii}{}{.}%
-\item {} 
+\item {}
 \sphinxAtStartPar
 Source Impedance ; impedance
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 Load Impedance ; impedance
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 Maximum Reflection Coefficient (dB) ;
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 Number Of Sections ;
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 Minimum Frequency ; frequency
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 Test Frequency ; frequency
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 Minimum Total Phase at Minimum Frequency ; angle ;
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 Impedances ; impedance
 
@@ -4673,7 +4673,7 @@ Impedances ; impedance
 Reference:  Microwave Engineering, Pozar
 
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 \sphinxstyleliteralstrong{\sphinxupquote{defaultunits}} (\sphinxstyleliteralemphasis{\sphinxupquote{list}}\sphinxstyleliteralemphasis{\sphinxupquote{, }}\sphinxstyleliteralemphasis{\sphinxupquote{optional}}) \textendash{} Default units for quantities in \sphinxstyleemphasis{arg} list. Default is {[}{]} which means SI units will be used if no unit is given in \sphinxstyleemphasis{arg}.
 
@@ -4702,42 +4702,42 @@ list
 Calculate LC Balun.
 \begin{quote}\begin{description}
 \sphinxlineitem{Parameters}\begin{itemize}
-\item {} 
+\item {}
 \sphinxAtStartPar
-\sphinxstyleliteralstrong{\sphinxupquote{arg}} (\sphinxstyleliteralemphasis{\sphinxupquote{list}}) \textendash{} 
+\sphinxstyleliteralstrong{\sphinxupquote{arg}} (\sphinxstyleliteralemphasis{\sphinxupquote{list}}) \textendash{}
 \sphinxAtStartPar
 First 4 arguments are inputs.
 \begin{enumerate}
 \sphinxsetlistlabels{\arabic}{enumi}{enumii}{}{.}%
-\item {} 
+\item {}
 \sphinxAtStartPar
 Source Impedance (Rin) ; impedance
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 Load Impedances (RL) ; impedance
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 Frequency; frequency
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 Test Frequency ; frequency
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 Inductance ; inductance
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 Capacitance ; capacitance
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 S11 (dB) ;
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 S21 (dB) ;
 
@@ -4748,7 +4748,7 @@ S21 (dB) ;
 Reference:
 
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 \sphinxstyleliteralstrong{\sphinxupquote{defaultunits}} (\sphinxstyleliteralemphasis{\sphinxupquote{list}}\sphinxstyleliteralemphasis{\sphinxupquote{, }}\sphinxstyleliteralemphasis{\sphinxupquote{optional}}) \textendash{} Default units for quantities in \sphinxstyleemphasis{arg} list. Default is {[}{]} which means SI units will be used if no unit is given in \sphinxstyleemphasis{arg}.
 
@@ -4777,26 +4777,26 @@ list
 Inductance of a bond wire.
 \begin{quote}\begin{description}
 \sphinxlineitem{Parameters}\begin{itemize}
-\item {} 
+\item {}
 \sphinxAtStartPar
-\sphinxstyleliteralstrong{\sphinxupquote{arg}} (\sphinxstyleliteralemphasis{\sphinxupquote{list}}) \textendash{} 
+\sphinxstyleliteralstrong{\sphinxupquote{arg}} (\sphinxstyleliteralemphasis{\sphinxupquote{list}}) \textendash{}
 \sphinxAtStartPar
 First 4 arguments are inputs.
 \begin{enumerate}
 \sphinxsetlistlabels{\arabic}{enumi}{enumii}{}{.}%
-\item {} 
+\item {}
 \sphinxAtStartPar
 Bondwire Radius ;length
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 Substrate Thickness ;length
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 Distance Between End Points ;length
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 Angle At End Points In Degrees ; angle
 
@@ -4807,7 +4807,7 @@ Angle At End Points In Degrees ; angle
 Reference:  Transmission Line Design Handbook, Wadell, s.153
 
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 \sphinxstyleliteralstrong{\sphinxupquote{defaultunits}} (\sphinxstyleliteralemphasis{\sphinxupquote{list}}\sphinxstyleliteralemphasis{\sphinxupquote{, }}\sphinxstyleliteralemphasis{\sphinxupquote{optional}}) \textendash{} Default units for quantities in \sphinxstyleemphasis{arg} list. Default is {[}{]} which means SI units will be used if no unit is given in \sphinxstyleemphasis{arg}.
 
@@ -4836,38 +4836,38 @@ list
 Inductance of a flat wire.
 \begin{quote}\begin{description}
 \sphinxlineitem{Parameters}\begin{itemize}
-\item {} 
+\item {}
 \sphinxAtStartPar
-\sphinxstyleliteralstrong{\sphinxupquote{arg}} (\sphinxstyleliteralemphasis{\sphinxupquote{list}}) \textendash{} 
+\sphinxstyleliteralstrong{\sphinxupquote{arg}} (\sphinxstyleliteralemphasis{\sphinxupquote{list}}) \textendash{}
 \sphinxAtStartPar
 First 6 arguments are inputs.
 \begin{enumerate}
 \sphinxsetlistlabels{\arabic}{enumi}{enumii}{}{.}%
-\item {} 
+\item {}
 \sphinxAtStartPar
 Wire Width ;length
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 Wire Thickness ;length
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 Wire Length ;length
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 Frequency ; frequency
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 Relative Permeability ;
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 Conductivity ; electrical conductivity
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 Inductance ;inductance
 
@@ -4878,7 +4878,7 @@ Inductance ;inductance
 Reference:  Transmission Line Design Handbook, Wadell, s.382
 
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 \sphinxstyleliteralstrong{\sphinxupquote{defaultunits}} (\sphinxstyleliteralemphasis{\sphinxupquote{list}}\sphinxstyleliteralemphasis{\sphinxupquote{, }}\sphinxstyleliteralemphasis{\sphinxupquote{optional}}) \textendash{} Default units for quantities in \sphinxstyleemphasis{arg} list. Default is {[}{]} which means SI units will be used if no unit is given in \sphinxstyleemphasis{arg}.
 
@@ -4907,34 +4907,34 @@ list
 Inductance of a straight round wire.
 \begin{quote}\begin{description}
 \sphinxlineitem{Parameters}\begin{itemize}
-\item {} 
+\item {}
 \sphinxAtStartPar
-\sphinxstyleliteralstrong{\sphinxupquote{arg}} (\sphinxstyleliteralemphasis{\sphinxupquote{list}}) \textendash{} 
+\sphinxstyleliteralstrong{\sphinxupquote{arg}} (\sphinxstyleliteralemphasis{\sphinxupquote{list}}) \textendash{}
 \sphinxAtStartPar
 First 5 arguments are inputs.
 \begin{enumerate}
 \sphinxsetlistlabels{\arabic}{enumi}{enumii}{}{.}%
-\item {} 
+\item {}
 \sphinxAtStartPar
 Wire Diameter ;length
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 Wire Length ;length
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 Frequency ; frequency
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 Dielectric Permeability  ;
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 Conductivity ; electrical conductivity
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 Inductance ;inductance
 
@@ -4945,7 +4945,7 @@ Inductance ;inductance
 Reference:  Transmission Line Design Handbook, Wadell, s.380
 
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 \sphinxstyleliteralstrong{\sphinxupquote{defaultunits}} (\sphinxstyleliteralemphasis{\sphinxupquote{list}}\sphinxstyleliteralemphasis{\sphinxupquote{, }}\sphinxstyleliteralemphasis{\sphinxupquote{optional}}) \textendash{} Default units for quantities in \sphinxstyleemphasis{arg} list. Default is {[}{]} which means SI units will be used if no unit is given in \sphinxstyleemphasis{arg}.
 
@@ -4974,30 +4974,30 @@ list
 Inductance of a via hole in microstrip.
 \begin{quote}\begin{description}
 \sphinxlineitem{Parameters}\begin{itemize}
-\item {} 
+\item {}
 \sphinxAtStartPar
-\sphinxstyleliteralstrong{\sphinxupquote{arg}} (\sphinxstyleliteralemphasis{\sphinxupquote{list}}) \textendash{} 
+\sphinxstyleliteralstrong{\sphinxupquote{arg}} (\sphinxstyleliteralemphasis{\sphinxupquote{list}}) \textendash{}
 \sphinxAtStartPar
 First 4 arguments are inputs.
 \begin{enumerate}
 \sphinxsetlistlabels{\arabic}{enumi}{enumii}{}{.}%
-\item {} 
+\item {}
 \sphinxAtStartPar
 Wire Diameter (d) ;length
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 Coil Inner Diameter (d\_in) ;length
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 Spacing Between Turns (s) ; length
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 Number Of Turns ;
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 Inductance ; inductance
 
@@ -5008,7 +5008,7 @@ Inductance ; inductance
 Reference:  www.microwavecoil.com , Microwave Components Inc.
 
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 \sphinxstyleliteralstrong{\sphinxupquote{defaultunits}} (\sphinxstyleliteralemphasis{\sphinxupquote{list}}\sphinxstyleliteralemphasis{\sphinxupquote{, }}\sphinxstyleliteralemphasis{\sphinxupquote{optional}}) \textendash{} Default units for quantities in \sphinxstyleemphasis{arg} list. Default is {[}{]} which means SI units will be used if no unit is given in \sphinxstyleemphasis{arg}.
 
@@ -5037,18 +5037,18 @@ list
 Inductance of a via hole in microstrip.
 \begin{quote}\begin{description}
 \sphinxlineitem{Parameters}\begin{itemize}
-\item {} 
+\item {}
 \sphinxAtStartPar
-\sphinxstyleliteralstrong{\sphinxupquote{arg}} (\sphinxstyleliteralemphasis{\sphinxupquote{list}}) \textendash{} 
+\sphinxstyleliteralstrong{\sphinxupquote{arg}} (\sphinxstyleliteralemphasis{\sphinxupquote{list}}) \textendash{}
 \sphinxAtStartPar
 First 2 arguments are inputs.
 \begin{enumerate}
 \sphinxsetlistlabels{\arabic}{enumi}{enumii}{}{.}%
-\item {} 
+\item {}
 \sphinxAtStartPar
 Via Radius ;length
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 Substrate Thickness ;length
 
@@ -5059,7 +5059,7 @@ Substrate Thickness ;length
 Reference:  Microstrip Via Hole Grounds in Microstrip.pdf
 
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 \sphinxstyleliteralstrong{\sphinxupquote{defaultunits}} (\sphinxstyleliteralemphasis{\sphinxupquote{list}}\sphinxstyleliteralemphasis{\sphinxupquote{, }}\sphinxstyleliteralemphasis{\sphinxupquote{optional}}) \textendash{} Default units for quantities in \sphinxstyleemphasis{arg} list. Default is {[}{]} which means SI units will be used if no unit is given in \sphinxstyleemphasis{arg}.
 
@@ -5089,29 +5089,29 @@ Optimum Mitered Microstrip Bend Parameters.
 Reference: Tranmission line design handbook, p.290
 \begin{quote}\begin{description}
 \sphinxlineitem{Parameters}\begin{itemize}
-\item {} 
+\item {}
 \sphinxAtStartPar
-\sphinxstyleliteralstrong{\sphinxupquote{arg}} (\sphinxstyleliteralemphasis{\sphinxupquote{list}}) \textendash{} 
+\sphinxstyleliteralstrong{\sphinxupquote{arg}} (\sphinxstyleliteralemphasis{\sphinxupquote{list}}) \textendash{}
 \sphinxAtStartPar
 First 2 arguments are inputs.
 \begin{enumerate}
 \sphinxsetlistlabels{\arabic}{enumi}{enumii}{}{.}%
-\item {} 
+\item {}
 \sphinxAtStartPar
 Microstrip Width;length
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 Substrate Height;length
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 Miter Length; length
 
 \end{enumerate}
 
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 \sphinxstyleliteralstrong{\sphinxupquote{defaultunits}} (\sphinxstyleliteralemphasis{\sphinxupquote{list}}\sphinxstyleliteralemphasis{\sphinxupquote{, }}\sphinxstyleliteralemphasis{\sphinxupquote{optional}}) \textendash{} Default units for quantities in \sphinxstyleemphasis{arg} list. Default is {[}{]} which means SI units will be used if no unit is given in \sphinxstyleemphasis{arg}.
 
@@ -5142,24 +5142,24 @@ Reference: MWOHELP, MBENDA model
 \begin{quote}\begin{description}
 \sphinxlineitem{Parameters}
 \sphinxAtStartPar
-\sphinxstyleliteralstrong{\sphinxupquote{arg}} (\sphinxstyleliteralemphasis{\sphinxupquote{list}}) \textendash{} 
+\sphinxstyleliteralstrong{\sphinxupquote{arg}} (\sphinxstyleliteralemphasis{\sphinxupquote{list}}) \textendash{}
 \sphinxAtStartPar
 First 2 arguments are inputs.
 \begin{enumerate}
 \sphinxsetlistlabels{\arabic}{enumi}{enumii}{}{.}%
-\item {} 
+\item {}
 \sphinxAtStartPar
 Microstrip Width;length;
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 Substrate Height;length;
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 Angle (0\sphinxhyphen{}180 degrees); angle ;
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 Miter Length; length ;
 
@@ -5199,49 +5199,49 @@ list
 PCB Track Current Capacity.
 \begin{quote}\begin{description}
 \sphinxlineitem{Parameters}\begin{itemize}
-\item {} 
+\item {}
 \sphinxAtStartPar
-\sphinxstyleliteralstrong{\sphinxupquote{arg}} (\sphinxstyleliteralemphasis{\sphinxupquote{list}}) \textendash{} 
+\sphinxstyleliteralstrong{\sphinxupquote{arg}} (\sphinxstyleliteralemphasis{\sphinxupquote{list}}) \textendash{}
 \sphinxAtStartPar
 First 7 arguments are inputs.
 \begin{enumerate}
 \sphinxsetlistlabels{\arabic}{enumi}{enumii}{}{.}%
-\item {} 
+\item {}
 \sphinxAtStartPar
 Metal Width;  length
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 PCB Height;     length
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 Metal Thickness;        length
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 Allowable Temperature Rise; temperature
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 Thermal Conductivity;  thermal conductivity
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 Electrical Conductivity; electrical conductivity
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 External if 1, Internal if 0;
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 Current ; current
 
 \end{enumerate}
 
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 \sphinxstyleliteralstrong{\sphinxupquote{defaultunits}} (\sphinxstyleliteralemphasis{\sphinxupquote{list}}\sphinxstyleliteralemphasis{\sphinxupquote{, }}\sphinxstyleliteralemphasis{\sphinxupquote{optional}}) \textendash{} Default units for quantities in \sphinxstyleemphasis{arg} list. Default is {[}{]} which means SI units will be used if no unit is given in \sphinxstyleemphasis{arg}.
 
@@ -5271,37 +5271,37 @@ PCB Track Current Capacity, IPC.
 Reference: IPC2221A
 \begin{quote}\begin{description}
 \sphinxlineitem{Parameters}\begin{itemize}
-\item {} 
+\item {}
 \sphinxAtStartPar
-\sphinxstyleliteralstrong{\sphinxupquote{arg}} (\sphinxstyleliteralemphasis{\sphinxupquote{list}}) \textendash{} 
+\sphinxstyleliteralstrong{\sphinxupquote{arg}} (\sphinxstyleliteralemphasis{\sphinxupquote{list}}) \textendash{}
 \sphinxAtStartPar
 First 4 arguments are inputs.
 \begin{enumerate}
 \sphinxsetlistlabels{\arabic}{enumi}{enumii}{}{.}%
-\item {} 
+\item {}
 \sphinxAtStartPar
 Metal Width;length
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 Metal Thickness;length
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 Allowable Temperature Rise; temperature
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 External if 1, Internal if 0;
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 Current ; current
 
 \end{enumerate}
 
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 \sphinxstyleliteralstrong{\sphinxupquote{defaultunits}} (\sphinxstyleliteralemphasis{\sphinxupquote{list}}\sphinxstyleliteralemphasis{\sphinxupquote{, }}\sphinxstyleliteralemphasis{\sphinxupquote{optional}}) \textendash{} Default units for quantities in \sphinxstyleemphasis{arg} list. Default is {[}{]} which means SI units will be used if no unit is given in \sphinxstyleemphasis{arg}.
 
@@ -5330,45 +5330,45 @@ list
 Parallel Plate Capacitance.
 \begin{quote}\begin{description}
 \sphinxlineitem{Parameters}\begin{itemize}
-\item {} 
+\item {}
 \sphinxAtStartPar
-\sphinxstyleliteralstrong{\sphinxupquote{arg}} (\sphinxstyleliteralemphasis{\sphinxupquote{list}}) \textendash{} 
+\sphinxstyleliteralstrong{\sphinxupquote{arg}} (\sphinxstyleliteralemphasis{\sphinxupquote{list}}) \textendash{}
 \sphinxAtStartPar
 First 4 arguments are inputs.
 \begin{enumerate}
 \sphinxsetlistlabels{\arabic}{enumi}{enumii}{}{.}%
-\item {} 
+\item {}
 \sphinxAtStartPar
 Width;length
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 Length;length
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 Height;length
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 Dielectric Permittivity;
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 Frequency; frequency
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 Capacitance; capacitance
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 Impedance; impedance
 
 \end{enumerate}
 
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 \sphinxstyleliteralstrong{\sphinxupquote{defaultunits}} (\sphinxstyleliteralemphasis{\sphinxupquote{list}}\sphinxstyleliteralemphasis{\sphinxupquote{, }}\sphinxstyleliteralemphasis{\sphinxupquote{optional}}) \textendash{} Default units for quantities in \sphinxstyleemphasis{arg} list. Default is {[}{]} which means SI units will be used if no unit is given in \sphinxstyleemphasis{arg}.
 
@@ -5399,49 +5399,49 @@ Ref: Overview of Microstrip Antennas (Jackson) (Presentation)
 Reference:  Foundations for Microwave Engineering, Collin
 \begin{quote}\begin{description}
 \sphinxlineitem{Parameters}\begin{itemize}
-\item {} 
+\item {}
 \sphinxAtStartPar
-\sphinxstyleliteralstrong{\sphinxupquote{arg}} (\sphinxstyleliteralemphasis{\sphinxupquote{list}}) \textendash{} 
+\sphinxstyleliteralstrong{\sphinxupquote{arg}} (\sphinxstyleliteralemphasis{\sphinxupquote{list}}) \textendash{}
 \sphinxAtStartPar
 First 6 arguments are inputs.
 \begin{enumerate}
 \sphinxsetlistlabels{\arabic}{enumi}{enumii}{}{.}%
-\item {} 
+\item {}
 \sphinxAtStartPar
 Width (W) ; length
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 Length (L) ; length
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 Substrate Thickness (h);length
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 Dielectric Permittivity ;
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 Dielectric Loss Tangent ;
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 Metal Conductivity ; electrical conductivity
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 Resonance Frequency (f) ; frequency
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 Bandwidth ; frequency
 
 \end{enumerate}
 
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 \sphinxstyleliteralstrong{\sphinxupquote{defaultunits}} (\sphinxstyleliteralemphasis{\sphinxupquote{list}}\sphinxstyleliteralemphasis{\sphinxupquote{, }}\sphinxstyleliteralemphasis{\sphinxupquote{optional}}) \textendash{} Default units for quantities in \sphinxstyleemphasis{arg} list. Default is {[}{]} which means SI units will be used if no unit is given in \sphinxstyleemphasis{arg}.
 
@@ -5470,38 +5470,38 @@ list
 Pi Attenuator Analysis.
 \begin{quote}\begin{description}
 \sphinxlineitem{Parameters}\begin{itemize}
-\item {} 
+\item {}
 \sphinxAtStartPar
-\sphinxstyleliteralstrong{\sphinxupquote{arg}} (\sphinxstyleliteralemphasis{\sphinxupquote{list}}) \textendash{} 
+\sphinxstyleliteralstrong{\sphinxupquote{arg}} (\sphinxstyleliteralemphasis{\sphinxupquote{list}}) \textendash{}
 \sphinxAtStartPar
 First 3 arguments are inputs.
 \begin{enumerate}
 \sphinxsetlistlabels{\arabic}{enumi}{enumii}{}{.}%
-\item {} 
+\item {}
 \sphinxAtStartPar
 Reference Impedance (Zo); impedance
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 Series Impedance (Rs); impedance
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 Parallel Impedance (Rp); impedance
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 S(1,1) ;
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 S(2,1) ;
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 P1 ;
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 P2 ;
 
@@ -5512,7 +5512,7 @@ P2 ;
 Reference:
 
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 \sphinxstyleliteralstrong{\sphinxupquote{defaultunits}} (\sphinxstyleliteralemphasis{\sphinxupquote{list}}\sphinxstyleliteralemphasis{\sphinxupquote{, }}\sphinxstyleliteralemphasis{\sphinxupquote{optional}}) \textendash{} Default units for quantities in \sphinxstyleemphasis{arg} list. Default is {[}{]} which means SI units will be used if no unit is given in \sphinxstyleemphasis{arg}.
 
@@ -5541,38 +5541,38 @@ list
 Pi Attenuator Analysis.
 \begin{quote}\begin{description}
 \sphinxlineitem{Parameters}\begin{itemize}
-\item {} 
+\item {}
 \sphinxAtStartPar
-\sphinxstyleliteralstrong{\sphinxupquote{arg}} (\sphinxstyleliteralemphasis{\sphinxupquote{list}}) \textendash{} 
+\sphinxstyleliteralstrong{\sphinxupquote{arg}} (\sphinxstyleliteralemphasis{\sphinxupquote{list}}) \textendash{}
 \sphinxAtStartPar
 First 3 arguments are inputs.
 \begin{enumerate}
 \sphinxsetlistlabels{\arabic}{enumi}{enumii}{}{.}%
-\item {} 
+\item {}
 \sphinxAtStartPar
 Reference Impedance (Zo); impedance
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 Series Impedance (Rs); impedance
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 Parallel Impedance (Rp); impedance
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 S(1,1) ;
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 S(2,1) ;
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 P1 ;
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 P2 ;
 
@@ -5583,7 +5583,7 @@ P2 ;
 Reference:
 
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 \sphinxstyleliteralstrong{\sphinxupquote{defaultunits}} (\sphinxstyleliteralemphasis{\sphinxupquote{list}}\sphinxstyleliteralemphasis{\sphinxupquote{, }}\sphinxstyleliteralemphasis{\sphinxupquote{optional}}) \textendash{} Default units for quantities in \sphinxstyleemphasis{arg} list. Default is {[}{]} which means SI units will be used if no unit is given in \sphinxstyleemphasis{arg}.
 
@@ -5613,33 +5613,33 @@ Waveguide Width Step from Rectangular Waveguide to Evanescent Mode Rectangular W
 Reference:  The Design of Evanescent Mode Waveguide Bandpass Filters for a Prescribed Insertion Loss Characteristic.pdf
 \begin{quote}\begin{description}
 \sphinxlineitem{Parameters}\begin{itemize}
-\item {} 
+\item {}
 \sphinxAtStartPar
-\sphinxstyleliteralstrong{\sphinxupquote{arg}} (\sphinxstyleliteralemphasis{\sphinxupquote{list}}) \textendash{} 
+\sphinxstyleliteralstrong{\sphinxupquote{arg}} (\sphinxstyleliteralemphasis{\sphinxupquote{list}}) \textendash{}
 \sphinxAtStartPar
 First 2 arguments are inputs.
 \begin{enumerate}
 \sphinxsetlistlabels{\arabic}{enumi}{enumii}{}{.}%
-\item {} 
+\item {}
 \sphinxAtStartPar
 Width of Rectangular Waveguide;length;
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 Width of Evanescent Mode Rectangular Waveguide;length;
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 Inductance; inductance
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 Turns Ratio;
 
 \end{enumerate}
 
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 \sphinxstyleliteralstrong{\sphinxupquote{defaultunits}} (\sphinxstyleliteralemphasis{\sphinxupquote{list}}\sphinxstyleliteralemphasis{\sphinxupquote{, }}\sphinxstyleliteralemphasis{\sphinxupquote{optional}}) \textendash{} Default units for quantities in \sphinxstyleemphasis{arg} list. Default is {[}{]} which means SI units will be used if no unit is given in \sphinxstyleemphasis{arg}.
 
@@ -5668,15 +5668,15 @@ list
 Equivalent width of substrate integrated waveguide.
 \begin{quote}\begin{description}
 \sphinxlineitem{Parameters}\begin{itemize}
-\item {} 
+\item {}
 \sphinxAtStartPar
 \sphinxstyleliteralstrong{\sphinxupquote{w}} (\sphinxstyleliteralemphasis{\sphinxupquote{float}}) \textendash{} Distance between the centers of two via arrays.
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 \sphinxstyleliteralstrong{\sphinxupquote{d}} (\sphinxstyleliteralemphasis{\sphinxupquote{float}}) \textendash{} Diameter of vias.
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 \sphinxstyleliteralstrong{\sphinxupquote{s}} (\sphinxstyleliteralemphasis{\sphinxupquote{float}}) \textendash{} Distance between the centers of consecutive vias of via arrays.
 
@@ -5705,37 +5705,37 @@ float
 Shortening 90 Degree Line with a capacitive load.
 \begin{quote}\begin{description}
 \sphinxlineitem{Parameters}\begin{itemize}
-\item {} 
+\item {}
 \sphinxAtStartPar
-\sphinxstyleliteralstrong{\sphinxupquote{arg}} (\sphinxstyleliteralemphasis{\sphinxupquote{list}}) \textendash{} 
+\sphinxstyleliteralstrong{\sphinxupquote{arg}} (\sphinxstyleliteralemphasis{\sphinxupquote{list}}) \textendash{}
 \sphinxAtStartPar
 First 3 arguments are inputs.
 \begin{enumerate}
 \sphinxsetlistlabels{\arabic}{enumi}{enumii}{}{.}%
-\item {} 
+\item {}
 \sphinxAtStartPar
 Impedance (Zo); impedance
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 Center Frequency ;  frequency
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 Electrical Length (theta) ; angle
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 Impedance (Z); impedance
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 Capacitance ; capacitance
 
 \end{enumerate}
 
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 \sphinxstyleliteralstrong{\sphinxupquote{defaultunits}} (\sphinxstyleliteralemphasis{\sphinxupquote{list}}\sphinxstyleliteralemphasis{\sphinxupquote{, }}\sphinxstyleliteralemphasis{\sphinxupquote{optional}}) \textendash{} Default units for quantities in \sphinxstyleemphasis{arg} list. Default is {[}{]} which means SI units will be used if no unit is given in \sphinxstyleemphasis{arg}.
 
@@ -5764,30 +5764,30 @@ list
 Star network to Triangle network transformation.
 \begin{quote}\begin{description}
 \sphinxlineitem{Parameters}\begin{itemize}
-\item {} 
+\item {}
 \sphinxAtStartPar
-\sphinxstyleliteralstrong{\sphinxupquote{arg}} (\sphinxstyleliteralemphasis{\sphinxupquote{list}}) \textendash{} 
+\sphinxstyleliteralstrong{\sphinxupquote{arg}} (\sphinxstyleliteralemphasis{\sphinxupquote{list}}) \textendash{}
 \sphinxAtStartPar
 First 3 arguments are inputs.
 \begin{enumerate}
 \sphinxsetlistlabels{\arabic}{enumi}{enumii}{}{.}%
-\item {} 
+\item {}
 \sphinxAtStartPar
 Z1; impedance
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 Z2; impedance
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 Z3; impedance
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 Z1’; impedance
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 Z2’; impedance
 
@@ -5800,7 +5800,7 @@ At star, z1 is connected to A\sphinxhyphen{}node, z2 is connected to B\sphinxhyp
 At triangle, z1 is between A\sphinxhyphen{}B, z2 is between A\sphinxhyphen{}C, z3 is between B\sphinxhyphen{}C
 
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 \sphinxstyleliteralstrong{\sphinxupquote{defaultunits}} (\sphinxstyleliteralemphasis{\sphinxupquote{list}}\sphinxstyleliteralemphasis{\sphinxupquote{, }}\sphinxstyleliteralemphasis{\sphinxupquote{optional}}) \textendash{} Default units for quantities in \sphinxstyleemphasis{arg} list. Default is {[}{]} which means SI units will be used if no unit is given in \sphinxstyleemphasis{arg}.
 
@@ -5829,26 +5829,26 @@ list
 Symmetric Lange Coupler.
 \begin{quote}\begin{description}
 \sphinxlineitem{Parameters}\begin{itemize}
-\item {} 
+\item {}
 \sphinxAtStartPar
-\sphinxstyleliteralstrong{\sphinxupquote{arg}} (\sphinxstyleliteralemphasis{\sphinxupquote{list}}) \textendash{} 
+\sphinxstyleliteralstrong{\sphinxupquote{arg}} (\sphinxstyleliteralemphasis{\sphinxupquote{list}}) \textendash{}
 \sphinxAtStartPar
 First 3 arguments are inputs.
 \begin{enumerate}
 \sphinxsetlistlabels{\arabic}{enumi}{enumii}{}{.}%
-\item {} 
+\item {}
 \sphinxAtStartPar
 C: Voltage coupling coefficient in dB (positive);
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 n: Number of fingers (should be even);
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 Reference Impedance;impedance
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 Zoo;impedance
 
@@ -5859,7 +5859,7 @@ Zoo;impedance
 Reference:  Microwave Circuits, Analysis and Computer\sphinxhyphen{}Aided Design, Fusco
 
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 \sphinxstyleliteralstrong{\sphinxupquote{defaultunits}} (\sphinxstyleliteralemphasis{\sphinxupquote{list}}\sphinxstyleliteralemphasis{\sphinxupquote{, }}\sphinxstyleliteralemphasis{\sphinxupquote{optional}}) \textendash{} Default units for quantities in \sphinxstyleemphasis{arg} list. Default is {[}{]} which means SI units will be used if no unit is given in \sphinxstyleemphasis{arg}.
 
@@ -5888,38 +5888,38 @@ list
 Tee Attenuator Analysis.
 \begin{quote}\begin{description}
 \sphinxlineitem{Parameters}\begin{itemize}
-\item {} 
+\item {}
 \sphinxAtStartPar
-\sphinxstyleliteralstrong{\sphinxupquote{arg}} (\sphinxstyleliteralemphasis{\sphinxupquote{list}}) \textendash{} 
+\sphinxstyleliteralstrong{\sphinxupquote{arg}} (\sphinxstyleliteralemphasis{\sphinxupquote{list}}) \textendash{}
 \sphinxAtStartPar
 First 3 arguments are inputs.
 \begin{enumerate}
 \sphinxsetlistlabels{\arabic}{enumi}{enumii}{}{.}%
-\item {} 
+\item {}
 \sphinxAtStartPar
 Reference Impedance (Zo); impedance
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 Series Impedance (Rs); impedance
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 Parallel Impedance (Rp); impedance
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 S(1,1) ;
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 S(2,1) ;
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 P1 ;
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 P2 ;
 
@@ -5930,7 +5930,7 @@ P2 ;
 Reference:
 
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 \sphinxstyleliteralstrong{\sphinxupquote{defaultunits}} (\sphinxstyleliteralemphasis{\sphinxupquote{list}}\sphinxstyleliteralemphasis{\sphinxupquote{, }}\sphinxstyleliteralemphasis{\sphinxupquote{optional}}) \textendash{} Default units for quantities in \sphinxstyleemphasis{arg} list. Default is {[}{]} which means SI units will be used if no unit is given in \sphinxstyleemphasis{arg}.
 
@@ -5959,38 +5959,38 @@ list
 Tee Attenuator Synthesis.
 \begin{quote}\begin{description}
 \sphinxlineitem{Parameters}\begin{itemize}
-\item {} 
+\item {}
 \sphinxAtStartPar
-\sphinxstyleliteralstrong{\sphinxupquote{arg}} (\sphinxstyleliteralemphasis{\sphinxupquote{list}}) \textendash{} 
+\sphinxstyleliteralstrong{\sphinxupquote{arg}} (\sphinxstyleliteralemphasis{\sphinxupquote{list}}) \textendash{}
 \sphinxAtStartPar
 First 5 arguments are inputs.
 \begin{enumerate}
 \sphinxsetlistlabels{\arabic}{enumi}{enumii}{}{.}%
-\item {} 
+\item {}
 \sphinxAtStartPar
 Reference Impedance (Zo); impedance
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 Series Impedance (Rs); impedance
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 Parallel Impedance (Rp); impedance
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 S(1,1) ;
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 S(2,1) ;
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 P1 ;
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 P2 ;
 
@@ -6001,7 +6001,7 @@ P2 ;
 Reference:
 
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 \sphinxstyleliteralstrong{\sphinxupquote{defaultunits}} (\sphinxstyleliteralemphasis{\sphinxupquote{list}}\sphinxstyleliteralemphasis{\sphinxupquote{, }}\sphinxstyleliteralemphasis{\sphinxupquote{optional}}) \textendash{} Default units for quantities in \sphinxstyleemphasis{arg} list. Default is {[}{]} which means SI units will be used if no unit is given in \sphinxstyleemphasis{arg}.
 
@@ -6032,41 +6032,41 @@ At star, z1 is connected to A\sphinxhyphen{}node, z2 is connected to B\sphinxhyp
 At triangle, z1’ is between A\sphinxhyphen{}B, z2’ is between A\sphinxhyphen{}C, z3’ is between B\sphinxhyphen{}C
 \begin{quote}\begin{description}
 \sphinxlineitem{Parameters}\begin{itemize}
-\item {} 
+\item {}
 \sphinxAtStartPar
-\sphinxstyleliteralstrong{\sphinxupquote{arg}} (\sphinxstyleliteralemphasis{\sphinxupquote{list}}) \textendash{} 
+\sphinxstyleliteralstrong{\sphinxupquote{arg}} (\sphinxstyleliteralemphasis{\sphinxupquote{list}}) \textendash{}
 \sphinxAtStartPar
 Last 3 arguments are inputs.
 \begin{enumerate}
 \sphinxsetlistlabels{\arabic}{enumi}{enumii}{}{.}%
-\item {} 
+\item {}
 \sphinxAtStartPar
 Z1; impedance
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 Z2; impedance
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 Z3; impedance
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 Z1’; impedance
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 Z2’; impedance
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 Z3’; impedance
 
 \end{enumerate}
 
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 \sphinxstyleliteralstrong{\sphinxupquote{defaultunits}} (\sphinxstyleliteralemphasis{\sphinxupquote{list}}\sphinxstyleliteralemphasis{\sphinxupquote{, }}\sphinxstyleliteralemphasis{\sphinxupquote{optional}}) \textendash{} Default units for quantities in \sphinxstyleemphasis{arg} list. Default is {[}{]} which means SI units will be used if no unit is given in \sphinxstyleemphasis{arg}.
 
@@ -6096,45 +6096,45 @@ Triangular Impedance Taper.
 Reference:  Foundations for Microwave Engineering, Collin
 \begin{quote}\begin{description}
 \sphinxlineitem{Parameters}\begin{itemize}
-\item {} 
+\item {}
 \sphinxAtStartPar
-\sphinxstyleliteralstrong{\sphinxupquote{arg}} (\sphinxstyleliteralemphasis{\sphinxupquote{list}}) \textendash{} 
+\sphinxstyleliteralstrong{\sphinxupquote{arg}} (\sphinxstyleliteralemphasis{\sphinxupquote{list}}) \textendash{}
 \sphinxAtStartPar
 First 5 arguments are inputs.
 \begin{enumerate}
 \sphinxsetlistlabels{\arabic}{enumi}{enumii}{}{.}%
-\item {} 
+\item {}
 \sphinxAtStartPar
 Source Impedance ; impedance
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 Load Impedance ; impedance
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 Number Of Sections (Even) ;
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 Fractional Bandwidth (F2/F1) ;
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 Length (normalized to Lambda at fcenter) ;
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 Impedances ; impedance
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 Return Loss ;
 
 \end{enumerate}
 
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 \sphinxstyleliteralstrong{\sphinxupquote{defaultunits}} (\sphinxstyleliteralemphasis{\sphinxupquote{list}}\sphinxstyleliteralemphasis{\sphinxupquote{, }}\sphinxstyleliteralemphasis{\sphinxupquote{optional}}) \textendash{} Default units for quantities in \sphinxstyleemphasis{arg} list. Default is {[}{]} which means SI units will be used if no unit is given in \sphinxstyleemphasis{arg}.
 
@@ -6163,27 +6163,27 @@ list
 Computes the wave impedance of circular waveguide.
 \begin{quote}\begin{description}
 \sphinxlineitem{Parameters}\begin{itemize}
-\item {} 
+\item {}
 \sphinxAtStartPar
 \sphinxstyleliteralstrong{\sphinxupquote{v}} (\sphinxstyleliteralemphasis{\sphinxupquote{int}}) \textendash{} Mode number of \(\phi\).
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 \sphinxstyleliteralstrong{\sphinxupquote{n}} (\sphinxstyleliteralemphasis{\sphinxupquote{int}}) \textendash{} Radial mode number.
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 \sphinxstyleliteralstrong{\sphinxupquote{eps\_r}} (\sphinxstyleliteralemphasis{\sphinxupquote{float}}) \textendash{} Permittivity of filling material.
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 \sphinxstyleliteralstrong{\sphinxupquote{freq}} (\sphinxstyleliteralemphasis{\sphinxupquote{float}}) \textendash{} Frequency (Hz).
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 \sphinxstyleliteralstrong{\sphinxupquote{mode}} (\sphinxstyleliteralemphasis{\sphinxupquote{str}}) \textendash{} “TE” or “TM”.
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 \sphinxstyleliteralstrong{\sphinxupquote{rad}} (\sphinxstyleliteralemphasis{\sphinxupquote{float}}) \textendash{} Radius.
 
@@ -6221,30 +6221,30 @@ Z (float)
 Impedance and Effective Permittivity of Straight Wire Over Substrate.
 \begin{quote}\begin{description}
 \sphinxlineitem{Parameters}\begin{itemize}
-\item {} 
+\item {}
 \sphinxAtStartPar
-\sphinxstyleliteralstrong{\sphinxupquote{arg}} (\sphinxstyleliteralemphasis{\sphinxupquote{list}}) \textendash{} 
+\sphinxstyleliteralstrong{\sphinxupquote{arg}} (\sphinxstyleliteralemphasis{\sphinxupquote{list}}) \textendash{}
 \sphinxAtStartPar
 First 4 arguments are inputs.
 \begin{enumerate}
 \sphinxsetlistlabels{\arabic}{enumi}{enumii}{}{.}%
-\item {} 
+\item {}
 \sphinxAtStartPar
 Wire Diameter (d);length
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 Height Of Wire Center Above Ground (h);length
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 Dielectric Thickness (t);length
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 Dielectric Permittivity ;
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 Impedance ; impedance
 
@@ -6255,7 +6255,7 @@ Impedance ; impedance
 Reference:  Transmission Line Design Handbook, Wadell, s.151
 
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 \sphinxstyleliteralstrong{\sphinxupquote{defaultunits}} (\sphinxstyleliteralemphasis{\sphinxupquote{list}}\sphinxstyleliteralemphasis{\sphinxupquote{, }}\sphinxstyleliteralemphasis{\sphinxupquote{optional}}) \textendash{} Default units for quantities in \sphinxstyleemphasis{arg} list. Default is {[}{]} which means SI units will be used if no unit is given in \sphinxstyleemphasis{arg}.
 
@@ -6284,26 +6284,26 @@ list
 Impedance and Effective Permittivity of Straight Wire Over Substrate.
 \begin{quote}\begin{description}
 \sphinxlineitem{Parameters}\begin{itemize}
-\item {} 
+\item {}
 \sphinxAtStartPar
-\sphinxstyleliteralstrong{\sphinxupquote{arg}} (\sphinxstyleliteralemphasis{\sphinxupquote{list}}) \textendash{} 
+\sphinxstyleliteralstrong{\sphinxupquote{arg}} (\sphinxstyleliteralemphasis{\sphinxupquote{list}}) \textendash{}
 \sphinxAtStartPar
 First 4 arguments are inputs.
 \begin{enumerate}
 \sphinxsetlistlabels{\arabic}{enumi}{enumii}{}{.}%
-\item {} 
+\item {}
 \sphinxAtStartPar
 Wire Diameter (d);length
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 Dielectric Thickness (t);length
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 Dielectric Permittivity ;
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 Impedance ; impedance
 
@@ -6315,7 +6315,7 @@ Reference:  Transmission Line Design Handbook, Wadell, s.151
 Note: eeff is the same as eeff of microstrip with w=2*d, t=0
 
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 \sphinxstyleliteralstrong{\sphinxupquote{defaultunits}} (\sphinxstyleliteralemphasis{\sphinxupquote{list}}\sphinxstyleliteralemphasis{\sphinxupquote{, }}\sphinxstyleliteralemphasis{\sphinxupquote{optional}}) \textendash{} Default units for quantities in \sphinxstyleemphasis{arg} list. Default is {[}{]} which means SI units will be used if no unit is given in \sphinxstyleemphasis{arg}.
 
@@ -6344,23 +6344,23 @@ list
 Computes the cutoff frequency of circular waveguide.
 \begin{quote}\begin{description}
 \sphinxlineitem{Parameters}\begin{itemize}
-\item {} 
+\item {}
 \sphinxAtStartPar
 \sphinxstyleliteralstrong{\sphinxupquote{v}} (\sphinxstyleliteralemphasis{\sphinxupquote{int}}) \textendash{} Mode number of \(\phi\).
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 \sphinxstyleliteralstrong{\sphinxupquote{n}} (\sphinxstyleliteralemphasis{\sphinxupquote{int}}) \textendash{} Radial mode number.
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 \sphinxstyleliteralstrong{\sphinxupquote{eps\_r}} (\sphinxstyleliteralemphasis{\sphinxupquote{float}}) \textendash{} Permittivity of filling material.
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 \sphinxstyleliteralstrong{\sphinxupquote{mode}} (\sphinxstyleliteralemphasis{\sphinxupquote{str}}) \textendash{} “TE” or “TM”.
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 \sphinxstyleliteralstrong{\sphinxupquote{rad}} (\sphinxstyleliteralemphasis{\sphinxupquote{float}}) \textendash{} Radius.
 
@@ -6389,57 +6389,57 @@ fc (float)
 Thermal conductance of an array of vias in PCB.
 \begin{quote}\begin{description}
 \sphinxlineitem{Parameters}\begin{itemize}
-\item {} 
+\item {}
 \sphinxAtStartPar
-\sphinxstyleliteralstrong{\sphinxupquote{arg}} (\sphinxstyleliteralemphasis{\sphinxupquote{list}}) \textendash{} 
+\sphinxstyleliteralstrong{\sphinxupquote{arg}} (\sphinxstyleliteralemphasis{\sphinxupquote{list}}) \textendash{}
 \sphinxAtStartPar
 First 7 arguments are inputs.
 \begin{enumerate}
 \sphinxsetlistlabels{\arabic}{enumi}{enumii}{}{.}%
-\item {} 
+\item {}
 \sphinxAtStartPar
 Plated Via Diameter (d);length
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 Plating Thickness (t);length
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 Area Width (w);length
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 Area Height (l);length
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 Dielectric Height (h);length
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 Number Of Vias (n);
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 Dielectric Thermal Conductivity ;   thermal conductivity
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 Metal Thermal Conductivity ; thermal conductivity
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 Thermal Conductance (W/K) ;
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 Thermal Resistance (K/W) ;
 
 \end{enumerate}
 
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 \sphinxstyleliteralstrong{\sphinxupquote{defaultunits}} (\sphinxstyleliteralemphasis{\sphinxupquote{list}}\sphinxstyleliteralemphasis{\sphinxupquote{, }}\sphinxstyleliteralemphasis{\sphinxupquote{optional}}) \textendash{} Default units for quantities in \sphinxstyleemphasis{arg} list. Default is {[}{]} which means SI units will be used if no unit is given in \sphinxstyleemphasis{arg}.
 
@@ -6470,15 +6470,15 @@ list
 
 \chapter{Indices and tables}
 \label{\detokenize{index:indices-and-tables}}\begin{itemize}
-\item {} 
+\item {}
 \sphinxAtStartPar
 \DUrole{xref,std,std-ref}{genindex}
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 \DUrole{xref,std,std-ref}{modindex}
 
-\item {} 
+\item {}
 \sphinxAtStartPar
 \DUrole{xref,std,std-ref}{search}
 

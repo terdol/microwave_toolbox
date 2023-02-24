@@ -198,7 +198,7 @@ def abcd2s_list(M, Zo=50):
     s22 = (( - a + b/Zo - c * Zo + d)/(a + b/Zo + c * Zo + d))
     return [s11, s12, s21, s22]
 
-def s2abcd(M, Z=[50, 50]):
+def s2abcd(M, Z=( 50, 50 )):
     """
     S-Parameters to ABCD parameters conversion
     Valid for real Z values
@@ -229,7 +229,7 @@ def abcd_change_ports(M):
     M = M.I
     sp.Matrix([[M[0, 0],  - M[0, 1]], [ - M[1, 0], M[1, 1]]])
 
-def t2abcd(M, Z=[50,50]):
+def t2abcd(M, Z=( 50,50 )):
     """
     T-parameters to ABCD parameters conversion
     """
@@ -427,6 +427,3 @@ if __name__=="__main__":
     sp.pprint(sp.simplify(s4))
     s5 = connect_2_ports_retain(s4,2,1)
     sp.pprint(sp.simplify(s5))
-
-
-

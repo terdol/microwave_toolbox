@@ -180,20 +180,20 @@ class spfile:
     """
     def __init__(self, filename=..., freqs=..., n_ports=..., skiplines=..., only_port_number=...) -> None:
         ...
-    
+
     aliases = ...
     def __setattr__(self, name, value): # -> None:
         ...
-    
+
     def __getattr__(self, name): # -> Any:
         ...
-    
+
     def copy(self): # -> Self@spfile:
         ...
-    
+
     def set_smatrix_type(self, smatrix_type): # -> Self@spfile:
         ...
-    
+
     def change_smatrix_type(self, smatrix_type): # -> None:
         """
         Change S-Matrix formulation and re-calculate s-parameters.
@@ -203,12 +203,12 @@ class spfile:
                                1: Power-Wave, 2:Pseudo-Wave, 3: HFSS Pseudo-Wave
         """
         ...
-    
+
     def copy_data_from_spfile(self, local_i, local_j, source_i, source_j, sourcespfile): # -> None:
         """ This method copies S-Parameter data from another SPFILE object
         """
         ...
-    
+
     def set_frequencies_wo_recalc(self, freqs): # -> None:
         """Directly sets the frequencies of this network, but does not re-calculate s-parameters.
 
@@ -216,10 +216,10 @@ class spfile:
             freqs (list or ndarray): New frequency values
         """
         ...
-    
+
     def port_numbers_from_names(self, *names): # -> list[int | Unknown]:
         ...
-    
+
     def setdatapoint(self, m, indices, x): # -> None:
         """Set the value for some part of S-Parameter data.
 
@@ -231,7 +231,7 @@ class spfile:
             x (number or list): New value. If this is a number, it is converted to a list.
         """
         ...
-    
+
     def column_of_data(self, i, j):
         """Gets the indice of column at *sdata* matrix corresponding to :math:`S_{i j}`
         For internal use of the library.
@@ -244,7 +244,7 @@ class spfile:
             int: Index of column
         """
         ...
-    
+
     def set_sym_smatrix(self, SM): # -> None:
         """This function is used to set arithmetic expression for S-Matrix, if S-Matrix is defined using symbolic variables.
 
@@ -252,7 +252,7 @@ class spfile:
             SM (sympy.Matrix): Symbolic ``sympy.Matrix`` expression for S-Parameter matrix
         """
         ...
-    
+
     def set_sym_params(self, paramdict): # -> None:
         """This function is used to set the values of symbolic variables of the network. This is used if the S-Matrix of the network is defined by an arithmetic expression containing symbolic variables. This property is used in conjunction with *sympy* library for symbolic manipulation. Arithmetic expression for S-Matrix is defined by ``set_sym_smatrix`` function.
 
@@ -260,7 +260,7 @@ class spfile:
             paramdict (dict): This is a dictionary containing the values of symbolic variables of the network
         """
         ...
-    
+
     def set_sparam_gen_func(self, func=...): # -> None:
         """This function is used to set the function that generates s-parameters from frequency.
 
@@ -268,7 +268,7 @@ class spfile:
             func (function, optional): function to be set. Defaults to None.
         """
         ...
-    
+
     def set_sparam_mod_func(self, func=...): # -> None:
         """This function is used to set the function that generates s-parameters from frequency.
 
@@ -276,7 +276,7 @@ class spfile:
             func (function, optional): function to be set. Defaults to None.
         """
         ...
-    
+
     def set_smatrix_at_frequency_point(self, indices, smatrix): # -> None:
         """Set S-Matrix at frequency indices
 
@@ -285,7 +285,7 @@ class spfile:
             smatrix (numpy.matrix): New S-Matrix value which is to be set at all *indices*
         """
         ...
-    
+
     def make_symmetric(self, kind=..., inplace=...): # -> Self@spfile:
         """Make SPFILE symmetric by taking the average of S11 and S22. S12=S21 assumed.
 
@@ -296,7 +296,7 @@ class spfile:
             spfile: Modified spfile object
         """
         ...
-    
+
     def snp2smp(self, ports, inplace=...): # -> Self@spfile:
         """This method changes the port numbering of the network
         port j of new network corresponds to ports[j] in old network.
@@ -311,19 +311,19 @@ class spfile:
             spfile: Modified spfile object
         """
         ...
-    
+
     def scaledata(self, scale=..., dataindices=...): # -> None:
         """
         Multiply all elements in S-Parameter matrices by *scale*.
         """
         ...
-    
+
     def read_file_again(self): # -> None:
         """
         Network data is read from the file named *filename*.
         """
         ...
-    
+
     def read_file(self, file_name, skiplines=..., only_port_number=...):
         """
         Network data is read from file. *filename* attribute of object is set with given argument.
@@ -334,7 +334,7 @@ class spfile:
             only_port_number(bool, optional): If True, the aim of the file reading is only to get the number of ports and the process is terminated once the port number is determined. Default is False.
         """
         ...
-    
+
     def Ffunc(self, imp): # -> matrix[Any, Any]:
         """Calculates F-matrix in a, b definition of S-Parameters. For internal use of the library.
 
@@ -349,7 +349,7 @@ class spfile:
             numpy.matrix: F-Matrix
         """
         ...
-    
+
     def calc_syz(self, input=..., indices=...):
         """This function, using one of S, Y and Z parameters, calculates the other two parameters. Y and Z-matrices calculated separately instead of calculating one and taking inverse. Because one of them may be undefined for some circuits.
 
@@ -358,12 +358,12 @@ class spfile:
             indices (list, optional): If given, output matrices are calculated only at the indices given by this list. If it is None, then output matrices are calculated at all frequencies. Defaults to None.
         """
         ...
-    
+
     def calc_t_eigs(self, port1=..., port2=...): # -> None:
         """ Eigenfunctions and Eigenvector of T-Matrix is calculated.
         Only power-wave formulation is implemented """
         ...
-    
+
     def s2t(self): # -> Self@spfile:
         """Calculate transmission matrix for 2-port networks.
 
@@ -371,7 +371,7 @@ class spfile:
             spfile: SPFILE object
         """
         ...
-    
+
     def sqrt_network(self): # -> Self@spfile:
         """Calculate the spfile, when two of which are cascaded, this spfile is obtained.
 
@@ -379,7 +379,7 @@ class spfile:
             spfile: SPFILE object
         """
         ...
-    
+
     def inverse_2port(self, inplace=...): # -> Self@spfile:
         """Take inverse of 2-port data for de-embedding purposes. The reference impedance of the network is not changed.
 
@@ -390,7 +390,7 @@ class spfile:
             spfile: Inverted 2-port spfile
         """
         ...
-    
+
     def s2abcd(self, port1=..., port2=...): # -> NDArray[Any]:
         """S-Matrix to ABCD matrix conversion between 2 chosen ports. Other ports are terminated with reference impedances
 
@@ -402,8 +402,8 @@ class spfile:
             numpy.matrix: ABCD data. Numpy.matrix of size (ns,4) (ns: number of frequencies). Each row contains (A,B,C,D) numbers in order.
         """
         ...
-    
-    def input_impedance(self, k):
+
+    def z_in(self, k):
         """Input impedance at port k. All ports are terminated with reference impedances.
 
         Args:
@@ -413,7 +413,7 @@ class spfile:
             numpy.ndarray: Array of impedance values for all frequencies
         """
         ...
-    
+
     def load_impedance(self, Gamma_in, port1=..., port2=...):
         """Calculates termination impedance at port2 that gives Gamma_in reflection coefficient at port1.
 
@@ -426,7 +426,7 @@ class spfile:
             numpy.ndarray: Array of reflection coeeficient of termination at port2
         """
         ...
-    
+
     def gmax(self, port1=..., port2=..., dB=...): # -> NDArray[signedinteger[Any]] | NDArray[Unknown]:
         """Calculates Gmax from port1 to port2. Other ports are terminated with current reference impedances. If dB=True, output is in dB, otherwise it is a power ratio.
 
@@ -439,7 +439,7 @@ class spfile:
             numpy.ndarray: Array of Gmax values for all frequencies
         """
         ...
-    
+
     def set_port_name(self, name, i): # -> None:
         """Set name of a specific port.
 
@@ -448,7 +448,7 @@ class spfile:
             i(int): Port number
         """
         ...
-    
+
     def get_port_number_from_name(self, isim): # -> int:
         """Index of first port index with name *isim*
 
@@ -459,7 +459,7 @@ class spfile:
             int: Port index if port is found, 0 otherwise
         """
         ...
-    
+
     def gav(self, port1=..., port2=..., ZS=..., dB=...): # -> Any:
         """Available gain from port1 to port2. If dB=True, output is in dB, otherwise it is a power ratio.
 
@@ -475,7 +475,7 @@ class spfile:
             numpy.ndarray: Array of Gmax values for all frequencies
         """
         ...
-    
+
     def gop(self, port1=..., port2=..., ZL=..., dB=...): # -> Any:
         """Operating power gain from port1 to port2 with load impedance of ZL. If dB=True, output is in dB, otherwise it is a power ratio.
 
@@ -491,7 +491,7 @@ class spfile:
             numpy.ndarray: Array of Gop values for all frequencies
         """
         ...
-    
+
     def gop2(self, port1=..., port2=..., ZL=..., dB=...): # -> Any:
         """Operating power gain from port1 to port2 with load impedance of ZL. If dB=True, output is in dB, otherwise it is a power ratio.
 
@@ -507,7 +507,7 @@ class spfile:
             numpy.ndarray: Array of Gop values for all frequencies
         """
         ...
-    
+
     def conj_match_uncoupled(self, ports=..., inplace=..., noofiters=...): # -> Self@spfile:
         """Sets the reference impedance for given ports as the complex conjugate of output impedance at each port.
         The ports are assumed to be uncoupled. Coupling is taken care of by doing the same operation multiple times.
@@ -521,7 +521,7 @@ class spfile:
             spfile object with new s-parameters
         """
         ...
-    
+
     def Z_conjmatch(self, port1=..., port2=...): # -> tuple[Unknown, Unknown]:
         """Calculates source and load impedances for simultaneous conjugate match.
 
@@ -535,7 +535,7 @@ class spfile:
                 - GL: Reflection coefficient of Port-2 Impedance
         """
         ...
-    
+
     def gt(self, port1=..., port2=..., ZS=..., ZL=..., dB=...): # -> Any:
         """This method calculates transducer gain (GT) from port1 to port2. Source and load impedances can be specified independently. If any one of them is not specified, current reference impedance is used for that port. Other ports are terminated by reference impedances. This calculation can also be done using impedance renormalization.
 
@@ -552,7 +552,7 @@ class spfile:
             numpy.ndarray: Array of GT values for all frequencies
         """
         ...
-    
+
     def interpolate_data(self, datain, freqs): # -> NDArray[complexfloating[Any, Any]]:
         """Calculate new data corresponding to new frequency points *freqs* by interpolation from original data corresponding to current frequency points of the network.
 
@@ -564,11 +564,11 @@ class spfile:
             numpy.ndarray: New data corresponding to *freqs*
         """
         ...
-    
+
     def return_s2p(self, port1=..., port2=...): # -> tuple[ndarray[Any, dtype[Any]] | Unknown, ndarray[Any, dtype[Any]] | Unknown, ndarray[Any, dtype[Any]] | Unknown, ndarray[Any, dtype[Any]] | Unknown]:
         """Return 2-port s-parameters tuple between port1- and port-2."""
         ...
-    
+
     def stability_factor_mu1(self, port1=..., port2=...):
         """Calculates :math:`\mu_1` stability factor, from port1 to port2. Other ports are terminated with reference impedances.
 
@@ -580,7 +580,7 @@ class spfile:
             numpy.ndarray: Array of stability factor for all frequencies
         """
         ...
-    
+
     def stability_factor_mu2(self, port1=..., port2=...):
         """Calculates :math:`\mu_2` stability factor, from port1 to port2. Other ports are terminated with reference impedances.
 
@@ -592,7 +592,7 @@ class spfile:
             numpy.ndarray: Array of stability factor for all frequencies
         """
         ...
-    
+
     def stability_factor_k(self, port1=..., port2=...):
         """Calculates *k* stability factor, from port1 to port2. Other ports are terminated with reference impedances.
 
@@ -604,7 +604,7 @@ class spfile:
             numpy.ndarray: Array of stability factor for all frequencies
         """
         ...
-    
+
     def change_ref_impedance(self, Znewinput, inplace=...): # -> Self@spfile:
         """Changes reference impedance and re-calculates S-Parameters.
 
@@ -617,7 +617,7 @@ class spfile:
             spfile: The spfile object with new reference impedance
         """
         ...
-    
+
     def prepare_ref_impedance_array(self, imparray=...): # -> NDArray[Unknown]:
         """Turns reference impedance array which is composed of numbers,arrays, functions or 1-ports to numerical array which
         is composed of numbers and arrays. It is made sure that :math:`Re(Z)\neq 0`. Mainly for internal use.
@@ -629,7 +629,7 @@ class spfile:
             numpy.ndarray: Calculated impedance array
         """
         ...
-    
+
     def impulse_response(self, i=..., j=..., dc_interp=..., dc_value=..., max_time_step=..., freq_res_coef=..., window_name=...): # -> tuple[Unknown, NDArray[Unknown], ndarray[Unknown, Unknown], Any, Any, Any, Any, Any, Any]:
         """Calculates impulse response of :math:`S_{i j}`
 
@@ -655,7 +655,7 @@ class spfile:
                 9. Max Value of Impulse Input
         """
         ...
-    
+
     def impulse_response_banded(self, i=..., j=..., dc_interp=..., dc_value=..., max_time_step=..., freq_res_coef=..., Window=...): # -> tuple[NDArray[Any], NDArray[Any], NDArray[Any], Unknown, Unknown, ndarray[Unknown, Unknown], Any, Any, Any, Any, Any, Any]:
         """Calculates impulse response of :math:`S_{i j}`
 
@@ -681,7 +681,7 @@ class spfile:
                 9. Max Value of Impulse Input
         """
         ...
-    
+
     def __sub__(self, SP2): # -> Self@spfile | Literal[0]:
         """Implements SP1-SP2.
         Deembeds SP2 from port-2 of SP1.
@@ -696,7 +696,7 @@ class spfile:
             spfile: The resulting of deembedding process
         """
         ...
-    
+
     def __neg__(self): # -> Self@spfile | None:
         """Calculates an spfile object for two-port networks which is the inverse of this network. This is used to use + and - signs to cascade or deembed 2-port blocks.
 
@@ -706,7 +706,7 @@ class spfile:
                 2. *spfile* which is the inverse of the spfile object operated on.
         """
         ...
-    
+
     def __add__(self, SP2): # -> Self@spfile | Literal[0]:
         """Implements SP1+SP2. Cascades port-1 of SP2 to port-2 of SP1. Port ordering is shown in the following diagram. Reference impedances of original ports (port-1 of SP1 and port-2 of SP2) are preserved.
 
@@ -727,7 +727,7 @@ class spfile:
             spfile: The result of cascade of 2 networks
         """
         ...
-    
+
     def check_passivity(self): # -> tuple[list[Unknown], Unknown, list[Unknown]]:
         """This method determines the frequencies and frequency indices at which the network is not passive.
         Reference: Fast Passivity Enforcement of S-Parameter Macromodels by Pole Perturbation.pdf
@@ -737,7 +737,7 @@ class spfile:
             3-tuple of lists: For non-passive frequencies (indices, frequencies, eigenvalues)
         """
         ...
-    
+
     def restore_passivity(self, inplace=...): # -> Self@spfile:
         """Make the network passive by minimum modification.
         Reference: Fast and Optimal Algorithms for Enforcing Reciprocity, Passivity and Causality in S-parameters.pdf
@@ -749,7 +749,7 @@ class spfile:
             spfile: Passive network object
         """
         ...
-    
+
     def restore_passivity2(self): # -> None:
         """**Obsolete**
         Bu metod S-parametre datasinin pasif olmadigi frequenciesda
@@ -759,7 +759,7 @@ class spfile:
         Restoration of Passivity In S-parameter Data of Microwave Measurements.pdf
         """
         ...
-    
+
     def write2file(self, filename=..., parameter=..., freq_unit=..., data_format=..., normalized=...): # -> None:
         """This function writes a parameter (S, Y or Z) file. If the filename given does not have the proper filename extension, it is corrected.
 
@@ -770,7 +770,7 @@ class spfile:
             data_format (str, optional): Format of file DB, RI or MA. Defaults to "".
         """
         ...
-    
+
     def connect_2_ports_list(self, conns, inplace=...): # -> Self@spfile:
         """Short circuit ports together one-to-one. Short circuited ports are removed.
         Ports that will be connected are given as tuples in list *conns*
@@ -786,7 +786,7 @@ class spfile:
             spfile: New spfile object
         """
         ...
-    
+
     def connect_2_ports(self, k, m, inplace=...): # -> Self@spfile:
         """Port-m is connected to port-k and both ports are removed.
         Reference: QUCS technical.pdf, S-parameters in CAE programs, p.29
@@ -800,7 +800,7 @@ class spfile:
             spfile: New spfile object
         """
         ...
-    
+
     def connect_2_ports_retain(self, k, m, inplace=...): # -> Self@spfile:
         """Port-m is connected to port-k and both ports are removed. New port becomes the last port of the circuit.
         Reference: QUCS technical.pdf, S-parameters in CAE programs, p.29
@@ -814,7 +814,7 @@ class spfile:
             spfile: New *spfile* object
         """
         ...
-    
+
     def connect_network_1_conn_retain(self, EX, k, m, inplace=...): # -> Self@spfile:
         """Port-m of EX circuit is connected to port-k of this circuit. This connection point will also be a port. Remaining ports of EX are added to the port list of this circuit in order. The port of connection point will be the last port of the final network.
         Reference: QUCS technical.pdf, S-parameters in CAE programs, p.29
@@ -830,7 +830,7 @@ class spfile:
             spfile: Connected network
         """
         ...
-    
+
     def connect_network_1_conn(self, EX, k, m, preserveportnumbers=..., inplace=...): # -> Self@spfile:
         """Port-m of EX circuit is connected to port-k of this circuit. Both of these ports will be removed.
         Remaining ports of EX are added to the port list of this circuit in order.
@@ -847,7 +847,7 @@ class spfile:
             spfile: Connected network
         """
         ...
-    
+
     def add_abs_noise(self, dbnoise=..., phasenoise=..., inplace=...): # -> Self@spfile:
         """This method adds random amplitude and phase noise to the s-parameter data.
         Mean value for both noises are 0.
@@ -861,7 +861,7 @@ class spfile:
             spfile: object with noisy data
         """
         ...
-    
+
     def smoothing(self, smoothing_length=..., inplace=...): # -> Self@spfile:
         """This method applies moving average smoothing to the s-parameter data
 
@@ -873,7 +873,7 @@ class spfile:
             spfile: Network object with smooth data
         """
         ...
-    
+
     def interpolate(self, number_of_points=..., inplace=...): # -> Self@spfile:
         """This method increases the number of frequencies through interpolation.
 
@@ -885,7 +885,7 @@ class spfile:
             spfile: Network object with smooth data
         """
         ...
-    
+
     def data_array(self, data_format=..., M=..., i=..., j=..., frequencies=..., ref=..., DCInt=..., DCValue=..., smoothing=..., InterpolationConstant=...):
         """Return a network parameter between ports *i* and *j* (:math:`M_{i j}`) at specified frequencies in specified format.
 
@@ -920,7 +920,7 @@ class spfile:
             numpy.array: Network data array
         """
         ...
-    
+
     def extraction(self, measspfile): # -> spfile:
         """Extract die S-Parameters using measurement data and simulated S-Parameters
         Port ordering in *measspfile* is assumed to be the same as this *spfile*.
@@ -934,7 +934,7 @@ class spfile:
             spfile: *SPFILE* object of die's S-Parameters
         """
         ...
-    
+
     def uniform_deembed(self, quantity, ports=..., kind=..., inplace=...): # -> Self@spfile | None:
         """This function deembeds some of the ports of S-Parameters. Deembedding quantity can be:
             - Phase in degrees
@@ -957,7 +957,7 @@ class spfile:
             spfile: De-embedded spfile
         """
         ...
-    
+
     def S(self, i=..., j=..., data_format=..., freqs=...):
         """Gives :math:`S_{i j}` in *data_format* format.
         Uses *data_array* method internally. This is a convenience function for practical use.
@@ -972,7 +972,7 @@ class spfile:
             numpy.array: :math:`S_{i j}` in *data_format* format
         """
         ...
-    
+
     def ABCD(self, i=..., j=..., data_format=..., freqs=...):
         """Gives :math:`ABCD_{i j}` in *data_format* format.
         Uses *data_array* method internally. This is a convenience function for practical use.
@@ -987,7 +987,7 @@ class spfile:
             numpy.array: :math:`S_{i j}` in *data_format* format
         """
         ...
-    
+
     def T(self, i=..., j=..., data_format=..., freqs=...):
         """Return :math:`T_{i j}` in format *data_format*
         Uses *data_array* method internally. A convenience function for practical use.
@@ -1001,7 +1001,7 @@ class spfile:
             numpy.array: :math:`T_{i j}` as *data_format*
         """
         ...
-    
+
     def Z(self, i=..., j=..., data_format=..., freqs=...):
         """Return :math:`Z_{i j}` in format *data_format*
         Uses *data_array* method internally. A convenience function for practical use.
@@ -1015,7 +1015,7 @@ class spfile:
             numpy.array: :math:`Z_{i j}` as *data_format*
         """
         ...
-    
+
     def Y(self, i=..., j=..., data_format=..., freqs=...):
         """Return :math:`Y_{i j}` in format *data_format*
         Uses *data_array* method internally. A convenience function for practical use.
@@ -1029,7 +1029,7 @@ class spfile:
             numpy.array: :math:`Y_{i j}` as *data_format*
         """
         ...
-    
+
     def set_frequency_limits(self, flow, fhigh, inplace=...): # -> Self@spfile:
         """Remove frequency points higher than *fhigh* and lower than *flow*.
 
@@ -1042,7 +1042,7 @@ class spfile:
             spfile: spfile object with new frequency points.
         """
         ...
-    
+
     def crop_with_frequency(self, fstart=..., fstop=..., inplace=...): # -> Self@spfile:
         """Crop the points below fstart and above fstop. No recalculation or interpolation occurs.
 
@@ -1055,7 +1055,7 @@ class spfile:
             spfile: spfile object with new frequency points.
         """
         ...
-    
+
     def set_frequency_points(self, frequencies, inplace=...): # -> Self@spfile:
         """Set new frequency points. if S-Parameter data generator function is available, use that to calculate new s-parameter data. If not, use interpolation/extrapolation. For new frequency points, S-Parameters and reference impedances which are in the form of array are re-calculated.
 
@@ -1067,7 +1067,7 @@ class spfile:
             spfile: spfile object with new frequency points.
         """
         ...
-    
+
     def set_frequency_points_array(self, fstart, fstop, NumberOfPoints, inplace=...): # -> Self@spfile:
         """Set the frequencies of the object using start-end frequencies and number of points.
 
@@ -1081,10 +1081,10 @@ class spfile:
             spfile: spfile object with new frequency points.
         """
         ...
-    
+
     def convert_s1p_to_s2p(self): # -> Self@spfile:
         ...
-    
+
     @classmethod
     def microstrip_step(cls, w1, w2, eps_r, h, t, freqs=...): # -> Self@spfile:
         """Create an ``spfile`` object corresponding to a microstrip step.
@@ -1099,7 +1099,7 @@ class spfile:
             spfile: An spfile object equivalent to microstrip step.
         """
         ...
-    
+
     @classmethod
     def stripline_step(cls, w1, w2, eps_r, h1, h2, t, freqs=...): # -> Self@spfile:
         """Create an ``spfile`` object corresponding to a stripline step
@@ -1116,7 +1116,7 @@ class spfile:
             spfile: An spfile object.
         """
         ...
-    
+
     @classmethod
     def shunt_impedance(cls, Z, freqs=...): # -> Self@spfile:
         """Create an ``spfile`` object corresponding to a stripline step
@@ -1129,7 +1129,7 @@ class spfile:
             spfile: An spfile object.
         """
         ...
-    
+
     @classmethod
     def series_impedance(cls, Z, freqs=...): # -> Self@spfile:
         """Create an ``spfile`` object corresponding to a stripline step
@@ -1142,7 +1142,7 @@ class spfile:
             spfile: An spfile object.
         """
         ...
-    
+
     @classmethod
     def microstrip_line(cls, length, w, h, t, er, freqs=...): # -> Self@spfile:
         """Create an ``spfile`` object corresponding to a microstrip line.
@@ -1159,7 +1159,7 @@ class spfile:
             spfile: An spfile object.
         """
         ...
-    
+
     @classmethod
     def stripline(cls, length, w, er, h1, h2, t, freqs=...): # -> Self@spfile:
         """Create an ``spfile`` object corresponding to a stripline transmission line.
@@ -1177,7 +1177,7 @@ class spfile:
             spfile: An spfile object.
         """
         ...
-    
+
     @classmethod
     def cpwg_line(cls, length, w, th, er, s, h, freqs=...): # -> Self@spfile:
         """Create an ``spfile`` object corresponding to a cpwg transmission line.
@@ -1195,7 +1195,7 @@ class spfile:
             spfile: An spfile object.
         """
         ...
-    
+
 
 
 if __name__ == '__main__':

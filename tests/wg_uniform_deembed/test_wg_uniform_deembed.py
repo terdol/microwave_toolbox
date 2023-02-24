@@ -1,16 +1,12 @@
 import sys
 sys.path.append(r"c:\\users\\erdoel\\documents\\works\\python_works\\microwave_toolbox")
 from mwtoolbox.touchstone import *
-import network
 import itertools
 import numpy as np
-from icecream import ic
 from mwtoolbox.components import Z_WG_TE10
 freq_high=83
 freq_low=74
 frequencies=np.linspace(freq_low*1e9,freq_high*1e9,10,endpoint=True)
-import matplotlib
-matplotlib.use("TkAgg")
 import matplotlib.pyplot as plt
 plt.rcParams.update({'font.size': 12})
 plt.rcParams["figure.autolayout"]=True
@@ -24,27 +20,27 @@ tx1out= 6
 tx2in= 7
 tx2out= 8
 
-ref = spfile("platedesign_afip_wr10_HFSSDesign6.s8p").UniformDeembed(-1e-3, ports=[1,3,5,7], kind="len")
+ref = spfile("platedesign_afip_wr10_HFSSDesign6.s8p").uniform_deembed(-1e-3, ports=[1,3,5,7], kind="len")
 ref1 = spfile("platedesign_afip_wr10_HFSSDesign6_Zpv_rxin_n1mm_deembed.s8p")
 
-ff="db"
+ff="phase"
 fig, ax= plt.subplots(2,4,figsize=(15,4))
-ax[0,0].plot(ref.get_frequency_list()/1e9,ref.S(1,1,ff),label="ref")
-ax[0,0].plot(ref1.get_frequency_list()/1e9,ref1.S(1,1,ff),label="ref1")
-ax[0,1].plot(ref.get_frequency_list()/1e9,ref.S(2,2,ff),label="ref")
-ax[0,1].plot(ref1.get_frequency_list()/1e9,ref1.S(2,2,ff),label="ref1")
-ax[0,2].plot(ref.get_frequency_list()/1e9,ref.S(3,3,ff),label="ref")
-ax[0,2].plot(ref1.get_frequency_list()/1e9,ref1.S(3,3,ff),label="ref1")
-ax[0,3].plot(ref.get_frequency_list()/1e9,ref.S(4,4,ff),label="ref")
-ax[0,3].plot(ref1.get_frequency_list()/1e9,ref1.S(4,4,ff),label="ref1")
-ax[1,0].plot(ref.get_frequency_list()/1e9,ref.S(5,5,ff),label="ref")
-ax[1,0].plot(ref1.get_frequency_list()/1e9,ref1.S(5,5,ff),label="ref1")
-ax[1,1].plot(ref.get_frequency_list()/1e9,ref.S(6,6,ff),label="ref")
-ax[1,1].plot(ref1.get_frequency_list()/1e9,ref1.S(6,6,ff),label="ref1")
-ax[1,2].plot(ref.get_frequency_list()/1e9,ref.S(7,7,ff),label="ref")
-ax[1,2].plot(ref1.get_frequency_list()/1e9,ref1.S(7,7,ff),label="ref1")
-ax[1,3].plot(ref.get_frequency_list()/1e9,ref.S(8,8,ff),label="ref")
-ax[1,3].plot(ref1.get_frequency_list()/1e9,ref1.S(8,8,ff),label="ref1")
+ax[0,0].plot(ref.freqs/1e9,ref.S(1,1,ff),label="ref")
+ax[0,0].plot(ref1.freqs/1e9,ref1.S(1,1,ff),label="ref1")
+ax[0,1].plot(ref.freqs/1e9,ref.S(2,2,ff),label="ref")
+ax[0,1].plot(ref1.freqs/1e9,ref1.S(2,2,ff),label="ref1")
+ax[0,2].plot(ref.freqs/1e9,ref.S(3,3,ff),label="ref")
+ax[0,2].plot(ref1.freqs/1e9,ref1.S(3,3,ff),label="ref1")
+ax[0,3].plot(ref.freqs/1e9,ref.S(4,4,ff),label="ref")
+ax[0,3].plot(ref1.freqs/1e9,ref1.S(4,4,ff),label="ref1")
+ax[1,0].plot(ref.freqs/1e9,ref.S(5,5,ff),label="ref")
+ax[1,0].plot(ref1.freqs/1e9,ref1.S(5,5,ff),label="ref1")
+ax[1,1].plot(ref.freqs/1e9,ref.S(6,6,ff),label="ref")
+ax[1,1].plot(ref1.freqs/1e9,ref1.S(6,6,ff),label="ref1")
+ax[1,2].plot(ref.freqs/1e9,ref.S(7,7,ff),label="ref")
+ax[1,2].plot(ref1.freqs/1e9,ref1.S(7,7,ff),label="ref1")
+ax[1,3].plot(ref.freqs/1e9,ref.S(8,8,ff),label="ref")
+ax[1,3].plot(ref1.freqs/1e9,ref1.S(8,8,ff),label="ref1")
 for aa in fig.axes:
     aa.legend()
     aa.grid()
@@ -57,6 +53,5 @@ for aa in fig.axes:
 # ax[0].set_ylim([-6,3])
 # ax[1].set_ylim([-30,0])
 # ax[2].set_ylim([-30,0])
-plt.savefig(f"deembed_comparison.png")
-plt.show()
-
+plt.savefig(f"deembed_comparison_{ff}.png")
+# plt.show()
