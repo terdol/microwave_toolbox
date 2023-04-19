@@ -1,3 +1,31 @@
+[build-system]
+build-backend = 'setuptools.build_meta'
+requires = ['setuptools']
+
+[project]
+name = "mwtoolbox"
+version = "0.1.0"
+dependencies = ["quantities",
+                "numpy",
+                "scipy",
+                "sympy",
+                ]
+description="Microwave Toolbox"
+authors = [{ name = "Tuncay Erdöl", email = "terdol@hotmail.com"}]
+requires-python = ">=3.7"
+license = {text = "BSD-3-Clause"}
+classifiers=[
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Science/Research",
+    "License :: OSI Approved :: GNU Lesser General Public License v3 or later (LGPLv3+)",  
+    "Operating System :: Windows :: POSIX :: Linux",
+    "Programming Language :: Python :: 3",
+]
+
+[tool.setuptools.packages.find]
+where = ["src"]
+include = ["*"]
+
 [tool.yapfignore]
 ignore_patterns = [
   "temp/**/*.py",
@@ -10,7 +38,7 @@ BLANK_LINE_BEFORE_NESTED_CLASS_OR_DEF = false
 BLANK_LINE_BEFORE_MODULE_DOCSTRING = false
 BLANK_LINE_BEFORE_CLASS_DOCSTRING = false
 COALESCE_BRACKETS = true
-CONTINUATION_ALIGN_STYLE = SPACE
+CONTINUATION_ALIGN_STYLE = "SPACE"
 CONTINUATION_INDENT_WIDTH = 2
 DEDENT_CLOSING_BRACKETS = true
 DISABLE_ENDING_COMMA_HEURISTIC = true
@@ -20,7 +48,7 @@ INDENT_DICTIONARY_VALUE = true
 INDENT_WIDTH = 4
 INDENT_CLOSING_BRACKETS = true
 JOIN_MULTIPLE_LINES = true
-NO_SPACES_AROUND_SELECTED_BINARY_OPERATORS = *,/
+NO_SPACES_AROUND_SELECTED_BINARY_OPERATORS = "*,/"
 SPACES_AROUND_POWER_OPERATOR = false
 SPACES_AROUND_DEFAULT_OR_NAMED_ASSIGN = false
 SPACES_AROUND_DICT_DELIMITERS = true

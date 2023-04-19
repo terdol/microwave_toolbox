@@ -10,6 +10,7 @@ try:
 except:
     pass
 
+
 # from scipy.linalg import eig
 # from scipy.signal import get_window
 from numpy.lib.scimath import sqrt as csqrt
@@ -17,7 +18,7 @@ import sympy as sp
 from copy import deepcopy
 import mwtoolbox.network as network
 import itertools
-from .genel import smooth, flatten, blackman_window, cmp
+from .genel import smooth, flatten, blackman_window, cmp, str_distance
 from .myconstants import c0, mu0, eps0
 import inspect
 import re
@@ -35,7 +36,7 @@ def extract_rlgc(spr,length):
     Returns:
         tuple: tuple of two complex numpy arrays (Inductance per unit length, Characteristic impedance of the line).
     """
-    freqs = np.aray(spr.freqs)
+    freqs = np.array(spr.freqs)
     spr.s2abcd()
     spr.s2t()
     T11=np.array(spr.tdata[:,0])
@@ -55,7 +56,6 @@ def write_impedance_as_s1p(filename, frequencies, Z):
     for f,realpart,imagpart in zip(frequencies/1e9,np.real(data),np.imag(data)):
         print("%2.12f    %-12.12f    %-12.12f" %(f,realpart,imagpart),end="\n",file=out)
     out.close()
-
 
 def write_impedance_as_table(filename, frequencies, Z):
     out=open(filename,"w")
@@ -652,15 +652,46 @@ class spfile:
         """Directly sets the frequencies of this network, but does not re-calculate s-parameters.
 
         Args:
-            freqs (list or ndarray): New frequency yvalues
+            freqs (list or ndarray): New frequency values
         """
         self.freqs=np.array(freqs)
 
     def port_numbers_from_names(self, *names):
+        """
+        This function returns the list of port numbers corresponding to the exact port names given as input parameters.
+
+        Args:
+            names(str): Port names are given as arguments in order.
+
+        Returns:
+            list of port numbers in order.
+        """
         return [self.port_names.index(n)+1 if isinstance(n,str) else n for n in names]
 
+    def port_numbers_from_names2(self, *names):
+        """
+        This function returns the list of port numbers corresponding to the port names given as input parameters. For each port name, the port number with closest name is returned.
+
+        Args:
+            names(str): Port names are given as arguments in order.
+
+        Returns:
+            list of port numbers in order.
+        """
+        pnames = self.port_names
+        n = len(pnames)
+        pn = []
+        for name in names:
+            dists = sorted([(str_distance(name.lower(), pnames[i].lower())[0], i+1) for i in range(n)], key = lambda x: x[0])
+            if dists[0][0]==dists[1][0]:
+                print("Error finding port number matching the port name.")
+            else:
+                pn.append(dists[0][1])
+        return tuple(pn)
+
     def set_data_points(self, m, indices, x):
-        """Set the value for some part of S-Parameter data.
+        """
+        Set the value for some part of S-Parameter data.
 
             .. math:: S_{i j}[m:m+len(x)]=x
 
@@ -680,7 +711,8 @@ class spfile:
 
 
     def column_of_data(self,i,j):
-        """Gets the indice of column at *sdata* matrix corresponding to :math:`S_{i j}`
+        """
+        Gets the indice of column at *sdata* matrix corresponding to :math:`S_{i j}`
         For internal use of the library.
 
         Args:
@@ -693,7 +725,8 @@ class spfile:
         return (i-1)*self.n_ports+(j-1)
 
     def set_sym_smatrix(self,SM):
-        """This function is used to set arithmetic expression for S-Matrix, if S-Matrix is defined using symbolic variables.
+        """
+        This function is used to set arithmetic expression for S-Matrix, if S-Matrix is defined using symbolic variables.
 
         Args:
             SM (sympy.Matrix): Symbolic ``sympy.Matrix`` expression for S-Parameter matrix
@@ -707,7 +740,8 @@ class spfile:
         self.set_frequency_points(self.freqs)
 
     def set_sym_params(self,paramdict):
-        """This function is used to set the values of symbolic variables of the network. This is used if the S-Matrix of the network is defined by an arithmetic expression containing symbolic variables. This property is used in conjunction with *sympy* library for symbolic manipulation. Arithmetic expression for S-Matrix is defined by ``set_sym_smatrix`` function.
+        """
+        This function is used to set the values of symbolic variables of the network. This is used if the S-Matrix of the network is defined by an arithmetic expression containing symbolic variables. This property is used in conjunction with *sympy* library for symbolic manipulation. Arithmetic expression for S-Matrix is defined by ``set_sym_smatrix`` function.
 
         Args:
             paramdict (dict): This is a dictionary containing the values of symbolic variables of the network
@@ -725,7 +759,8 @@ class spfile:
             self.set_frequency_points(self.freqs)
 
     def set_sparam_gen_func(self,func = None):
-        """This function is used to set the function that generates s-parameters from frequency.
+        """
+        This function is used to set the function that generates s-parameters from frequency.
 
         Args:
             func (function, optional): function to be set. Defaults to None.
@@ -736,7 +771,8 @@ class spfile:
                 self.set_smatrix_at_frequency_point(i,func(f))
 
     def set_sparam_mod_func(self,func = None):
-        """This function is used to set the function that generates s-parameters from frequency.
+        """
+        This function is used to set the function that generates s-parameters from frequency.
 
         Args:
             func (function, optional): function to be set. Defaults to None.
@@ -744,7 +780,8 @@ class spfile:
         self.sparam_mod_func = func
 
     def set_smatrix_at_frequency_point(self,indices,smatrix):
-        """Set S-Matrix at frequency indices
+        """
+        Set S-Matrix at frequency indices
 
         Args:
             indices (list): List of frequency indices
@@ -759,7 +796,8 @@ class spfile:
         self.z_ok, self.y_ok, self.abcd_ok, self.t_ok = False, False, False, False
 
     def make_symmetric(self, kind=1, inplace=-1):
-        """Make SPFILE symmetric by taking the average of S11 and S22. S12=S21 assumed.
+        """
+        Make SPFILE symmetric by taking the average of S11 and S22. S12=S21 assumed.
 
         Args:
             inplace (int, optional): Object editing mode. Defaults to -1.
@@ -783,8 +821,8 @@ class spfile:
         return obj
 
     def snp2smp(self,ports,inplace=-1):
-        """This method changes the port numbering of the network
-        port j of new network corresponds to ports[j] in old network.
+        """
+        This method changes the port numbering of the network port j of new network corresponds to ports[j] in old network.
 
         if the length of "ports" argument is lower than number of ports, remaining ports are terminated with current reference impedances and number of ports are reduced.
 
@@ -1004,7 +1042,8 @@ class spfile:
         return 1
 
     def Ffunc(self,imp):
-        """Calculates F-matrix in a, b definition of S-Parameters. For internal use of the library.
+        """
+        Calculates F-matrix in a, b definition of S-Parameters. For internal use of the library.
 
                 .. math::
                     a=F(V+Z_rI)
@@ -1133,8 +1172,10 @@ class spfile:
 
 
     def calc_t_eigs(self,port1=1,port2=2):
-        """ Eigenfunctions and Eigenvector of T-Matrix is calculated.
-        Only power-wave formulation is implemented """
+        """
+        Eigenfunctions and Eigenvector of T-Matrix is calculated.
+        Only power-wave formulation is implemented.
+        """
         self.s2abcd(port1,port2)
         for i in range(len(self.freqs)):
             abcd=self.abcddata[i].reshape(2,2)
@@ -1142,7 +1183,8 @@ class spfile:
             eigs,eigv=eig(T)
 
     def s2t(self):
-        """Calculate transmission matrix for 2-port networks.
+        """
+        Calculate transmission matrix for 2-port networks.
 
         Returns:
             spfile: SPFILE object
@@ -1164,7 +1206,8 @@ class spfile:
         return self
 
     def sqrt_network(self):
-        """Calculate the spfile, when two of which are cascaded, this spfile is obtained.
+        """
+        Calculate the spfile, when two of which are cascaded, this spfile is obtained.
 
         Returns:
             spfile: SPFILE object
@@ -1472,7 +1515,7 @@ class spfile:
         else:
             return gain
 
-    def conj_match_uncoupled(self,ports=[],inplace=-1, noofiters=50):
+    def conj_match_uncoupled(self,ports=None,inplace=-1, noofiters=50):
         """Sets the reference impedance for given ports as the complex conjugate of output impedance at each port.
         The ports are assumed to be uncoupled. Coupling is taken care of by doing the same operation multiple times.
 
@@ -1487,7 +1530,7 @@ class spfile:
         if inplace==-1: inplace=self.inplace
         if inplace==0:  obj = deepcopy(self); obj.inplace=1
         else:           obj = self
-        if ports==[]:
+        if ports==None:
             ports=list(range(1,self.n_ports+1))
         for _ in range(noofiters):
             imp = list(obj.refimpedance)
@@ -2688,7 +2731,7 @@ class spfile:
         if inplace==0:  obj = deepcopy(self); obj.inplace=1
         else:           obj = self
         ps = obj.n_ports
-
+        kind = kind.lower()
         if ports=="all":
             portsmask=[1]*ps
         else:
@@ -2712,13 +2755,13 @@ class spfile:
             if isinstance(quantity[i],(complex, float, int)):
                 quantity[i] = ps*[quantity[i]]
             smatrix = np.matrix(obj.sdata[i,:]).reshape(ps,ps)
-            if "delay" in kind.lower():
+            if "delay" in kind:
                 PhaseMatrix = np.matrix(np.diag([np.exp(1j*w[i]*x*z) for x,z in zip(quantity[i],portsmask)]))
-            elif "rad" in kind.lower():
+            elif "rad" in kind:
                 PhaseMatrix = np.matrix(np.diag([np.exp(1j*x*z) for x,z in zip(quantity[i],portsmask)]))
-            elif "deg" in kind.lower():
+            elif "deg" in kind:
                 PhaseMatrix = np.matrix(np.diag([np.exp(1j*x*np.pi/180.0*z) for x,z in zip(quantity[i],portsmask)]))
-            elif "len" in kind.lower():
+            elif "len" in kind:
                 PhaseMatrix = np.matrix(np.diag([np.exp(x*y*z) for x,y,z in zip(quantity[i],self.gammas[:,i],portsmask)]))
             Sm = PhaseMatrix*smatrix*PhaseMatrix
             obj.sdata[i,:]=Sm.reshape(ps**2)

@@ -1,11 +1,11 @@
 {
   "exclude": ["**/node_modules", "**/__pycache__"],
   "ignore": ["**/node_modules", "**/__pycache__"],
-  "include": ["mwtoolbox"]
+  "include": ["mwtoolbox"],
   "pythonPlatform": "Windows",
   "pythonVersion": "3.9",
   "reportMissingImports": true,
-  "reportMissingTypeStubs": false,
-  "stubPath": "typings_for_pyright",
-  "typeCheckingMode": "basic",
+  "reportMissingTypeStubs": true,
+  "stubPath": "C:/Users/Erdoel/Documents/Teknik/Python/typings_for_pyright",
+  "typeCheckingMode": "basic"
 }

@@ -693,7 +693,7 @@ def peakdet(v, delta, x = None):
 
     return array(maxtab), array(mintab)
 
-def levenshtein_ratio_and_distance(s, t, ratio_calc = False):
+def str_distance(s, t):
     """ levenshtein_ratio_and_distance:
         Calculates levenshtein distance between two strings.
         If ratio_calc = True, the function computes the
@@ -721,22 +721,18 @@ def levenshtein_ratio_and_distance(s, t, ratio_calc = False):
             else:
                 # In order to align the results with those of the Python Levenshtein package, if we choose to calculate the ratio
                 # the cost of a substitution is 2. If we calculate just distance, then the cost of a substitution is 1.
-                if ratio_calc == True:
-                    cost = 2
-                else:
-                    cost = 1
+                cost = 1
             distance[row][col] = min(distance[row-1][col] + 1,      # Cost of deletions
                                  distance[row][col-1] + 1,          # Cost of insertions
                                  distance[row-1][col-1] + cost)     # Cost of substitutions
-    if ratio_calc == True:
-        # Computation of the Levenshtein Distance Ratio
-        Ratio = ((len(s)+len(t)) - distance[row][col]) / (len(s)+len(t))
-        return Ratio
-    else:
-        # print(distance) # Uncomment if you want to see the matrix showing how the algorithm computes the cost of deletions,
-        # insertions and/or substitutions
-        # This is the minimum number of edits needed to convert string a to string b
-        return "The strings are {} edits away".format(distance[row][col])
+
+    # Computation of the Levenshtein Distance Ratio
+    Ratio = ((len(s)+len(t)) - distance[row][col]) / (len(s)+len(t))
+    # print(distance) # Uncomment if you want to see the matrix showing how the algorithm computes the cost of deletions,
+    # insertions and/or substitutions
+    # This is the minimum number of edits needed to convert string a to string b
+    # return "The strings are {} edits away".format(distance[rows-1][cols-1])
+    return distance[rows-1][cols-1], Ratio
 
 if __name__ == "__main__":
     #print(convert2pq("10mil"))
@@ -787,4 +783,7 @@ if __name__ == "__main__":
     # print convert2pq([10.0], defaultunits=["Hz"])
     # print convert2pq([10.0], defaultunits=["MHz"])
     # print convert2pq([100.0], defaultunits=["MHz"])
+
+    print(str_distance("rx1","rx2", ratio_calc = False))
+
     pass
