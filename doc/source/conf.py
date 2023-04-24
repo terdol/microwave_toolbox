@@ -13,20 +13,21 @@
 import os
 import sys
 sys.path.insert(0, os.path.abspath('..'))
-sys.path.insert(0, os.path.abspath(r'C:\\Users\\Erdoel\\Documents\\Works\\Python_Works\\microwave_toolbox\\'))
+sys.path.insert(0, os.path.abspath(r'C:\\Users\\Erdoel\\Documents\\Works\\Python_Works\\microwave_toolbox'))
+sys.path.insert(0, os.path.abspath(r'C:\\Users\\Erdoel\\Documents\\Works\\Python_Works\\microwave_toolbox\\src'))
 
 
 # -- Project information -----------------------------------------------------
 
-project = 'spfile'
-copyright = '2020, Tuncay Erdöl'
+project = 'mwtoolbox'
+copyright = '2023, Tuncay Erdöl'
 author = 'Tuncay Erdöl'
 
 # The full version, including alpha/beta/rc tags
-release = '0.1'
+release = '0.1.0'
 
 ditaa = "java"
-ditaa_args = ["-jar", r"C:\Users\Erdoel\Programlar\EmacsConfs\doom\.emacs.d\.local\straight\build-28.1\org-contrib\scripts\ditaa.jar"]
+ditaa_args = ["-jar", r"C:\Users\Erdoel\Programlar\ditaa.jar"]
 ditaa_log_enable = True
 
 # -- General configuration ---------------------------------------------------
@@ -44,6 +45,7 @@ extensions = [
 ]
 napoleon_google_docstring = True
 napoleon_include_special_with_doc = True
+
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
 

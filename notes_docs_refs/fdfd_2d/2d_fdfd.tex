@@ -1,0 +1,72 @@
+\documentclass{article}
+\usepackage[english]{babel}
+\usepackage{geometry,amsmath}
+\geometry{landscape, a2paper}
+
+%%%%%%%%%% Start TeXmacs macros
+\newcommand{\tmop}[1]{\ensuremath{\operatorname{#1}}}
+%%%%%%%%%% End TeXmacs macros
+
+\begin{document}
+
+\[ \frac{\beta}{k_o} E_x (i, j) = H_y (i, j) + \frac{j}{k_o \tmop{dx} (i)}
+   [E_z (i + 1, j) - E_z (i, j)] \]
+\[ \frac{\beta}{k_o} E_x (i, j) = H_y (i, j) + \frac{j}{k_o \tmop{dx} (i)}
+   \left[ \frac{- j}{k_o \tmop{ddx} (i) \varepsilon_{\tmop{zz}} (i + 1, j)}
+   [H_y (i + 1, j) - H_y (i, j)] + \frac{j}{k_o \tmop{ddy} (j - 1)
+   \varepsilon_{\tmop{zz}} (i + 1, j)} [H_x (i + 1, j) - H_x (i + 1, j - 1)] -
+   \left( \frac{- j}{k_o \tmop{ddx} (i - 1) \varepsilon_{\tmop{zz}} (i, j)}
+   [H_y (i, j) - H_y (i - 1, j)] + \frac{j}{k_o \tmop{ddy} (j - 1)
+   \varepsilon_{\tmop{zz}} (i, j)} [H_x (i, j) - H_x (i, j - 1)] \right)
+   \right] \]
+\[ \tmop{ddx} (i) = \frac{\tmop{dx} (i) + \tmop{dx} (i + 1)}{2} \hspace{3em}
+   \tmop{ddy} (j) = \frac{\tmop{dy} (j) + \tmop{dy} (j + 1)}{2} \]
+\[ \frac{\beta}{k_o} E_x (i, j) = H_y (i, j) + \frac{1}{k_o^{^2} \tmop{ddx}
+   (i) \tmop{dx} (i) \varepsilon_{\tmop{zz}} (i + 1, j)} [H_y (i + 1, j) - H_y
+   (i, j)] - \frac{1}{k_o^{^2} \tmop{dx} (i) \tmop{ddy} (j - 1)
+   \varepsilon_{\tmop{zz}} (i + 1, j)} [H_x (i + 1, j) - H_x (i + 1, j - 1)] -
+   \left. \frac{1}{k_o^{^2} \tmop{ddx} (i - 1) \tmop{dx} (i)
+   \varepsilon_{\tmop{zz}} (i, j)} [H_y (i, j) - H_y (i - 1, j)] +
+   \frac{1}{k_o^{^2} \tmop{dx} (i) \tmop{ddy} (j - 1) \varepsilon_{\tmop{zz}}
+   (i, j)} [H_x (i, j) - H_x (i, j - 1)] \right) \]
+
+
+\
+
+$\frac{\beta}{k_o} E_y (i, j) = - H_x (i, j) + \frac{j}{k_o \tmop{dy} (j)}
+[E_z (i, j + 1) - E_z (i, j)]$
+\[ \frac{\beta}{k_o} E_y (i, j) = - H_x (i, j) + \frac{j}{k_o \tmop{dy} (j)}
+   \left[ \frac{- j}{k_o \tmop{ddx} (i - 1) \varepsilon_{\tmop{zz}} (i, j +
+   1)} [H_y (i, j + 1) - H_y (i - 1, j + 1)] + \frac{j}{k_o \tmop{ddy} (j)
+   \varepsilon_{\tmop{zz}} (i, j)} [H_x (i, j + 1) - H_x (i, j)] - \left(
+   \frac{- j}{k_o \tmop{ddx} (i - 1) \varepsilon_{\tmop{zz}} (i, j)} [H_y (i,
+   j) - H_y (i - 1, j)] + \frac{j}{k_o \tmop{ddy} (j - 1)
+   \varepsilon_{\tmop{zz}} (i, j)} [H_x (i, j) - H_x (i, j - 1)] \right)
+   \right] \]
+
+
+\
+
+$\frac{\beta}{k_o} E_y (i, j) = - H_x (i, j) + \frac{1}{k_o^2 \tmop{dy} (j)
+\tmop{ddx} (i - 1) \varepsilon_{\tmop{zz}} (i, j + 1)} [H_y (i, j + 1) - H_y
+(i - 1, j + 1)] - \frac{1}{k_o^{^2} \tmop{dy} (j) \tmop{ddy} (j)
+\varepsilon_{\tmop{zz}} (i, j)} [H_x (i, j + 1) - H_x (i, j)] \left. -
+\frac{1}{k_o^{^2} \tmop{dy} (j) \tmop{ddx} (i - 1) \varepsilon_{\tmop{zz}} (i,
+j)} [H_y (i, j) - H_y (i - 1, j)] + \frac{1}{k_o^{^2} \tmop{dy} (j) \tmop{ddy}
+(j - 1) \varepsilon_{\tmop{zz}} (i, j)} [H_x (i, j) - H_x (i, j - 1)] \right)$
+
+\
+
+Bu form{\"u}llerde {\c s}u normalizasyon uygulanm{\i}{\c s}:
+\[ H' = H \sqrt{\eta_0} \hspace{3em} E' = \frac{E}{\sqrt{\eta_0}} \]
+
+
+\
+
+\
+
+\
+
+\
+
+\end{document}

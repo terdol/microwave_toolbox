@@ -3,7 +3,7 @@ build-backend = 'setuptools.build_meta'
 requires = ['setuptools']
 
 [project]
-name = "mwtoolbox"
+name = "mwtoolbox_terdol"
 version = "0.1.0"
 dependencies = ["quantities",
                 "numpy",
@@ -13,11 +13,10 @@ dependencies = ["quantities",
 description="Microwave Toolbox"
 authors = [{ name = "Tuncay Erdöl", email = "terdol@hotmail.com"}]
 requires-python = ">=3.7"
-license = {text = "BSD-3-Clause"}
+license = {text = "GPL-3.0-or-later"}
 classifiers=[
     "Development Status :: 3 - Alpha",
     "Intended Audience :: Science/Research",
-    "License :: OSI Approved :: GNU Lesser General Public License v3 or later (LGPLv3+)",  
     "Operating System :: Windows :: POSIX :: Linux",
     "Programming Language :: Python :: 3",
 ]

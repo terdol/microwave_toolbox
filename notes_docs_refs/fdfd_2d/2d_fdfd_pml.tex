@@ -1,0 +1,246 @@
+\documentclass{article}
+\usepackage[english]{babel}
+\usepackage{geometry,amsmath,xcolor}
+\geometry{portrait, a0paper}
+
+%%%%%%%%%% Start TeXmacs macros
+\newcommand{\tmcolor}[2]{{\color{#1}{#2}}}
+\newcommand{\tmmathbf}[1]{\ensuremath{\boldsymbol{#1}}}
+\newcommand{\tmop}[1]{\ensuremath{\operatorname{#1}}}
+%%%%%%%%%% End TeXmacs macros
+
+\begin{document}
+
+\[ \  \]
+
+
+
+\[ \text{} \frac{\beta}{k_o} E_x (i, j) = H_y (i, j) + \frac{j}{k_o \tmop{dx}
+   (i)} [\tmcolor{green}{\tmcolor{blue}{E_z (i + 1, j)} \tmcolor{magenta}{}} -
+   E_z (i, j)] \tmcolor{red}{\left( \frac{1}{1 - \frac{j \sigma_x (i + 1 /
+   2)}{\omega \epsilon_0 \epsilon_{\tmop{xx}} (i, j)}} \right)} \]
+\[ \frac{\beta}{k_o} E_x (i, j) = H_y (i, j) + \frac{j}{k_o \tmop{dx} (i)}
+   \tmcolor{red}{\left( \frac{1}{1 - \frac{j \sigma_x (i + 1 / 2)}{\omega
+   \epsilon_0 \epsilon_{\tmop{xx}} (i, j)}} \right)} \left[ \frac{- j}{k_o
+   \tmop{ddx} (i) \varepsilon_{\tmop{zz}} (i + 1, j)} [H_y (i + 1, j) - H_y
+   (i, j)] \tmcolor{red}{\left( \frac{1}{1 - \frac{j \sigma_x (i + 1)}{\omega
+   \epsilon_0 \epsilon_{\tmop{xx}}' (i + 1, j)}} \right)} + \frac{j}{k_o
+   \tmop{ddy} (j - 1) \varepsilon_{\tmop{zz}} (i + 1, j)} [H_x (i + 1, j) -
+   H_x (i + 1, j - 1)] \tmcolor{red}{\left( \frac{1}{1 - \frac{j \sigma_y
+   (j)}{\omega \epsilon_0 \epsilon_{\tmop{yy}}' (i + 1, j)}} \right)} - \left(
+   \frac{- j}{k_o \tmop{ddx} (i - 1) \varepsilon_{\tmop{zz}} (i, j)} [H_y (i,
+   j) - H_y (i - 1, j)] \tmcolor{red}{\left( \frac{1}{1 - \frac{j \sigma_x
+   (i)}{\omega \epsilon_0 \epsilon_{\tmop{xx}}' (i, j)}} \right)} +
+   \frac{j}{k_o \tmop{ddy} (j - 1) \varepsilon_{\tmop{zz}} (i, j)} [H_x (i, j)
+   - H_x (i, j - 1)] \tmcolor{red}{\left( \frac{1}{1 - \frac{j \sigma_y
+   (j)}{\omega \epsilon_0 \epsilon_{\tmop{yy}}' (i, j)}} \right)} \right)
+   \right] \]
+\[ \tmop{ddx} (i) = \frac{\tmop{dx} (i) + \tmop{dx} (i + 1)}{2} \hspace{3em}
+   \tmop{ddy} (j) = \frac{\tmop{dy} (j) + \tmop{dy} (j + 1)}{2} \]
+\[ \epsilon_{\tmop{xx}}' (i + 1, j) = \frac{\epsilon_{\tmop{xx}} (i + 1, j) +
+   \epsilon_{\tmop{xx}} (i, j)}{2} \hspace{6em} \epsilon_{\tmop{yy}}' (i, j +
+   1) = \frac{\epsilon_{\tmop{yy}} (i, j + 1) + \epsilon_{\tmop{yy}} (i,
+   j)}{2} \hspace{3em} \]
+\[ \sigma_x = - \frac{(n + 1) \epsilon_0 c}{2 \delta} \ln (R_{\tmop{th}})
+   {\left( \frac{x}{\delta} \right)^{^n}}^{} \]
+
+
+\
+
+\
+
+
+\[ \frac{\beta}{k_o} E_x (i, j) = H_y (i, j) + \frac{1}{k_o^{^2} \tmop{ddx}
+   (i) \tmop{dx} (i) \varepsilon_{\tmop{zz}} (i + 1, j)} [H_y (i + 1, j) - H_y
+   (i, j)] \left( \frac{1}{1 - \frac{j \sigma_x (i + 1 / 2)}{\omega \epsilon_0
+   \epsilon_{\tmop{xx}} (i, j)}} \right) \left( \frac{1}{1 - \frac{j \sigma_x
+   (i + 1)}{\omega \epsilon_0 \epsilon_{\tmop{xx}}' (i + 1, j)}} \right) -
+   \frac{1}{k_o^{^2} \tmop{dx} (i) \tmop{ddy} (j - 1) \varepsilon_{\tmop{zz}}
+   (i + 1, j)} [H_x (i + 1, j) - H_x (i + 1, j - 1)] \left( \frac{1}{1 -
+   \frac{j \sigma_x (i + 1 / 2)}{\omega \epsilon_0 \epsilon_{\tmop{xx}} (i,
+   j)}} \right) \left( \frac{1}{1 - \frac{j \sigma_y (j)}{\omega \epsilon_0
+   \epsilon_{\tmop{yy}}' (i + 1, j)}} \right) - \frac{1}{k_o^{^2} \tmop{ddx}
+   (i - 1) \tmop{dx} (i) \varepsilon_{\tmop{zz}} (i, j)} [H_y (i, j) - H_y (i
+   - 1, j)] \left( \frac{1}{1 - \frac{j \sigma_x (i + 1 / 2)}{\omega
+   \epsilon_0 \epsilon_{\tmop{xx}} (i, j)}} \right) \left( \frac{1}{1 -
+   \frac{j \sigma_x (i)}{\omega \epsilon_0 \epsilon_{\tmop{xx}}' (i, j)}}
+   \right) + \frac{1}{k_o^{^2} \tmop{dx} (i) \tmop{ddy} (j - 1)
+   \varepsilon_{\tmop{zz}} (i, j)} [H_x (i, j) - H_x (i, j - 1)] \left(
+   \frac{1}{1 - \frac{j \sigma_x (i + 1 / 2)}{\omega \epsilon_0
+   \epsilon_{\tmop{xx}} (i, j)}} \right) \tmmathbf{} \left( \frac{1}{1 -
+   \frac{j \sigma_y (j)}{\omega \epsilon_0 \epsilon_{\tmop{yy}}' (i, j)}}
+   \right) \]
+
+
+\
+
+\
+
+\
+
+\
+
+
+\[ \frac{\beta}{k_o} E_y (i, j) = - H_x (i, j) + \frac{j}{k_o \tmop{dy} (j)}
+   [E_z (i, j + 1) - E_z (i, j)] \tmcolor{red}{\left( \frac{1}{1 - \frac{j
+   \sigma_y (j + 1 / 2)}{w \epsilon_0 \epsilon_{\tmop{yy}} (i, j)}} \right)}
+\]
+\[ \frac{\beta}{k_o} E_y (i, j) = - H_x (i, j) + \frac{j}{k_o \tmop{dy} (j)}
+   \left( \frac{1}{1 - \frac{j \sigma_y (j + 1 / 2)}{w \epsilon_0
+   \epsilon_{\tmop{yy}} (i, j)}} \right) \left[ \frac{- j}{k_o \tmop{ddx} (i -
+   1) \varepsilon_{\tmop{zz}} (i, j + 1)} [H_y (i, j + 1) - H_y (i - 1, j +
+   1)] \tmcolor{red}{\left( \frac{1}{1 - \frac{j \sigma_x (i)}{\omega
+   \epsilon_0 \epsilon_{\tmop{xx}}' (i, j + 1)}} \right)} + \frac{j}{k_o
+   \tmop{ddy} (j) \varepsilon_{\tmop{zz}} (i, j)} [H_x (i, j + 1) - H_x (i,
+   j)] \tmcolor{red}{\left( \frac{1}{1 - \frac{j \sigma_y (j + 1)}{\omega
+   \epsilon_0 \epsilon_{\tmop{yy}}' (i, j + 1)}} \right)} - \left( \frac{-
+   j}{k_o \tmop{ddx} (i - 1) \varepsilon_{\tmop{zz}} (i, j)} [H_y (i, j) - H_y
+   (i - 1, j)] \tmcolor{red}{\left( \frac{1}{1 - \frac{j \sigma_x (i)}{\omega
+   \epsilon_0 \epsilon_{\tmop{xx}}' (i, j)}} \right)} + \frac{j}{k_o
+   \tmop{ddy} (j - 1) \varepsilon_{\tmop{zz}} (i, j)} [H_x (i, j) - H_x (i, j
+   - 1)] \left( \frac{1}{1 - \frac{j \sigma_y (j)}{\omega \epsilon_0
+   \epsilon_{\tmop{yy}}' (i, j)}} \right) \right) \right] \]
+
+
+
+\[ \frac{\beta}{k_o} E_y (i, j) = - H_x (i, j) + \frac{1}{k_o^2 \tmop{dy} (j)
+   \tmop{ddx} (i - 1) \varepsilon_{\tmop{zz}} (i, j + 1)} [H_y (i, j + 1) -
+   H_y (i - 1, j + 1)] \left( \frac{1}{1 - \frac{j \sigma_y (j + 1 / 2)}{w
+   \epsilon_0 \epsilon_{\tmop{yy}} (i, j)}} \right) \left( \frac{1}{1 -
+   \frac{j \sigma_x (i)}{\omega \epsilon_0 \epsilon_{\tmop{xx}}' (i, j + 1)}}
+   \right) - \frac{1}{k_o^{^2} \tmop{dy} (j) \tmop{ddy} (j)
+   \varepsilon_{\tmop{zz}} (i, j)} [H_x (i, j + 1) - H_x (i, j)] \left. \left(
+   \frac{1}{1 - \frac{j \sigma_y (j + 1 / 2)}{w \epsilon_0
+   \epsilon_{\tmop{yy}} (i, j)}} \right) \left( \frac{1}{1 - \frac{j \sigma_x
+   (i)}{\omega \epsilon_0 \epsilon_{\tmop{xx}}' (i, j + 1)}} \right) -
+   \frac{1}{k_o^{^2} \tmop{dy} (j) \tmop{ddx} (i - 1) \varepsilon_{\tmop{zz}}
+   (i, j)} [H_y (i, j) - H_y (i - 1, j)] \left( \frac{1}{1 - \frac{j \sigma_y
+   (j + 1 / 2)}{w \epsilon_0 \epsilon_{\tmop{yy}} (i, j)}} \right) \left(
+   \frac{1}{1 - \frac{j \sigma_x (i)}{\omega \epsilon_0 \epsilon_{\tmop{xx}}'
+   (i, j)}} \right) + \frac{1}{k_o^{^2} \tmop{dy} (j) \tmop{ddy} (j - 1)
+   \varepsilon_{\tmop{zz}} (i, j)} [H_x (i, j) - H_x (i, j - 1)] \left(
+   \frac{1}{1 - \frac{j \sigma_y (j + 1 / 2)}{w \epsilon_0
+   \epsilon_{\tmop{yy}} (i, j)}} \right) \left( \frac{1}{1 - \frac{j \sigma_y
+   (j)}{\omega \epsilon_0 \epsilon_{\tmop{yy}}' (i, j)}} \right) \right) \]
+
+
+Bu form{\"u}llerde {\c s}u normalizasyon uygulanm{\i}{\c s}:
+\[ H' = H \sqrt{\eta_0} \hspace{3em} E' = \frac{E}{\sqrt{\eta_0}} \]
+
+
+\
+
+
+\begin{eqnarray*}
+  &  & \frac{\beta}{k_0} H_y (i, j) = \epsilon_{\tmop{xx}} (i, j) E_x (i, j)
+  + \frac{j}{k_0 \tmop{ddy} (j - 1)} [H_z (i, j) - H_z (i, j - 1)]\\
+  &  & \frac{\beta}{k_0} H_y (i, j) = \epsilon_{\tmop{xx}} (i, j) E_x (i, j)
+  + \frac{j}{k_0 \tmop{ddy} (j - 1)} \left[ \left( \frac{j}{k_0 \tmop{dx} (i)}
+  [E_y (i + 1, j) - E_y (i, j)] - \frac{j}{k_0 \tmop{dy} (j)} [E_x (i, j + 1)
+  - E_x (i, j)] \right) - \left( \frac{j}{k_0 \tmop{dx} (i)} [E_y (i + 1, j -
+  1) - E_y (i, j - 1)] - \frac{j}{k_0 \tmop{dy} (j - 1)} [E_x (i, j) - E_x (i,
+  j - 1)] \right) \right]\\
+  &  & \frac{\beta}{k_0} H_x (i, j) = - \epsilon_{\tmop{yy}} (i, j) E_y (i,
+  j) + \frac{j}{k_0 \tmop{ddx} (i - 1)} [H_z (i, j) - H_z (i - 1, j)]\\
+  &  & \frac{\beta}{k_0} H_x (i, j) = - \epsilon_{\tmop{yy}} (i, j) E_y (i,
+  j) + \frac{j}{k_0 \tmop{ddx} (i - 1)} \left[ \left( \frac{j}{k_0 \tmop{dx}
+  (i)} [E_y (i + 1, j) - E_y (i, j)] - \frac{j}{k_0 \tmop{dy} (j)} [E_x (i, j
+  + 1) - E_x (i, j)] \right) - \left( \frac{j}{k_0 \tmop{dx} (i - 1)} [E_y (i,
+  j) - E_y (i - 1, j)] - \frac{j}{k_0 \tmop{dy} (j)} [E_x (i - 1, j + 1) - E_x
+  (i - 1, j)] \right) \right]
+\end{eqnarray*}
+
+
+\
+
+
+\begin{eqnarray*}
+  &  & \frac{\beta}{k_0} H_y (i, j) = \epsilon_{\tmop{xx}} (i, j) E_x (i, j)
+  + \frac{j}{k_0 \tmop{ddy} (j - 1)} [H_z (i, j) - H_z (i, j - 1)]
+  \tmcolor{red}{\left( \frac{1}{1 - \frac{j \sigma_y (j)}{\omega \epsilon_0
+  \epsilon_{\tmop{yy}}' (i, j)}} \right)} \\
+  &  & \\
+  &  & \frac{\beta}{k_0} H_y (i, j) = \epsilon_{\tmop{xx}} (i, j) E_x (i, j)
+  + \frac{j}{k_0 \tmop{ddy} (j - 1)} \tmcolor{red}{\left( \frac{1}{1 - \frac{j
+  \sigma_y (j)}{\omega \epsilon_0 \epsilon_{\tmop{yy}}' (i, j)}} \right)}
+  \left[ \left( \frac{j}{k_0 \tmop{dx} (i)} [E_y (i + 1, j) - E_y (i, j)]
+  \tmcolor{red}{\left( \frac{1}{1 - \frac{j \sigma_x (i + 1 / 2)}{\omega_0
+  \epsilon_0 \epsilon_r (i, j)}} \right)} - \frac{j}{k_0 \tmop{dy} (j)} [E_x
+  (i, j + 1) - E_x (i, j)] \tmcolor{red}{\left( \frac{1}{1 - \frac{j \sigma_y
+  (j + 1 / 2)}{\omega_0 \epsilon_0 \epsilon_r (i, j)}} \right)} \right) -
+  \left( \frac{j}{k_0 \tmop{dx} (i)} [E_y (i + 1, j - 1) - E_y (i, j - 1)]
+  \tmcolor{red}{\left( \frac{1}{1 - \frac{j \sigma_x (i + 1 / 2)}{\omega_0
+  \epsilon_0 \epsilon_r (i, j - 1)}} \right)} - \frac{j}{k_0 \tmop{dy} (j -
+  1)} [E_x (i, j) - E_x (i, j - 1)] \tmcolor{red}{\left( \frac{1}{1 - \frac{j
+  \sigma_y (j - 1 / 2)}{\omega_0 \epsilon_0 \epsilon_r (i, j - 1)}} \right)}
+  \right) \right]\\
+  &  & \\
+  &  & \frac{\beta}{k_0} H_y (i, j) = \epsilon_{\tmop{xx}} (i, j) E_x (i, j)
+  + \tmcolor{red}{} \frac{- 1}{k_0^{^2} \tmop{dx} (i) \tmop{ddy} (j - 1)} [E_y
+  (i + 1, j) - E_y (i, j)] \tmcolor{red}{\left( \frac{1}{1 - \frac{j \sigma_y
+  (j)}{\omega \epsilon_0 \epsilon_{\tmop{yy}}' (i, j)}} \right) \left(
+  \frac{1}{1 - \frac{j \sigma_x (i + 1 / 2)}{\omega_0 \epsilon_0 \epsilon_r
+  (i, j)}} \right)} + \frac{1}{k_0^{^2} \tmop{dy} (j) \tmop{ddy} (j - 1)} [E_x
+  (i, j + 1) - E_x (i, j)] \left( \frac{1}{1 - \frac{j \sigma_y (j)}{\omega
+  \epsilon_0 \epsilon_{\tmop{yy}}' (i, j)}} \right) \tmcolor{red}{\left(
+  \frac{1}{1 - \frac{j \sigma_y (j + 1 / 2)}{\omega_0 \epsilon_0 \epsilon_r
+  (i, j)}} \right)} + \frac{1}{k_0^{^2} \tmop{dx} (i) \tmop{ddy} (j - 1)} [E_y
+  (i + 1, j - 1) - E_y (i, j - 1)] \tmcolor{red}{\left( \frac{1}{1 - \frac{j
+  \sigma_y (j)}{\omega \epsilon_0 \epsilon_{\tmop{yy}}' (i, j)}} \right)
+  \left( \frac{1}{1 - \frac{j \sigma_x (i + 1 / 2)}{\omega_0 \epsilon_0
+  \epsilon_r (i, j - 1)}} \right)} - \frac{1}{k_0^{^2} \tmop{dy} (j - 1)
+  \tmop{ddy} (j - 1)} [E_x (i, j) - E_x (i, j - 1)] \tmcolor{red}{\left(
+  \frac{1}{1 - \frac{j \sigma_y (j)}{\omega \epsilon_0 \epsilon_{\tmop{yy}}'
+  (i, j)}} \right) \left( \frac{1}{1 - \frac{j \sigma_y (j - 1 / 2)}{\omega_0
+  \epsilon_0 \epsilon_r (i, j - 1)}} \right)}\\
+  &  & \\
+  &  & \frac{\beta}{k_0} H_x (i, j) = - \epsilon_{\tmop{yy}} (i, j) E_y (i,
+  j) + \frac{j}{k_0 \tmop{ddx} (i - 1)} [H_z (i, j) - H_z (i - 1, j)]
+  \tmcolor{red}{\left( \frac{1}{1 - \frac{j \sigma_x (i)}{\omega \epsilon_0
+  \epsilon_{\tmop{xx}}' (i, j)}} \right)}\\
+  &  & \frac{\beta}{k_0} H_x (i, j) = - \epsilon_{\tmop{yy}} (i, j) E_y (i,
+  j) + \frac{j}{k_0 \tmop{ddx} (i - 1)} \tmcolor{red}{\left( \frac{1}{1 -
+  \frac{j \sigma_x (i)}{\omega \epsilon_0 \epsilon_{\tmop{xx}}' (i, j)}}
+  \right)} \left[ \left( \frac{j}{k_0 \tmop{dx} (i)} [E_y (i + 1, j) - E_y (i,
+  j)] \tmcolor{red}{\left( \frac{1}{1 - \frac{j \sigma_x (i + 1 / 2)}{\omega_0
+  \epsilon_0 \epsilon_r (i, j)}} \right)} - \frac{j}{k_0 \tmop{dy} (j)} [E_x
+  (i, j + 1) - E_x (i, j)] \tmcolor{red}{\left( \frac{1}{1 - \frac{j \sigma_y
+  (j + 1 / 2)}{\omega_0 \epsilon_0 \epsilon_r (i, j)}} \right)} \right) -
+  \left( \frac{j}{k_0 \tmop{dx} (i - 1)} [E_y (i, j) - E_y (i - 1, j)]
+  \tmcolor{red}{\left( \frac{1}{1 - \frac{j \sigma_x (i - 1 / 2)}{\omega_0
+  \epsilon_0 \epsilon_r (i - 1, j)}} \right)} - \frac{j}{k_0 \tmop{dy} (j)}
+  [E_x (i - 1, j + 1) - E_x (i - 1, j)] \tmcolor{red}{\left( \frac{1}{1 -
+  \frac{j \sigma_y (j + 1 / 2)}{\omega_0 \epsilon_0 \epsilon_r (i - 1, j)}}
+  \right)} \right) \right]\\
+  &  & \\
+  &  & \frac{\beta}{k_0} H_x (i, j) = - \epsilon_{\tmop{yy}} (i, j) E_y (i,
+  j) + \tmcolor{red}{} \frac{- 1}{k_0^{^2} \tmop{dx} (i) \tmop{ddx} (i - 1)}
+  [E_y (i + 1, j) - E_y (i, j)] \tmcolor{red}{\left( \frac{1}{1 - \frac{j
+  \sigma_x (i)}{\omega \epsilon_0 \epsilon_{\tmop{xx}}' (i, j)}} \right)
+  \left( \frac{1}{1 - \frac{j \sigma_x (i + 1 / 2)}{\omega_0 \epsilon_0
+  \epsilon_r (i, j)}} \right)} + \frac{1}{k_0^{^2} \tmop{dy} (j) \tmop{ddx} (i
+  - 1)} [E_x (i, j + 1) - E_x (i, j)] \tmcolor{red}{\left( \frac{1}{1 -
+  \frac{j \sigma_x (i)}{\omega \epsilon_0 \epsilon_{\tmop{xx}}' (i, j)}}
+  \right) \left( \frac{1}{1 - \frac{j \sigma_y (j + 1 / 2)}{\omega_0
+  \epsilon_0 \epsilon_r (i, j)}} \right)} + \frac{1}{k_0^{^2} \tmop{dx} (i -
+  1) \tmop{ddx} (i - 1)} [E_y (i, j) - E_y (i - 1, j)] \tmcolor{red}{\left(
+  \frac{1}{1 - \frac{j \sigma_x (i)}{\omega \epsilon_0 \epsilon_{\tmop{xx}}'
+  (i, j)}} \right) \left( \frac{1}{1 - \frac{j \sigma_x (i - 1 / 2)}{\omega_0
+  \epsilon_0 \epsilon_r (i - 1, j)}} \right)} - \frac{1}{k_0^{^2} \tmop{dy}
+  (j) \tmop{ddx} (i - 1)} [E_x (i - 1, j + 1) - E_x (i - 1, j)]
+  \tmcolor{red}{\left( \frac{1}{1 - \frac{j \sigma_x (i)}{\omega \epsilon_0
+  \epsilon_{\tmop{xx}}' (i, j)}} \right) \left( \frac{1}{1 - \frac{j \sigma_y
+  (j + 1 / 2)}{\omega_0 \epsilon_0 \epsilon_r (i - 1, j)}} \right)}\\
+  &  & \\
+  &  & \epsilon_{\tmop{yy}}' (j) = 0.5 (\epsilon_{\tmop{yy}} (j) +
+  \epsilon_{\tmop{yy}} (j - 1))\\
+  &  & \sigma_y (j) = H_y (j) \tmop{noktas} {\i} \tmop{ndaki} \sigma_y
+  \tmop{de} {\u g} \tmop{eri}
+\end{eqnarray*}
+
+
+In fdfd\_solve method, compact formulation is used which employs P,Q matrices
+instead of A and solves only for E vector. Then H vector is calculated from E
+vector.
+
+\end{document}

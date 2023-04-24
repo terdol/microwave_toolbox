@@ -1,3 +1,4 @@
+LICENSE.txt
 license_text_to_include_to_source_files.txt
 pyproject.toml
 src/em/__init__.py
@@ -24,7 +25,6 @@ src/mwtoolbox/myconstants.py
 src/mwtoolbox/network.py
 src/mwtoolbox/networksym.py
 src/mwtoolbox/pysmith.py
-src/mwtoolbox/t.py
 src/mwtoolbox/touchstone.py
 src/mwtoolbox/transmission_lines.py
 src/mwtoolbox.egg-info/PKG-INFO
@@ -32,11 +32,6 @@ src/mwtoolbox.egg-info/SOURCES.txt
 src/mwtoolbox.egg-info/dependency_links.txt
 src/mwtoolbox.egg-info/requires.txt
 src/mwtoolbox.egg-info/top_level.txt
-src/mwtoolbox/em/2d_fdfd/__init__.py
-src/mwtoolbox/em/2d_fdfd/fdfd_cs3.py
-src/mwtoolbox/em/2d_fdfd/grid.py
-src/mwtoolbox/em/2d_fdfd/grid2.py
-src/mwtoolbox/em/mode-matching/mode_matching_module.py
 tests/test1.py
 tests/test2.py
 tests/tests.py

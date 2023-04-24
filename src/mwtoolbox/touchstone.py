@@ -86,14 +86,12 @@ def generate_multiport_spfile(conf_filename, output_filename):
     """
     Configuration file format:
     - comments start by "#"
-    - every line's format is:
-        i,j ? filename ? is, js
-        meaning:
-        S(is,js) of touchstone file filename is S(i,j) of output_filename
+    - every line's format is: "i,j ? filename ? is, js". The meaning is "S(is,js) of touchstone file filename is S(i,j) of output_filename"
 
     Args:
         conf_filename(str): Name of the configuration filename.
         output_filename(str): Name of the output filename.
+
     """
     conffile = open(conf_filename)
     target_indices = []
@@ -1049,6 +1047,7 @@ class spfile:
                     a=F(V+Z_rI)
 
                     b=F(V-Z_r^*I)
+
         Args:
             imp (numpy.ndarray): Zref, Reference impedance array for which includes the reference impedance for each port.
 
@@ -1751,11 +1750,10 @@ class spfile:
         return obj
 
     def prepare_ref_impedance_array(self,imparray=None):
-        """Turns reference impedance array which is composed of numbers,arrays, functions or 1-ports to numerical array which
-        is composed of numbers and arrays. It is made sure that :math:`Re(Z)\neq 0`. Mainly for internal use.
+        """Turns reference impedance array which is composed of numbers,arrays, functions or 1-ports to numerical array which is composed of numbers and arrays. It is made sure that :math:`Re(Z)\neq 0`. Mainly for internal use.
 
         Args:
-            imparray (list): List of impedance array
+            imparray (list, optional): List of impedance array. Default is None.
 
         Returns:
             numpy.ndarray: Calculated impedance array
@@ -2529,7 +2527,7 @@ class spfile:
                 -   "Z": Return Z-parameter data
                 -   "ABCD": Return ABCD-parameter data
             i (int, optional): First port number. Defaults to 1.
-            j (int, optional): Second port number. Defaults to 1. Ignored for *data_format*="VSWR"
+            j (int, optional): Second port number. Defaults to 1. Ignored for *data_format* ="VSWR"
             frequencies (list, optional): Defaults to []. List of frequencies in Hz. If an empty list is given, networks whole frequency range is used.
             ref (spfile, optional): Defaults to None. If given the data of this network is subtracted from the same data of *ref* object.
             DCInt (int, optional): Defaults to 0. If 1, DC point given by *DCValue* is used at frequency interpolation if *frequencies* is not [].
@@ -2712,6 +2710,7 @@ class spfile:
             - Phase in radians
             - Length in meters
             - Delay in seconds
+
         A positive quantity means deembedding into the circuit.
         The Zc of de-embedding lines is the reference impedances of each port.
 

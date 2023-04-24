@@ -33,6 +33,8 @@ eps0 = free_space_permittivity.simplified.magnitude
 
 def Zo_eeff_WireOnGroundedSubstrate(arg, defaultunits=None):
     """ Impedance and Effective Permittivity of Straight Wire Over Substrate.
+            Reference:  Transmission Line Design Handbook, Wadell, s.151
+            Note: eeff is the same as eeff of microstrip with w=2*d, t=0
 
     Args:
         arg(list): First 4 arguments are inputs.
@@ -42,8 +44,6 @@ def Zo_eeff_WireOnGroundedSubstrate(arg, defaultunits=None):
             3.  Dielectric Permittivity ;
             4.  Impedance ; impedance
             5.  Effective Diel. Permittivity ;
-            Reference:  Transmission Line Design Handbook, Wadell, s.151
-            Note: eeff is the same as eeff of microstrip with w=2*d, t=0
 
         defaultunits(list, optional): Default units for quantities in *arg* list. Default is [] which means SI units will be used if no unit is given in *arg*.
 
@@ -65,6 +65,7 @@ def Zo_eeff_WireOnGroundedSubstrate(arg, defaultunits=None):
 
 def L_StraightRoundWire(arg, defaultunits=None):
     """ Inductance of a straight round wire.
+    Reference:  Transmission Line Design Handbook, Wadell, s.380
 
     Args:
         arg(list): First 5 arguments are inputs.
@@ -76,7 +77,6 @@ def L_StraightRoundWire(arg, defaultunits=None):
             5. Conductivity ; electrical conductivity
             6. Inductance ;inductance
             7. Impedance ; impedance
-            Reference:  Transmission Line Design Handbook, Wadell, s.380
 
         defaultunits(list, optional): Default units for quantities in *arg* list. Default is [] which means SI units will be used if no unit is given in *arg*.
 
@@ -104,6 +104,7 @@ def L_StraightRoundWire(arg, defaultunits=None):
 
 def Zo_eeff_StraightWireOverSubstrate(arg, defaultunits=None):
     """ Impedance and Effective Permittivity of Straight Wire Over Substrate.
+    Reference:  Transmission Line Design Handbook, Wadell, s.151
 
     Args:
         arg(list): First 4 arguments are inputs.
@@ -114,7 +115,6 @@ def Zo_eeff_StraightWireOverSubstrate(arg, defaultunits=None):
             4.  Dielectric Permittivity ;
             5.  Impedance ; impedance
             6.  Effective Diel. Permittivity ;
-            Reference:  Transmission Line Design Handbook, Wadell, s.151
 
         defaultunits(list, optional): Default units for quantities in *arg* list. Default is [] which means SI units will be used if no unit is given in *arg*.
 
@@ -137,6 +137,8 @@ def Zo_eeff_StraightWireOverSubstrate(arg, defaultunits=None):
 
 def L_StraightFlatWire(arg, defaultunits=None):
     """ Inductance of a flat wire.
+    Reference:  Transmission Line Design Handbook, Wadell, s.382
+
 
     Args:
         arg(list): First 6 arguments are inputs.
@@ -149,7 +151,6 @@ def L_StraightFlatWire(arg, defaultunits=None):
             6.  Conductivity ; electrical conductivity
             7.  Inductance ;inductance
             8.  Impedance ;impedance
-            Reference:  Transmission Line Design Handbook, Wadell, s.382
 
         defaultunits(list, optional): Default units for quantities in *arg* list. Default is [] which means SI units will be used if no unit is given in *arg*.
 
@@ -176,6 +177,7 @@ def L_StraightFlatWire(arg, defaultunits=None):
 
 def L_microstrip_via_hole(arg, defaultunits=None):
     """ Inductance of a via hole in microstrip.
+    Reference:  Microstrip Via Hole Grounds in Microstrip.pdf
 
     Args:
         arg(list): First 2 arguments are inputs.
@@ -183,7 +185,6 @@ def L_microstrip_via_hole(arg, defaultunits=None):
             1. Via Radius ;length
             2. Substrate Thickness ;length
             3. Inductance ; inductance
-            Reference:  Microstrip Via Hole Grounds in Microstrip.pdf
 
         defaultunits(list, optional): Default units for quantities in *arg* list. Default is [] which means SI units will be used if no unit is given in *arg*.
 
@@ -204,6 +205,7 @@ def L_microstrip_via_hole(arg, defaultunits=None):
 
 def L_air_core_coil(arg, defaultunits=None):
     """ Inductance of a via hole in microstrip.
+    Reference:  www.microwavecoil.com , Microwave Components Inc.
 
     Args:
         arg(list): First 4 arguments are inputs.
@@ -214,7 +216,6 @@ def L_air_core_coil(arg, defaultunits=None):
             4. Number Of Turns ;
             5. Inductance ; inductance
             6. Resonance Frequency ; frequency
-            Reference:  www.microwavecoil.com , Microwave Components Inc.
 
         defaultunits(list, optional): Default units for quantities in *arg* list. Default is [] which means SI units will be used if no unit is given in *arg*.
 
@@ -242,6 +243,7 @@ def L_air_core_coil(arg, defaultunits=None):
 
 def L_BondWire(arg, defaultunits=None):
     """ Inductance of a bond wire.
+    Reference:  Transmission Line Design Handbook, Wadell, s.153
 
     Args:
         arg(list): First 4 arguments are inputs.
@@ -251,7 +253,6 @@ def L_BondWire(arg, defaultunits=None):
             3. Distance Between End Points ;length
             4. Angle At End Points In Degrees ; angle
             5. Inductance ;inductance
-            Reference:  Transmission Line Design Handbook, Wadell, s.153
 
         defaultunits(list, optional): Default units for quantities in *arg* list. Default is [] which means SI units will be used if no unit is given in *arg*.
 
@@ -276,6 +277,7 @@ def L_BondWire(arg, defaultunits=None):
 
 def Chebyshev_QWave_Impedance_Transformer(arg, defaultunits=None):
     """ Chebyshev Quarter Wave Impedance Transformer.
+    Reference:  Impedance Matching and Transformation.pdf + eski kod
 
     Args:
         arg(list): First 6 arguments are inputs.
@@ -288,7 +290,6 @@ def Chebyshev_QWave_Impedance_Transformer(arg, defaultunits=None):
             6.  Test Frequency ; frequency
             7.  Impedances ; impedance
             8.  Return Loss at Test Frequency ;
-            Reference:  Impedance Matching and Transformation.pdf + eski kod
 
         defaultunits(list, optional): Default units for quantities in *arg* list. Default is [] which means SI units will be used if no unit is given in *arg*.
 
@@ -352,6 +353,7 @@ def Chebyshev_QWave_Impedance_Transformer(arg, defaultunits=None):
 
 def Binomial_QWave_Impedance_Transformer(arg, defaultunits=None):
     """ Binomial Quarter Wave Impedance Transformer.
+        Reference:  Impedance Matching and Transformation.pdf
 
     Args:
         arg(list): First 5 arguments are inputs.
@@ -363,7 +365,6 @@ def Binomial_QWave_Impedance_Transformer(arg, defaultunits=None):
             5.  Center Frequency ; frequency
             6.  Impedances ; impedance
             7.  Bandwidth ; frequency
-            Reference:  Impedance Matching and Transformation.pdf
 
         defaultunits(list, optional): Default units for quantities in *arg* list. Default is [] which means SI units will be used if no unit is given in *arg*.
 
@@ -408,7 +409,6 @@ def Tee_Attenuator_Synthesis(arg, defaultunits=None):
             6. P1 ;
             7. P2 ;
             8. P3 ;
-            Reference:
 
         defaultunits(list, optional): Default units for quantities in *arg* list. Default is [] which means SI units will be used if no unit is given in *arg*.
 
@@ -442,7 +442,6 @@ def Tee_Attenuator_Analysis(arg, defaultunits=None):
             6. P1 ;
             7. P2 ;
             8. P3 ;
-            Reference:
 
         defaultunits(list, optional): Default units for quantities in *arg* list. Default is [] which means SI units will be used if no unit is given in *arg*.
 
@@ -483,7 +482,6 @@ def Pi_Attenuator_Synthesis(arg, defaultunits=None):
             6. P1 ;
             7. P2 ;
             8. P3 ;
-            Reference:
 
         defaultunits(list, optional): Default units for quantities in *arg* list. Default is [] which means SI units will be used if no unit is given in *arg*.
 
@@ -518,7 +516,6 @@ def Pi_Attenuator_Analysis(arg, defaultunits=None):
             6. P1 ;
             7. P2 ;
             8. P3 ;
-            Reference:
 
         defaultunits(list, optional): Default units for quantities in *arg* list. Default is [] which means SI units will be used if no unit is given in *arg*.
 
@@ -559,7 +556,6 @@ def Bridged_Tee_Attenuator_Synthesis(arg, defaultunits=None):
             3. Parallel Impedance (Rp); impedance
             4. S(1,1) ;
             5. S(2,1) ;
-            Reference:
 
         defaultunits(list, optional): Default units for quantities in *arg* list. Default is [] which means SI units will be used if no unit is given in *arg*.
 
@@ -590,7 +586,6 @@ def Bridged_Tee_Attenuator_Analysis(arg, defaultunits=None):
             3. Parallel Impedance (Rp); impedance
             4. S(1,1) ;
             5. S(2,1) ;
-            Reference:
 
         defaultunits(list, optional): Default units for quantities in *arg* list. Default is [] which means SI units will be used if no unit is given in *arg*.
 
@@ -619,6 +614,7 @@ def Bridged_Tee_Attenuator_Analysis(arg, defaultunits=None):
 
 def DualFrequencyTransformer(arg, defaultunits=None):
     """ Dual Frequency Transformer.
+    Reference:  A Small Dual Frequency Transformer in Two Sections
 
     Args:
         arg(list): First 4 arguments are inputs.
@@ -630,7 +626,6 @@ def DualFrequencyTransformer(arg, defaultunits=None):
             5. Z1; impedance
             6. Z2; impedance
             7. Electrical Length ; angle
-            Reference:  A Small Dual Frequency Transformer in Two Sections
 
         defaultunits(list, optional): Default units for quantities in *arg* list. Default is [] which means SI units will be used if no unit is given in *arg*.
 
@@ -654,6 +649,7 @@ def DualFrequencyTransformer(arg, defaultunits=None):
 
 def SymmetricLangeCoupler(arg, defaultunits=None):
     """ Symmetric Lange Coupler.
+    Reference:  Microwave Circuits, Analysis and Computer-Aided Design, Fusco
 
     Args:
         arg(list): First 3 arguments are inputs.
@@ -663,7 +659,6 @@ def SymmetricLangeCoupler(arg, defaultunits=None):
             3. Reference Impedance;impedance
             4. Zoo;impedance
             5. Zoe;impedance
-            Reference:  Microwave Circuits, Analysis and Computer-Aided Design, Fusco
 
         defaultunits(list, optional): Default units for quantities in *arg* list. Default is [] which means SI units will be used if no unit is given in *arg*.
 
@@ -696,7 +691,7 @@ def AWG2Dia(arg, defaultunits=None):
     Args:
         arg(list): First 1 arguments are inputs.
 
-            1.  AWG ;
+            1. AWG ;
             2. Diameter ;length
             3. Current rating in still air ; current
 
@@ -844,6 +839,7 @@ def OptimumMitered90DegMicrostripBend(arg, defaultunits=None):
 def OptimumMiteredArbitraryAngleMicrostripBend(arg, defaultunits=None):
     r""" Optimum Mitered Microstrip Bend Parameters.
     Reference: MWOHELP, MBENDA model
+    Burada scipy.interpolate.griddata kullanildi ve maalesef extrapolation yapmiyor. Sinir disi degerlerde dogrudan en yakin deger kullanildi.
 
     Args:
         arg(list): First 2 arguments are inputs.
@@ -852,8 +848,6 @@ def OptimumMiteredArbitraryAngleMicrostripBend(arg, defaultunits=None):
             2.  Substrate Height;length;
             3.  Angle (0-180 degrees); angle ;
             4.  Miter Length; length ;
-
-    Burada scipy.interpolate.griddata kullanildi ve maalesef extrapolation yapmiyor. Sinir disi degerlerde dogrudan en yakin deger kullanildi.
 
         defaultunits(list, optional): Default units for quantities in *arg* list. Default is [] which means SI units will be used if no unit is given in *arg*.
 
@@ -1049,7 +1043,7 @@ def HomogeneousRectWaveguideParameters_TE(arg, defaultunits=None):
             15. Impedance; impedance
             16. Electrical Length; angle
             17. Group Velocity;
-            17. Group Delay; time
+            18. Group Delay; time
 
         defaultunits(list, optional): Default units for quantities in *arg* list. Default is [] which means SI units will be used if no unit is given in *arg*.
 
@@ -1129,6 +1123,7 @@ def HomogeneousRectWaveguideParameters_TE(arg, defaultunits=None):
 
 def InductivePostInWaveguide(arg, defaultunits=None):
     """ Inductive Post In Waveguide.
+    Reference:  Marcuvitz Waveguide Handbook s.257
 
     Args:
         arg(list): First 6 arguments are inputs.
@@ -1142,7 +1137,6 @@ def InductivePostInWaveguide(arg, defaultunits=None):
             7. Inductance;inductance
             8. Capacitance; capacitance
             9. Impedance; impedance
-            Reference:  Marcuvitz Waveguide Handbook s.257
 
         defaultunits(list, optional): Default units for quantities in *arg* list. Default is [] which means SI units will be used if no unit is given in *arg*.
 
@@ -1408,6 +1402,9 @@ def RectWG2EvanescentRectWGStep(a1, a2):
 
 def Star2TriangleTransformation(arg, defaultunits=None):
     """ Star network to Triangle network transformation.
+            Reference:
+            At star, z1 is connected to A-node, z2 is connected to B-node, z3 is connected to C-node
+            At triangle, z1 is between A-B, z2 is between A-C, z3 is between B-C
 
     Args:
         arg(list): First 3 arguments are inputs.
@@ -1418,9 +1415,6 @@ def Star2TriangleTransformation(arg, defaultunits=None):
             4. Z1'; impedance
             5. Z2'; impedance
             6. Z3'; impedance
-            Reference:
-            At star, z1 is connected to A-node, z2 is connected to B-node, z3 is connected to C-node
-            At triangle, z1 is between A-B, z2 is between A-C, z3 is between B-C
 
         defaultunits(list, optional): Default units for quantities in *arg* list. Default is [] which means SI units will be used if no unit is given in *arg*.
 
@@ -1525,6 +1519,7 @@ def GyselPowerDivider(arg, defaultunits=None):
 
 def DualTransformation1(arg, defaultunits=None):
     """ Dual Transformation 1.
+    Reference:  Microstrip Filters for RF-Microwave Applications, s.25, Figure 2.6a
 
     Args:
         arg(list): First 4 arguments are inputs.
@@ -1537,7 +1532,6 @@ def DualTransformation1(arg, defaultunits=None):
             6.  C1' ; capacitance
             7.  L2' ; inductance
             8.  C2' ; capacitance
-            Reference:  Microstrip Filters for RF-Microwave Applications, s.25, Figure 2.6a
 
         defaultunits(list, optional): Default units for quantities in *arg* list. Default is [] which means SI units will be used if no unit is given in *arg*.
 
@@ -1851,6 +1845,7 @@ def fcutoff_CWG(rad,eps_r=1, v=0, n=1, mode="TE"):
         eps_r (float): Permittivity of filling material.
         mode (str): "TE" or "TM".
         rad (float): Radius.
+
     Returns:
         fc (float): Cutoff frequency (Hz).
     """
@@ -1871,6 +1866,7 @@ def Z_CWG(rad,freq, eps_r=1, v=0, n=1, mode="TE"):
         freq (float): Frequency (Hz).
         mode (str): "TE" or "TM".
         rad (float): Radius.
+
     Returns:
         Z (float): Impedance.
     """
@@ -1887,6 +1883,7 @@ def Z_CWG(rad,freq, eps_r=1, v=0, n=1, mode="TE"):
 
 def Klopfenstein_Taper_Impedance_Transformer(arg, defaultunits=None):
     r""" Calculates performance and impedance values for an N-section Klopfenstein Impedance Taper.
+    Reference:  Microwave Engineering, Pozar
 
     Args:
         arg(list): First 6 arguments are inputs.
@@ -1900,7 +1897,6 @@ def Klopfenstein_Taper_Impedance_Transformer(arg, defaultunits=None):
             7.  Minimum Total Phase at Minimum Frequency ; angle ;
             8.  Impedances ; impedance
             9.  MAG(Reflection Coefficient) ;
-            Reference:  Microwave Engineering, Pozar
 
         defaultunits(list, optional): Default units for quantities in *arg* list. Default is [] which means SI units will be used if no unit is given in *arg*.
 
@@ -1945,8 +1941,6 @@ def Absorptive_Filter_Equalizer(arg, defaultunits=None):
             6.  Zeven ;  impedance
             7.  Zodd ;  impedance
 
-            Reference:
-
         defaultunits(list, optional): Default units for quantities in *arg* list. Default is [] which means SI units will be used if no unit is given in *arg*.
 
     Returns:
@@ -1984,7 +1978,6 @@ def LC_Balun(arg, defaultunits=None):
             7.  S11 (dB) ;
             8.  S21 (dB) ;
             9.  S31 (dB) ;
-            Reference:
 
         defaultunits(list, optional): Default units for quantities in *arg* list. Default is [] which means SI units will be used if no unit is given in *arg*.
 

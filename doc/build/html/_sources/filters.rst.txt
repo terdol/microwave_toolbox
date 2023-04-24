@@ -1,7 +1,7 @@
 filters module
 ==============
 
-.. automodule:: filters
+.. automodule:: mwtoolbox.filters
    :members:
    :undoc-members:
    :show-inheritance:

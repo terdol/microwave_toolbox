@@ -1,7 +1,7 @@
 components module
 =================
 
-.. automodule:: components
+.. automodule:: mwtoolbox.components
    :members:
    :undoc-members:
    :show-inheritance:

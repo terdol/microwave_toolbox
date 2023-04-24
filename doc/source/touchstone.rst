@@ -1,7 +1,7 @@
 touchstone module
 =================
 
-.. automodule:: touchstone
+.. automodule:: mwtoolbox.touchstone
    :members:
    :undoc-members:
    :show-inheritance:

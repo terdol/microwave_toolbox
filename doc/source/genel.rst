@@ -1,7 +1,7 @@
 genel module
 ============
 
-.. automodule:: genel
+.. automodule:: mwtoolbox.genel
    :members:
    :undoc-members:
    :show-inheritance:

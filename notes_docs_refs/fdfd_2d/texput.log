@@ -1,0 +1,25 @@
+This is pdfTeX, Version 3.141592653-2.6-1.40.24 (MiKTeX 22.7.30) (preloaded format=prv_2d_fdfd 2023.4.20)  20 APR 2023 08:47
+entering extended mode
+ restricted \write18 enabled.
+ file:line:error style messages enabled.
+ %&-line parsing enabled.
+**&prv_2d_fdfd C:/Users/Erdoel/Programlar/PortableGit/App/Git/AUCTEXINPUT{ _reg
+ion_.tex }
+
+! Emergency stop.
+<to be read again> 
+                   \catcode 
+<*> ...ableGit/App/Git/AUCTEXINPUT{ _region_.tex }
+                                                  
+*** (job aborted, file error in nonstop mode)
+
+ 
+Here is how much of TeX's memory you used:
+ 2 strings out of 475790
+ 12 string characters out of 2801406
+ 354953 words of memory out of 3000000
+ 20999 multiletter control sequences out of 15000+600000
+ 471796 words of font info for 37 fonts, out of 8000000 for 9000
+ 1141 hyphenation exceptions out of 8191
+ 2i,0n,1p,1b,6s stack positions out of 10000i,1000n,20000p,200000b,80000s
+!  ==> Fatal error occurred, no output PDF file produced!

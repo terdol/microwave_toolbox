@@ -1,7 +1,7 @@
 networksym module
 =================
 
-.. automodule:: networksym
+.. automodule:: mwtoolbox.networksym
    :members:
    :undoc-members:
    :show-inheritance:

@@ -1,7 +1,7 @@
 mwutils module
 ==============
 
-.. automodule:: mwutils
+.. automodule:: mwtoolbox.mwutils
    :members:
    :undoc-members:
    :show-inheritance:

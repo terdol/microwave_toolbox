@@ -1,7 +1,7 @@
 network module
 ==============
 
-.. automodule:: network
+.. automodule:: mwtoolbox.network
    :members:
    :undoc-members:
    :show-inheritance:
