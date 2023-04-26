@@ -10,16 +10,7 @@ Welcome to mwtoolbox's documentation!
    :maxdepth: 4
    :caption: Contents:
 
-   mwtoolbox
-   touchstone
-   components
-   transmission_lines
-   networksym
-   network
-   mwutils
-   filters
-   genel
-   em
+   modules
 
 
 Indices and tables

@@ -1,0 +1,15 @@
+Metadata-Version: 2.1
+Name: mwtoolbox-terdol
+Version: 0.1.0
+Summary: Microwave Toolbox
+Author-email: Tuncay Erdöl <terdol@hotmail.com>
+License: GPL-3.0-or-later
+Keywords: microwave,rf,s-parameters
+Classifier: Programming Language :: Python :: 3
+Requires-Python: >=3.7
+Description-Content-Type: text/markdown
+License-File: LICENSE.txt
+License-File: license_text_to_include_to_source_files.txt
+
+# HEADING
+Bla bla bla.

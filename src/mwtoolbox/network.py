@@ -7,7 +7,7 @@ import operator as op
 from numpy.lib.scimath import sqrt as csqrt
 from functools import reduce
 
-def idealNport(N):
+def ideal_nport(N):
     """
     S-parameters of ideal N-port junction with equal reference impedances at all ports
     """
@@ -19,13 +19,13 @@ def idealNport(N):
         S[i,i]=a
     return S
 
-def idealGyrator():
+def ideal_gyrator():
     """
     S-parameters of ideal gyrator
     """
     return np.matrix([[0,-1],[1,0]])
 
-def idealCoupledLine(Ze, Zo, Te, To, Z0):
+def ideal_coupled_line(Ze, Zo, Te, To, Z0):
     """
     S-parameters of ideal coupled line
     Te and To in radian
@@ -45,14 +45,14 @@ def idealCoupledLine(Ze, Zo, Te, To, Z0):
     S[0,3]=S[3,0]=S[1,2]=S[2,1]=Ye-Yo
     return S
 
-def idealamp(G):
+def ideal_amp(G):
     """
     S-parameters of an ideal amplifier/isolator
     G is voltage gain, no reflection, infinite isolation
     """
     return np.matrix([[0, 0], [G, 0]])
 
-def idealatt(G):
+def ideal_att(G):
     """
     S-parameters of an ideal attenuator
     G is voltage gain (<1), no reflection
@@ -76,16 +76,19 @@ def series_z(Z):
     ABCD parameters of series impedance
     """
     return np.matrix([[1., Z], [0, 1.]])
+
 def jinv(J):
     """
     ABCD parameters of J - inverter
     """
     return np.matrix([[0, 1.0j/J], [1.0j * J, 0]])
+
 def jinv_lumped(X):
     """
     ABCD parameters of J - inverter produced by 3 inductors in Tee form.
     """
-    return CascadeNetworks([shZ( - X), seZ(X), shZ( - X)])
+    return cascade_networks([shZ( - X), seZ(X), shZ( - X)])
+
 def kinv(K):
     """
     ABCD parameters of k - inverter
@@ -149,7 +152,7 @@ def t2s(M):
     Ref: https://en.wikipedia.org/wiki/Scattering_parameters#Scattering_transfer_parameters
     """
     t11, t12, t21, t22 = M[0, 0], M[0, 1], M[1, 0], M[1, 1]
-    delta=t11*t22-t12*t21
+    delta = t11*t22-t12*t21
     return np.matrix([[ t12/t22,  delta/t22], [1./t22,  -t21/t22]])
 
 def t2s_list(M):
@@ -159,7 +162,7 @@ def t2s_list(M):
     Ref: https://en.wikipedia.org/wiki/Scattering_parameters#Scattering_transfer_parameters
     """
     t11, t12, t21, t22 = M[0], M[1], M[2], M[3]
-    delta=t11*t22-t12*t21
+    delta = t11*t22-t12*t21
     return [ t12/t22,  delta/t22, 1./t22,  -t21/t22]
 
 def s2t(M):
@@ -169,7 +172,7 @@ def s2t(M):
     Ref: https://en.wikipedia.org/wiki/Scattering_parameters#Scattering_transfer_parameters
     """
     s11, s12, s21, s22 = M[0, 0], M[0, 1], M[1, 0], M[1, 1]
-    delta=s11*s22-s12*s21
+    delta = s11*s22-s12*s21
     return np.matrix([[ -delta/s21,  s11/s21], [-s22/s21,  1./s21]])
 
 def s2t_list(M):
@@ -179,7 +182,7 @@ def s2t_list(M):
     Ref: https://en.wikipedia.org/wiki/Scattering_parameters#Scattering_transfer_parameters
     """
     s11, s12, s21, s22 = M[0], M[1], M[2], M[3]
-    delta=s11*s22-s12*s21
+    delta = s11*s22-s12*s21
     return [ -delta/s21,  s11/s21, -s22/s21,  1./s21]
 
 def abcd2z(M):
@@ -198,20 +201,18 @@ def z2abcd(M):
 
 def abcd2s(M, Zo=50.0):
     """
-    ABCD parameters to S - Parameters conversion
-    Valid for real Zo value
+    ABCD parameters to S - Parameters conversion. Valid for real Zo value.
     """
     a, b, c, d = M[0, 0], M[0, 1], M[1, 0], M[1, 1]
     s11 = ((a + b/Zo - c * Zo - d)/(a + b/Zo + c * Zo + d))
     s12 = 2. * (a * d - b * c)/(a + b/Zo + c * Zo + d)
     s21 = (2./(a + b/Zo + c * Zo + d))
     s22 = (( - a + b/Zo - c * Zo + d)/(a + b/Zo + c * Zo + d))
-    return np.matrix([[s11, s12], [s21, s22]])
+    return np.matrix( [[s11, s12], [s21, s22]] )
 
 def abcd2s_list(M, Zo=50.0):
     """
-    ABCD parameters to S - Parameters conversion
-    Valid for real Zo value
+    ABCD parameters to S - Parameters conversion. Valid for real Zo value.
     """
     a, b, c, d = M[0], M[1], M[2], M[3]
     s11 = ((a + b/Zo - c * Zo - d)/(a + b/Zo + c * Zo + d))
@@ -222,9 +223,10 @@ def abcd2s_list(M, Zo=50.0):
 
 def s2abcd(M, Z=(50.0, 50.0)):
     """
-    S-Parameters to ABCD parameters conversion
-    Valid for real Z values
-    Z: reference impedance list [Z1, Z2]
+    S-Parameters to ABCD parameters conversion. Valid for real Zo value.
+
+    Args:
+        Z(2-tuple, optional): reference impedance tuple ( Z1, Z2 )
     """
     Zo1, Zo2 = tuple(Z)
     s11, s12, s21, s22 = M[0, 0], M[0, 1], M[1, 0], M[1, 1]
@@ -236,7 +238,7 @@ def s2abcd(M, Z=(50.0, 50.0)):
 
 def abcd2t(M, Zo=50.0):
     """
-    ABCD parameters to T - Parameters conversion
+    ABCD parameters to T-Parameters conversion. Valid for real impedances.
 
     ABCD: [V1 I1]=ABCD*[V2 -I2]
     Pseudo-Wave or Power-Wave? Don't use for complex impedances.
@@ -328,8 +330,8 @@ def s_phase_deembed(S, phase):
     S is numpy.matrix NxN
     phase, deembedding phase for each port in radian. Positive phase is deembedding into the circuit
     """
-    PhaseMatrix=np.exp(1j*np.matrix(np.diag(phase)))
-    return PhaseMatrix*S*PhaseMatrix
+    phase_matrix=np.exp(1j*np.matrix(np.diag(phase)))
+    return phase_matrix*S*phase_matrix
 
 def connect_2_ports(Smatrix,k,m):
     """ Port-m is connected to port-k and both ports are removed
@@ -345,13 +347,12 @@ def connect_2_ports(Smatrix,k,m):
         ii=i+(i>=k)+(i>=(m-1))
         for j in range(ps-2):
             jj=j+(j>=k)+(j>=(m-1))
-            # index = (ps-2)*(i-1)+(j-1)
             temp = S[k,jj]*S[ii,m]*(1-S[m,k])+S[m,jj]*S[ii,k]*(1-S[k,m])+S[k,jj]*S[m,m]*S[ii,k]+S[m,jj]*S[k,k]*S[ii,m]
             Sm[i,j] = S[ii,jj] + temp/((1-S[m,k])*(1-S[k,m])-S[k,k]*S[m,m])
     return Sm
 
 def connect_network_1_conn_retain(Smatrix,EX,k,m):
-    ideal3port = idealNport(3)
+    ideal3port = ideal_nport(3)
     EX = connect_network_1_conn(EX,ideal3port,m,1)
     psex = EX.shape[0]
     sonuc = connect_network_1_conn(Smatrix,EX,k,psex)
@@ -423,4 +424,4 @@ def connect_2_ports_retain(Smatrix,k,m):
     return Sm
 
 if __name__=="__main__":
-    print(idealNport(4))
+    print(ideal_nport(4))

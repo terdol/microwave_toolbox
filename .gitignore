@@ -16,6 +16,12 @@ __pycache__/**
 temp/
 temp/*
 temp/**
+build/
+build/*
+build/**
+dist/
+dist/*
+dist/**
 .vscode
 .vscode/
 .vscode/*

@@ -7,7 +7,7 @@ import sympy as sp
 import operator as op
 from functools import reduce
 
-def idealNport(N):
+def ideal_nport(N):
     """
     S-parameters of ideal N-port junction with equal reference impedances at all ports
     """
@@ -19,13 +19,13 @@ def idealNport(N):
         S[i,i]=a
     return S
 
-def idealGyrator():
+def ideal_gyrator():
     """
     S-parameters of ideal gyrator
     """
     return sp.Matrix([[0,-1],[1,0]])
 
-def idealCoupledLine(Ze, Zo, Te, To, Z0):
+def ideal_coupled_line(Ze, Zo, Te, To, Z0):
     """
     S-parameters of ideal coupled line
     Te and To in radian
@@ -45,14 +45,14 @@ def idealCoupledLine(Ze, Zo, Te, To, Z0):
     S[0,3]=S[3,0]=S[1,2]=S[2,1]=Ye-Yo
     return S
 
-def idealamp(G):
+def ideal_amp(G):
     """
     S-parameters of an ideal amplifier/isolator
     G is voltage gain, no reflection, infinite isolation
     """
     return sp.Matrix([[0, 0], [G, 0]])
 
-def idealatt(G):
+def ideal_att(G):
     """
     S-parameters of an ideal amplifier/attenuator/isolator
     G is voltage gain (<1), no reflection
@@ -365,7 +365,7 @@ def connect_network_1_conn(Smatrix,EX,k,m):
     return Sm
 
 def connect_network_1_conn_retain(Smatrix,EX,k,m):
-    ideal3port = idealNport(3)
+    ideal3port = ideal_nport(3)
     EX = connect_network_1_conn(EX,ideal3port,m,1)
     psex = EX.shape[0]
     sonuc = connect_network_1_conn(Smatrix,EX,k,psex)

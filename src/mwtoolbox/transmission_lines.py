@@ -64,10 +64,10 @@ def skin_depth(f, sigma, mu=1.0, er=0.0):
     """
     return csqrt(1.0 / sigma / mu / mu0 / pi / f)*csqrt(csqrt(1+(2*pi*f*er*eps0/sigma)**2)+2*pi*f*er*eps0/sigma)
 
-def SentezBisection_1d(fonk, _args, k, target_value, init_value, limits = []):
+def synthesis_bisection_1d(fonk, _args, k, target_value, init_value, limits = []):
     """
     This function calculates x such that f(x)=y.
-    This function is added because NLOPT version in Sentez function does not work fast.
+    This function is added because NLOPT version in =synthesis= function does not work fast.
     This function works faster because it employs the fact that all the fonk functions are monotonic functions,
     so bisection method can be used securely.
 
@@ -95,17 +95,17 @@ def SentezBisection_1d(fonk, _args, k, target_value, init_value, limits = []):
             argsmin=args[:]
             argsmin[k]=lim[0]
             fmin=fonk(*argsmin)-target_value
-        
+
         if tt!=1:
             argsmax=args[:]
             argsmax[k]=lim[1]
             fmax=fonk(*argsmax)-target_value
-        
+
         midpoint=0.5*(lim[0]+lim[1])
         argsmid=args[:]
         argsmid[k]=midpoint
         fmid=fonk(*argsmid)-target_value
-        
+
         if fmin*fmid<0:
             lim[1]=midpoint
             tt=1
@@ -113,8 +113,8 @@ def SentezBisection_1d(fonk, _args, k, target_value, init_value, limits = []):
             lim[0]=midpoint
             tt=2
     return midpoint
-    
-def Sentez(fonk, _args, k, target_value = [],init_value = [], limits = []):
+
+def synthesis(fonk, _args, k, target_value = [],init_value = [], limits = []):
     r"""Function that is used to calculate the parameter value of a function
     that will give target value. There are 2 versions in this function (SciPy and NLOPT).
     NLOPT is added to avoid SciPy for smaller package size for packed applications.
@@ -160,7 +160,7 @@ def Sentez(fonk, _args, k, target_value = [],init_value = [], limits = []):
     # from scipy.optimize import fmin_l_bfgs_b, fmin_tnc, minimize
     # xopt = fmin_l_bfgs_b(callable_func,array(init_value),approx_grad=1,factr=0.01,bounds=limits,maxfun=100000,pgtol=1.0e-10, epsilon=1.0e-8)
     # print(xopt)
-    
+
     import nlopt
     print(limits)
     print(init_value)
@@ -196,7 +196,7 @@ def skindepth_analysis(arg, defaultunits):
     return arg
 
 
-def Z_qs_thin_microstrip(w, h, er):
+def z_qs_thin_microstrip(w, h, er):
     r"""Impedance of microstrip transmission line with infinitely thin metal and ignoring dispersion.
     Reference:  Qucs Technical.pdf, Hammerstad and Jensen (er should be eeff in 11.5 formula )
     0.01% for w/h<1, 0.01% for w/h<1000
@@ -234,7 +234,7 @@ def er_eff_qs_thin_microstrip(w, h, er):
     return ((er + 1.)/ 2.) + (er - 1.) / 2. * (1. + (10./ u)) ** (-a * b)
 
 
-def Z_qs_thick_microstrip(w, h, er, t=0):
+def z_qs_thick_microstrip(w, h, er, t=0):
     r"""Impedance of microstrip transmission line ignoring dispersion.
     Reference:  Hammerstad and Jensen
 
@@ -258,7 +258,7 @@ def Z_qs_thick_microstrip(w, h, er, t=0):
 #    w1=w+dw1
     wr = w + dwr
     x = er_eff_qs_thin_microstrip(wr, h, er)
-    return (Z_qs_thin_microstrip(wr, h, 1)/ csqrt(x))
+    return (z_qs_thin_microstrip(wr, h, 1)/ csqrt(x))
 
 
 def er_eff_qs_thick_microstrip(w, h, er, t=0.0):
@@ -276,7 +276,7 @@ def er_eff_qs_thick_microstrip(w, h, er, t=0.0):
     w1 = w + dw1
     wr = w + dwr
     x = er_eff_qs_thin_microstrip(wr, h, er)
-    return x * ((Z_qs_thick_microstrip(w1, h, 1.0, t)/ Z_qs_thick_microstrip(wr, h, 1.0, t))) ** 2
+    return x * ((z_qs_thick_microstrip(w1, h, 1.0, t)/ z_qs_thick_microstrip(wr, h, 1.0, t))) ** 2
 
 
 def er_eff_disp_thick_microstrip(w, h, t, er, f):
@@ -298,15 +298,15 @@ def er_eff_disp_thick_microstrip(w, h, t, er, f):
     return er - ((er - ee)/ (1 + x ** m))
 
 
-def Z_disp_thick_microstrip(w, h, t, er, f):
+def z_disp_thick_microstrip(w, h, t, er, f):
     #?
     eeff = er_eff_disp_thick_microstrip(w, h, t, er, f)
-    return (Z_qs_thick_microstrip(w, h, 1, t)/ csqrt(eeff))
+    return (z_qs_thick_microstrip(w, h, 1, t)/ csqrt(eeff))
 
-def Z_eeff_disp_thick_microstrip(w, h, t, er, f):
+def z_eeff_disp_thick_microstrip(w, h, t, er, f):
     """ This function is for convenience only. Returns (Z,eeff) pair to be used at ABCD matrix of TL """
     eeff = er_eff_disp_thick_microstrip(w, h, t, er, f)
-    return (Z_qs_thick_microstrip(w, h, 1, t)/ csqrt(eeff), eeff)
+    return (z_qs_thick_microstrip(w, h, 1, t)/ csqrt(eeff), eeff)
 
 def average_power_rating_thick_microstrip(w, h, t, er, f, tand, sigma, mu_r, rms_roughness, Kd, dT_allowed):
     """
@@ -319,10 +319,10 @@ def average_power_rating_thick_microstrip(w, h, t, er, f, tand, sigma, mu_r, rms
     Ka = 0.026
     er_t = (Kd/ Ka)
     eeff_t = er_eff_disp_thick_microstrip(w, h, t, er_t, f)
-    Z_t = (Z_qs_thick_microstrip(w, h, 1, t)/ csqrt(eeff_t))
+    z_t = (z_qs_thick_microstrip(w, h, 1, t)/ csqrt(eeff_t))
     eeff = er_eff_disp_thick_microstrip(w, h, t, er, f)
-    Z = (Z_qs_thick_microstrip(w, h, 1, t)/ csqrt(eeff))
-    We = eta0 * h / (Z_t * csqrt(eeff_t))
+    Z = (z_qs_thick_microstrip(w, h, 1, t)/ csqrt(eeff))
+    We = eta0 * h / (z_t * csqrt(eeff_t))
     Weff = eta0 * h / (Z * csqrt(eeff))
     fp = Z / 2.0 / mu0 / h
     f_fp = (f/ fp)
@@ -349,10 +349,10 @@ def dc_current_rating_thick_microstrip(w, h, t, er, f, tand, sigma, mu_r, rms_ro
     Ka = 0.026
     er_t = (Kd/ Ka)
     eeff_t = er_eff_disp_thick_microstrip(w, h, t, er_t, f)
-    Z_t = (Z_qs_thick_microstrip(w, h, 1, t)/ csqrt(eeff_t))
+    z_t = (z_qs_thick_microstrip(w, h, 1, t)/ csqrt(eeff_t))
     eeff = er_eff_disp_thick_microstrip(w, h, t, er, f)
-    Z = (Z_qs_thick_microstrip(w, h, 1, t)/ csqrt(eeff))
-    We = eta0 * h / (Z_t * csqrt(eeff_t))
+    Z = (z_qs_thick_microstrip(w, h, 1, t)/ csqrt(eeff))
+    We = eta0 * h / (z_t * csqrt(eeff_t))
     Weff = eta0 * h / (Z * csqrt(eeff))
     fp = Z / 2.0 / mu0 / h
     f_fp = (f/ fp)
@@ -386,7 +386,7 @@ def conductor_loss_microstrip(w, h, t, er, sigma, mu_r, rms_roughness, f):
     skindepth = skin_depth(f, sigma, mu_r)
     R = 1 / skindepth / sigma
     Kr = 1.0 + 2.0 / pi * arctan( 1.4 * ((rms_roughness/ skindepth)) ** 2) # correction for surface roughness
-    ZL = Z_disp_thick_microstrip(w, h, t, er, f)
+    ZL = z_disp_thick_microstrip(w, h, t, er, f)
     Ki = exp(-1.2 * ((ZL/ eta0)) ** 0.7)
     return (R * Kr * Ki / ZL / w) * Np2dB
 
@@ -431,11 +431,11 @@ def freq_limit_for_coupling_to_surface_modes_microstrip(er, h):
     return co * arctan(er) / pi / h / csqrt(2 * (er - 1))
 
 
-def Z_disp_thick_covered_microstrip(w, h, h2, t, er, f):
+def z_disp_thick_covered_microstrip(w, h, h2, t, er, f):
     # Transmssion Line Design Handbook, p120  ?
     # w1=w+t/pi*(1+log(4.0)-0.5*log((t/h)**2+(t/pi/w)**2))
     # p=270.0*(1.0-tanh(1.192+0.706*csqrt(1.0-h2/h)))
-    # return  Z_qs_thin(w,h,1)/csqrt( er_eff_disp_thick(w,h,t,er,f))
+    # return  z_qs_thin(w,h,1)/csqrt( er_eff_disp_thick(w,h,t,er,f))
 
     """
     Ref: Lumped elements for RF and Microwave circuits, p438
@@ -448,7 +448,7 @@ def Z_disp_thick_covered_microstrip(w, h, h2, t, er, f):
         dZ = p * q
     else:
         dZ = p
-    return ((Z_disp_thick_microstrip(w, h, t, 1.0, f) - dZ)/ csqrt(er_eff_disp_thick_covered_microstrip(w, h, h2, t, er, f)))
+    return ((z_disp_thick_microstrip(w, h, t, 1.0, f) - dZ)/ csqrt(er_eff_disp_thick_covered_microstrip(w, h, h2, t, er, f)))
 
 
 def er_eff_disp_thick_covered_microstrip(w, h, h2, t, er, f):
@@ -518,15 +518,7 @@ def microstrip_synthesis(arg, defaultunits):
     _, h, t, er, tand, Kd, sigma, mu, roughness, freq, _, Z, rad, dT = tuple(
         newargs)
     w = h
-    
-    # print a,h,t,er,tand,Kd,sigma,mu,roughness,freq,a,Z,deg
-    # output = Sentez(Z_disp_thick_microstrip, [w, h, t, er, freq], [0], [Z] , [h] , [((h/1000.0),1000.0*h)])
-    # w=output[0]
-    
-    w = SentezBisection_1d(Z_disp_thick_microstrip, [w, h, t, er, freq], 0, Z , h , [h/1000.0,1000.0*h])
-
-    
-    # print "w= ",w, type(w)
+    w = synthesis_bisection_1d(z_disp_thick_microstrip, [w, h, t, er, freq], 0, Z , h , [h/1000.0,1000.0*h])
     eeff = er_eff_disp_thick_microstrip(w, h, t, er, freq)
     length = physical_length(eeff, freq, rad)
     cond_loss = conductor_loss_microstrip(
@@ -587,7 +579,7 @@ def microstrip_analysis(arg, defaultunits):
     newargs = convert2pq(arg, defaultunits)
     w, h, t, er, tand, Kd, sigma, mu, roughness, freq, length = tuple(newargs)
     eeff = er_eff_disp_thick_microstrip(w, h, t, er, freq)
-    Z = Z_disp_thick_microstrip(w, h, t, er, freq)
+    Z = z_disp_thick_microstrip(w, h, t, er, freq)
     deg = electrical_length(eeff, freq, length)
     cond_loss = conductor_loss_microstrip(
         w, h, t, er, sigma, mu, roughness, freq)
@@ -651,7 +643,7 @@ def C_R_interdigital_capacitor(w,s,h,t,length,N,er,sigma, freq):
     Rs=4.0/3.0*length/w/N*Rsurf
     return (2.0*epso*eeff*ellipk(k)/ellipk(k_)*(N-1)*length,Rs)
 
-def Z_thick_stripline(w, b, t, er):
+def z_thick_stripline(w, b, t, er):
     r"""Characteristic impedance of symmetric stripline transmission line.
     Reference:  Transmssion Line Design Handbook, p. 125
 
@@ -688,7 +680,7 @@ def Z_thick_stripline(w, b, t, er):
     else:
         return Zo1
 
-def Z_thick_offset_stripline(w, eps_r, h1, h2, t):
+def z_thick_offset_stripline(w, eps_r, h1, h2, t):
     """Characteristic impedance of asymmetric stripline transmission line.
     Ref: Transmssion Line Design Handbook, p. 129
 
@@ -714,7 +706,7 @@ def Z_thick_offset_stripline(w, eps_r, h1, h2, t):
         x=min(t,w)/max(w,t)
         d0 = w*(0.5008+1.0235*x-1.023*x**2+1.1564*x**3-0.4749*x**4)
         A=sin(pi*cl/b)/tanh(pi*d0/2/b)
-        Z_0 = eta0*arccosh(A)/2/pi/sqrt(eps_r)
+        z_0 = eta0*arccosh(A)/2/pi/sqrt(eps_r)
     else:
         if w/(b-t)<t/b:
             k = 1.0/cosh(pi*w/2/b)
@@ -725,8 +717,8 @@ def Z_thick_offset_stripline(w, eps_r, h1, h2, t):
         beta = 1-t/b
         gamma = cl/b-t/2/b
         cf=eps_r*eps0/pi*(2*log(1/gamma/(beta-gamma))+1/gamma/(beta-gamma)*(F(t/b)-F(cl/b)))
-        Z_0=eta0/sqrt(eps_r)/(w_b/gamma+w_b/(beta-gamma)+2*cf/eps_r/eps0)
-    return Z_0
+        z_0=eta0/sqrt(eps_r)/(w_b/gamma+w_b/(beta-gamma)+2*cf/eps_r/eps0)
+    return z_0
 
 def conductor_loss_stripline(w, b, t, er, f, sigma, mu):
     """Calculation of conductor loss of stripline with incremental inductance rule.
@@ -744,9 +736,9 @@ def conductor_loss_stripline(w, b, t, er, f, sigma, mu):
         float: Conductor loss in dB/m.
     """
     sd = skin_depth(f, sigma, mu)
-    z1 = Z_thick_stripline(w - sd, b + sd, t - sd, 1.0)
-    z2 = Z_thick_stripline(w, b, t, 1.0)
-    z = Z_thick_stripline(w, b, t, er)
+    z1 = z_thick_stripline(w - sd, b + sd, t - sd, 1.0)
+    z2 = z_thick_stripline(w, b, t, 1.0)
+    z = z_thick_stripline(w, b, t, er)
     return ( - pi * f / co * (z1 - z2)) /z  * 20.0 * log10(exp(1))
 
 
@@ -777,7 +769,7 @@ def stripline_analysis(arg, defaultunits):
     newargs = convert2pq(arg, defaultunits)
     w, b, t, er, tand, sigma, mu, roughness, freq, length = tuple(newargs)
     eeff = er
-    Z = Z_thick_stripline(w, b, t, er)
+    Z = z_thick_stripline(w, b, t, er)
     deg = electrical_length(eeff, freq, length)
     cond_loss = conductor_loss_stripline(w, b, t, er, freq, sigma, mu)
     diel_loss = dielectric_loss(eeff, er, freq, tand)
@@ -831,11 +823,9 @@ def stripline_synthesis(arg, defaultunits):
         newargs)
     eeff = er
     w = (b/ 5.0)
-    # output = Sentez(Z_thick_stripline, [w, b, t, er], [0], [Zc] , [b] , [((b/1000.0),1000.0*b)])
-    # w=output[0]
-    
-    w = SentezBisection_1d(Z_thick_stripline, [w, b, t, er], 0, Zc , b , [b/1000.0,1000.0*b])
-    
+
+    w = synthesis_bisection_1d(z_thick_stripline, [w, b, t, er], 0, Zc , b , [b/1000.0,1000.0*b])
+
     print("ee ", eeff, freq, elec_length)
     length = physical_length(eeff, freq, elec_length)
     cond_loss = conductor_loss_stripline(w, b, t, er, freq, sigma, mu)
@@ -847,30 +837,30 @@ def stripline_synthesis(arg, defaultunits):
                  for i in range(len(argout))]
     return arg
 
-def Z_coaxial(er, r, d):
+def z_coaxial(er, r, d):
     return eta0 * log((d/ r)) / 2.0 / pi / csqrt(er)
 
-def Z_coaxial_strip_center(er, w, D):
+def z_coaxial_strip_center(er, w, D):
     z = eta0 * log(2.0 * D / w) / 2.0 / pi / csqrt(er)
     if z < 300.0 * pi / csqrt(er):
         z = 15.0 * pi * pi / \
             csqrt(er) * 1.0 / (log(2.0 * (D + w) / (D - w)))
     return z
 
-def Z_square_coaxial(er, r, d):
+def z_square_coaxial(er, r, d):
     z = eta0 * log(1.0787 * d / r) / 2.0 / pi / csqrt(er)
     if z < 2.0:
         z = 21.2 * csqrt((d/ r) - 1.0)
     return z
 
-def Z_square_coaxial_square_center(er, r, d):
+def z_square_coaxial_square_center(er, r, d):
     z = eta0 * ((1.0/ (4.0 * ((2.0/ ((d/ r) - 1.0)) + 0.558)))) / csqrt(er)
     return z
 
-def Z_eccentric_coaxial(er, r, d, sh):
+def z_eccentric_coaxial(er, r, d, sh):
     return eta0 * arccosh(0.5 * d / r * (1.0 - ((sh/ d)) ** 2) + 0.5 * r / d) / 2.0 / pi / csqrt(er)
 
-def Z_parallel_wires(er, d1, d2, D):
+def z_parallel_wires(er, d1, d2, D):
     return eta0 * arccosh(((4.0 * D ** 2 - d1 ** 2 - d2 ** 2)/ (2.0 * d1 * d2))) / 2.0 / pi / csqrt(er)
 
 def conductor_loss_coaxial(er, r, d, f, sigma, mu):
@@ -889,7 +879,7 @@ def conductor_loss_coaxial(er, r, d, f, sigma, mu):
         float: Conductor loss in dB/m.
     """
     # Transmssion Line Design Handbook, p47, r-inner diameter, d-outer diameter
-    # return 0.014272*csqrt(f)*(1/r+1/d)/ Z_coaxial(er,r,d)
+    # return 0.014272*csqrt(f)*(1/r+1/d)/ z_coaxial(er,r,d)
     # r: inner radius, d: outer radius
     # inner and outer conductors are assumed to be the same
     skindepth = skin_depth(f, sigma, mu)
@@ -902,7 +892,7 @@ def conductor_loss_coaxial(er, r, d, f, sigma, mu):
     print(outer_area)
     # eger en dis konektorun dis yaricapini da hesaba katarsak
     # outer_area=2*pi*skindepth*(d+skindepth-(c+skindepth)*exp((d-c)/skindepth))
-    temp = Np2dB / sigma * ((1.0/ inner_area) + (1.0/ outer_area)) / (2 * Z_coaxial(er, r, d))
+    temp = Np2dB / sigma * ((1.0/ inner_area) + (1.0/ outer_area)) / (2 * z_coaxial(er, r, d))
     return temp
 
 def conductor_loss_eccentric_coaxial(er, r, d, sh, f, sigma, mu):
@@ -922,7 +912,7 @@ def conductor_loss_eccentric_coaxial(er, r, d, sh, f, sigma, mu):
         float: Conductor loss in dB/m.
     """
     # Transmssion Line Design Handbook, p47, r-inner diameter, d-outer diameter
-    # return 0.014272*csqrt(f)*(1/r+1/d)/ Z_coaxial(er,r,d)
+    # return 0.014272*csqrt(f)*(1/r+1/d)/ z_coaxial(er,r,d)
     # r: inner radius, d: outer radius
     # inner and outer conductors are assumed to be the same
     skindepth = skin_depth(f, sigma, mu)
@@ -932,7 +922,7 @@ def conductor_loss_eccentric_coaxial(er, r, d, sh, f, sigma, mu):
     outer_area = 2 * pi * skindepth * (d + skindepth)
     # eger en dis konektorun dis yaricapini da hesaba katarsak
     # outer_area=2*pi*skindepth*(d+skindepth-(c+skindepth)*exp((d-c)/skindepth))
-    temp = Np2dB / sigma * ((1.0/ inner_area) + (1.0/ outer_area)) / (2 * Z_coaxial(er, r, d))
+    temp = Np2dB / sigma * ((1.0/ inner_area) + (1.0/ outer_area)) / (2 * z_coaxial(er, r, d))
 #    temp=temp+10.0*log10(1.0+)
     return temp
 
@@ -963,7 +953,7 @@ def coaxial_line_analysis(arg, defaultunits):
     arg = arg[:9]
     newargs = convert2pq(arg, defaultunits)
     r, d, er, tand, sigma, mu, roughness, freq, length = tuple(newargs)
-    Z = Z_coaxial(er, r, d)
+    Z = z_coaxial(er, r, d)
     eeff = er
     deg = electrical_length(eeff, freq, length)
     print("df ",eeff,freq,length,deg)
@@ -1002,10 +992,10 @@ def coaxial_line_synthesis(arg, defaultunits):
     arg = arg[:11]
     newargs = convert2pq(arg, defaultunits)
     r, d, er, tand, sigma, mu, roughness, freq, length, Z, deg = tuple(newargs)
-    output = Sentez(lambda *x: Z_coaxial(*x), [er, r, d], [1], target_value=[Z],
+    output = synthesis(lambda *x: z_coaxial(*x), [er, r, d], [1], target_value=[Z],
                     init_value=[(d/2.0)], limits=[((d/ 100.0), d * 100.0)])
     r = output[0]
-    Z = Z_coaxial(er, r, d)
+    Z = z_coaxial(er, r, d)
     eeff = er
     #deg = electrical_length(eeff, freq, length)
     length = physical_length(eeff, freq, deg)
@@ -1061,11 +1051,11 @@ def coaxial_strip_center_analysis(arg, defaultunits):
     arg = arg[:9]
     newargs = convert2pq(arg, defaultunits)
     w, er, d, tand, sigma, mu, roughness, freq, length = tuple(newargs)
-    Z = Z_coaxial_strip_center(er, w, d)
+    Z = z_coaxial_strip_center(er, w, d)
     eeff = er
     deg = electrical_length(eeff, freq, length)
     sd = skin_depth(freq, sigma, mu)
-    cond_loss = -mu * pi * freq / Z / co * (Z_coaxial_strip_center(1.0, w, d) - Z_coaxial_strip_center(
+    cond_loss = -mu * pi * freq / Z / co * (z_coaxial_strip_center(1.0, w, d) - z_coaxial_strip_center(
         1.0, w - sd, d + sd)) * 20.0 * log10(exp(1))  # dB/m, incremental inductance
     diel_loss = dielectric_loss(eeff, er, freq, tand)
     argout = [Z, deg, eeff, cond_loss, diel_loss]
@@ -1115,11 +1105,11 @@ def square_coaxial_circular_center_analysis(arg, defaultunits):
     arg = arg[:9]
     newargs = convert2pq(arg, defaultunits)
     r, d, er, tand, sigma, mu, roughness, freq, length = tuple(newargs)
-    Z = Z_square_coaxial(er, 2*r, d)
+    Z = z_square_coaxial(er, 2*r, d)
     eeff = er
     deg = electrical_length(eeff, freq, length)
     sd = skin_depth(freq, sigma, mu)
-    cond_loss = -mu * pi * freq / Z / co * (Z_square_coaxial(1.0, 2*r, d) - Z_square_coaxial(
+    cond_loss = -mu * pi * freq / Z / co * (z_square_coaxial(1.0, 2*r, d) - z_square_coaxial(
         1.0, 2*r - (sd/ 2.0), d + (sd/ 2.0))) * 20.0 * log10(exp(1))  # dB/m, incremental inductance
     diel_loss = dielectric_loss(eeff, er, freq, tand)
     argout = [Z, deg, eeff, cond_loss, diel_loss]
@@ -1155,11 +1145,11 @@ def rectangular_coaxial_line_analysis(arg, defaultunits):
     arg = arg[:11]
     newargs = convert2pq(arg, defaultunits)
     w, t, a, b, er, tand, sigma, mu, roughness, freq, length = tuple(newargs)
-    Z = Z_rectangular_coaxial(w, b, t, a, er)
+    Z = z_rectangular_coaxial(w, b, t, a, er)
     eeff = er
     deg = electrical_length(eeff, freq, length)
     sd = skin_depth(freq, sigma, mu)
-    cond_loss = -mu * pi * freq / Z / co * (Z_rectangular_coaxial(w, b, t, a, 1.0) - Z_rectangular_coaxial(
+    cond_loss = -mu * pi * freq / Z / co * (z_rectangular_coaxial(w, b, t, a, 1.0) - z_rectangular_coaxial(
         w-sd, b + sd, t - sd, a+sd,1.0)) * 20.0 * log10(exp(1))  # dB/m, incremental inductance
     diel_loss = dielectric_loss(eeff, er, freq, tand)
     argout = [Z, deg, eeff, cond_loss, diel_loss]
@@ -1195,15 +1185,15 @@ def rectangular_coaxial_line_synthesis(arg, defaultunits):
     arg = arg[:13]
     newargs = convert2pq(arg, defaultunits)
     w, t, a, b, er, tand, sigma, mu, roughness, freq, length, Z ,deg = tuple(newargs)
-    output = Sentez(lambda *x: Z_rectangular_coaxial(*x), [w, b, t, a, er], [0], target_value=[Z],
+    output = synthesis(lambda *x: z_rectangular_coaxial(*x), [w, b, t, a, er], [0], target_value=[Z],
                     init_value=[b], limits=[((b/ 100.0), b * 100.0)])
     w = output[0]
-    Z = Z_rectangular_coaxial(w, b, t, a, er)
+    Z = z_rectangular_coaxial(w, b, t, a, er)
     eeff = er
     length = physical_length(eeff, freq, deg)
     #deg = electrical_length(eeff, freq, length)
     sd = skin_depth(freq, sigma, mu)
-    cond_loss = -mu * pi * freq / Z / co * (Z_rectangular_coaxial(w, b, t, a, 1.0) - Z_rectangular_coaxial(
+    cond_loss = -mu * pi * freq / Z / co * (z_rectangular_coaxial(w, b, t, a, 1.0) - z_rectangular_coaxial(
         w-sd, b + sd, t - sd, a+sd,1.0)) * 20.0 * log10(exp(1))  # dB/m, incremental inductance
     diel_loss = dielectric_loss(eeff, er, freq, tand)
     argout = [eeff, cond_loss, diel_loss]
@@ -1239,11 +1229,11 @@ def square_coaxial_line_square_center_analysis(arg, defaultunits):
     arg = arg[:9]
     newargs = convert2pq(arg, defaultunits)
     er, r, d, tand, sigma, mu, roughness, freq, length = tuple(newargs)
-    Z = Z_square_coaxial_square_center(er, r, d)
+    Z = z_square_coaxial_square_center(er, r, d)
     eeff = er
     deg = electrical_length(eeff, freq, length)
     sd = skin_depth(freq, sigma, mu)
-    cond_loss = -mu * pi * freq / Z / co * (Z_square_coaxial_square_center(1.0, r, d) - Z_square_coaxial_square_center(
+    cond_loss = -mu * pi * freq / Z / co * (z_square_coaxial_square_center(1.0, r, d) - z_square_coaxial_square_center(
         1.0, r - (sd/ 2.0), d + (sd/ 2.0))) * 20.0 * log10(exp(1))  # dB/m, incremental inductance
     diel_loss = dielectric_loss(eeff, er, freq, tand)
     argout = [Z, deg, eeff, cond_loss, diel_loss]
@@ -1277,15 +1267,15 @@ def square_coaxial_line_square_center_synthesis(arg, defaultunits):
     arg = arg[:11]
     newargs = convert2pq(arg, defaultunits)
     er, r, d, tand, sigma, mu, roughness, freq, length, Z, deg = tuple(newargs)
-    output = Sentez(lambda *x: Z_square_coaxial_square_center(*x), [er, r, d], [1], target_value=[Z],
+    output = synthesis(lambda *x: z_square_coaxial_square_center(*x), [er, r, d], [1], target_value=[Z],
                     init_value=[(d/2.0)], limits=[((d/ 1000.0), d * 1000.0)])
     r = output[0]
-    Z = Z_square_coaxial_square_center(er, r, d)
+    Z = z_square_coaxial_square_center(er, r, d)
     eeff = er
     length = physical_length(eeff, freq, deg)
     #deg = electrical_length(eeff, freq, length)
     sd = skin_depth(freq, sigma, mu)
-    cond_loss = -mu * pi * freq / Z / co * (Z_square_coaxial_square_center(1.0, r, d) - Z_square_coaxial_square_center(
+    cond_loss = -mu * pi * freq / Z / co * (z_square_coaxial_square_center(1.0, r, d) - z_square_coaxial_square_center(
         1.0, r - (sd/ 2.0), d + (sd/ 2.0))) * 20.0 * log10(exp(1))  # dB/m, incremental inductance
     diel_loss = dielectric_loss(eeff, er, freq, tand)
     argout = [eeff, cond_loss, diel_loss]
@@ -1322,11 +1312,11 @@ def eccentric_coaxial_analysis(arg, defaultunits):
     arg = arg[:10]
     newargs = convert2pq(arg, defaultunits)
     er, r, d, sh, tand, sigma, mu, roughness, freq, length = tuple(newargs)
-    Z = Z_eccentric_coaxial(er, r, d, sh)
+    Z = z_eccentric_coaxial(er, r, d, sh)
     eeff = er
     deg = electrical_length(eeff, freq, length)
     sd = skin_depth(freq, sigma, mu)
-    cond_loss = -mu * pi * freq / Z / co * (Z_eccentric_coaxial(1.0, r, d, sh) - Z_eccentric_coaxial(
+    cond_loss = -mu * pi * freq / Z / co * (z_eccentric_coaxial(1.0, r, d, sh) - z_eccentric_coaxial(
         1.0, r - (sd/ 2.0), d + (sd/ 2.0), sh)) * 20.0 * log10(exp(1))  # dB/m, incremental inductance
     diel_loss = dielectric_loss(eeff, er, freq, tand)
     argout = [Z, deg, eeff, cond_loss, diel_loss]
@@ -1361,11 +1351,11 @@ def parallel_wires_analysis(arg, defaultunits):
     arg = arg[:10]
     newargs = convert2pq(arg, defaultunits)
     er, d1, d2, D, tand, sigma, mu, roughness, freq, length = tuple(newargs)
-    Z = Z_parallel_wires(er, d1, d2, D)
+    Z = z_parallel_wires(er, d1, d2, D)
     eeff = er
     deg = electrical_length(eeff, freq, length)
     sd = skin_depth(freq, sigma, mu)
-    cond_loss = -mu * pi * freq / Z / co * (Z_parallel_wires(1.0, d1, d2, D) - Z_parallel_wires(
+    cond_loss = -mu * pi * freq / Z / co * (z_parallel_wires(1.0, d1, d2, D) - z_parallel_wires(
         1.0, d1 - sd, d2 - sd, D)) * 20.0 * log10(exp(1))  # dB/m, incremental inductance
     diel_loss = dielectric_loss(eeff, er, freq, tand)
     argout = [Z, deg, eeff, cond_loss, diel_loss]
@@ -1373,14 +1363,14 @@ def parallel_wires_analysis(arg, defaultunits):
                  for i in range(len(argout))]
     return arg
 
-def Z_rectangular_coaxial(w, b, t, a, er):
+def z_rectangular_coaxial(w, b, t, a, er):
     """
     Ref: Transmission line design handbook, p60
     """
     temp = w/b/(1.0-(t/b))+2.0/pi*log((1.0/(1.0-(t/b)))+(1.0/tanh(pi*a/2.0/b)))
     return eta0/4.0/sqrt(er)/temp
 
-def Z_partial_coaxial(er, r, d):
+def z_partial_coaxial(er, r, d):
     # My calculation, r-inner diameter, d1-inner diameter, d2-outer dielectric diameter, er1-inner dielectric eps, er2-outer dielectric eps
     # return eta0/2.0/pi*csqrt(log(d2/r)*(1./er1*log(d1/r)+1./er2*log(d2/r)))
     x = min(len(er), len(d))
@@ -1392,13 +1382,13 @@ def Z_partial_coaxial(er, r, d):
 def er_eff_partial_coaxial(er, r, d):
     # My calculation, r-inner diameter, d1-inner diameter, d2-outer dielectric diameter, er1-inner dielectric eps, er2-outer dielectric eps
     # return eta0/2.0/pi*csqrt(log(d2/r)*(1./er1*log(d1/r)+1./er2*log(d2/r)))
-    return (eta0 / 2.0 / pi * log((d[-1]/ r)) / Z_partial_coaxial(er, r, d)) ** 2.0
+    return (eta0 / 2.0 / pi * log((d[-1]/ r)) / z_partial_coaxial(er, r, d)) ** 2.0
 
 def conductor_loss_partial_coaxial(er, r, d, f):
     # Transmssion Line Design Handbook, p47, r-inner diameter, d-outer diameter
     pass
 
-def Z_eeff_suspended_stripline_0(w, t, h, b, er, freq):
+def z_eeff_suspended_stripline_0(w, t, h, b, er, freq):
     # Model for Shielded Suspended Substrate Microstrip Line, Level 0
     # hu: ustteki hava boslugu
     # hl: alttaki hava boslugu
@@ -1413,7 +1403,7 @@ def Z_eeff_suspended_stripline_0(w, t, h, b, er, freq):
     Z = (Zo/csqrt(eeff))
     return (Z, eeff)
 
-def Z_eeff_inverted_suspended_stripline_0(w, t, h, b, er, freq):
+def z_eeff_inverted_suspended_stripline_0(w, t, h, b, er, freq):
     # Model for Shielded Suspended Substrate Microstrip Line.pdf, Level 0
     # hu: ustteki hava boslugu
     # hl: alttaki hava boslugu
@@ -1428,7 +1418,7 @@ def Z_eeff_inverted_suspended_stripline_0(w, t, h, b, er, freq):
     Z = (Zo/csqrt(eeff))
     return (Z, eeff)
 
-def Z_eeff_suspended_microstripline(w, t, h, hl, er, freq):
+def z_eeff_suspended_microstripline(w, t, h, hl, er, freq):
     # Model for Shielded Suspended Substrate Microstrip Line.pdf, Level 1
     # hu: ustteki hava boslugu
     # hl: alttaki hava boslugu
@@ -1468,7 +1458,7 @@ def Z_eeff_suspended_microstripline(w, t, h, hl, er, freq):
     Z = Zo/csqrt(eeff)
     return (Z, eeff)
 
-def Z_eeff_inverted_suspended_stripline(w, t, h, hu, hl, er, freq):
+def z_eeff_inverted_suspended_stripline(w, t, h, hu, hl, er, freq):
     # Model for Shielded Suspended Substrate Microstrip Line.pdf, Level 1
     # hu: ustteki hava boslugu
     # hl: alttaki hava boslugu
@@ -1509,7 +1499,7 @@ def Z_eeff_inverted_suspended_stripline(w, t, h, hu, hl, er, freq):
     Z = (Zo/csqrt(eeff))
     return (Z, eeff)
 
-def Z_eeff_suspended_stripline_eski(w, t, a, b, er, freq):
+def z_eeff_suspended_stripline_eski(w, t, a, b, er, freq):
     # Transmssion Line Design Handbook, p141, a-dielectric height, b-spacing
     # height, t-metal thickness, w-metal width
     # Hatali, er etkisi olmasi gerekenden az gorunuyor.
@@ -1609,10 +1599,10 @@ def covered_suspended_microstripline_analysis(arg, defaultunits):
     arg = arg[:12]
     newargs = convert2pq(arg, defaultunits)
     w, t, h, hu, hl, er, tand, sigma, mu, roughness, freq, length = tuple(newargs)
-    Z, eeff = Z_eeff_suspended_stripline(w, t, h, hu, hl, er, freq)
+    Z, eeff = z_eeff_suspended_stripline(w, t, h, hu, hl, er, freq)
     deg = electrical_length(eeff, freq, length)
     sd = min([skin_depth(freq, sigma, mu),(t/2.0)])
-    cond_loss = -mu * pi * freq / Z / co * (Z_eeff_suspended_stripline(w, t, h, hu, hl, 1.0, freq)[0] - Z_eeff_suspended_stripline(
+    cond_loss = -mu * pi * freq / Z / co * (z_eeff_suspended_stripline(w, t, h, hu, hl, 1.0, freq)[0] - z_eeff_suspended_stripline(
         w - sd, t - sd,  h, hu + sd, hl + sd, 1.0, freq)[0]) * 20.0 * log10(exp(1))  # dB/m, incremental inductance
     diel_loss = dielectric_loss(eeff, er, freq, tand)
     argout = [Z, deg, eeff, cond_loss, diel_loss]
@@ -1650,13 +1640,12 @@ def covered_suspended_microstripline_synthesis(arg, defaultunits):
     arg = arg[:13]
     newargs = convert2pq(arg, defaultunits)
     w, t, h, hu, hl, er, tand, sigma, mu, roughness, freq, length, Z, deg = tuple(newargs)
-    # output =Sentez(lambda *x:Z_eeff_suspended_stripline(*x)[0], [w, t, a, b, er, freq], [0],target_value=[Z],init_value=[b], limits = [(a/100.0,a*100.0),(a/100.0,a*100.0)])
-    output =Sentez(lambda *x:Z_eeff_suspended_stripline(*x)[0], [w, t, h, hu, hl, er, freq], [0],target_value=[Z],init_value=[b], limits = [((a/1000.0),a*1000.0)])
+    output = synthesis(lambda *x:Z_eeff_suspended_stripline(*x)[0], [w, t, h, hu, hl, er, freq], [0],target_value=[Z],init_value=[b], limits = [((a/1000.0),a*1000.0)])
     w= output[0]
-    Z, eeff = Z_eeff_suspended_stripline(w, t, h, hu, hl, er, freq)
+    Z, eeff = z_eeff_suspended_stripline(w, t, h, hu, hl, er, freq)
     length = physical_length(eeff, freq, deg)
     sd = skin_depth(freq, sigma, mu)
-    cond_loss = -mu * pi * freq / Z / co * (Z_eeff_suspended_stripline(w, t, h, hu, hl, 1.0, freq)[0] - Z_eeff_suspended_stripline(
+    cond_loss = -mu * pi * freq / Z / co * (z_eeff_suspended_stripline(w, t, h, hu, hl, 1.0, freq)[0] - z_eeff_suspended_stripline(
         w - sd, t - sd,  h, hu + sd, hl + sd, 1.0, freq)[0]) * 20.0 * log10(exp(1))  # dB/m, incremental inductance
     diel_loss = dielectric_loss(eeff, er, freq, tand)
     argout = [Z, deg, eeff, cond_loss, diel_loss]
@@ -1703,10 +1692,10 @@ def suspended_microstripline_analysis(arg, defaultunits):
     arg = arg[:11]
     newargs = convert2pq(arg, defaultunits)
     w, t, a, b, er, tand, sigma, mu, roughness, freq, length = tuple(newargs)
-    Z, eeff = Z_eeff_suspended_stripline(w, t, a, 1000*b, b, er, freq)
+    Z, eeff = z_eeff_suspended_stripline(w, t, a, 1000*b, b, er, freq)
     deg = electrical_length(eeff, freq, length)
     sd = min(skin_depth(freq, sigma, mu),(t/2.0))
-    cond_loss = -mu * pi * freq / Z / co * (Z_eeff_suspended_stripline(w, t, a, 1000*b, b, 1.0, freq)[0] - Z_eeff_suspended_stripline(
+    cond_loss = -mu * pi * freq / Z / co * (z_eeff_suspended_stripline(w, t, a, 1000*b, b, 1.0, freq)[0] - z_eeff_suspended_stripline(
         w - sd, t - sd, a, 1000*b, b + sd, 1.0, freq)[0]) * 20.0 * log10(exp(1))  # dB/m, incremental inductance
     diel_loss = dielectric_loss(eeff, er, freq, tand)
     argout = [Z, deg, eeff, cond_loss, diel_loss]
@@ -1743,15 +1732,14 @@ def suspended_microstripline_synthesis(arg, defaultunits):
     arg = arg[:13]
     newargs = convert2pq(arg, defaultunits)
     w, t, a, b, er, tand, sigma, mu, roughness, freq, length, Z, deg = tuple(newargs)
-    # output =Sentez(lambda *x:Z_eeff_suspended_stripline(*x)[0], [w, t, a, b, er, freq], [0],target_value=[Z],init_value=[b], limits = [(a/100.0,a*100.0),(a/100.0,a*100.0)])
-    output =Sentez(lambda *x:Z_eeff_suspended_microstripline(*x)[0], [w, t, a, b, er, freq], [0],target_value=[Z],init_value=[b], limits = [((a/1000.0),a*1000.0)])
+    output =synthesis(lambda *x:Z_eeff_suspended_microstripline(*x)[0], [w, t, a, b, er, freq], [0],target_value=[Z],init_value=[b], limits = [((a/1000.0),a*1000.0)])
     w= output[0]
 
 
-    Z, eeff = Z_eeff_suspended_microstripline(w, t, a, b, er, freq)
+    Z, eeff = z_eeff_suspended_microstripline(w, t, a, b, er, freq)
     length = physical_length(eeff, freq, deg)
     sd = skin_depth(freq, sigma, mu)
-    cond_loss = -mu * pi * freq / Z / co * (Z_eeff_suspended_microstripline(w, t, a, b, 1.0, freq)[0] - Z_eeff_suspended_microstripline(
+    cond_loss = -mu * pi * freq / Z / co * (z_eeff_suspended_microstripline(w, t, a, b, 1.0, freq)[0] - z_eeff_suspended_microstripline(
         w - sd, t - sd, a, b + sd, 1.0, freq)[0]) * 20.0 * log10(exp(1))  # dB/m, incremental inductance
     diel_loss = dielectric_loss(eeff, er, freq, tand)
     argout = [Z, deg, eeff, cond_loss, diel_loss]
@@ -1762,7 +1750,7 @@ def suspended_microstripline_synthesis(arg, defaultunits):
                  for i in range(len(argout))]
     return arg
 
-def Z_eeff_shielded_suspended_stripline(w, h, b, a, er):
+def z_eeff_shielded_suspended_stripline(w, h, b, a, er):
     # Transmssion Line Design Handbook, p145, h-dielectric height, b-total height, a-box width, w-metal width
     # Validity: 1<a/b<2.5, 1<er<4, 0.1<h/b<0.5
     if w <= ((a/ 2)):
@@ -1820,10 +1808,10 @@ def shielded_suspended_stripline_analysis(arg, defaultunits):
     arg = arg[:11]
     newargs = convert2pq(arg, defaultunits)
     w, h, b, a, er, tand, sigma, mu, roughness, freq, length = tuple(newargs)
-    Z, eeff = Z_eeff_shielded_suspended_stripline(w, h, b, a, er)
+    Z, eeff = z_eeff_shielded_suspended_stripline(w, h, b, a, er)
     deg = electrical_length(eeff, freq, length)
     sd = skin_depth(freq, sigma, mu)
-    cond_loss = -mu * pi * freq / Z / co * (Z_eeff_shielded_suspended_stripline(w, h, b, a, 1.0)[0] - Z_eeff_shielded_suspended_stripline(
+    cond_loss = -mu * pi * freq / Z / co * (z_eeff_shielded_suspended_stripline(w, h, b, a, 1.0)[0] - z_eeff_shielded_suspended_stripline(
         w - sd, h + sd, b + sd, a + sd, 1.0)[0]) * 20.0 * log10(exp(1))  # dB/m, incremental inductance
     diel_loss = dielectric_loss(eeff, er, freq, tand)
     argout = [Z, deg, eeff, cond_loss, diel_loss]
@@ -1862,13 +1850,13 @@ def shielded_suspended_stripline_synthesis(arg, defaultunits):
     arg = arg[:13]
     newargs = convert2pq(arg, defaultunits)
     w, h, b, a, er, tand, sigma, mu, roughness, freq, length,Z,deg = tuple(newargs)
-    # Z, eeff = Z_eeff_shielded_suspended_stripline(w, h, b, a, er)
-    output =Sentez(lambda *x:Z_eeff_shielded_suspended_stripline(*x)[0], [w, h, b, a, er], [0],target_value=[Z],init_value=[b], limits = [((a/100.0),a*100.0)])
+    # Z, eeff = z_eeff_shielded_suspended_stripline(w, h, b, a, er)
+    output =synthesis(lambda *x:Z_eeff_shielded_suspended_stripline(*x)[0], [w, h, b, a, er], [0],target_value=[Z],init_value=[b], limits = [((a/100.0),a*100.0)])
     w= output[0]
-    Z, eeff = Z_eeff_shielded_suspended_stripline(w, h, b, a, er)
+    Z, eeff = z_eeff_shielded_suspended_stripline(w, h, b, a, er)
     length = physical_length(eeff, freq, deg)
     sd = skin_depth(freq, sigma, mu)
-    cond_loss = -mu * pi * freq / Z / co * (Z_eeff_shielded_suspended_stripline(w, h, b, a, 1.0)[0] - Z_eeff_shielded_suspended_stripline(
+    cond_loss = -mu * pi * freq / Z / co * (z_eeff_shielded_suspended_stripline(w, h, b, a, 1.0)[0] - z_eeff_shielded_suspended_stripline(
         w - sd, h + sd, b + sd, a + sd, 1.0)[0]) * 20.0 * log10(exp(1))  # dB/m, incremental inductance
     diel_loss = dielectric_loss(eeff, er, freq, tand)
     argout = [eeff, cond_loss, diel_loss]
@@ -1878,7 +1866,7 @@ def shielded_suspended_stripline_synthesis(arg, defaultunits):
                  for i in range(len(argout))]
     return arg
 
-def Z_eeff_grounded_cpw(w, er, s, h):
+def z_eeff_grounded_cpw(w, er, s, h):
     """Coplanar waveguide circuits, components and systems s89
     Transmission Line Design Handbook s79
     """
@@ -1893,26 +1881,26 @@ def Z_eeff_grounded_cpw(w, er, s, h):
     Zo = 60 * pi /csqrt(eeff) / ((ellipk(k)/ ellipk(k_)) + (ellipk(k3)/ ellipk(k3_)))
     return (Zo, eeff)
 
-def Z_eeff_grounded_cpw_thick(w, th, er, s, h):
+def z_eeff_grounded_cpw_thick(w, th, er, s, h):
     """Coplanar waveguide circuits, components and systems s89
     Transmission Line Design Handbook s79
 	For thickness correction Reference: "CPWG impedance formula" document
     """
     dd = 1.25*th/pi*(1.0+log(2*h/th));
-    Zair, _ = Z_eeff_grounded_cpw(w+dd, 1.0, s-dd, h)
+    Zair, _ = z_eeff_grounded_cpw(w+dd, 1.0, s-dd, h)
     Cair = 1/co/Zair
     L = Cair*Zair*Zair
-    Zair_thin, _ = Z_eeff_grounded_cpw(w, 1.0, s, h)
+    Zair_thin, _ = z_eeff_grounded_cpw(w, 1.0, s, h)
     Cex = 1./co*(1./Zair-1./Zair_thin)
     Cex = 2.0*eps0*th/s+(Cex-2*eps0*th/s)*(er+1.0)/2.0
-    Zthin, eps_eff_thin = Z_eeff_grounded_cpw(w, er, s, h)
+    Zthin, eps_eff_thin = z_eeff_grounded_cpw(w, er, s, h)
     Cthin = 1./Zthin/co*sqrt(eps_eff_thin);
     vp = 1./sqrt(L*(Cthin+Cex));
     eeff = (co/vp)**2;
     Zo = sqrt(L/(Cthin+Cex));
     return (Zo, eeff)
 
-def Z_eeff_cpw(w, er, s, h, t):
+def z_eeff_cpw(w, er, s, h, t):
     """ Transmission Line Design Handbook s73"""
     a = w
     b = w + 2 * s
@@ -1957,10 +1945,10 @@ def grounded_cpw_analysis(arg, defaultunits):
     arg = arg[:10]
     newargs = convert2pq(arg, defaultunits)
     w, s, th, er, h, tand, sigma, mu, roughness, freq, length = tuple(newargs)
-    Z, eeff = Z_eeff_grounded_cpw_thick(w, th, er, s, h)
+    Z, eeff = z_eeff_grounded_cpw_thick(w, th, er, s, h)
     deg = electrical_length(eeff, freq, length)
     sd = skin_depth(freq, sigma, mu)
-    cond_loss = -mu * pi * freq / Z / co * (Z_eeff_grounded_cpw(w, th, 1.0, s, h)[0] - Z_eeff_grounded_cpw(
+    cond_loss = -mu * pi * freq / Z / co * (z_eeff_grounded_cpw(w, th, 1.0, s, h)[0] - z_eeff_grounded_cpw(
         w - sd, th-sd, 1.0, s + sd, h + sd)[0]) * 20.0 * log10(exp(1))  # dB/m, incremental inductance
     diel_loss = dielectric_loss(eeff, er, freq, tand)
     argout = [Z, deg, eeff, cond_loss, diel_loss]
@@ -1994,13 +1982,13 @@ def grounded_cpw_synthesis(arg, defaultunits):
     arg = arg[:12]
     newargs = convert2pq(arg, defaultunits)
     w, s, er, h, tand, sigma, mu, roughness, freq, length, Z, deg = tuple(newargs)
-    output = Sentez(lambda *x: Z_eeff_grounded_cpw(*x)[0], [w, er, s, h], [0], target_value=[Z],
+    output = synthesis(lambda *x: z_eeff_grounded_cpw(*x)[0], [w, er, s, h], [0], target_value=[Z],
                     init_value=[h], limits=[((h/ 1000.0), h * 1000.0)])
     w = output[0]
-    Z, eeff = Z_eeff_grounded_cpw(w, er, s, h)
+    Z, eeff = z_eeff_grounded_cpw(w, er, s, h)
     length = physical_length(eeff, freq, deg)
     sd = skin_depth(freq, sigma, mu)
-    cond_loss = -mu * pi * freq / Z / co * (Z_eeff_grounded_cpw(w, 1.0, s, h)[0] - Z_eeff_grounded_cpw(
+    cond_loss = -mu * pi * freq / Z / co * (z_eeff_grounded_cpw(w, 1.0, s, h)[0] - z_eeff_grounded_cpw(
         w - sd, 1.0, s + sd, h + sd)[0]) * 20.0 * log10(exp(1))  # dB/m, incremental inductance
     diel_loss = dielectric_loss(eeff, er, freq, tand)
     arg[0] = prettystring(w, defaultunits[0])
@@ -2010,7 +1998,7 @@ def grounded_cpw_synthesis(arg, defaultunits):
     arg = arg + [prettystring(argout[i], defaultunits[len(arg) + i]) for i in range(len(argout))]
     return arg
 
-def Z_eeff_covered_grounded_cpw(w, s, h, er, h1):
+def z_eeff_covered_grounded_cpw(w, s, h, er, h1):
     """ Coplanar waveguide circuits, components and systems s89"""
     a = (w/ 2)
     b = (w/ 2) + s
@@ -2054,10 +2042,10 @@ def covered_grounded_coplanar_waveguide_analysis(arg, defaultunits):
     arg = arg[:11]
     newargs = convert2pq(arg, defaultunits)
     w, s, h, er, h1, tand, sigma, mu, roughness, freq, length = tuple(newargs)
-    Z, eeff = Z_eeff_covered_grounded_cpw(w, s, h, er, h1)
+    Z, eeff = z_eeff_covered_grounded_cpw(w, s, h, er, h1)
     deg = electrical_length(eeff, freq, length)
     sd = skin_depth(freq, sigma, mu)
-    cond_loss = -mu * pi * freq / Z / co * (Z_eeff_covered_grounded_cpw(w, s, h, 1.0, h1)[0] - Z_eeff_covered_grounded_cpw(
+    cond_loss = -mu * pi * freq / Z / co * (z_eeff_covered_grounded_cpw(w, s, h, 1.0, h1)[0] - z_eeff_covered_grounded_cpw(
         w - sd, s + sd, h + sd, 1.0, h1 + sd)[0]) * 20.0 * log10(exp(1))  # dB/m, incremental inductance
     diel_loss = dielectric_loss(eeff, er, freq, tand)
     argout = [Z, deg, eeff, cond_loss, diel_loss]
@@ -2092,16 +2080,12 @@ def covered_grounded_coplanar_waveguide_synthesis(arg, defaultunits):
     arg = arg[:13]
     newargs = convert2pq(arg, defaultunits)
     w, s, h, er, h1, tand, sigma, mu, roughness, freq, length, Z, deg = tuple(newargs)
-    # output = Sentez(lambda *x: Z_eeff_covered_grounded_cpw(*x)[0], [w, s, h, er, h1], [0], target_value=[Z],
-                    # init_value=[h], limits=[((h/ 100.0), h * 100.0)])
-    # w = output[0]
-    
-    w = SentezBisection_1d(lambda *x: Z_eeff_covered_grounded_cpw(*x)[0], [w, s, h, er, h1], 0, Z,h, limits=[h/ 100.0, h * 100.0])
-    
-    Z, eeff = Z_eeff_covered_grounded_cpw(w, s, h, er, h1)
+    w = synthesis_bisection_1d(lambda *x: z_eeff_covered_grounded_cpw(*x)[0], [w, s, h, er, h1], 0, Z,h, limits=[h/ 100.0, h * 100.0])
+
+    Z, eeff = z_eeff_covered_grounded_cpw(w, s, h, er, h1)
     length = physical_length(eeff, freq, deg)
     sd = skin_depth(freq, sigma, mu)
-    cond_loss = -mu * pi * freq / Z / co * (Z_eeff_covered_grounded_cpw(w, s, h, 1.0, h1)[0] - Z_eeff_covered_grounded_cpw(
+    cond_loss = -mu * pi * freq / Z / co * (z_eeff_covered_grounded_cpw(w, s, h, 1.0, h1)[0] - z_eeff_covered_grounded_cpw(
         w - sd, s + sd, h + sd, 1.0, h1 + sd)[0]) * 20.0 * log10(exp(1))  # dB/m, incremental inductance
     diel_loss = dielectric_loss(eeff, er, freq, tand)
     argout = [Z, deg, eeff, cond_loss, diel_loss]
@@ -2110,7 +2094,7 @@ def covered_grounded_coplanar_waveguide_synthesis(arg, defaultunits):
     arg = arg + [prettystring(argout[i], defaultunits[len(arg) + i]) for i in range(len(argout))]
     return arg
 
-def Z_eeff_laterally_covered_grounded_cpw(w, s, h, er, h1):
+def z_eeff_laterally_covered_grounded_cpw(w, s, h, er, h1):
     """Coplanar waveguide circuits, components and systems s89"""
     pass
 
@@ -2149,7 +2133,7 @@ def edge_coupled_microstrip_analysis(arg, defaultunits):
     arg = arg[:11]
     newargs = convert2pq(arg, defaultunits)
     w, s, t, h, er, tand, sigma, mu, roughness, freq, length = tuple(newargs)
-    Z_even, Z_odd, eeff_even, eeff_odd = Z_eeff_edge_coupled_microstrip(
+    z_even, z_odd, eeff_even, eeff_odd = z_eeff_edge_coupled_microstrip(
         w, er, t, h, s, freq)
     deg_even = electrical_length(eeff_even, freq, length)
     deg_odd = electrical_length(eeff_odd, freq, length)
@@ -2158,21 +2142,21 @@ def edge_coupled_microstrip_analysis(arg, defaultunits):
     # print "ze ",Z_even
     # print "w-sd ",w-sd
     # print "t-sd ",t-sd
-    Z_even1, Z_odd1, eeff_even1, eeff_odd1 = Z_eeff_edge_coupled_microstrip(
+    z_even1, z_odd1, eeff_even1, eeff_odd1 = z_eeff_edge_coupled_microstrip(
         w - sd, 1.001, t - sd, h + sd, s + sd, freq)
-    Z_even2, Z_odd2, eeff_even2, eeff_odd2 = Z_eeff_edge_coupled_microstrip(
+    z_even2, z_odd2, eeff_even2, eeff_odd2 = z_eeff_edge_coupled_microstrip(
         w, 1.001, t, h, s, freq)
-    cond_loss_even = -pi * freq / Z_even / co * \
-        (Z_even2 - Z_even1) * 20.0 * \
+    cond_loss_even = -pi * freq / z_even / co * \
+        (z_even2 - z_even1) * 20.0 * \
         log10(exp(1))  # dB/m, incremental inductance
-    cond_loss_odd = -pi * freq / Z_odd / co * \
-        (Z_odd2 - Z_odd1) * 20.0 * \
+    cond_loss_odd = -pi * freq / z_odd / co * \
+        (z_odd2 - z_odd1) * 20.0 * \
         log10(exp(1))  # dB/m, incremental inductance
     diel_loss_even = dielectric_loss(eeff_even, er, freq, tand)
     diel_loss_odd = dielectric_loss(eeff_odd, er, freq, tand)
-    max_coupling = 20 * log10(((Z_even - Z_odd)/ (Z_even + Z_odd)))
-    matched_impedance = sqrt((Z_even * Z_odd))
-    argout = [Z_even, Z_odd, deg_even, deg_odd, eeff_even, eeff_odd,
+    max_coupling = 20 * log10(((z_even - z_odd)/ (z_even + z_odd)))
+    matched_impedance = sqrt((z_even * z_odd))
+    argout = [Z_even, z_odd, deg_even, deg_odd, eeff_even, eeff_odd,
               cond_loss_even, cond_loss_odd, diel_loss_even, diel_loss_odd, max_coupling, matched_impedance]
     arg = arg + [prettystring(argout[i], defaultunits[len(arg) + i]) for i in range(len(argout))]
     return arg
@@ -2183,7 +2167,7 @@ def edge_coupled_microstrip_analysis_view(arg, defaultunits):
     arg = arg[:11]
     newargs = convert2pq(arg, defaultunits)
     w, s, t, h, er, tand, sigma, mu, roughness, freq, length = tuple(newargs)
-    Z_even, Z_odd, eeff_even, eeff_odd = Z_eeff_edge_coupled_microstrip(w, er, t, h, s, freq)
+    z_even, z_odd, eeff_even, eeff_odd = z_eeff_edge_coupled_microstrip(w, er, t, h, s, freq)
     # visvis.clf()
     # diel = visvis.solidBox(translation=(0,0,h/t/2.0),scaling=(w/t*5.0,w/t*10.0,(h/t)))
     # line1 = visvis.solidBox(translation=(w/t/2+s/t/2,0,(h/t)+0.5),scaling=((w/t),w/t*10.0,(t/t)))
@@ -2228,28 +2212,28 @@ def edge_coupled_microstrip_synthesis(arg, defaultunits):
 
     arg = arg[:14]
     newargs = convert2pq(arg, defaultunits)
-    w, s, t, h, er, tand, sigma, mu, roughness, freq, length, Z_even, Z_odd, elec_length = tuple(newargs)
-    output =Sentez(lambda *x:Z_eeff_edge_coupled_microstrip(*x)[:2], [w, er, t, h, s, freq], [0,4],target_value=[Z_even, Z_odd],init_value=[h,h], limits = [((h/100.0),h*10.0),((h/100.0),h*10.0)])
+    w, s, t, h, er, tand, sigma, mu, roughness, freq, length, z_even, z_odd, elec_length = tuple(newargs)
+    output =synthesis(lambda *x:Z_eeff_edge_coupled_microstrip(*x)[:2], [w, er, t, h, s, freq], [0,4],target_value=[Z_even, z_odd],init_value=[h,h], limits = [((h/100.0),h*10.0),((h/100.0),h*10.0)])
     w, s= tuple(output[0])
-    Z_even, Z_odd, eeff_even, eeff_odd = Z_eeff_edge_coupled_microstrip(
+    z_even, z_odd, eeff_even, eeff_odd = z_eeff_edge_coupled_microstrip(
         w, er, t, h, s, freq)
     # deg_even = electrical_length(eeff_even, freq, length)
     length = physical_length(eeff_even, freq, elec_length)
     deg_odd = electrical_length(eeff_odd, freq, length)
     sd = skin_depth(freq, sigma, mu)
-    Z_even1, Z_odd1, eeff_even1, eeff_odd1 = Z_eeff_edge_coupled_microstrip(
+    z_even1, z_odd1, eeff_even1, eeff_odd1 = z_eeff_edge_coupled_microstrip(
         w - sd, 1.0001, t - sd, h + sd, s + sd, freq)
-    Z_even2, Z_odd2, eeff_even2, eeff_odd2 = Z_eeff_edge_coupled_microstrip(
+    z_even2, z_odd2, eeff_even2, eeff_odd2 = z_eeff_edge_coupled_microstrip(
         w, 1.0001, t, h, s, freq)
-    cond_loss_even = -pi * freq / Z_even / co * \
-        (Z_even2 - Z_even1) * 20.0 * \
+    cond_loss_even = -pi * freq / z_even / co * \
+        (z_even2 - z_even1) * 20.0 * \
         log10(exp(1))  # dB/m, incremental inductance
-    cond_loss_odd = -pi * freq / Z_odd / co * \
-        (Z_odd2 - Z_odd1) * 20.0 * \
+    cond_loss_odd = -pi * freq / z_odd / co * \
+        (z_odd2 - z_odd1) * 20.0 * \
         log10(exp(1))  # dB/m, incremental inductance
     diel_loss_even = dielectric_loss(eeff_even, er, freq, tand)
     diel_loss_odd = dielectric_loss(eeff_odd, er, freq, tand)
-    max_coupling = 20 * log10(((Z_even - Z_odd)/ (Z_even + Z_odd)))
+    max_coupling = 20 * log10(((z_even - z_odd)/ (z_even + z_odd)))
     arg[0]=prettystring(w, defaultunits[0])
     arg[1]=prettystring(s, defaultunits[1])
     arg[10]=prettystring(length, defaultunits[10])
@@ -2259,7 +2243,7 @@ def edge_coupled_microstrip_synthesis(arg, defaultunits):
                  for i in range(len(argout))]
     return arg
 
-def Z_eeff_edge_coupled_microstrip(w, er, t, h, s, f):
+def z_eeff_edge_coupled_microstrip(w, er, t, h, s, f):
     """
     Transmssion Line Design Handbook, p199, with errata sheet
     """
@@ -2357,19 +2341,19 @@ def Z_eeff_edge_coupled_microstrip(w, er, t, h, s, f):
     Fe = P1 * P2 * ((P3 * P4 + 0.1844 * P7) * fn) ** 1.5763
     eeff_odd = er - ((er - eeff_0_odd)/ (1. + Fo))
     eeff_even = er - ((er - eeff_0_even)/ (1. + Fe))
-    Z = Z_qs_thick_microstrip(w, h, er, t)
+    Z = z_qs_thick_microstrip(w, h, er, t)
     Ze = Z * csqrt((eeff_0/ eeff_0_even)) / \
         (1.0 - Z / eta0 * csqrt(eeff_0) * Q4)
     Zo = Z * csqrt((eeff_0/ eeff_0_odd)) / \
         (1.0 - Z / eta0 * csqrt(eeff_0) * Q10)
-    Z_even = Ze * (0.9408 * (eeff_even) ** c - 0.9603) ** Q0 / \
+    z_even = Ze * (0.9408 * (eeff_even) ** c - 0.9603) ** Q0 / \
         ((0.9408 - d) * (eeff_even) ** c - 0.9603) ** Q0
-    Z = Z_disp_thick_microstrip(w, h, t, er, f)
-    Z_odd = Z + ((Zo * ((eeff_odd/ eeff_0_odd)) ** Q22 - Z * Q23)/ \
+    Z = z_disp_thick_microstrip(w, h, t, er, f)
+    z_odd = Z + ((Zo * ((eeff_odd/ eeff_0_odd)) ** Q22 - Z * Q23)/ \
         (1.0 + Q24 + (0.46 * g) ** 2.2 * Q25))
-    return (Z_even, Z_odd, eeff_even, eeff_odd)
+    return (z_even, z_odd, eeff_even, eeff_odd)
 
-def Z_edge_coupled_thin_symmetric_stripline(w, b, s, er):
+def z_edge_coupled_thin_symmetric_stripline(w, b, s, er):
     """
     b:  ground spacing
     w:  line width
@@ -2386,7 +2370,7 @@ def Z_edge_coupled_thin_symmetric_stripline(w, b, s, er):
     Zoo = 30.0 * pi / csqrt(er) * ellipk(ko1) / ellipk(ko)
     return (Zoe, Zoo)
 
-def Z_edge_coupled_thick_symmetric_stripline(w, b, s, er, t):
+def z_edge_coupled_thick_symmetric_stripline(w, b, s, er, t):
     """
     b:  ground spacing
     w:  line width
@@ -2396,9 +2380,9 @@ def Z_edge_coupled_thick_symmetric_stripline(w, b, s, er, t):
     Referans: Shielded Coupled-Strip Transmission Line.pdf
     """
 
-    Z_even, Z_odd = Z_edge_coupled_thin_symmetric_stripline(w, b, s, er)
-    Zst = Z_thick_stripline(w, b, t, er)
-    Zs0 = Z_thick_stripline(w, b, 0.0, er)
+    z_even, z_odd = z_edge_coupled_thin_symmetric_stripline(w, b, s, er)
+    Zst = z_thick_stripline(w, b, t, er)
+    Zs0 = z_thick_stripline(w, b, 0.0, er)
     cf0 = 0.0885 * er * 2.0 * log(2.0) /  pi * (1e-4)
     if ( (t/ b) > 1.0e-5):
         cft = (1e-4) * 0.0885 * er /  pi * (2.0 / (1.0 - (t/ b)) * log((1.0/ (1.0 - (t/ b))) + 1.0) - \
@@ -2406,12 +2390,12 @@ def Z_edge_coupled_thick_symmetric_stripline(w, b, s, er, t):
     else:
         cft = (1e-4) * 0.0885 * er /  pi * (2.0 / (1.0 - (t/ b)) * log( 2.0 ))
 
-    temp = (1.0/ Zst) - cft / cf0 * ((1.0/ Zs0) - (1.0/ Z_even))
+    temp = (1.0/ Zst) - cft / cf0 * ((1.0/ Zs0) - (1.0/ z_even))
     Zeven = (1.0/ temp)
     if (s/t) > 5.0:
-        temp = (1.0/ Zst) + cft / cf0 * ((1.0/ Z_odd) - (1.0/ Zs0))
+        temp = (1.0/ Zst) + cft / cf0 * ((1.0/ z_odd) - (1.0/ Zs0))
     else:
-        temp = (1.0/ Z_odd) + ( (1.0/ Zst) - (1.0/ Zs0)) - 2.0 / eta0 * ( (cft/ er) - (cf0/ er) ) + 2.0 * t / eta0 / s
+        temp = (1.0/ z_odd) + ( (1.0/ Zst) - (1.0/ Zs0)) - 2.0 / eta0 * ( (cft/ er) - (cf0/ er) ) + 2.0 * t / eta0 / s
     Zodd = (1.0/ temp)
     return (Zeven, Zodd)
 
@@ -2446,22 +2430,22 @@ def edge_coupled_stripline_analysis(arg, defaultunits):
     arg = arg[:11]
     newargs = convert2pq(arg, defaultunits)
     w, s, t, b, er, tand, sigma, mu, roughness, freq, length = tuple(newargs)
-    Z_even, Z_odd = Z_edge_coupled_thick_symmetric_stripline(w, b, s, er, t)
+    z_even, z_odd = z_edge_coupled_thick_symmetric_stripline(w, b, s, er, t)
     sd = skin_depth(freq, sigma, mu)
-    Z_even1, Z_odd1 = Z_edge_coupled_thick_symmetric_stripline(
+    z_even1, z_odd1 = z_edge_coupled_thick_symmetric_stripline(
         w - sd, b + sd, s + sd, 1.0, t)
-    Z_even2, Z_odd2 = Z_edge_coupled_thick_symmetric_stripline(w, b, s, 1.0, t)
+    z_even2, z_odd2 = z_edge_coupled_thick_symmetric_stripline(w, b, s, 1.0, t)
     eeff = er
-    cond_loss_even = -pi * freq / Z_even / co * \
-       (Z_even2 - Z_even1) * 20.0 * \
+    cond_loss_even = -pi * freq / z_even / co * \
+       (z_even2 - z_even1) * 20.0 * \
        log10(exp(1))  # dB/m, incremental inductance
-    cond_loss_odd = -pi * freq / Z_odd / co * \
-       (Z_odd2 - Z_odd1) * 20.0 * \
+    cond_loss_odd = -pi * freq / z_odd / co * \
+       (z_odd2 - z_odd1) * 20.0 * \
        log10(exp(1))  # dB/m, incremental inductance
     diel_loss = dielectric_loss(er, er, freq, tand)
     deg = electrical_length(eeff, freq, length)
-    max_coupling = 20 * log10((fabs(Z_even - Z_odd)/ (Z_even + Z_odd)))
-    argout = [Z_even, Z_odd, deg, eeff, cond_loss_even, cond_loss_odd , diel_loss, max_coupling]
+    max_coupling = 20 * log10((fabs(z_even - z_odd)/ (z_even + z_odd)))
+    argout = [Z_even, z_odd, deg, eeff, cond_loss_even, cond_loss_odd , diel_loss, max_coupling]
     arg = arg + [prettystring(argout[i], defaultunits[len(arg) + i])
                  for i in range(len(argout))]
     return arg
@@ -2515,25 +2499,25 @@ def edge_coupled_stripline_synthesis(arg, defaultunits):
 
     arg = arg[:14]
     newargs = convert2pq(arg, defaultunits)
-    w, er, t, b, s, tand, sigma, mu, roughness, freq, length, Z_even, Z_odd, elec_length = tuple(newargs)
-    output = Sentez(Z_edge_coupled_thick_symmetric_stripline, [w, b, s, er, t], [0,2], [Z_even, Z_odd] , [w,s] , [((b/100.0),10.0*b)])
+    w, er, t, b, s, tand, sigma, mu, roughness, freq, length, z_even, z_odd, elec_length = tuple(newargs)
+    output = synthesis(z_edge_coupled_thick_symmetric_stripline, [w, b, s, er, t], [0,2], [Z_even, z_odd] , [w,s] , [((b/100.0),10.0*b)])
     w, s= tuple(output[0])
     arg[0]=prettystring(w, defaultunits[0])
     arg[4]=prettystring(s, defaultunits[4])
     sd = skin_depth(freq, sigma, mu)
-    Z_even1, Z_odd1 = Z_edge_coupled_thick_symmetric_stripline(w - sd, b + sd, s + sd, 1.0, t)
-    Z_even2, Z_odd2 = Z_edge_coupled_thick_symmetric_stripline(w, b, s, 1.0, t)
+    z_even1, z_odd1 = z_edge_coupled_thick_symmetric_stripline(w - sd, b + sd, s + sd, 1.0, t)
+    z_even2, z_odd2 = z_edge_coupled_thick_symmetric_stripline(w, b, s, 1.0, t)
     eeff = er
-    cond_loss_even = -pi * freq / Z_even / co * (Z_even2 - Z_even1) * 20.0 * log10(exp(1))  # dB/m, incremental inductance
-    cond_loss_odd = -pi * freq / Z_odd / co * (Z_odd2 - Z_odd1) * 20.0 * log10(exp(1))  # dB/m, incremental inductance
+    cond_loss_even = -pi * freq / z_even / co * (z_even2 - z_even1) * 20.0 * log10(exp(1))  # dB/m, incremental inductance
+    cond_loss_odd = -pi * freq / z_odd / co * (z_odd2 - z_odd1) * 20.0 * log10(exp(1))  # dB/m, incremental inductance
     diel_loss = dielectric_loss(er, er, freq, tand)
-    max_coupling = 20 * log10((fabs(Z_even - Z_odd)/ (Z_even + Z_odd)))
+    max_coupling = 20 * log10((fabs(z_even - z_odd)/ (z_even + z_odd)))
     argout = [eeff, cond_loss_even, cond_loss_odd, diel_loss, max_coupling]
     arg = arg + [prettystring(argout[i], defaultunits[len(arg) + i])
                  for i in range(len(argout))]
     return arg
 
-def Z_shielded_stripline(w, b, t, g, er):
+def z_shielded_stripline(w, b, t, g, er):
     """Transmssion Line Design Handbook, p136, g-yanduvarla hat arasi bosluk,
     b-toplam yukseklik
     """
@@ -2547,8 +2531,8 @@ def Z_shielded_stripline(w, b, t, g, er):
 def conductor_loss_shielded_stripline(w, b, t, g, er, f, sigma, mu):
     """Incremental Inductance Rule"""
     sd = skin_depth(f, sigma, mu)
-    z1 = Z_shielded_stripline(w - sd, b + sd, t - sd, g + 2 * sd, er)
-    z2 = Z_shielded_stripline(w, b, t, g, er)
+    z1 = z_shielded_stripline(w - sd, b + sd, t - sd, g + 2 * sd, er)
+    z2 = z_shielded_stripline(w, b, t, g, er)
     return (mu * pi * f * sqrt(er) / co * np.abs(z1/ z2 - 1.0)) * 20.0 * log10(exp(1))
 
 def symmetrical_shielded_stripline_analysis(arg, defaultunits):
@@ -2579,7 +2563,7 @@ def symmetrical_shielded_stripline_analysis(arg, defaultunits):
     arg = arg[:11]
     newargs = convert2pq(arg, defaultunits)
     w, b, t, g, er, tand, sigma, mu, roughness, freq, length = tuple(newargs)
-    Z = Z_shielded_stripline(w, b, t, g, er)
+    Z = z_shielded_stripline(w, b, t, g, er)
     eeff = er
     deg = electrical_length(eeff, freq, length)
     cond_loss = conductor_loss_shielded_stripline( w, b, t, g, er, freq, sigma, mu)
@@ -2619,10 +2603,10 @@ def symmetrical_shielded_stripline_synthesis(arg, defaultunits):
     arg = arg[:13]
     newargs = convert2pq(arg, defaultunits)
     w, b, t, g, er, tand, sigma, mu, roughness, freq, length, Z, deg = tuple(newargs)
-    output = Sentez(lambda *x: Z_shielded_stripline(*x), [w, b, t, g, er], [0], target_value=[Z],
+    output = synthesis(lambda *x: z_shielded_stripline(*x), [w, b, t, g, er], [0], target_value=[Z],
                     init_value=[b], limits=[((b/ 1000.0), b * 1000.0)])
     w = output[0]
-    Z = Z_shielded_stripline(w, b, t, g, er)
+    Z = z_shielded_stripline(w, b, t, g, er)
     eeff = er
     length = physical_length(eeff, freq, deg)
     cond_loss = conductor_loss_shielded_stripline( w, b, t, g, er, freq, sigma, mu)
@@ -2670,18 +2654,18 @@ def broadside_offset_coupled_stripline_analysis(arg, defaultunits):
     arg = arg[:12]
     newargs = convert2pq(arg, defaultunits)
     w, wo, t, s, b, er, tand, sigma, mu, roughness, freq, length = tuple(newargs)
-    Z_even, Z_odd = Z_broadside_coupled_offset_stripline(w,wo,b,s,er)
+    z_even, z_odd = z_broadside_coupled_offset_stripline(w,wo,b,s,er)
     sd = skin_depth(freq, sigma, mu)
-    Z_even1, Z_odd1 = Z_broadside_coupled_offset_stripline(
+    z_even1, z_odd1 = z_broadside_coupled_offset_stripline(
         w - sd, wo, b + sd, s + sd, 1.0)
-    Z_even2, Z_odd2 = Z_broadside_coupled_offset_stripline(w, wo, b, s, 1.0)
+    z_even2, z_odd2 = z_broadside_coupled_offset_stripline(w, wo, b, s, 1.0)
     eeff = er
-    cond_loss_even = -pi * freq / Z_even / co * (Z_even2 - Z_even1) * 20.0 * log10(exp(1))  # dB/m, incremental inductance
-    cond_loss_odd = -pi * freq / Z_odd / co * (Z_odd2 - Z_odd1) * 20.0 * log10(exp(1))  # dB/m, incremental inductance
+    cond_loss_even = -pi * freq / z_even / co * (z_even2 - z_even1) * 20.0 * log10(exp(1))  # dB/m, incremental inductance
+    cond_loss_odd = -pi * freq / z_odd / co * (z_odd2 - z_odd1) * 20.0 * log10(exp(1))  # dB/m, incremental inductance
     diel_loss = dielectric_loss(er, er, freq, tand)
     deg = electrical_length(eeff, freq, length)
-    max_coupling = 20.0 * log10((fabs(Z_even - Z_odd)/ (Z_even + Z_odd)))
-    argout = [Z_even, Z_odd, deg, eeff, cond_loss_even, cond_loss_odd, diel_loss, max_coupling]
+    max_coupling = 20.0 * log10((fabs(z_even - z_odd)/ (z_even + z_odd)))
+    argout = [Z_even, z_odd, deg, eeff, cond_loss_even, cond_loss_odd, diel_loss, max_coupling]
     arg = arg + [prettystring(argout[i], defaultunits[len(arg) + i])
                  for i in range(len(argout))]
     return arg
@@ -2736,21 +2720,21 @@ def broadside_offset_coupled_stripline_synthesis(arg, defaultunits):
 
     arg = arg[:15]
     newargs = convert2pq(arg, defaultunits)
-    w, b, t, s, wo, er, tand, sigma, mu, roughness, freq, length, Z_even, Z_odd, elec_length = tuple(newargs)
-    w , wo = width_broadside_coupled_offset_stripline(Z_even,Z_odd,b,s,er)
+    w, b, t, s, wo, er, tand, sigma, mu, roughness, freq, length, z_even, z_odd, elec_length = tuple(newargs)
+    w , wo = width_broadside_coupled_offset_stripline(z_even,Z_odd,b,s,er)
     sd = skin_depth(freq, sigma, mu)
-    Z_even1, Z_odd1 = Z_broadside_coupled_offset_stripline(
+    z_even1, z_odd1 = z_broadside_coupled_offset_stripline(
         w - sd, wo, b + sd, s , 1.0)
-    Z_even2, Z_odd2 = Z_broadside_coupled_offset_stripline(w, wo, b, s, 1.0)
+    z_even2, z_odd2 = z_broadside_coupled_offset_stripline(w, wo, b, s, 1.0)
     eeff = er
-    cond_loss_even = -pi * freq / Z_even / co * (Z_even2 - Z_even1) * 20.0 * log10(exp(1))  # dB/m, incremental inductance
-    cond_loss_odd = -pi * freq / Z_odd / co * (Z_odd2 - Z_odd1) * 20.0 * log10(exp(1))  # dB/m, incremental inductance
+    cond_loss_even = -pi * freq / z_even / co * (z_even2 - z_even1) * 20.0 * log10(exp(1))  # dB/m, incremental inductance
+    cond_loss_odd = -pi * freq / z_odd / co * (z_odd2 - z_odd1) * 20.0 * log10(exp(1))  # dB/m, incremental inductance
     diel_loss = dielectric_loss(er, er, freq, tand)
     length = physical_length(eeff, freq, elec_length)
     arg[11]= prettystring(length, defaultunits[11])
     arg[0] = prettystring(w, defaultunits[11])
     arg[4] = prettystring(wo, defaultunits[11])
-    max_coupling = 20.0 * log10((fabs(Z_even - Z_odd)/ (Z_even + Z_odd)))
+    max_coupling = 20.0 * log10((fabs(z_even - z_odd)/ (z_even + z_odd)))
     argout = [eeff, cond_loss_even, cond_loss_odd, diel_loss, max_coupling]
     arg = arg + [prettystring(argout[i], defaultunits[len(arg) + i])
                  for i in range(len(argout))]
@@ -2783,8 +2767,8 @@ def width_broadside_coupled_offset_stripline(Zeven,Zodd,b,s,er):
     wo=wo*b
     return (w,wo)
 
-def Z_broadside_coupled_offset_stripline(w,wo,b,s,er):
-    output =Sentez(width_broadside_coupled_offset_stripline, [(b/2.0), (b/10.0), b,s,er], [0,1],target_value=[w,wo],init_value=[60,40], limits = [(5.0,200.0),(5.0,200.0)])
+def z_broadside_coupled_offset_stripline(w,wo,b,s,er):
+    output =synthesis(width_broadside_coupled_offset_stripline, [(b/2.0), (b/10.0), b,s,er], [0,1],target_value=[w,wo],init_value=[60,40], limits = [(5.0,200.0),(5.0,200.0)])
     return output[0] #(Zeven,Zodd)
 
 def broadside_coupled_suspended_stripline_analysis(arg, defaultunits):
@@ -2822,20 +2806,20 @@ def broadside_coupled_suspended_stripline_analysis(arg, defaultunits):
     arg = arg[:11]
     newargs = convert2pq(arg, defaultunits)
     w, b, t, s, er, tand, sigma, mu, roughness, freq, length = tuple(newargs)
-    Z_even,Z_odd,eeff_even,eeff_odd = Z_eeff_broadside_coupled_suspended_stripline(w,s,b,er)
+    z_even,Z_odd,eeff_even,eeff_odd = z_eeff_broadside_coupled_suspended_stripline(w,s,b,er)
     sd = skin_depth(freq, sigma, mu)
-    Z_even1, Z_odd1, eeff_even1, eeff_odd1 = Z_eeff_broadside_coupled_suspended_stripline(
+    z_even1, z_odd1, eeff_even1, eeff_odd1 = z_eeff_broadside_coupled_suspended_stripline(
         w - sd, s, b + sd, 1.0 )
-    Z_even2, Z_odd2, eeff_even2, eeff_odd2 = Z_eeff_broadside_coupled_suspended_stripline(w, s, b, 1.0)
+    z_even2, z_odd2, eeff_even2, eeff_odd2 = z_eeff_broadside_coupled_suspended_stripline(w, s, b, 1.0)
 
-    cond_loss_even = -pi * freq / Z_even / co * (Z_even2 - Z_even1) * 20.0 * log10(exp(1))  # dB/m, incremental inductance
-    cond_loss_odd = -pi * freq / Z_odd / co * (Z_odd2 - Z_odd1) * 20.0 * log10(exp(1))  # dB/m, incremental inductance
+    cond_loss_even = -pi * freq / z_even / co * (z_even2 - z_even1) * 20.0 * log10(exp(1))  # dB/m, incremental inductance
+    cond_loss_odd = -pi * freq / z_odd / co * (z_odd2 - z_odd1) * 20.0 * log10(exp(1))  # dB/m, incremental inductance
     diel_loss_even = dielectric_loss(eeff_even, er, freq, tand)
     diel_loss_odd = dielectric_loss(eeff_odd, er, freq, tand)
     deg_even = electrical_length(eeff_even, freq, length)
     deg_odd = electrical_length(eeff_odd, freq, length)
-    max_coupling = 20.0 * log10((fabs(Z_even - Z_odd)/ (Z_even + Z_odd)))
-    argout = [Z_even, Z_odd, deg_even, deg_odd, eeff_even, eeff_odd, cond_loss_even, cond_loss_odd, diel_loss_even, diel_loss_odd,max_coupling]
+    max_coupling = 20.0 * log10((fabs(z_even - z_odd)/ (z_even + z_odd)))
+    argout = [Z_even, z_odd, deg_even, deg_odd, eeff_even, eeff_odd, cond_loss_even, cond_loss_odd, diel_loss_even, diel_loss_odd,max_coupling]
     print("df ",len(arg),len(argout),len(defaultunits))
     arg = arg + [prettystring(argout[i], defaultunits[len(arg) + i])
                  for i in range(len(argout))]
@@ -2865,8 +2849,8 @@ def microstrip_step_in_width(w1, w2, eps_r, h, t, freq):
     if abs(w2-w1)>w1*0.01:
         eeff1 = er_eff_disp_thick_microstrip(w1, h, t, eps_r, freq)
         eeff2 = er_eff_disp_thick_microstrip(w2, h, t, eps_r, freq)
-        Z1 = Z_disp_thick_microstrip(w1, h, t, eps_r, freq)
-        Z2 = Z_disp_thick_microstrip(w2, h, t, eps_r, freq)
+        Z1 = z_disp_thick_microstrip(w1, h, t, eps_r, freq)
+        Z2 = z_disp_thick_microstrip(w2, h, t, eps_r, freq)
         C = sqrt(w1*w2)*((10.1*log10(eps_r)+2.33)*w1/w2-12.6*log10(eps_r)-3.17)*1e-12
         Ls = h*(40.5*(w1/w2-1)-75*log10(w1/w2)+0.2*(w1/w2-1)**2)*1e-9
         Lw1 = Z1*sqrt(eeff1)/co
@@ -2885,8 +2869,8 @@ def stripline_step_in_width2(w1, w2, eps_r, h1, h2, t, freq):
     DOES NOT WORK, may be problems in units"""
     w1, w2 = min(w1,w2), max(w1,w2)
     if abs(w2-w1)>w1*0.01:
-        Z1 = Z_thick_offset_stripline(w1, eps_r, h1, h2, t)
-        Z2 = Z_thick_offset_stripline(w2, eps_r, h1, h2, t)
+        Z1 = z_thick_offset_stripline(w1, eps_r, h1, h2, t)
+        Z2 = z_thick_offset_stripline(w2, eps_r, h1, h2, t)
         b = h1 + h2 + t
         d_= w1+2*b/pi*log(2.0)
         d = w2+2*b/pi*log(2.0)
@@ -2908,8 +2892,8 @@ def stripline_step_in_width(w1, w2, eps_r, h1, h2, t, freq):
     """ Reference: Transmission Line Design Handbook p. 350"""
     w1, w2 = min(w1,w2), max(w1,w2)
     if abs(w2-w1)>w1*0.01:
-        Z1 = Z_thick_offset_stripline(w1, eps_r, h1, h2, t)
-        Z2 = Z_thick_offset_stripline(w2, eps_r, h1, h2, t)
+        Z1 = z_thick_offset_stripline(w1, eps_r, h1, h2, t)
+        Z2 = z_thick_offset_stripline(w2, eps_r, h1, h2, t)
         b = h1 + h2 + t
         d1 = w1+2*b/pi*log(2.0)
         lg = co/freq/sqrt(eps_r)
@@ -2927,7 +2911,7 @@ def stripline_step_in_width(w1, w2, eps_r, h1, h2, t, freq):
                         0, 1]
     return ABCDmatrix # [A, B, C, D] list
 
-def Z_eeff_broadside_coupled_suspended_stripline(w,s,b,er):
+def z_eeff_broadside_coupled_suspended_stripline(w,s,b,er):
     """
     Ref: RF and Microwave Coupled-Line Circuits
     """
@@ -2987,9 +2971,9 @@ if __name__ == "__main__":
     # arg =["55mil","0.1mil","5mil", "20mil", "20mil", "2.2","0.001","10e9","1.0","0.0","10GHz","100mil","50","100"]
     # args=covered_suspended_microstripline_analysis(arg,[""]*17)
     # print(args)
-    # print(Z_eeff_suspended_stripline(55, 0.1, 5, 20, 20, 2.2, 1000))
-    # print(Z_eeff_grounded_cpw_thick(100e-6, 0.1e-6, 3.0, 100e-6, 127e-6))
-    # print(Z_coaxial(3.4, 80 , 140))
+    # print(z_eeff_suspended_stripline(55, 0.1, 5, 20, 20, 2.2, 1000))
+    # print(z_eeff_grounded_cpw_thick(100e-6, 0.1e-6, 3.0, 100e-6, 127e-6))
+    # print(z_coaxial(3.4, 80 , 140))
     # print(stripline_step_in_width(130e-6, 200e-6, 3, 100e-6, 300e-6, 30e-6, 77e9))
     # print(stripline_step_in_width2(130e-6, 200e-6, 3, 100e-6, 300e-6, 30e-6, 77e9))
     print(microstrip_synthesis(["10mil","5mil","1mil","3.0","0","10","5e8","1","0","77GHz","100mil","50.0","90","100"],[]))

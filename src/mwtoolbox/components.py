@@ -31,7 +31,7 @@ eta0 = free_space_wave_impedance.simplified.magnitude
 mu0 = free_space_permeability.simplified.magnitude
 eps0 = free_space_permittivity.simplified.magnitude
 
-def Zo_eeff_WireOnGroundedSubstrate(arg, defaultunits=None):
+def zo_eeff_wire_on_grounded_substrate(arg, defaultunits=None):
     """ Impedance and Effective Permittivity of Straight Wire Over Substrate.
             Reference:  Transmission Line Design Handbook, Wadell, s.151
             Note: eeff is the same as eeff of microstrip with w=2*d, t=0
@@ -63,7 +63,7 @@ def Zo_eeff_WireOnGroundedSubstrate(arg, defaultunits=None):
     return arg
 
 
-def L_StraightRoundWire(arg, defaultunits=None):
+def ind_straight_round_wire(arg, defaultunits=None):
     """ Inductance of a straight round wire.
     Reference:  Transmission Line Design Handbook, Wadell, s.380
 
@@ -102,7 +102,7 @@ def L_StraightRoundWire(arg, defaultunits=None):
     return arg
 
 
-def Zo_eeff_StraightWireOverSubstrate(arg, defaultunits=None):
+def zo_eeff_straight_wire_over_substrate(arg, defaultunits=None):
     """ Impedance and Effective Permittivity of Straight Wire Over Substrate.
     Reference:  Transmission Line Design Handbook, Wadell, s.151
 
@@ -135,7 +135,7 @@ def Zo_eeff_StraightWireOverSubstrate(arg, defaultunits=None):
     return arg
 
 
-def L_StraightFlatWire(arg, defaultunits=None):
+def ind_straight_flat_wire(arg, defaultunits=None):
     """ Inductance of a flat wire.
     Reference:  Transmission Line Design Handbook, Wadell, s.382
 
@@ -175,7 +175,7 @@ def L_StraightFlatWire(arg, defaultunits=None):
     return arg
 
 
-def L_microstrip_via_hole(arg, defaultunits=None):
+def ind_microstrip_via_hole(arg, defaultunits=None):
     """ Inductance of a via hole in microstrip.
     Reference:  Microstrip Via Hole Grounds in Microstrip.pdf
 
@@ -203,7 +203,7 @@ def L_microstrip_via_hole(arg, defaultunits=None):
     return arg
 
 
-def L_air_core_coil(arg, defaultunits=None):
+def ind_air_core_coil(arg, defaultunits=None):
     """ Inductance of a via hole in microstrip.
     Reference:  www.microwavecoil.com , Microwave Components Inc.
 
@@ -241,7 +241,7 @@ def L_air_core_coil(arg, defaultunits=None):
     return arg
 
 
-def L_BondWire(arg, defaultunits=None):
+def ind_bond_wire(arg, defaultunits=None):
     """ Inductance of a bond wire.
     Reference:  Transmission Line Design Handbook, Wadell, s.153
 
@@ -275,7 +275,7 @@ def L_BondWire(arg, defaultunits=None):
     return arg
 
 
-def Chebyshev_QWave_Impedance_Transformer(arg, defaultunits=None):
+def chebyshev_quarter_wave_impedance_transformer(arg, defaultunits=None):
     """ Chebyshev Quarter Wave Impedance Transformer.
     Reference:  Impedance Matching and Transformation.pdf + eski kod
 
@@ -351,7 +351,7 @@ def Chebyshev_QWave_Impedance_Transformer(arg, defaultunits=None):
     return arg
 
 
-def Binomial_QWave_Impedance_Transformer(arg, defaultunits=None):
+def binomial_quarter_wave_impedance_transformer(arg, defaultunits=None):
     """ Binomial Quarter Wave Impedance Transformer.
         Reference:  Impedance Matching and Transformation.pdf
 
@@ -395,7 +395,7 @@ def Binomial_QWave_Impedance_Transformer(arg, defaultunits=None):
     return arg
 
 
-def Tee_Attenuator_Synthesis(arg, defaultunits=None):
+def tee_attenuator_synthesis(arg, defaultunits=None):
     """ Tee Attenuator Synthesis.
 
     Args:
@@ -428,7 +428,7 @@ def Tee_Attenuator_Synthesis(arg, defaultunits=None):
     return arg
 
 
-def Tee_Attenuator_Analysis(arg, defaultunits=None):
+def tee_attenuator_analysis(arg, defaultunits=None):
     """ Tee Attenuator Analysis.
 
     Args:
@@ -468,7 +468,7 @@ def Tee_Attenuator_Analysis(arg, defaultunits=None):
     return arg
 
 
-def Pi_Attenuator_Synthesis(arg, defaultunits=None):
+def pi_attenuator_synthesis(arg, defaultunits=None):
     """ Pi Attenuator Analysis.
 
     Args:
@@ -502,7 +502,7 @@ def Pi_Attenuator_Synthesis(arg, defaultunits=None):
     return arg
 
 
-def Pi_Attenuator_Analysis(arg, defaultunits=None):
+def pi_attenuator_analysis(arg, defaultunits=None):
     """ Pi Attenuator Analysis.
 
     Args:
@@ -545,7 +545,7 @@ def Pi_Attenuator_Analysis(arg, defaultunits=None):
     return arg
 
 
-def Bridged_Tee_Attenuator_Synthesis(arg, defaultunits=None):
+def bridged_tee_attenuator_synthesis(arg, defaultunits=None):
     """ Bridged Tee Attenuator Synthesis.
 
     Args:
@@ -575,7 +575,7 @@ def Bridged_Tee_Attenuator_Synthesis(arg, defaultunits=None):
     return arg
 
 
-def Bridged_Tee_Attenuator_Analysis(arg, defaultunits=None):
+def bridged_tee_attenuator_analysis(arg, defaultunits=None):
     """ Bridged Tee Attenuator Analysis.
 
     Args:
@@ -597,12 +597,12 @@ def Bridged_Tee_Attenuator_Analysis(arg, defaultunits=None):
     arg = arg[:3]
     newargs = convert2pq(arg, defaultunits)
     Zo, Rs, Rp = tuple(newargs)
-    s = Triangle2StarTransformation(
+    s = triangle_to_star_transformation(
         [prettystring(x) for x in [0,0,0,Rs, Zo, Zo]], ["ohm", "ohm", "ohm", "ohm", "ohm", "ohm"])
     s = convert2pq(s)
     R1 = s[0]
     R2 = s[2] + Rp
-    temp = Tee_Attenuator_Analysis(
+    temp = tee_attenuator_analysis(
         [prettystring(x) for x in [Zo, R1, R2]], ["ohm", "ohm", "ohm", "", "", "", "", ""])
     s11 = temp[3]
     s21 = temp[4]
@@ -612,7 +612,7 @@ def Bridged_Tee_Attenuator_Analysis(arg, defaultunits=None):
     return arg
 
 
-def DualFrequencyTransformer(arg, defaultunits=None):
+def dual_frequency_transformer(arg, defaultunits=None):
     """ Dual Frequency Transformer.
     Reference:  A Small Dual Frequency Transformer in Two Sections
 
@@ -647,7 +647,7 @@ def DualFrequencyTransformer(arg, defaultunits=None):
                  for i in range(len(argout))]
     return arg
 
-def SymmetricLangeCoupler(arg, defaultunits=None):
+def symmetric_lange_coupler(arg, defaultunits=None):
     """ Symmetric Lange Coupler.
     Reference:  Microwave Circuits, Analysis and Computer-Aided Design, Fusco
 
@@ -684,7 +684,7 @@ def SymmetricLangeCoupler(arg, defaultunits=None):
     return arg
 
 
-def AWG2Dia(arg, defaultunits=None):
+def awg2dia(arg, defaultunits=None):
     """ Convert AWG to Diameter.
     Reference:  Wikipedia, Current rating is calculated through curve fit from online data.
 
@@ -715,7 +715,7 @@ def AWG2Dia(arg, defaultunits=None):
     return arg
 
 
-def Dia2AWG(arg, defaultunits=None):
+def dia2awg(arg, defaultunits=None):
     """ Convert Diameter to AWG.
     Reference:  Wikipedia
 
@@ -745,7 +745,7 @@ def Dia2AWG(arg, defaultunits=None):
     return arg
 
 
-def PCBTrackCurrentCapacityIPC(arg, defaultunits=None):
+def pcb_track_current_capacity_ipc(arg, defaultunits=None):
     """ PCB Track Current Capacity, IPC.
     Reference: IPC2221A
 
@@ -775,7 +775,7 @@ def PCBTrackCurrentCapacityIPC(arg, defaultunits=None):
     return arg
 
 
-def PCBTrackCurrentCapacity(arg, defaultunits=None):
+def pcb_track_current_capacity(arg, defaultunits=None):
     """ PCB Track Current Capacity.
 
     Args:
@@ -807,7 +807,7 @@ def PCBTrackCurrentCapacity(arg, defaultunits=None):
     return arg
 
 
-def OptimumMitered90DegMicrostripBend(arg, defaultunits=None):
+def optimum_mitered90_deg_microstrip_bend(arg, defaultunits=None):
     """ Optimum Mitered Microstrip Bend Parameters.
     Reference: Tranmission line design handbook, p.290
 
@@ -836,7 +836,7 @@ def OptimumMitered90DegMicrostripBend(arg, defaultunits=None):
     return arg
 
 
-def OptimumMiteredArbitraryAngleMicrostripBend(arg, defaultunits=None):
+def optimum_mitered_arbitrary_angle_microstrip_bend(arg, defaultunits=None):
     r""" Optimum Mitered Microstrip Bend Parameters.
     Reference: MWOHELP, MBENDA model
     Burada scipy.interpolate.griddata kullanildi ve maalesef extrapolation yapmiyor. Sinir disi degerlerde dogrudan en yakin deger kullanildi.
@@ -884,7 +884,7 @@ def OptimumMiteredArbitraryAngleMicrostripBend(arg, defaultunits=None):
     return arg
 
 
-def Interference_Phase_Amp_Error(arg, defaultunits=None):
+def interference_phase_amp_error(arg, defaultunits=None):
     r""" Maximum phase and amplitude variation of a signal in presence of an interfering signal.
 
     Args:
@@ -910,7 +910,7 @@ def Interference_Phase_Amp_Error(arg, defaultunits=None):
     return arg
 
 
-def ParallelPlateCap(arg, defaultunits=None):
+def parallel_plate_cap(arg, defaultunits=None):
     """ Parallel Plate Capacitance.
 
     Args:
@@ -947,7 +947,7 @@ def ParallelPlateCap(arg, defaultunits=None):
     return arg
 
 
-def CircularPlateCap(arg, defaultunits=None):
+def circular_plate_cap(arg, defaultunits=None):
     """ Circular Plate Capacitance.
 
     Args:
@@ -976,7 +976,7 @@ def CircularPlateCap(arg, defaultunits=None):
     return arg
 
 
-def Shorten90DegreeLine(arg, defaultunits=None):
+def shorten_90_degree_line(arg, defaultunits=None):
     """ Shortening 90 Degree Line with a capacitive load.
 
     Args:
@@ -1004,7 +1004,7 @@ def Shorten90DegreeLine(arg, defaultunits=None):
     arg.append(prettystring(cap, defaultunits[4]))
     return arg
 
-def Z_WG_TE10(er, a, b, freq, formulation=1):
+def z_wg_te10(er, a, b, freq, formulation=1):
     kc = (pi/ a)
     k = 2 * pi * freq * csqrt(er) / co
     beta = csqrt(k * k - kc * kc)
@@ -1019,7 +1019,7 @@ def Z_WG_TE10(er, a, b, freq, formulation=1):
     return imp
 
 
-def HomogeneousRectWaveguideParameters_TE(arg, defaultunits=None):
+def homogeneous_rect_waveguide_parameters_te(arg, defaultunits=None):
     """ Homogeneous Rectangular Waveguide Parameters.
     Reference:  Marcuvitz Waveguide Handbook s.253
 
@@ -1062,7 +1062,7 @@ def HomogeneousRectWaveguideParameters_TE(arg, defaultunits=None):
     k = 2 * pi * freq * csqrt(er) / co
     beta = csqrt(k * k - kc * kc)
     eta = (eta0/ csqrt(er))
-    imp_te = Z_WG_TE10(er, a, b, freq)
+    imp_te = z_wg_te10(er, a, b, freq)
     Rs = 1.0 / sigma / skin_depth
 
     # if (n==0):
@@ -1121,7 +1121,7 @@ def HomogeneousRectWaveguideParameters_TE(arg, defaultunits=None):
     return arg
 
 
-def InductivePostInWaveguide(arg, defaultunits=None):
+def inductive_post_in_waveguide(arg, defaultunits=None):
     """ Inductive Post In Waveguide.
     Reference:  Marcuvitz Waveguide Handbook s.257
 
@@ -1204,7 +1204,7 @@ def InductivePostInWaveguide(arg, defaultunits=None):
     return arg
 
 
-def InductiveWindowInWaveguide(arg, defaultunits=None):
+def inductive_window_in_waveguide(arg, defaultunits=None):
     """ Waveguide Width Step from Rectangular Waveguide to Evanescent Mode Rectangular Waveguide.
     Reference:  Marcuvitz Waveguide Handbook s.253
 
@@ -1274,7 +1274,7 @@ def InductiveWindowInWaveguide(arg, defaultunits=None):
     return arg
 
 
-def EvanescentWGEquivalent(arg, defaultunits=None):
+def evanescent_wg_equivalent(arg, defaultunits=None):
     """ Waveguide Width Step from Rectangular Waveguide to Evanescent Mode Rectangular Waveguide.
     Reference:  The Design of Evanescent Mode Waveguide Bandpass Filters for a Prescribed Insertion Loss Characteristic.pdf
             Model= Xp1,Xs1,Xp1 ya da Xs2,Xp2,Xs2 (p: shunt, s: series)
@@ -1320,7 +1320,7 @@ def EvanescentWGEquivalent(arg, defaultunits=None):
     return arg
 
 
-def EWG_ABCD(a, b, er, length, frek):
+def ewg_abcd(a, b, er, length, frek):
     # Referans:"The Design of Evanescent Mode Waveguide Bandpass Filters for a Prescribed Insertion Loss Characteristic.pdf"
     # Model= Xp1,Xs1,Xp1 ya da Xs2,Xp2,Xs2 (p: shunt, s: series)
     # Zo=jXo
@@ -1336,10 +1336,10 @@ def EWG_ABCD(a, b, er, length, frek):
     networks.append(shunt_z(1.0j * Xp1))
     networks.append(series_z(1.0j * Xs1))
     networks.append(shunt_z(1.0j * Xp1))
-    return CascadeNetworks(networks)
+    return cascade_networks(networks)
 
 
-def EWG_inv(a, b, er, length, frek):
+def ewg_inv(a, b, er, length, frek):
     # Referans:"The Design of Evanescent Mode Waveguide Bandpass Filters for a Prescribed Insertion Loss Characteristic.pdf"
     # Model= Xp1,Xs1,Xp1 ya da Xs2,Xp2,Xs2 (p: shunt, s: series)
     # Zo=jXo
@@ -1355,9 +1355,9 @@ def EWG_inv(a, b, er, length, frek):
     networks.append(shunt_z(-1.0j * Xs1))
     networks.append(series_z(1.0j * Xs1))
     networks.append(shunt_z(-1.0j * Xs1))
-    return CascadeNetworks(networks)
+    return cascade_networks(networks)
 
-def SIW_EquivalentWidth(w, d, s):
+def siw_equivalent_width(w, d, s):
     """Equivalent width of substrate integrated waveguide.
 
     Args:
@@ -1370,7 +1370,7 @@ def SIW_EquivalentWidth(w, d, s):
     """
     return w-d**2/0.95/s
 
-def RectWG2EvanescentRectWGStep(a1, a2):
+def rect_wg_to_evanescent_rect_wg_step(a1, a2):
     """ Waveguide Width Step from Rectangular Waveguide to Evanescent Mode Rectangular Waveguide.
     Reference:  The Design of Evanescent Mode Waveguide Bandpass Filters for a Prescribed Insertion Loss Characteristic.pdf
 
@@ -1400,7 +1400,7 @@ def RectWG2EvanescentRectWGStep(a1, a2):
     return arg
 
 
-def Star2TriangleTransformation(arg, defaultunits=None):
+def star_to_triangle_transformation(arg, defaultunits=None):
     """ Star network to Triangle network transformation.
             Reference:
             At star, z1 is connected to A-node, z2 is connected to B-node, z3 is connected to C-node
@@ -1433,7 +1433,7 @@ def Star2TriangleTransformation(arg, defaultunits=None):
     return arg
 
 
-def Triangle2StarTransformation(arg, defaultunits=None):
+def triangle_to_star_transformation(arg, defaultunits=None):
     """ Triangle network to Star network transformation.
     At star, z1 is connected to A-node, z2 is connected to B-node, z3 is connected to C-node
     At triangle, z1' is between A-B, z2' is between A-C, z3' is between B-C
@@ -1468,7 +1468,7 @@ def Triangle2StarTransformation(arg, defaultunits=None):
     return arg
 
 
-def GyselPowerDivider(arg, defaultunits=None):
+def gysel_power_divider(arg, defaultunits=None):
     """ Triangle network to Star network transformation.
     Reference:
        Zo1: 1. port impedance
@@ -1517,7 +1517,7 @@ def GyselPowerDivider(arg, defaultunits=None):
     return arg
 
 
-def DualTransformation1(arg, defaultunits=None):
+def dual_transformation1(arg, defaultunits=None):
     """ Dual Transformation 1.
     Reference:  Microstrip Filters for RF-Microwave Applications, s.25, Figure 2.6a
 
@@ -1556,7 +1556,7 @@ def DualTransformation1(arg, defaultunits=None):
     return arg
 
 
-def DualTransformation2(arg, defaultunits=None):
+def dual_transformation2(arg, defaultunits=None):
     """ Dual Transformation 1.
     Reference:  Microstrip Filters for RF-Microwave Applications, s.25, Figure 2.6b
 
@@ -1657,7 +1657,7 @@ def thermal_conductance_of_via_farm_view(arg, defaultunits):
     # gnd1.faceColor="r"
     return
 
-def Exponential_Taper_Impedance_Transformer(arg, defaultunits=None):
+def exponential_taper_impedance_transformer(arg, defaultunits=None):
     """ Exponential Impedance Taper.
     Reference:  Foundations for Microwave Engineering, Collin
 
@@ -1698,7 +1698,7 @@ def Exponential_Taper_Impedance_Transformer(arg, defaultunits=None):
     return arg
 
 
-def Triangular_Taper_Impedance_Transformer(arg, defaultunits=None):
+def triangular_taper_impedance_transformer(arg, defaultunits=None):
     """ Triangular Impedance Taper.
     Reference:  Foundations for Microwave Engineering, Collin
 
@@ -1743,7 +1743,7 @@ def Triangular_Taper_Impedance_Transformer(arg, defaultunits=None):
     arg.append(prettystring(max_gamma, defaultunits[6]))
     return arg
 
-def Patch_Antenna_Analysis(arg, defaultunits=None):
+def patch_antenna_analysis(arg, defaultunits=None):
     """ Calculates performance and impedance values for an N-section Chebyshev Impedance Taper.
     Ref: Overview of Microstrip Antennas (Jackson) (Presentation)
     Reference:  Foundations for Microwave Engineering, Collin
@@ -1794,7 +1794,7 @@ def Patch_Antenna_Analysis(arg, defaultunits=None):
     return arg
 
 
-def Chebyshev_Taper_Impedance_Transformer(arg, defaultunits=None):
+def chebyshev_taper_impedance_transformer(arg, defaultunits=None):
     """ Calculates performance and impedance values for an N-section Chebyshev Impedance Taper.
     Reference:  Foundations for Microwave Engineering, Collin
 
@@ -1836,7 +1836,7 @@ def Chebyshev_Taper_Impedance_Transformer(arg, defaultunits=None):
     arg.append(prettystring(max_gamma, defaultunits[6]))
     return arg
 
-def fcutoff_CWG(rad,eps_r=1, v=0, n=1, mode="TE"):
+def fcutoff_cwg(rad,eps_r=1, v=0, n=1, mode="TE"):
     r""" Computes the cutoff frequency of circular waveguide.
 
     Args:
@@ -1856,7 +1856,7 @@ def fcutoff_CWG(rad,eps_r=1, v=0, n=1, mode="TE"):
     fc= kc*co/2/np.pi/sqrt(eps_r)
     return fc
 
-def Z_CWG(rad,freq, eps_r=1, v=0, n=1, mode="TE"):
+def z_cwg(rad,freq, eps_r=1, v=0, n=1, mode="TE"):
     r""" Computes the wave impedance of circular waveguide.
 
     Args:
@@ -1873,15 +1873,15 @@ def Z_CWG(rad,freq, eps_r=1, v=0, n=1, mode="TE"):
     k=2*np.pi*freq*sqrt(eps_r)/co
     if mode=="TE":
         kc = jnp_zeros(v,n)/rad
-        beta= csqrt(k**2-kc**2)
-        Z= k*eta0/sqrt(eps_r)/beta
+        beta = csqrt(k**2-kc**2)
+        Z = k*eta0/sqrt(eps_r)/beta
     else: # mode=="TM" is assumed
         kc = jn_zeros(v,n)/rad
-        beta= csqrt(k**2-kc**2)
-        Z= beta*eta0/sqrt(eps_r)/k
+        beta = csqrt(k**2-kc**2)
+        Z = beta*eta0/sqrt(eps_r)/k
     return Z
 
-def Klopfenstein_Taper_Impedance_Transformer(arg, defaultunits=None):
+def klopfenstein_taper_impedance_transformer(arg, defaultunits=None):
     r""" Calculates performance and impedance values for an N-section Klopfenstein Impedance Taper.
     Reference:  Microwave Engineering, Pozar
 
@@ -1927,7 +1927,7 @@ def Klopfenstein_Taper_Impedance_Transformer(arg, defaultunits=None):
     if (ZL1 < Z01):
         z_n = np.flipud(z_n)  # numpy dizisini ters cevirme
 
-def Absorptive_Filter_Equalizer(arg, defaultunits=None):
+def absorptive_filter_equalizer(arg, defaultunits=None):
     r""" Equalizer using an absorptive filter composed of two coupled lines.
 
     Args:
@@ -1963,7 +1963,7 @@ def Absorptive_Filter_Equalizer(arg, defaultunits=None):
                  for i in range(len(argout))]
     return arg
 
-def LC_Balun(arg, defaultunits=None):
+def lc_balun(arg, defaultunits=None):
     r""" Calculate LC Balun.
 
     Args:
@@ -2015,4 +2015,4 @@ if __name__ == "__main__":
     # print GyselPowerDivider(["50","100","50","50","50","2"],["","","","","","","","","","","","","",""])
     # print
     # Exponential_Taper_Impedance_Transformer(["50","100","20","9","2"],[""]*7)
-    print(OptimumMiteredArbitraryAngleMicrostripBend(["300", "127", "90deg", "3"], ["um", "um", "deg", "um"]))
+    print(optimum_mitered_arbitrary_angle_microstrip_bend(["300", "127", "90deg", "3"], ["um", "um", "deg", "um"]))
