@@ -1,4 +1,0 @@
-quantities
-numpy
-scipy
-sympy
