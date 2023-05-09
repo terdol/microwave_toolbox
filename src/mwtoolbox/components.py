@@ -807,7 +807,7 @@ def pcb_track_current_capacity(arg, defaultunits=None):
     return arg
 
 
-def optimum_mitered90_deg_microstrip_bend(arg, defaultunits=None):
+def optimum_mitered_90_deg_microstrip_bend(arg, defaultunits=None):
     """ Optimum Mitered Microstrip Bend Parameters.
     Reference: Tranmission line design handbook, p.290
 

@@ -64,7 +64,7 @@ def skin_depth(f, sigma, mu=1.0, er=0.0):
     """
     return csqrt(1.0 / sigma / mu / mu0 / pi / f)*csqrt(csqrt(1+(2*pi*f*er*eps0/sigma)**2)+2*pi*f*er*eps0/sigma)
 
-def synthesis_bisection_1d(fonk, _args, k, target_value, init_value, limits = []):
+def synthesis_bisection_1d(fonk, _args, k, target_value, init_value, limits = None):
     """
     This function calculates x such that f(x)=y.
     This function is added because NLOPT version in =synthesis= function does not work fast.
@@ -86,7 +86,10 @@ def synthesis_bisection_1d(fonk, _args, k, target_value, init_value, limits = []
     args=_args[:]
     args[k] = init_value
     argsmid = args[:]
-    lim = limits[:]
+    if not limits:
+        lim = []
+    else:
+        lim = limits[:]
     tol = 1e-10
     tt=0
     midpoint=0.5*(lim[0]+lim[1])
@@ -114,7 +117,7 @@ def synthesis_bisection_1d(fonk, _args, k, target_value, init_value, limits = []
             tt=2
     return midpoint
 
-def synthesis(fonk, _args, k, target_value = [],init_value = [], limits = []):
+def synthesis(fonk, _args, k, target_value, init_value, limits):
     r"""Function that is used to calculate the parameter value of a function
     that will give target value. There are 2 versions in this function (SciPy and NLOPT).
     NLOPT is added to avoid SciPy for smaller package size for packed applications.
