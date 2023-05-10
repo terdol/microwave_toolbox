@@ -1277,8 +1277,8 @@ def inductive_window_in_waveguide(arg, defaultunits=None):
 def evanescent_wg_equivalent(arg, defaultunits=None):
     """ Waveguide Width Step from Rectangular Waveguide to Evanescent Mode Rectangular Waveguide.
     Reference:  The Design of Evanescent Mode Waveguide Bandpass Filters for a Prescribed Insertion Loss Characteristic.pdf
-            Model= Xp1,Xs1,Xp1 ya da Xs2,Xp2,Xs2 (p: shunt, s: series)
-            Zo=jXo
+    Model= Xp1,Xs1,Xp1 ya da Xs2,Xp2,Xs2 (p: shunt, s: series)
+    Zo=jXo
 
     Args:
         arg(list): First 5 arguments are inputs.
@@ -1471,16 +1471,16 @@ def triangle_to_star_transformation(arg, defaultunits=None):
 def gysel_power_divider(arg, defaultunits=None):
     """ Triangle network to Star network transformation.
     Reference:
-       Zo1: 1. port impedance
-       Zo2: 2. port impedance
-       Zo3: 3. port impedance
-       R1: first isolation resistor (2.porta yakin)
-       R2: second isolation resistor (3.porta yakin)
-       ratio: P2/P3 power ratio
-       Z1: impedance of transmission line between 1.port and 2.port
-       Z2: impedance of transmission line between 1.port and 3.port
-       Z3: impedance of transmission line between 2.port and isolation resistor
-       Z4: impedance of transmission line between 3.port and isolation resistor
+    Zo1: 1. port impedance
+    Zo2: 2. port impedance
+    Zo3: 3. port impedance
+    R1: first isolation resistor (2.porta yakin)
+    R2: second isolation resistor (3.porta yakin)
+    ratio: P2/P3 power ratio
+    Z1: impedance of transmission line between 1.port and 2.port
+    Z2: impedance of transmission line between 1.port and 3.port
+    Z3: impedance of transmission line between 2.port and isolation resistor
+    Z4: impedance of transmission line between 3.port and isolation resistor
 
     Args:
         arg(list): First 6 arguments are inputs.

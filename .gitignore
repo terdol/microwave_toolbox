@@ -7,6 +7,9 @@ sil/**
 __pycache__/
 __pycache__/*
 __pycache__/**
+src/*egg*
+src/mwtoolbox/.*
+src/mwtoolbox/*pycache*
 .unotes/
 .unotes/*
 .unotes/**

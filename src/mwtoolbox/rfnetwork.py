@@ -668,7 +668,7 @@ class spfile:
 
     def port_numbers_from_names2(self, *names):
         """
-        This function returns the list of port numbers corresponding to the port names given as input parameters. For each port name, the port number with closest name is returned.
+        This function returns the list of port numbers corresponding to the port names given as input parameters. For each port name, the port number with closest name is returned. Levenshtein distance is used.
 
         Args:
             names(str): Port names are given as arguments in order.
@@ -686,6 +686,30 @@ class spfile:
             else:
                 pn.append(dists[0][1])
         return tuple(pn)
+
+    def port_numbers_from_names3(self, *names, cutoff = 0.3):
+        """
+        This function returns the list of port numbers corresponding to the port names given as input parameters. For each port name, the port number with closest name is returned. Difflib builtin library is used. By default, a cutoff value of 0.3 is used and -1 is returned when no match is found for an input port name.
+
+        Args:
+            names(str): Port names are given as arguments in order.
+            cutoff(float, optional): Cutoff value used at difflib library. It should be between 0.0 and 1.0. 1.0 means is perfect match.
+
+        Returns:
+            list of port numbers in order.
+        """
+        import difflib
+        pnames = [x.lower() for x in self.port_names]
+        # pn = []
+        # for name in names:
+        #     closestmatch = difflib.get_close_matches(name.lower(), pnames, n=1, cutoff=0.3)
+        #     if len(closestmatch) == 0:
+        #         print(f"No match for {name}!")
+        #         pn.append(-1)
+        #     else:
+        #         pn.append(pnames.index(closestmatch[0])+1)
+        # return tuple(pn)
+        return tuple([pnames.index(closestmatch[0])+1 if len(closestmatch := difflib.get_close_matches(name.lower(), pnames, n=1, cutoff=0.3)) > 0 else -1 for name in names])
 
     def set_data_points(self, m, indices, x):
         """

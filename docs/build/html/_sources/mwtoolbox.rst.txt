@@ -60,18 +60,10 @@ mwtoolbox.networksym module
    :undoc-members:
    :show-inheritance:
 
-mwtoolbox.pysmith module
-------------------------
-
-.. automodule:: mwtoolbox.pysmith
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-mwtoolbox.touchstone module
+mwtoolbox.rfnetwork module
 ---------------------------
 
-.. automodule:: mwtoolbox.touchstone
+.. automodule:: mwtoolbox.rfnetwork
    :members:
    :undoc-members:
    :show-inheritance:

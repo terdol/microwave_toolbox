@@ -1,6 +1,6 @@
 import sys
 sys.path.append(r"c:\\users\\erdoel\\documents\\works\\python_works\\microwave_toolbox")
-from mwtoolbox.touchstone import *
+from mwtoolbox.rfnetwork import *
 # import network
 import itertools
 import numpy as np
@@ -146,4 +146,3 @@ plt.show()
 #ax[1].set_ylim([-30,0])
 #ax[2].set_ylim([-30,0])
 #plt.savefig("transition"+version+".png")
-
