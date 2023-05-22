@@ -1,8 +1,8 @@
 """
-pyexample.
+mwtoolbox
 
-An example python library.
+An python library for processing of RF/Microwave networks.
 """
 
-__version__ = "0.1.2"
+__version__ = "0.0.1"
 __author__ = 'Tuncay Erdöl'

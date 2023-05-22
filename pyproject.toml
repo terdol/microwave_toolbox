@@ -3,8 +3,8 @@ build-backend = 'setuptools.build_meta'
 requires = ['setuptools', 'wheel']
 
 [project]
-name = "mwtoolbox_terdol"
-version = "0.1.2"
+name = "mwtoolbox"
+version = "0.0.1"
 dependencies = ["quantities",
                 "numpy",
                 "scipy",
@@ -14,19 +14,19 @@ description="Microwave Toolbox"
 readme = "README.md"
 keywords = ["microwave", "rf", "s-parameters"]
 authors = [{ name = "Tuncay Erdöl", email = "terdol@hotmail.com"}]
-requires-python = ">=3.7"
-license = {text = "GPL-3.0-or-later"}
+requires-python = ">=3.8"
+license = {text = "MIT"}
 classifiers=[
 	"Development Status :: 3 - Alpha",
-	"License :: OSI Approved :: GNU General Public License v3 or later (GPLv3+)",
+	"License :: OSI Approved :: MIT License",
 	"Operating System :: OS Independent",
-    "Programming Language :: Python :: 3.7",
+    "Programming Language :: Python :: 3.8",
 	"Topic :: Scientific/Engineering"
 ]
 
 [tool.setuptools.packages.find]
 where = ["src"]
-include = ["*"]
+include = ["mwtoolbox"]
 
 [tool.yapfignore]
 ignore_patterns = [
@@ -88,7 +88,7 @@ stubPath = "C:/Users/Erdoel/Documents/Teknik/Python/typings_for_pyright"
 typeCheckingMode = "basic"
 
 [tool.bumpver]
-current_version = "0.1.2"
+current_version = "0.0.1"
 version_pattern = "MAJOR.MINOR.PATCH"
 commit_message = "bump version {old_version} -> {new_version}"
 commit = true
@@ -103,4 +103,3 @@ push = true
 "README.md" = [
     "{version}"
 ]
-

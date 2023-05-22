@@ -355,10 +355,7 @@ def convert2pq(sayilar, defaultunits=None):
         convert2pq.defaultunits=deepcopy(defaultunits)
     elif (convert2pq.sayilar == sayilar) and convert2pq.defaultunits == defaultunits:
         return convert2pq.sonuc
-
-
-
-
+        
 #    if not hasattr(convert2pq, "regex"):
          # make regex static variable, did not provide any performance advantage
 #        # pattern for matching real numbers
@@ -374,7 +371,6 @@ def convert2pq(sayilar, defaultunits=None):
                 continue
         except:
             pass
-        #print "sss ",i, " ",sayi
         if isinstance(sayi, pq.Quantity):
             sonuc = sayi
             sonuclar.append(float(sonuc.simplified.magnitude))
@@ -414,7 +410,6 @@ def convert2pq(sayilar, defaultunits=None):
     convert2pq.sayilar = deepcopy(sayilar)
     convert2pq.defaultunits=deepcopy(defaultunits)
     return convert2pq.sonuc
-    # return sonuclar
 
 def flatten(x):
     """Flatten (an irregular) list of lists"""
