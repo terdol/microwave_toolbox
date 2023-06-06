@@ -100,6 +100,7 @@ push = true
     'current_version = "{version}"', 'version = "{version}"'
 ]
 "src/mwtoolbox/__init__.py" = ['__version__ = "{version}"']
+"src/em/__init__.py" = ['__version__ = "{version}"']
 "README.md" = [
     "{version}"
 ]

@@ -15,16 +15,16 @@ eta0=free_space_wave_impedance.simplified.magnitude
 mu0=free_space_permeability.simplified.magnitude
 eps0=free_space_permittivity.simplified.magnitude
 
-def Z_WG_TE10(er,a,b,freq):
+def zwg_te10(er,a,b,freq):
     return z_wg_te10(er,a,b,freq,1)
 
-def EWG_ABCD(a,b,er,length,frek):
+def ewg_abcd(a,b,er,length,frek):
     #Referans:"The Design of Evanescent Mode Waveguide Bandpass Filters for a Prescribed Insertion Loss Characteristic.pdf"
     # Model= Xp1,Xs1,Xp1 ya da Xs2,Xp2,Xs2 (p: shunt, s: series)
     #Zo=jXo
     lcutoff=2*a
     wavelength=co/csqrt(er)/frek
-    Xo=abs(Z_WG_TE10(er,a,b,frek))
+    Xo=abs(zwg_te10(er,a,b,frek))
     gamma=2.*pi/wavelength*csqrt(((wavelength/lcutoff))**2.0-1.)
     Xs1=Xo*sinh(gamma*length)
     Xs2=Xo*tanh(gamma*length/2.0)
@@ -38,23 +38,23 @@ def EWG_ABCD(a,b,er,length,frek):
     #networks.append(shunt_z(-1.0j*Xo*tanh(gamma*length)))
     return cascade_networks(networks)
 
-def MinimumButterworthFilterDegree(L,fstop):
+def minimum_butterworth_filter_degree(L,fstop):
     #KAYNAK:Microstrip Filters for RF Microwave Applications s.42, fstop: normalize frekans, L: fstoptaki bastirma (dB)
     return int((log10(pow(10.0,0.1*L)-1.0)/(2.0*log10(fstop))))+1
 
-def ButterworthFilterPrototype(n):
+def butterworth_filter_prototype(n):
     #KAYNAK:Microstrip Filters for RF Microwave Applications s.41, fstop'taki bastirmayi da soyler, fstop: normalize frekans
     g=list(range(n+2))
     g[0]=g[n+1]=1.0
     g[1:n+1]=2.*sin((2*np.array(list(range(1, n+1)))-1)*pi/2./n)
     return g, -10.0*log10(1.0+pow(fstop,2*n))
 
-def MinimumChebyshevFilterDegree(Lar,Las,fstop):
+def minimum_chebyshev_filter_degree(Lar,Las,fstop):
     #KAYNAK:Microstrip Filters for RF Microwave Applications s.41, fstop: normalize frekans, Las: fstoptaki bastirma (dB), Lar: bant ici ripple (dB)
     temp=csqrt(((pow(10.0,0.1*Las)-1)/(pow(10.0,0.1*Lar)-1)))
     return int((arccosh(temp)/arccosh(fstop)))+1
 
-def ChebyshevFilterPrototype(n,Lar):
+def chebyshev_filter_prototype(n,Lar):
     #n-odd, KAYNAK:Microstrip Filters for RF Microwave Applications s.42, Lar: passband ripple in dB
     beta=-log(tanh((Lar/17.37)))
     gamma=sinh(beta/2/n)
@@ -66,7 +66,8 @@ def ChebyshevFilterPrototype(n,Lar):
         g[i]=1./g[i-1]*4*sin((2*i-1)*pi/2/n)*sin((2*i-3)*pi/2/n)/(gamma**2+sin((i-1)*pi/n)**2)
         i=i+1
     return g
-def LPFilterFromPrototype(g,Zo,fc,type=1):
+
+def lp_filter_from_prototype(g,Zo,fc,type=1):
     #n-odd, KAYNAK:Microstrip Filters for RF Microwave Applications s.42
     #type=1, starts with L
     #type=2, starts with C
@@ -90,7 +91,8 @@ def LPFilterFromPrototype(g,Zo,fc,type=1):
                 g[i]=g[i]*Zo
                 sonuc=sonuc+str(i)+"-Series L-"+str(g[i])+" H\n"
     return sonuc
-def HPFilterFromPrototype(g,Zo,fc,type=1):
+
+def hp_filter_from_prototype(g,Zo,fc,type=1):
     #n-odd, KAYNAK:Microstrip Filters for RF Microwave Applications s.42
     #type=1, starts with L
     #type=2, starts with C
@@ -114,7 +116,8 @@ def HPFilterFromPrototype(g,Zo,fc,type=1):
                 g[i]=g[i]*Zo
                 sonuc= sonuc+str(i)+"-Shunt L-"+str(g[i])+" H\n"
     return sonuc
-def BPFilterFromPrototype(g,Zo,fc,FBW,type=1):
+
+def bp_filter_from_prototype(g,Zo,fc,FBW,type=1):
     #n-odd, KAYNAK:Microstrip Filters for RF Microwave Applications s.42
     #type=1, starts with L
     #type=2, starts with C
@@ -134,7 +137,7 @@ def BPFilterFromPrototype(g,Zo,fc,FBW,type=1):
                 sonuc=sonuc+" Ls"+str(i)+" "+str(g[i]*Zo/FBW/2./pi/fc)+"H\t Cs"+str(i)+" "+str(FBW/2./pi/fc/Zo/g[i])+"F\n"
     return sonuc
 
-def BSFilterFromPrototype(g,Zo,fc,FBW,type=1):
+def bs_filter_from_prototype(g,Zo,fc,FBW,type=1):
     #n-odd, KAYNAK:Microstrip Filters for RF Microwave Applications s.42
     #type=1, starts with L
     #type=2, starts with C
@@ -154,7 +157,7 @@ def BSFilterFromPrototype(g,Zo,fc,FBW,type=1):
                 sonuc=sonuc+" Lp"+str(i)+" "+str(g[i]*Zo*FBW/2./pi/fc)+"H\t Cp"+str(i)+" "+str(1./FBW/2./pi/fc/Zo/g[i])+"F\n"
     return sonuc
 
-def ChebyshevSteppedImpedanceLPFilter(Zo,maxreturnloss,N,theta):
+def chebyshev_stepped_impedance_lp_filter(Zo,maxreturnloss,N,theta):
     #alpha=sin(theta), theta=ue'lerin bant kenarindaki elektriksel uzunlugu
     rip=csqrt((1./(10.**((maxreturnloss/10.0))-1)))
     alpha=sin(theta/180.*pi)
@@ -177,7 +180,7 @@ def ChebyshevSteppedImpedanceLPFilter(Zo,maxreturnloss,N,theta):
             Z.append((Zo/x))
     return Z
 
-def InductivePostWGFilter(er, a, b, maxreturnloss,N, d,  x,  f1, f2):
+def inductive_post_wg_filter(er, a, b, maxreturnloss,N, d,  x,  f1, f2):
     #kaynak: theory and design of microwave filters s.220
     fcenter=((f1+f2)/2.)
     fc=co/csqrt(er)/2./a
@@ -254,7 +257,7 @@ def filter_with_j_inverter2(g,Zo,fcenter,fbw,caps): #first and last inverters ar
     return (jvalues[1:-1]/(Zo*Zo*jvalues[0]*jvalues[0])),inds*Zo*Zo*jvalues[0]*jvalues[0],(caps/(Zo*Zo*jvalues[0]*jvalues[0]))
 
 
-def EvanescentWGFilter_3(g,n,Lj,a,a1,b,er, fcenter,fbw,alpha):
+def evanescent_wg_filter3(g,n,Lj,a,a1,b,er, fcenter,fbw,alpha):
     #order=3,
     #n:WG junction transformer ratio (@fcenter)
     #Zj:abs(WG junction impedance)  (@fcenter)
@@ -264,8 +267,8 @@ def EvanescentWGFilter_3(g,n,Lj,a,a1,b,er, fcenter,fbw,alpha):
     lcutoff=2*a1
     wavelength=co/csqrt(er)/fcenter
     w0=2.0*pi*fcenter
-    Xo=abs(Z_WG_TE10(er,a1,b,fcenter))
-    Zo=abs(Z_WG_TE10(er,a,b,fcenter))
+    Xo=abs(zwg_te10(er,a1,b,fcenter))
+    Zo=abs(zwg_te10(er,a,b,fcenter))
     #Zo=100.0
     C2=g[0]*g[1]*alpha/fbw/w0/n/n/Zo
     C1=g[0]*g[1]/fbw/w0/n/n/Zo
@@ -280,7 +283,7 @@ def EvanescentWGFilter_3(g,n,Lj,a,a1,b,er, fcenter,fbw,alpha):
     L2=L2*Xo*tanh(gamma*length)/(Xo*tanh(gamma*length)-2*w0*L2)
     return (length,C1,C2,L1,L2,J)
 
-def EvanescentWGFilter_4(g,n,Lj,a,a1,b,er, fcenter,fbw,alpha):
+def evanescent_wg_filter4(g,n,Lj,a,a1,b,er, fcenter,fbw,alpha):
     #generalized version of EvanescentWGFilter_3
     #n:WG junction transformer ratio (@fcenter)
     #Zj:abs(WG junction impedance)  (@fcenter)
@@ -290,8 +293,8 @@ def EvanescentWGFilter_4(g,n,Lj,a,a1,b,er, fcenter,fbw,alpha):
     lcutoff=2*a1
     wavelength=co/csqrt(er)/fcenter
     w0=2.0*pi*fcenter
-    Xo=abs(Z_WG_TE10(er,a1,b,fcenter))
-    Zo=abs(Z_WG_TE10(er,a,b,fcenter))
+    Xo=abs(zwg_te10(er,a1,b,fcenter))
+    Zo=abs(zwg_te10(er,a,b,fcenter))
     #Zo=100.0
     C2=g[0]*g[1]*alpha/fbw/w0/n/n/Zo
     C1=g[0]*g[1]/fbw/w0/n/n/Zo
@@ -380,8 +383,8 @@ if __name__ == "__main__":
         networks.append(transformer((1./n)))
         networks.append(shunt_z(2.0j*pi*frek*X))
         abcd=cascade_networks(networks)
-        sonuc.append(abcd2s(abcd,Z_WG_TE10(er,a,b,frek))[0,1])
-    #sonuc.append(abcd2s(abcd,Z_WG_TE10(er,a,b,8.5e9))[0,1])
+        sonuc.append(abcd2s(abcd,zwg_te10(er,a,b,frek))[0,1])
+    #sonuc.append(abcd2s(abcd,zwg_te10(er,a,b,8.5e9))[0,1])
     plot(linspace(6e9,10e9,101),20.0*log10(abs(array(sonuc))))
     grid()
     xlabel("Frequency")

@@ -28,14 +28,6 @@ mwtoolbox.genel module
    :undoc-members:
    :show-inheritance:
 
-mwtoolbox.mwutils module
-------------------------
-
-.. automodule:: mwtoolbox.mwutils
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
 mwtoolbox.myconstants module
 ----------------------------
 

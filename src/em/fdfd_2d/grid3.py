@@ -196,14 +196,16 @@ class CartesianGrid():
         return (0,0)
 
     def customgrid(self, dmin, dmax, index, rmax, shape, axis, policy):
-        """ index: subregion numarasi
-            rmax =      maximum ratio between neighboring grids
-            shape =      0- fine-coarse
+        """
+        Args:
+            index (int): subregion numarasi
+            rmax (float):      maximum ratio between neighboring grids
+            shape (int):0- fine-coarse
                         1- coarse-fine
                         2- fine-coarse-fine
                         3- uniform
-            policy =    0- minimum number of grids
-                        1- minimum ratio, smoother transition
+            policy (int):   0- minimum number of grids
+                            1- minimum ratio, smoother transition
         """
 
         dx = self.dx
@@ -423,14 +425,18 @@ class CartesianGrid():
         return grids
 
     def nugrid(self, delta1, delta2, rmax, length, shape,  policy=0,cc=0.99):
-        """ rmax =      maximum ratio between neighboring grids
-            length=     total length
-            shape =      0- fine-coarse
-                        1- coarse-fine
-                        2- fine-coarse-fine
-                        3- uniform
-            policy =    0- minimum number of grids
-                        1- minimum ratio, smoother transition
+        """
+        Nonuniform grid generation.
+
+        Args:
+            rmax (float): Maximum ratio between neighboring grids
+            length (float):     total length
+            shape (int):    0- fine-coarse
+                            1- coarse-fine
+                            2- fine-coarse-fine
+                            3- uniform
+            policy (int):   0- minimum number of grids
+                            1- minimum ratio, smoother transition
         """
         r=rmax
 
@@ -527,5 +533,5 @@ if __name__ == "__main__":
     print("t2-t1= "+str(t2-t1))
     print("t3-t2= "+str(t3-t2))
     print("t4-t3= "+str(t4-t3))
-    print("t5-t4= "+str(t5-t4))                   
+    print("t5-t4= "+str(t5-t4))
     pass

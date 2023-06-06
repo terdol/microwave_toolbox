@@ -1,5 +1,7 @@
 #-*-coding:utf-8-*-
-
+"""
+This module involves analysis and synthesis of RF/Microwave transmission lines.
+"""
 # from constants import *
 import mwtoolbox.myconstants as mycons
 from .genel import *

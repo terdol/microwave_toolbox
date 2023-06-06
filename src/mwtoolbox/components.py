@@ -1,8 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-Created on Tue Nov 17 11:52:33 2009
-
-@author: Tuncay
+This module involves the calculations related to RF/Microwave components.
 """
 from .myconstants import *
 # from scipy.special import iv, scipy.special.ellipk, scipy.special.ellipe
