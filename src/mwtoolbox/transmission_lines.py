@@ -66,7 +66,7 @@ def skin_depth(f, sigma, mu=1.0, er=0.0):
     """
     return csqrt(1.0 / sigma / mu / mu0 / pi / f)*csqrt(csqrt(1+(2*pi*f*er*eps0/sigma)**2)+2*pi*f*er*eps0/sigma)
 
-def synthesis_bisection_1d(fonk, _args, k, target_value, init_value, limits = None):
+def synthesis_bisection_1d(fonk, _args, k, target_value, init_value, limits = None, tol = 1e-10):
     """
     This function calculates x such that f(x)=y.
     This function is added because NLOPT version in =synthesis= function does not work fast.
@@ -92,7 +92,7 @@ def synthesis_bisection_1d(fonk, _args, k, target_value, init_value, limits = No
         lim = []
     else:
         lim = limits[:]
-    tol = 1e-10
+    # print(f"{tol=}")
     tt=0
     midpoint=0.5*(lim[0]+lim[1])
     while((fonk(*argsmid)-target_value)**2>tol):
@@ -111,12 +111,19 @@ def synthesis_bisection_1d(fonk, _args, k, target_value, init_value, limits = No
         argsmid[k]=midpoint
         fmid=fonk(*argsmid)-target_value
 
-        if fmin*fmid<0:
+        if (fmin<0 and fmid>0) or (fmin>0 and fmid<0):
             lim[1]=midpoint
             tt=1
-        elif fmax*fmid<0:
+        elif (fmax<0 and fmid>0) or (fmax>0 and fmid<0):
             lim[0]=midpoint
             tt=2
+        else:
+            print("Out of bounds!")
+            return None
+            # if fmid < 0:
+            #     return lim[0]
+            # else:
+            #     return lim[1]
     return midpoint
 
 def synthesis(fonk, _args, k, target_value, init_value, limits):
@@ -265,6 +272,80 @@ def z_qs_thick_microstrip(w, h, er, t=0):
     x = er_eff_qs_thin_microstrip(wr, h, er)
     return (z_qs_thin_microstrip(wr, h, 1)/ csqrt(x))
 
+def z_qs_thick_embedded_microstrip_1(w, h1, h2, er, t=0):
+    r"""Impedance of microstrip transmission line ignoring dispersion.
+    Reference:  https://www.eeweb.com/tools/embedded-microstrip-impedance/ (IPC-2141A paragraph 4.2.3)
+    TODO: Has a problem, does not give meaningful results.
+
+    Args:
+        w (float): Line width.
+        h1 (float): Thickness of the substrate under the line.
+        h2 (float): Total thickness of the substrate.
+        er (float): Dielectric permittivity of the substrate.
+        t (float): Thickness of metal.
+
+    Returns:
+        float: Characteristic impedance.
+    """
+    eeff = er_eff_qs_thick_embedded_microstrip(w, h1, h2, er, t)
+    temp = np.sqrt(np.exp(-2*h2/h1)+er/eeff*(1-np.exp(-2*h2/h1)))
+    z0 = z_qs_thick_microstrip_wheeler(w, h2, er, t) / temp
+    return z0
+
+def z_qs_thick_embedded_microstrip(w, h, h1, er, t):
+    r"""Impedance of embedded microstrip transmission line ignoring dispersion.
+    Reference:  https://www.rfwireless-world.com/calculators/Embedded-Microstrip-Impedance-Calculator.html
+
+    Args:
+        w (float): Line width.
+        h (float): Thickness of the substrate under the line.
+        h1 (float): Total thickness of the substrate.
+        er (float): Dielectric permittivity of the substrate.
+        t (float): Thickness of metal.
+
+    Returns:
+        float: Characteristic impedance.
+    """
+    eeff = er_eff_qs_thick_embedded_microstrip(w, h, h1, er, t)
+    z0 = 60/np.sqrt(eeff) * np.log(5.98*h/(0.8*w+t))
+    return z0
+
+def er_eff_qs_thick_embedded_microstrip(w, h, h1, er, t):
+    r"""Effective permittivity of embedded microstrip transmission line ignoring dispersion.
+    Reference:  https://www.rfwireless-world.com/calculators/Embedded-Microstrip-Impedance-Calculator.html
+
+    Args:
+        w (float): Line width.
+        h (float): Thickness of the substrate under the line.
+        h1 (float): Total thickness of the substrate.
+        er (float): Dielectric permittivity of the substrate.
+        t (float): Thickness of metal.
+
+    Returns:
+        float: Characteristic impedance.
+    """
+    eeff = er*(1-np.exp(-1.55*h1/h))
+    return eeff
+
+def z_qs_thick_microstrip_wheeler(w, h, er, t):
+    r"""Impedance of microstrip transmission line ignoring dispersion.
+    Reference:  Wheeler's Equation ( https://www.eeweb.com/tools/microstrip/ )
+
+    Args:
+        w (float): Line width (in m).
+        h (float): Thickness of the substrate (in m).
+        er (float): Dielectric permittivity of the substrate.
+        t (float. optional): Thickness of metal. Default is 0.
+
+    Returns:
+        float: Characteristic impedance.
+    """
+    weff = w + (t/np.pi) * np.log(4*np.exp(1)/np.sqrt((t/h)**2+(t/(w*np.pi+1.1*t*np.pi))**2))*(er+1)/(2*er)
+    x1 = 4 * (14*er+8)/(11*er)*(h/weff)
+    x2 = 16 * (h/weff)**2 * ((14*er+8)/(11*er))**2 + (er+1)/(2*er)*np.pi**2
+    x2 = np.sqrt(x2)
+    z0 = eta0 / (2*np.pi*np.sqrt(2*(er+1)))*np.log(1 + 4*h/weff*(x1+x2))
+    return z0
 
 def er_eff_qs_thick_microstrip(w, h, er, t=0.0):
     """
@@ -523,7 +604,9 @@ def microstrip_synthesis(arg, defaultunits):
     _, h, t, er, tand, Kd, sigma, mu, roughness, freq, _, Z, rad, dT = tuple(
         newargs)
     w = h
-    w = synthesis_bisection_1d(z_disp_thick_microstrip, [w, h, t, er, freq], 0, Z , h , [h/1000.0,1000.0*h])
+    w = synthesis_bisection_1d(z_disp_thick_microstrip, [w, h, t, er, freq], 0, Z , h , [h/1000.0,1000.0*h], tol = 1e-5)
+    if not w: # no solution is found
+        return None
     eeff = er_eff_disp_thick_microstrip(w, h, t, er, freq)
     length = physical_length(eeff, freq, rad)
     cond_loss = conductor_loss_microstrip(
@@ -685,44 +768,52 @@ def z_thick_stripline(w, b, t, er):
     else:
         return Zo1
 
-def z_thick_offset_stripline(w, eps_r, h1, h2, t):
+def z_thick_offset_stripline(w, eps_r, h1, h2, t, imp=1):
     """Characteristic impedance of asymmetric stripline transmission line.
-    Ref: Transmssion Line Design Handbook, p. 129
+    Ref-1: Transmssion Line Design Handbook, p. 129
+    Ref-2: Compare with ref "IPC-2141A, https://www.eeweb.com/tools/asymmetric-stripline-impedance/"
 
     Args:
-        w (float): Line width (in m).
+        w (float): Line width.
         eps_r (float): Dielectric permittivity of the substrate.
-        h1 (float): Thickness of the substrate under the line (in m).
-        h2 (float): Thickness of the substrate above the line (in m).
-        t (float): Thickness of the metal (in m).
+        h1 (float): Thickness of the substrate under the line.
+        h2 (float): Thickness of the substrate above the line.
+        t (float): Thickness of the metal.
+        imp (int, optional): Type of implementation. Default is 1.
 
     Returns:
         float: Characteristic impedance.
     """
-    # print(w, eps_r, h1, h2, t)
-    seterr(all='raise')
-    def F(x):
-        return (1-2*x)*((1-x)*log(1-x)-x*log(x))
-    b = h1+h2+t
-    s= fabs(h1-h2)
-    eeff = eps_r
-    cl=(b-s)/2
-    if w/(b-t)<0.35:
-        x=min(t,w)/max(w,t)
-        d0 = w*(0.5008+1.0235*x-1.023*x**2+1.1564*x**3-0.4749*x**4)
-        A=sin(pi*cl/b)/tanh(pi*d0/2/b)
-        z_0 = eta0*arccosh(A)/2/pi/sqrt(eps_r)
-    else:
-        if w/(b-t)<t/b:
-            k = 1.0/cosh(pi*w/2/b)
-            k_ = tanh(pi*w/2/b)
-            w_b = w/b+(1-t/b)**8*(ekpolyfit(k_)/ekpolyfit(k)-2/pi*log(2)-w/b)
+    if imp==1:
+        seterr(all='raise')
+        def F(x):
+            return (1-2*x)*((1-x)*log(1-x)-x*log(x))
+        b = h1+h2+t
+        s= fabs(h1-h2)
+        eeff = eps_r
+        cl=(b-s)/2
+        if w/(b-t)<0.35:
+            x=min(t,w)/max(w,t)
+            d0 = w*(0.5008+1.0235*x-1.023*x**2+1.1564*x**3-0.4749*x**4)
+            A=sin(pi*cl/b)/tanh(pi*d0/2/b)
+            z_0 = eta0*arccosh(A)/2/pi/sqrt(eps_r)
         else:
-            w_b = w/b
-        beta = 1-t/b
-        gamma = cl/b-t/2/b
-        cf=eps_r*eps0/pi*(2*log(1/gamma/(beta-gamma))+1/gamma/(beta-gamma)*(F(t/b)-F(cl/b)))
-        z_0=eta0/sqrt(eps_r)/(w_b/gamma+w_b/(beta-gamma)+2*cf/eps_r/eps0)
+            if w/(b-t)<t/b:
+                k = 1.0/cosh(pi*w/2/b)
+                k_ = tanh(pi*w/2/b)
+                w_b = w/b+(1-t/b)**8*(ekpolyfit(k_)/ekpolyfit(k)-2/pi*log(2)-w/b)
+            else:
+                w_b = w/b
+            beta = 1-t/b
+            gamma = cl/b-t/2/b
+            cf=eps_r*eps0/pi*(2*log(1/gamma/(beta-gamma))+1/gamma/(beta-gamma)*(F(t/b)-F(cl/b)))
+            z_0=eta0/sqrt(eps_r)/(w_b/gamma+w_b/(beta-gamma)+2*cf/eps_r/eps0)
+
+    elif imp==2:
+        Z0air = 2 * (z_thick_stripline(w, h1, t, eps_r) * z_thick_stripline(w, h2, t, eps_r)) /  (z_thick_stripline(w, h1, t, eps_r) + z_thick_stripline(w, h2, t, eps_r))
+        dZ0air = 0.0325 * np.pi * Z0air**2 * np.pow(0.5-0.5*(2*h1+t)/(h1+h2+t),2.2) * np.pow((t+w)/(h1+h2+t),2.9)
+        z_0 = 1.0/np.sqrt(eps_r) * (z_thick_stripline(w, h1+h2+t, t, 1) - dZ0air)
+
     return z_0
 
 def conductor_loss_stripline(w, b, t, er, f, sigma, mu):
@@ -830,7 +921,8 @@ def stripline_synthesis(arg, defaultunits):
     w = (b/ 5.0)
 
     w = synthesis_bisection_1d(z_thick_stripline, [w, b, t, er], 0, Zc , b , [b/1000.0,1000.0*b])
-
+    if not w: # no solution is found
+        return None
     print("ee ", eeff, freq, elec_length)
     length = physical_length(eeff, freq, elec_length)
     cond_loss = conductor_loss_stripline(w, b, t, er, freq, sigma, mu)
@@ -999,6 +1091,8 @@ def coaxial_line_synthesis(arg, defaultunits):
     r, d, er, tand, sigma, mu, roughness, freq, length, Z, deg = tuple(newargs)
     output = synthesis(lambda *x: z_coaxial(*x), [er, r, d], [1], target_value=[Z],
                     init_value=[(d/2.0)], limits=[((d/ 100.0), d * 100.0)])
+    if not output: # no solution is found
+        return None
     r = output[0]
     Z = z_coaxial(er, r, d)
     eeff = er
@@ -1195,6 +1289,8 @@ def rectangular_coaxial_line_synthesis(arg, defaultunits):
     w, t, a, b, er, tand, sigma, mu, roughness, freq, length, Z ,deg = tuple(newargs)
     output = synthesis(lambda *x: z_rectangular_coaxial(*x), [w, b, t, a, er], [0], target_value=[Z],
                     init_value=[b], limits=[((b/ 100.0), b * 100.0)])
+    if not output: # no solution is found
+        return None
     w = output[0]
     Z = z_rectangular_coaxial(w, b, t, a, er)
     eeff = er
@@ -1279,6 +1375,8 @@ def square_coaxial_line_square_center_synthesis(arg, defaultunits):
     er, r, d, tand, sigma, mu, roughness, freq, length, Z, deg = tuple(newargs)
     output = synthesis(lambda *x: z_square_coaxial_square_center(*x), [er, r, d], [1], target_value=[Z],
                     init_value=[(d/2.0)], limits=[((d/ 1000.0), d * 1000.0)])
+    if not output: # no solution is found
+        return None
     r = output[0]
     Z = z_square_coaxial_square_center(er, r, d)
     eeff = er
@@ -1655,6 +1753,8 @@ def covered_suspended_microstripline_synthesis(arg, defaultunits):
     newargs = convert2pq(arg, defaultunits)
     w, t, h, hu, hl, er, tand, sigma, mu, roughness, freq, length, Z, deg = tuple(newargs)
     output = synthesis(lambda *x:Z_eeff_suspended_stripline(*x)[0], [w, t, h, hu, hl, er, freq], [0],target_value=[Z],init_value=[b], limits = [((a/1000.0),a*1000.0)])
+    if not output: # no solution is found
+        return None
     w= output[0]
     Z, eeff = z_eeff_suspended_stripline(w, t, h, hu, hl, er, freq)
     length = physical_length(eeff, freq, deg)
@@ -1749,9 +1849,9 @@ def suspended_microstrip_synthesis(arg, defaultunits):
     newargs = convert2pq(arg, defaultunits)
     w, t, a, b, er, tand, sigma, mu, roughness, freq, length, Z, deg = tuple(newargs)
     output =synthesis(lambda *x:Z_eeff_suspended_microstripline(*x)[0], [w, t, a, b, er, freq], [0],target_value=[Z],init_value=[b], limits = [((a/1000.0),a*1000.0)])
+    if not output: # no solution is found
+        return None
     w= output[0]
-
-
     Z, eeff = z_eeff_suspended_microstripline(w, t, a, b, er, freq)
     length = physical_length(eeff, freq, deg)
     sd = skin_depth(freq, sigma, mu)
@@ -1870,6 +1970,8 @@ def shielded_suspended_stripline_synthesis(arg, defaultunits):
     w, h, b, a, er, tand, sigma, mu, roughness, freq, length,Z,deg = tuple(newargs)
     # Z, eeff = z_eeff_shielded_suspended_stripline(w, h, b, a, er)
     output =synthesis(lambda *x:Z_eeff_shielded_suspended_stripline(*x)[0], [w, h, b, a, er], [0],target_value=[Z],init_value=[b], limits = [((a/100.0),a*100.0)])
+    if not output: # no solution is found
+        return None
     w= output[0]
     Z, eeff = z_eeff_shielded_suspended_stripline(w, h, b, a, er)
     length = physical_length(eeff, freq, deg)
@@ -1935,7 +2037,7 @@ def z_eeff_cpw(w, er, s, h, t):
     Zo=30.0*pi*ellipk(kt_)/ellipk(kt)/csqrt(eeff_t)
     return (Zo, eeff_t)
 
-def grounded_cpw_analysis(arg, defaultunits):
+def grounded_coplanar_waveguide_analysis(arg, defaultunits):
     r"""Analysis function for the grounded coplanar waveguide transmission line.
     Ref: Coplanar waveguide circuits, components and systems s89
 
@@ -1944,7 +2046,7 @@ def grounded_cpw_analysis(arg, defaultunits):
 
             1. Line Width (w);length
             2. Line Spacing (s);length
-            3. Metal Thickness (th);length
+            3. Metal Thickness (t);length
             4. Dielectric Permittivity (<font size=+2>&epsilon;<sub>r</sub></font>);
             5. Substrate Thickness (h);length
             6. Dielectric Loss Tangent ;
@@ -1974,7 +2076,7 @@ def grounded_cpw_analysis(arg, defaultunits):
     arg = arg + [prettystring(argout[i], defaultunits[len(arg) + i]) for i in range(len(argout))]
     return arg
 
-def grounded_cpw_synthesis(arg, defaultunits):
+def grounded_coplanar_waveguide_synthesis(arg, defaultunits):
     r"""Synthesis function for the grounded coplanar waveguide transmission line.
     Ref: Coplanar waveguide circuits, components and systems s89
 
@@ -2004,6 +2106,8 @@ def grounded_cpw_synthesis(arg, defaultunits):
     w, s, er, h, tand, sigma, mu, roughness, freq, length, Z, deg = tuple(newargs)
     output = synthesis(lambda *x: z_eeff_grounded_cpw(*x)[0], [w, er, s, h], [0], target_value=[Z],
                     init_value=[h], limits=[((h/ 1000.0), h * 1000.0)])
+    if not output: # no solution is found
+        return None
     w = output[0]
     Z, eeff = z_eeff_grounded_cpw(w, er, s, h)
     length = physical_length(eeff, freq, deg)
@@ -2103,7 +2207,8 @@ def covered_grounded_coplanar_waveguide_synthesis(arg, defaultunits):
     newargs = convert2pq(arg, defaultunits)
     w, s, h, er, h1, tand, sigma, mu, roughness, freq, length, Z, deg = tuple(newargs)
     w = synthesis_bisection_1d(lambda *x: z_eeff_covered_grounded_cpw(*x)[0], [w, s, h, er, h1], 0, Z,h, limits=[h/ 100.0, h * 100.0])
-
+    if not w: # no solution is found
+        return None
     Z, eeff = z_eeff_covered_grounded_cpw(w, s, h, er, h1)
     length = physical_length(eeff, freq, deg)
     sd = skin_depth(freq, sigma, mu)
@@ -2238,6 +2343,9 @@ def edge_coupled_microstrip_synthesis(arg, defaultunits):
     newargs = convert2pq(arg, defaultunits)
     w, s, t, h, er, tand, sigma, mu, roughness, freq, length, z_even, z_odd, elec_length = tuple(newargs)
     output =synthesis(lambda *x:Z_eeff_edge_coupled_microstrip(*x)[:2], [w, er, t, h, s, freq], [0,4],target_value=[Z_even, z_odd],init_value=[h,h], limits = [((h/100.0),h*10.0),((h/100.0),h*10.0)])
+
+    if not output: # no solution is found
+        return None
     w, s= tuple(output[0])
     z_even, z_odd, eeff_even, eeff_odd = z_eeff_edge_coupled_microstrip(
         w, er, t, h, s, freq)
@@ -2527,6 +2635,8 @@ def edge_coupled_stripline_synthesis(arg, defaultunits):
     newargs = convert2pq(arg, defaultunits)
     w, er, t, b, s, tand, sigma, mu, roughness, freq, length, z_even, z_odd, elec_length = tuple(newargs)
     output = synthesis(z_edge_coupled_thick_symmetric_stripline, [w, b, s, er, t], [0,2], [Z_even, z_odd] , [w,s] , [((b/100.0),10.0*b)])
+    if not output: # no solution is found
+        return None
     w, s= tuple(output[0])
     arg[0]=prettystring(w, defaultunits[0])
     arg[4]=prettystring(s, defaultunits[4])
@@ -2634,6 +2744,8 @@ def symmetric_shielded_stripline_synthesis(arg, defaultunits):
     w, b, t, g, er, tand, sigma, mu, roughness, freq, length, Z, deg = tuple(newargs)
     output = synthesis(lambda *x: z_shielded_stripline(*x), [w, b, t, g, er], [0], target_value=[Z],
                     init_value=[b], limits=[((b/ 1000.0), b * 1000.0)])
+    if not output: # no solution is found
+        return None
     w = output[0]
     Z = z_shielded_stripline(w, b, t, g, er)
     eeff = er
@@ -2977,7 +3089,7 @@ broadside_coupled_stripline_analysis = broadside_offset_coupled_stripline_analys
 #symmetrical_shielded_stripline_analysis = shielded_stripline_analysis
 suspended_icrostripline_analysis = suspended_microstrip_analysis
 shielded_suspended_stripline_analysis = shielded_suspended_stripline_analysis
-grounded_coplanar_waveguide_analysis = grounded_cpw_analysis
+# grounded_coplanar_waveguide_analysis = grounded_cpw_analysis
 #covered_grounded_coplanar_waveguide_analysis = covered_grounded_cpw_analysis
 eccentric_coaxial_line_analysis = eccentric_coaxial_analysis
 #rectangular_coaxial_line_analysis = rectangular_coaxial_analysis
@@ -2992,7 +3104,7 @@ edge_coupled_microstrip_analysis = edge_coupled_microstrip_analysis
 # shielded_suspended_stripline_synthesis = shielded_suspended_stripline_synthesis
 #symmetrical_shielded_stripline_synthesis = shielded_stripline_synthesis
 suspended_microstripline_synthesis = suspended_microstrip_synthesis
-grounded_coplanar_waveguide_synthesis = grounded_cpw_synthesis
+# grounded_coplanar_waveguide_synthesis = grounded_cpw_synthesis
 edge_coupled_microstrip_synthesis = edge_coupled_microstrip_synthesis
 edge_coupled_stripline_synthesis = edge_coupled_stripline_synthesis
 broadside_coupled_stripline_synthesis = broadside_offset_coupled_stripline_synthesis
@@ -3007,36 +3119,3 @@ if __name__ == "__main__":
     # print(stripline_step_in_width(130e-6, 200e-6, 3, 100e-6, 300e-6, 30e-6, 77e9))
     # print(stripline_step_in_width2(130e-6, 200e-6, 3, 100e-6, 300e-6, 30e-6, 77e9))
     print(microstrip_synthesis(["10mil","5mil","1mil","3.0","0","10","5e8","1","0","77GHz","100mil","50.0","90","100"],[]))
-    """Synthesis function for microstrip transmission lines.
-
-    Args:
-        arg(list): First 13 arguments are inputs.
-
-            1. Line Width ;length
-            2. Substrate Thickness ;length
-            3. Metal Thickness ;length
-            4. Dielectric Permittivity (<font size=+2>&epsilon;<sub>r</sub></font>);
-            5. Dielectric Loss Tangent ;
-            6. Dielectric Thermal Conductivity ;   thermal conductivity
-            7. Metal Conductivity ; electrical conductivity
-            8. Metal Permeability ;
-            9. Roughness ;length
-            10. Frequency ; frequency
-            11. Physical Length ;length
-            12. Impedance ;   impedance
-            13. Electrical Length ;  angle
-            14. Max Temp Difference (<sup>o</sup>C) ;
-            15. <font size=+2>&epsilon;<sub>eff</sub></font> ;
-            16. Conductor Loss ;  loss per length
-            17. Dielectric Loss ; loss per length
-            18. Skin Depth ;length
-            19. Cutoff Frequency for TE1 mode ; frequency
-            20. Transverse Resonance Frequency; frequency
-            21. Frequency Limit for Coupling to Surface Modes ; frequency
-            22. Time Delay ; time
-            23. L  per unit length ;
-            24. C per unit length ;
-            25. Surface Impedance ; impedance
-            26. Average Rated Power ; power
-            27. Max DC Current ; current
-    """

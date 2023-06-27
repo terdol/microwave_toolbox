@@ -983,7 +983,7 @@ def shorten_90_degree_line(arg, defaultunits=None):
             1. Impedance (Zo); impedance
             2. Center Frequency ;  frequency
             3. Electrical Length (theta) ; angle
-            4. Impedance (Z); impedance
+            4. Impedance (Zx); impedance
             5. Capacitance ; capacitance
 
         defaultunits(list, optional): Default units for quantities in *arg* list. Default is [] which means SI units will be used if no unit is given in *arg*.

@@ -24,10 +24,10 @@ copyright = '2023, Tuncay Erdöl'
 author = 'Tuncay Erdöl'
 
 # The full version, including alpha/beta/rc tags
-release = '0.1.0'
+release = '0.0.1'
 
 ditaa = "java"
-ditaa_args = ["-jar", r"C:\Users\Erdoel\Programlar\ditaa.jar"]
+ditaa_args = ["-jar", r"C:\Users\Erdoel\Programlar\Ditaa\ditaa.jar"]
 ditaa_log_enable = True
 
 # -- General configuration ---------------------------------------------------
@@ -41,6 +41,7 @@ extensions = [
     'sphinx.ext.mathjax',
     'sphinx.ext.todo',
     'sphinx.ext.napoleon',
+    'sphinx.ext.githubpages',
     'sphinxcontrib.ditaa',
 ]
 napoleon_google_docstring = True
