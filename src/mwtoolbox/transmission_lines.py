@@ -272,7 +272,7 @@ def z_qs_thick_microstrip(w, h, er, t=0):
     x = er_eff_qs_thin_microstrip(wr, h, er)
     return (z_qs_thin_microstrip(wr, h, 1)/ csqrt(x))
 
-def z_qs_thick_embedded_microstrip_1(w, h1, h2, er, t=0):
+def z_qs_thick_embedded_microstrip(w, h1, h2, er, t=0):
     r"""Impedance of microstrip transmission line ignoring dispersion.
     Reference:  https://www.eeweb.com/tools/embedded-microstrip-impedance/ (IPC-2141A paragraph 4.2.3)
     TODO: Has a problem, does not give meaningful results.
@@ -292,7 +292,7 @@ def z_qs_thick_embedded_microstrip_1(w, h1, h2, er, t=0):
     z0 = z_qs_thick_microstrip_wheeler(w, h2, er, t) / temp
     return z0
 
-def z_qs_thick_embedded_microstrip(w, h, h1, er, t):
+def z_qs_thick_embedded_microstrip_1(w, h, h1, er, t):
     r"""Impedance of embedded microstrip transmission line ignoring dispersion.
     Reference:  https://www.rfwireless-world.com/calculators/Embedded-Microstrip-Impedance-Calculator.html
 
@@ -669,10 +669,8 @@ def microstrip_analysis(arg, defaultunits):
     eeff = er_eff_disp_thick_microstrip(w, h, t, er, freq)
     Z = z_disp_thick_microstrip(w, h, t, er, freq)
     deg = electrical_length(eeff, freq, length)
-    cond_loss = conductor_loss_microstrip(
-        w, h, t, er, sigma, mu, roughness, freq)
-    Pave = average_power_rating_thick_microstrip(
-        w, h, t, er, freq, tand, sigma, mu, roughness, Kd, dT)
+    cond_loss = conductor_loss_microstrip(w, h, t, er, sigma, mu, roughness, freq)
+    Pave = average_power_rating_thick_microstrip(w, h, t, er, freq, tand, sigma, mu, roughness, Kd, dT)
     skindepth = skin_depth(freq, sigma, mu)
     diel_loss = dielectric_loss(eeff, er, freq, tand)
     f_te1 = cutoff_frequency_for_TE1_mode_microstrip(er, h)
@@ -685,6 +683,102 @@ def microstrip_analysis(arg, defaultunits):
                  for i in range(len(argout))]
     return arg
 
+def embedded_microstrip_synthesis(arg, defaultunits):
+    """Synthesis function for embedded microstrip transmission lines.
+
+    Args:
+        arg(list): First 13 arguments are inputs.
+
+            1. Line Width (w);length
+            2. Trace Elevation (H1);length
+            3. Substrate Thickness (H2);length
+            4. Metal Thickness (t);length
+            5. Dielectric Permittivity (<font size=+2>&epsilon;<sub>r</sub></font>);
+            6. Dielectric Loss Tangent ;
+            7. Metal Conductivity ; electrical conductivity
+            8. Metal Permeability ;
+            9. Roughness ;length
+            10. Frequency ; frequency
+            11. Physical Length ;length
+            12. Impedance ;   impedance
+            13. Electrical Length ;  angle
+            14. <font size=+2>&epsilon;<sub>eff</sub></font> ;
+            15. Conductor Loss ;  loss per length
+            16. Dielectric Loss ; loss per length
+            17. Skin Depth ;length
+            18. Time Delay ; time
+            19. L  per unit length ;
+            20. C per unit length ;
+            21. Surface Impedance ; impedance
+    """
+
+    if len(defaultunits) == 0:
+        defaultunits = [""] * len(arg) * 3
+    arg = arg[:13]
+    newargs = convert2pq(arg, defaultunits)
+    _, h1, h2, t, er, tand, sigma, mu, roughness, freq, _, Z, rad = tuple(newargs)
+    w = h1
+    w = synthesis_bisection_1d(z_qs_thick_embedded_microstrip, [w, h1, h2, er, t], 0, Z , h1 , [h1/1000.0,1000.0*h1], tol = 1e-5)
+    if not w: # no solution is found
+        return None
+    eeff = er_eff_qs_thick_embedded_microstrip(w, h1, h2, er, t)
+    Z = z_qs_thick_embedded_microstrip(w, h1, h2, er, t)
+    length = physical_length(eeff, freq, rad)
+    cond_loss = conductor_loss_embedded_microstrip(w, h1, h2, t, er, freq, sigma, mu)
+    skindepth = skin_depth(freq, sigma, mu)
+    diel_loss = dielectric_loss(eeff, er, freq, tand)
+    arg[0] = prettystring(w, defaultunits[0])
+    arg[10] = prettystring(length, defaultunits[10])
+    argout = [eeff, cond_loss, diel_loss, skindepth, (length/ ( (co/
+              csqrt(eeff)) )), csqrt(eeff) * Z / co, csqrt(eeff) / Z / co, 1.0 / skindepth / sigma]
+    arg = arg + [prettystring(argout[i], defaultunits[len(arg) + i])
+                 for i in range(len(argout))]
+    return arg
+
+
+def embedded_microstrip_analysis(arg, defaultunits):
+    r"""Analysis function for embedded microstrip transmission lines.
+
+    Args:
+        arg(list): First 11 arguments are inputs.
+
+            1. Line Width (w);length
+            2. Trace Elevation (H1);length
+            3. Substrate Thickness (H2);length
+            4. Metal Thickness (t);length
+            5. Dielectric Permittivity (<font size=+2>&epsilon;<sub>r</sub></font>);
+            6. Dielectric Loss Tangent ;
+            7. Metal Conductivity ; electrical conductivity
+            8. Metal Permeability ;
+            9. Roughness ;length
+            10. Frequency ; frequency
+            11. Physical Length ;length
+            12. Impedance ;   impedance
+            13. Electrical Length ;  angle
+            14. <font size=+2>&epsilon;<sub>eff</sub></font> ;
+            15. Conductor Loss ;  loss per length
+            16. Dielectric Loss ; loss per length
+            17. Skin Depth ;length
+            18. Time Delay ; time
+            19. L  per unit length ;
+            20. C per unit length ;
+            21. Surface Impedance ; impedance
+    """
+
+    arg = arg[:11]
+    newargs = convert2pq(arg, defaultunits)
+    w, h1, h2, t, er, tand, sigma, mu, roughness, freq, length = tuple(newargs)
+    eeff = er_eff_qs_thick_embedded_microstrip(w, h1, h2, er, t)
+    Z = z_qs_thick_embedded_microstrip(w, h1, h2, er, t)
+    deg = electrical_length(eeff, freq, length)
+    cond_loss = conductor_loss_embedded_microstrip(w, h1, h2, t, er, freq, sigma, mu)
+    skindepth = skin_depth(freq, sigma, mu)
+    diel_loss = dielectric_loss(eeff, er, freq, tand)
+    argout = [Z, deg, eeff, cond_loss, diel_loss, skindepth, (length/
+              ( (co/ csqrt(eeff)) )), csqrt(eeff) * Z / co, csqrt(eeff) / Z / co, 1.0 / skindepth / sigma]
+    arg = arg + [prettystring(argout[i], defaultunits[len(arg) + i])
+                 for i in range(len(argout))]
+    return arg
 
 
 def microstrip_analysis_view(arg, defaultunits):
@@ -835,6 +929,27 @@ def conductor_loss_stripline(w, b, t, er, f, sigma, mu):
     z1 = z_thick_stripline(w - sd, b + sd, t - sd, 1.0)
     z2 = z_thick_stripline(w, b, t, 1.0)
     z = z_thick_stripline(w, b, t, er)
+    return ( - pi * f / co * (z1 - z2)) /z  * 20.0 * log10(exp(1))
+
+def conductor_loss_embedded_microstrip(w, h, h1, t, er, f, sigma, mu):
+    """Calculation of conductor loss of stripline with incremental inductance rule.
+
+    Args:
+        w (float): Width of line (in m).
+        b (float): Thickness of the substrate (in m).
+        t (float): Thickness of the metal trace (in m).
+        er (float): Dielectric permittivity.
+        f (float): Frequency (in Hz).
+        sigma (float): Electrical conductivity of metal trace.
+        mu (float): Magnetic permeability of metal trace.
+
+    Returns:
+        float: Conductor loss in dB/m.
+    """
+    sd = skin_depth(f, sigma, mu)
+    z1 = z_qs_thick_embedded_microstrip(w - sd, h + sd, h1, 1.0, t - sd)
+    z2 = z_qs_thick_embedded_microstrip(w, h, h1, t, 1.0)
+    z = z_qs_thick_embedded_microstrip(w, h, h1, t, er)
     return ( - pi * f / co * (z1 - z2)) /z  * 20.0 * log10(exp(1))
 
 

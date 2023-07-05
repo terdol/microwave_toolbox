@@ -491,10 +491,10 @@ class fdfd_2d:
         # sx.nlayer = pmllayers[:2]
         # sy.nlayer = pmllayers[-2:]
         import scipy.sparse
-        print("metalnodesx ",metalnodesx)
-        print("metalnodesy ",metalnodesy)
-        print("metalnodesz ",metalnodesz)
-        print("cloops ",cloops)
+        # print("metalnodesx ",metalnodesx)
+        # print("metalnodesy ",metalnodesy)
+        # print("metalnodesz ",metalnodesz)
+        # print("cloops ",cloops)
         # print("vline ",vline)
 
         ko = 2 * np.pi * freq / sabitler.speed_of_light
@@ -886,7 +886,7 @@ class fdfd_2d:
         for cloop in cloops:
             for loop in cloop:
                 func,i,j,dd = loop
-                print(f"loop {i} {j} {dd}")
+                # print(f"loop {i} {j} {dd}")
                 px=[]
                 py=[]
                 if func=="hxn":
@@ -1116,13 +1116,10 @@ class fdfd_2d:
                 Quantity = np.abs(magH)
                 nz.autoscale(magH)
             X, Y = np.meshgrid(xi, yi)
-            #ekran.figure.gca().cla()
             temp = axes.contourf(X, Y, Quantity, color='black', density=10.0)
             if self.plot_field_cb:
-                self.plot_field_cb.ax.clear()
-                self.plot_field_cb = figure.colorbar(temp, cax = self.plot_field_cb.ax)
-            else:
-                self.plot_field_cb = figure.colorbar(temp)
+                self.plot_field_cb.remove()
+            self.plot_field_cb = figure.colorbar(temp)
         else:
             if comp=="E_t":
                 nz.autoscale(magE)

@@ -957,7 +957,7 @@ class spfile:
                 elif x[0]!="!":
                     lines.append(x.split("!")[0].strip())
                 else:
-                    if "Gamma" in x:
+                    if x.strip().startswith("Gamma"):
                         tempportgamma = x.replace("!","").replace("Gamma","").strip().split()
                         while index<len(linesread)-1:
                             index=index+1
@@ -979,7 +979,7 @@ class spfile:
                         if len(tempportgamma)==ps*ps:
                             tempportgamma=[tempportgamma[i*i-1] for i in range(1,ps+1)]
                         gammas.append(tempportgamma)
-                    if "Port Impedance" in x:
+                    if x.strip().startswith("Port Impedance"):
                         tempportimp = x.replace("!","").replace("Port Impedance","").strip().split()
                         while index<len(linesread)-1:
                             index=index+1
