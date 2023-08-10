@@ -7,7 +7,7 @@ try:
     import scipy.interpolate
     import scipy.optimize
     import scipy.signal
-except:
+except ImportError:
     pass
 
 
@@ -19,7 +19,7 @@ from copy import deepcopy
 import mwtoolbox.network as network
 import itertools
 from .genel import smooth, flatten, blackman_window, cmp, str_distance
-from .myconstants import c0, mu0, eps0
+from .myconstants import c0
 import inspect
 import re
 from collections import defaultdict
@@ -36,24 +36,35 @@ def extract_rlgc(spr,length):
     Returns:
         tuple: tuple of two complex numpy arrays (Inductance per unit length, Characteristic impedance of the line).
     """
-    freqs = np.array(spr.freqs)
+    freqs = np.asarray(spr.freqs)
     spr.s2abcd()
     spr.s2t()
     T11=np.array(spr.tdata[:,0])
     C=np.array(spr.abcddata[:,2])
     B=np.array(spr.abcddata[:,1])
     Zo=np.sqrt(B/C)
-    gamma=-1/length*np.log(T11)
+    gamma=-np.log(T11)/length
     Xs = Zo/gamma
     IndpL = np.imag(Xs)/(2*np.pi*freqs*length)
     return IndpL, Zo
 
 def write_impedance_as_s1p(filename, frequencies, Z):
+    """Write impedance data in the form of s1p file with 50Ohm
+    reference impedance.
+
+    Args:
+        filename(string): Output filename.
+        frequencies(numpy.ndarray or list): Frequency array to which impedance data
+            corresponds.
+        Z(numpy.ndarray or list): Impedance array.
+    """
     out=open(filename,"w")
-    data = (Z-50.0)/(Z+50.0)
-    #print("# GHz S RI R 50",end="\n",file=out)
-    print("# GHz S RI",end="\n",file=out)
-    for f,realpart,imagpart in zip(frequencies/1e9,np.real(data),np.imag(data)):
+    Zn = np.asarray(Z)
+    freqs = np.asarray(frequencies)
+    data = (Zn-50.0)/(Zn+50.0)
+    print("# GHz S RI R 50",end="\n",file=out)
+    # print("# GHz S RI",end="\n",file=out)
+    for f,realpart,imagpart in zip(freqs/1e9,np.real(data),np.imag(data)):
         print("%2.12f    %-12.12f    %-12.12f" %(f,realpart,imagpart),end="\n",file=out)
     out.close()
 
@@ -112,8 +123,10 @@ def generate_multiport_spfile(conf_filename, output_filename):
 
     conffile.close()
     temp = []
-    for i in [list(k) for k in target_indices]:
-        temp = temp + i
+    # for i in [list(k) for k in target_indices]:
+    #     temp = temp + i
+    for k in target_indices:
+        temp += list(k)
     n_ports = max(temp)
     # fill missing target_indices using reciprocity
     for i in range(1,n_ports+1):
@@ -263,7 +276,7 @@ def untermination_method_old(g1,g2,g3,gL1,gL2,gL3,returnS2P=False, freqs=None):
     S11 = -(Z3-Z1)/(Y1-Y3)
     S22 = a+b*S11
     S21 = np.sqrt((g1-S11)*(1-S22*gL1)/gL1)
-    if returnS2P==True:
+    if returnS2P:
         if freqs is None:
             freqs=np.linspace(1e9,10e9,len(g1))
         ph = np.unwrap(np.angle(S21,deg=0))
@@ -318,7 +331,7 @@ def untermination_method(g1,g2,g3,gL1,gL2,gL3,returnS2P=False, freqs=None):
         S22[i]= x[0]
         S11[i]= x[2]
         S21[i]= np.sqrt((x[2]*x[0]-x[1]))
-    if returnS2P==True:
+    if returnS2P:
         if freqs is None:
             freqs=np.linspace(1e9,10e9,len(g1))
         ph = np.unwrap(np.angle(S21,deg=0))
@@ -433,7 +446,7 @@ def trl_launcher_extraction(thru_file, line_file, reflect_file, refstd=False):
         elif "o" in refstd:
             refstd = True
         else:
-            print("Wring string argument for refstd parameter!")
+            print("Wrong string argument for refstd parameter!")
     if isinstance(thru_file, spfile):
         Tthru = thru_file
     else:
@@ -498,7 +511,7 @@ def trl_launcher_extraction(thru_file, line_file, reflect_file, refstd=False):
 
         gref=x7*(1+x4*s11s[i])/(1+x3*s11s[i])
         # print("gref=",gref,s11s[i])
-        if refstd==False:
+        if refstd is False:
             if np.real(gref)>0:
                 x7=-x7
         else:
@@ -917,7 +930,7 @@ class spfile:
                 return 0
 
         try:
-            f=open(file_name,'r')
+            f = open(file_name,'r')
         except:
             print("Error opening the file: "+file_name+"\n")
             return 0
@@ -957,7 +970,7 @@ class spfile:
                 elif x[0]!="!":
                     lines.append(x.split("!")[0].strip())
                 else:
-                    if x.strip().startswith("Gamma"):
+                    if x.strip().startswith("! Gamma"):
                         tempportgamma = x.replace("!","").replace("Gamma","").strip().split()
                         while index<len(linesread)-1:
                             index=index+1
@@ -971,7 +984,7 @@ class spfile:
                                 if "Port" in x:
                                     break
                                 else:
-                                    tempportgamma = tempportgamma + x.replace("!","").strip().split()
+                                    tempportgamma += x.replace("!","").strip().split()
 
                         tempportgamma=[float(tempportgamma[2*i])+1j*float(tempportgamma[2*i+1]) for i in range(round(len(tempportgamma)/2))]
 
@@ -979,7 +992,8 @@ class spfile:
                         if len(tempportgamma)==ps*ps:
                             tempportgamma=[tempportgamma[i*i-1] for i in range(1,ps+1)]
                         gammas.append(tempportgamma)
-                    if x.strip().startswith("Port Impedance"):
+                    
+                    if x.strip().startswith("! Port Impedance"):
                         tempportimp = x.replace("!","").replace("Port Impedance","").strip().split()
                         while index<len(linesread)-1:
                             index=index+1
@@ -990,7 +1004,7 @@ class spfile:
                                 index=index-1
                                 break
                             else:
-                                tempportimp = tempportimp + x.replace("!","").strip().split()
+                                tempportimp += x.replace("!","").strip().split()
                         tempportimp=[float(tempportimp[2*i])+1j*float(tempportimp[2*i+1]) for i in range(round(len(tempportimp)/2))]
 
                         #  The reason of the following correction: N-port Gamma and Impedances comments are exported in the Driven Terminal mode as NxN while in Modal mode there are exported as 1xN. (https://github.com/scikit-rf/scikit-rf/issues/354)
@@ -1001,6 +1015,7 @@ class spfile:
         if len(portnames.keys())>ps:
             print("Port names read from file is larger than the port quantity!")
             return
+            
         if len(imps)>0:
             imps2=[[arr[i] for arr in imps] for i in range(ps)]
         if len(gammas)>0:
@@ -1012,8 +1027,10 @@ class spfile:
         for i,pn in portnames.items():
             self.port_names[i-1]=pn
         x=lines[0]
+        
         self.file_data_format,self.file_freq_unit,refimpedance=parse_format(x)
-        if refimpedance==None:
+        
+        if refimpedance is None:
             if len(imps)==0:
                 self.refimpedance=[50.0]*ps
             else:
@@ -1413,7 +1430,7 @@ class spfile:
             g=np.abs(s21)/np.abs(s12)*(K-csqrt(K*K-1))
             gain=gain+[g]
         gain = np.array(gain)
-        if dB==True:
+        if dB:
             return 10*np.log10(gain)
         else:
             return gain
@@ -1467,7 +1484,7 @@ class spfile:
         s22=tsp.S(2,2)
         Gout=s22+s12*s21*GS/(1-s11*GS)
         gain=(1-np.abs(GS)**2)/np.abs(1-s11*GS)**2*np.abs(s21)**2/(1-np.abs(Gout)**2)
-        if dB==True:
+        if dB:
             return 10*np.log10(gain)
         else:
             return gain
@@ -1499,7 +1516,7 @@ class spfile:
         Gammain=s11+s12*s21*GammaL/(1-s22*GammaL)
         gain=1/(1-np.abs(Gammain)**2)*np.abs(s21)**2*(1-np.abs(GammaL)**2)/np.abs(1-s22*GammaL)**2
 
-        if dB==True:
+        if dB:
             return 10*np.log10(gain)
         else:
             return gain
@@ -1533,7 +1550,7 @@ class spfile:
         Rin=np.real(Zin)
         gain=RL/Rin*np.abs(z21/(z22+ZL))**2
 
-        if dB==True:
+        if dB is True:
             return 10*np.log10(gain)
         else:
             return gain
@@ -1553,7 +1570,7 @@ class spfile:
         if inplace==-1: inplace=self.inplace
         if inplace==0:  obj = deepcopy(self); obj.inplace=1
         else:           obj = self
-        if ports==None:
+        if ports is None:
             ports=list(range(1,self.n_ports+1))
         for _ in range(noofiters):
             imp = list(obj.refimpedance)
@@ -1620,7 +1637,7 @@ class spfile:
         s22=tsp.S(2,2)
         Gout=s22+s12*s21*GS/(1-s11*GS)
         gain=(1-np.abs(GS)**2)/np.abs(1-s11*GS)**2*np.abs(s21)**2*(1-np.abs(GL)**2)/np.abs(1-Gout*GL)**2
-        if dB==True:
+        if dB:
             return 10*np.log10(gain)
         else:
             return gain
@@ -2221,6 +2238,10 @@ class spfile:
                 data1 = self.zdata
         else:
             data1=self.sdata
+        if not normalized:
+            imp=self.prepare_ref_impedance_array(self.refimpedance)
+            impT=imp.T
+
         ps = self.n_ports
         data = deepcopy(data1)
         if ps == 2:
@@ -2240,6 +2261,8 @@ class spfile:
                         print("\n", end='', file=f)
                     elif j!=ps**2-1:
                         print("  ", end='', file=f)
+                if not normalized:
+                    print("! Port  " + " ".join([f"{np.real(impT[p][x])} {np.imag(impT[p][x])}" for p in range(ps)]), file=f)
         elif (data_format=="MA"):
             for x in range(len(freqs)):
                 print("\n%-12.9f"%(freqs[x]*temp)+"    ", end='', file=f)
@@ -2249,6 +2272,8 @@ class spfile:
                         print("\n", end='', file=f)
                     elif j!=ps**2-1:
                         print("  ", end='', file=f)
+                if not normalized:
+                    print("! Port  " + " ".join([f"{np.real(impT[p][x])} {np.imag(impT[p][x])}" for p in range(ps)]), file=f)
         else:
             for x in range(len(freqs)):
                 print("\n%-12.9f"%(freqs[x]*temp)+"    ", end='', file=f)
@@ -2258,6 +2283,8 @@ class spfile:
                         print("\n     ", end='', file=f)
                     elif j<(ps**2-1):
                         print("  ", end='', file=f)
+                if not normalized:
+                    print("! Port  " + " ".join([f"{np.real(impT[p][x])} {np.imag(impT[p][x])}" for p in range(ps)]), file=f)
         print("", file=f)
         f.close()
 
@@ -2655,7 +2682,7 @@ class spfile:
             ynew_db = np.array(ydb*len(frequencies))
             ynew_ph = np.array(yph*len(frequencies))
 
-        if not ref==None:
+        if ref:
             ynew_db=ynew_db-ref.data_array("DB",M,i,j,frequencies)
             ynew_ph=ynew_ph-ref.data_array("UPHASE",M,i,j,frequencies)
 

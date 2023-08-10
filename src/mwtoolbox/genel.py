@@ -12,15 +12,8 @@ from copy import deepcopy
 import os
 from functools import lru_cache
 
-inkscape_exe = os.path.normpath(r"C:\Users\Erdoel\Programlar\inkscape\bin\inkscape.exe ")
-convert_exe = os.path.normpath(r"C:\Users\Erdoel\Programlar\ImageMagick-7.0.9-5-portable-Q16-x64\convert.exe ")
-
-def convert_image(filename, format):
-    import subprocess
-    subprocess.call(inkscape_exe+filename+" --export-type=\""+format+"\"",shell=True)
-
-Np2dB = 8.68589 # guc kaybi icin alpha'dan' dB/m'ye donusum katsayisi (20.0*log10(e))
-                # alpha'nin birimi 1/m (Neper)'dir
+Np2dB = 8.68589 # coefficient to convert from alpha to dB/m (20.0*log10(e))
+                # unit of alpha is 1/m (Neper)
 globsep = ";"
 globsep2 = ":"  # empedans degerlerini ayirmak icin
 ### New Units For Quantities Library
@@ -53,62 +46,6 @@ def ekpolyfit(x):
     ek = p1*x**9+p2*x**8+ p3*x**7 + p4*x**6 +p5*x**5 + p6*x**4 + p7*x**3 + p8*x**2 + p9*x + p10
     return ek
 
-class dotdict(dict):
-    """dot.notation access to dictionary attributes
-    This class is not pickleable!!!
-    objdict is pickleable, because it raises correct exceptions,
-    dill instead of pickle does not work too.
-    """
-    # __getattr__ = dict.get
-    __getattr__ = dict.__getitem__
-    __setattr__ = dict.__setitem__
-    __delattr__ = dict.__delitem__
-
-class objectview(object):
-    def __init__(self, d):
-        self.__dict__ = d
-
-class objdict(dict):
-    def __getattr__(self, name):
-        if name in self:
-            return self[name]
-        else:
-            raise AttributeError("No such attribute: " + name)
-
-    def __setattr__(self, name, value):
-        self[name] = value
-
-    def __delattr__(self, name):
-        if name in self:
-            del self[name]
-        else:
-            raise AttributeError("No such attribute: " + name)
-
-def polarsample(x):
-    """Samples the Smith Chart uniformly and returns the reflection coefficient values
-    Args:
-        x(float): Approximate distance between the points.
-    Returns:
-        list: list of reflection coefficient values in complex form
-    """
-    maxref=0.99
-    n=int(np.ceil(maxref/x))
-    x=maxref/n
-    refs = [0]
-    for i in range(1,n+1):
-        r=x*i
-        m=int(np.ceil(2*np.pi*i))
-        th = 2*np.pi/m
-        for j in range(m):
-            refs.append(r*np.exp(1j*j*th))
-    return refs
-
-class Flexlist(list):
-    """This is a list implementation that supports indexing by list to return some elements of the list"""
-    def __getitem__(self, keys):
-        if isinstance(keys, (int, slice)): return list.__getitem__(self, keys)
-        return [self[k] for k in keys]
-
 def tukey_window(alpha,N):
     """
     Tukey window (also known as "tapered cosine window")
@@ -131,15 +68,12 @@ def blackman_window(N):
     Blackman-Harris window
     Also available in scipy.signal
     """
-    sonuc=[]
     a0 = 0.35875
     a1 = 0.48829
     a2 = 0.14128
     a3 = 0.01168
-    for i in range(N):
-        sonuc.append(a0-a1*np.cos(2*np.pi*i/(N-1))+a2*np.cos(4*np.pi*i/(N-1))-a3*np.cos(6*np.pi*i/(N-1)))
-        # sonuc.append(0.42+0.5*np.cos(np.pi*i/(N-1))+0.08*np.cos(2*np.pi*i/(N-1)))
-    return np.array(sonuc)
+    arr = np.linspace(0,N-1,N)
+    return a0-a1*np.cos(2*np.pi*arr/(N-1))+a2*np.cos(4*np.pi*arr/(N-1))-a3*np.cos(6*np.pi*arr/(N-1))
 
 def gaussian_window(sigma,N):
     """
@@ -148,11 +82,8 @@ def gaussian_window(sigma,N):
     Also available in scipy.signal
     Ref: Wikipedia
     """
-    sonuc=[]
-    exp = np.exp
-    for i in range(N):
-        sonuc.append(exp(-0.5*((i-(N-1.0)/2.0)/(sigma*(N-1.0)/2.0))**2))
-    return sonuc
+    arr = np.linspace(0,N-1,N)
+    return np.exp(-0.5*((arr-(N-1.0)/2.0)/(sigma*(N-1.0)/2.0))**2)
 
 def cmp(x, y):
     """
@@ -174,73 +105,6 @@ try:
 except NameError:
     unicode = bytes
 
-def do_cprofile(func):
-    # """ Bu fonksiyon istenen fonksiyona profiling yapmayi saglayan decoratordur
-        # ornek kullanim:
-        # @do_cprofile
-        # def expensive_function():
-            # for x in get_number():
-                # i = x ^ x ^ x
-            # return 'some result!'
-
-        #sperform profiling
-        # result = expensive_function()
-
-        # Referans: https://zapier.com/engineering/profiling-python-boss/
-    # """
-    def profiled_func(*args, **kwargs):
-        profile = cProfile.Profile()
-        try:
-            profile.enable()
-            result = func(*args, **kwargs)
-            profile.disable()
-            return result
-        finally:
-            profile.print_stats()
-    return profiled_func
-
-# Line Profiler ile profiling
-
-# Kullanim:
-# @do_profile(follow=[get_number])
-# def expensive_function():
-    # for x in get_number():
-        # i = x ^ x ^ x
-    # return 'some result!'
-# Handy tip: Just decorate your test function and pass the problem function in the follow argument!
-# Referans: https://zapier.com/engineering/profiling-python-boss/
-
-try:
-    from line_profiler import LineProfiler
-
-    def do_profile(follow=[]):
-        def inner(func):
-            def profiled_func(*args, **kwargs):
-                try:
-                    profiler = LineProfiler()
-                    profiler.add_function(func)
-                    for f in follow:
-                        profiler.add_function(f)
-                    profiler.enable_by_count()
-                    return func(*args, **kwargs)
-                finally:
-                    profiler.print_stats()
-            return profiled_func
-        return inner
-
-except ImportError:
-    def do_profile(follow=[]):
-        "Helpful if you accidentally leave in production!"
-        def inner(func):
-            def nothing(*args, **kwargs):
-                return func(*args, **kwargs)
-            return nothing
-        return inner
-
-def printall(isimler, args):
-    k = isimler.split(",")
-    for i in range(len(args)):
-        print(k[i] + " = " + str(args[i]))
 
 def prettystring(miktarlar, birim=None):
     formatstring1 = '{:3.3e}'
@@ -309,17 +173,12 @@ def prettystring(miktarlar, birim=None):
                 liste.append(miktar)
     return globsep.join(liste)
 
-def coef(birim):
-    """ SI'dan Birim'e cevirmek icin katsayi """
-    temp = pq.Quantity(1.0, birim)
+def coef(outputunit):
+    """ Coefficient to convert from SI unit to outputunit """
+    temp = pq.Quantity(1.0, outputunit)
     return (temp.magnitude) / (temp.simplified.magnitude)
 
-def split_camel_case(str):
-    "Split string written with CamelCase to words. The first letter can be either lower or upper case."
-    start_idx = [i for i, e in enumerate(str) if e.isupper()] + [len(str)]
-    start_idx = [0] + start_idx
-    return [str[x: y] for x, y in zip(start_idx, start_idx[1:]) if x!=y]
-
+# remove from this module
 def stripunit(sayi):
     match = re.search(r"([+\-]?)(\d+(\.\d*)?|\d*\.\d+)([eE][+\-]?\d+)?\s*(\D+\S*)?",sayi)
     number = ""
@@ -355,7 +214,7 @@ def convert2pq(sayilar, defaultunits=None):
         convert2pq.defaultunits=deepcopy(defaultunits)
     elif (convert2pq.sayilar == sayilar) and convert2pq.defaultunits == defaultunits:
         return convert2pq.sonuc
-        
+
 #    if not hasattr(convert2pq, "regex"):
          # make regex static variable, did not provide any performance advantage
 #        # pattern for matching real numbers
@@ -420,15 +279,6 @@ def flatten(x):
         else:
             result.append(el)
     return result
-
-def flatten2(l):
-    """Flatten (an irregular) list of lists (yield version of flatten)"""
-    for el in l:
-        if isinstance(el, collections.Iterable) and not isinstance(el, basestring):
-            for sub in flatten2(el):
-                yield sub
-        else:
-            yield el
 
 def heatmap(data, row_labels, col_labels, ax=None, cbar_kw={}, cbarlabel="", **kwargs):
     """
@@ -584,81 +434,6 @@ def smooth(x, window_len=11, window='hanning'):
     y = np.convolve(w / w.sum(), s, mode='same')
     return y[window_len - 1:-window_len + 1]
 
-
-
-from numpy import NaN, Inf, arange, isscalar, asarray, array
-
-def peakdet(v, delta, x = None):
-    """
-    Converted from MATLAB script at http://billauer.co.il/peakdet.html
-
-    Returns two arrays
-
-    function [maxtab, mintab]=peakdet(v, delta, x)
-    %PEAKDET Detect peaks in a vector
-    %        [MAXTAB, MINTAB] = PEAKDET(V, DELTA) finds the local
-    %        maxima and minima ("peaks") in the vector V.
-    %        MAXTAB and MINTAB consists of two columns. Column 1
-    %        contains indices in V, and column 2 the found values.
-    %
-    %        With [MAXTAB, MINTAB] = PEAKDET(V, DELTA, X) the indices
-    %        in MAXTAB and MINTAB are replaced with the corresponding
-    %        X-values.
-    %
-    %        A point is considered a maximum peak if it has the maximal
-    %        value, and was preceded (to the left) by a value lower by
-    %        DELTA.
-
-    % Eli Billauer, 3.4.05 (Explicitly not copyrighted).
-    % This function is released to the public domain; Any use is allowed.
-
-    """
-    maxtab = []
-    mintab = []
-
-    if x is None:
-        x = arange(len(v))
-
-    v = asarray(v)
-
-    if len(v) != len(x):
-        sys.exit('Input vectors v and x must have same length')
-
-    if not isscalar(delta):
-        sys.exit('Input argument delta must be a scalar')
-
-    if delta <= 0:
-        sys.exit('Input argument delta must be positive')
-
-    mn, mx = Inf, -Inf
-    mnpos, mxpos = NaN, NaN
-
-    lookformax = True
-
-    for i in arange(len(v)):
-        this = v[i]
-        if this > mx:
-            mx = this
-            mxpos = x[i]
-        if this < mn:
-            mn = this
-            mnpos = x[i]
-
-        if lookformax:
-            if this < mx-delta:
-                maxtab.append((mxpos, mx))
-                mn = this
-                mnpos = x[i]
-                lookformax = False
-        else:
-            if this > mn+delta:
-                mintab.append((mnpos, mn))
-                mx = this
-                mxpos = x[i]
-                lookformax = True
-
-    return array(maxtab), array(mintab)
-
 def str_distance(s, t):
     """ levenshtein_ratio_and_distance:
         Calculates levenshtein distance between two strings.
@@ -701,25 +476,7 @@ def str_distance(s, t):
     return distance[rows-1][cols-1], Ratio
 
 if __name__ == "__main__":
-    #print(convert2pq("10mil"))
-    #from timeit import default_timer as timer
-    #t1 = timer()
-    #print(convert2pq(["10", "10.00 inch"], ["m", "m"]))
-    #t2 = timer()
-    #print(convert2pq(["10", "10.00 inch"], ["m", "m"]))
-    #t3 = timer()
-    #print(t2-t1)
-    #print(t3-t2)
-    #print(convert2pq([10.0, "10 inch"]))
-    #print(convert2pq([[10.0, 36.2], "10 inch"], ["mil", "m"]))
-    #a = np.array([12.1, 45.3])
-    #print(prettystring(a, birim=""))
-
-    print(convert2pq("20","mm"))
-    print(convert2pq("20","mil/ps"))
-    print(convert2pq("20","mil"))
-    print(convert2pq(20,""))
-    #rr = polarsample(0.2)
+      #rr = polarsample(0.2)
     #print(rr)
     #for r in rr:
     #    print(r)
@@ -750,6 +507,7 @@ if __name__ == "__main__":
     # print convert2pq([10.0], defaultunits=["MHz"])
     # print convert2pq([100.0], defaultunits=["MHz"])
 
-    print(str_distance("rx1","rx2", ratio_calc = False))
-
+    # print(str_distance("rx1","rx2", ratio_calc = False))
+    dat = blackman_window(100)
+    print(dat)
     pass

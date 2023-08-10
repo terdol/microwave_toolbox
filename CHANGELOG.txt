@@ -6,18 +6,11 @@ All notable changes to this project will be documented in this file.
 
 - Initial release.
 
-## [0.0.1]
-
-### Added
-
-- Danish translation (#297).
-- Georgian translation from (#337).
-- Changelog inconsistency section in Bad Practices.
+## [0.0.4] - 2023-08-10
 
 ### Fixed
 
-- Italian translation (#332).
-- Indonesian translation (#336).
+- BugFix about reading reference impedance data from unnormalized S-Parameter files.
 
 ### Changed
 
