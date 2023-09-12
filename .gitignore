@@ -1,9 +1,6 @@
 sil/
 sil/*
 sil/**
-.idea/
-.idea/*
-.idea/**
 __pycache__/
 __pycache__/*
 __pycache__/**
@@ -13,12 +10,6 @@ tests/**
 src/*egg*
 src/mwtoolbox/.*
 src/mwtoolbox/*pycache*
-.unotes/
-.unotes/*
-.unotes/**
-.temp/
-.temp/*
-.temp/**
 temp/
 temp/*
 temp/**
@@ -28,10 +19,6 @@ build/**
 dist/
 dist/*
 dist/**
-.vscode
-.vscode/
-.vscode/*
-.vscode/**
 quantities/
 quantities/*
 quantities/**
@@ -42,3 +29,9 @@ em/fdfd_2d/__pycache__/
 em/fdfd_2d/__pycache__/*
 em/fdfd_2d/__pycache__/**
 *.bat
+.*
+./*
+./**
+_*
+_/*
+_/**

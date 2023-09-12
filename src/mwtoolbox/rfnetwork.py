@@ -26,6 +26,37 @@ from collections import defaultdict
 import mwtoolbox.transmission_lines as tlines
 fcoef={"HZ":1.0, "KHZ":1e3, "MHZ":1e6, "GHZ":1e9}
 
+
+def write_imp_dataset_files_for_hfss_numpy(freqs,
+                                          imparray,
+                                          realimpfilename = "realimp",
+                                          imagimpfilename = "imagimp"
+                                          ):
+
+    rimp = np.real(imparray)
+    iimp = np.imag(imparray)
+    resr = np.vstack((freqs, rimp))
+    resi = np.vstack((freqs, iimp))
+    np.savetxt(realimpfilename+".tab", resr.T, delimiter = "\t")
+    np.savetxt(imagimpfilename+".tab", resi.T, delimiter = "\t")
+
+def write_imp_dataset_files_for_hfss(freqs,
+                                    imparray,
+                                    realimpfilename = "realimp",
+                                    imagimpfilename = "imagimp"
+                                    ):
+
+    rimp = [a.real for a in imparray]
+    iimp = [a.imag for a in imparray]
+
+    with open(realimpfilename+".tab", "w") as ff:
+        for f, z in zip(freqs,rimp):
+            print(str(f)+"\t"+str(z), file = ff)
+
+    with open(imagimpfilename+".tab", "w") as ff:
+        for f, z in zip(freqs,iimp):
+            print(str(f)+"\t"+str(z), file = ff)
+
 def extract_rlgc(spr,length):
     """Extraction of RLGC parameters from S-parameters of a uniform transmission line.
 
@@ -992,7 +1023,7 @@ class spfile:
                         if len(tempportgamma)==ps*ps:
                             tempportgamma=[tempportgamma[i*i-1] for i in range(1,ps+1)]
                         gammas.append(tempportgamma)
-                    
+
                     if x.strip().startswith("! Port Impedance"):
                         tempportimp = x.replace("!","").replace("Port Impedance","").strip().split()
                         while index<len(linesread)-1:
@@ -1015,7 +1046,7 @@ class spfile:
         if len(portnames.keys())>ps:
             print("Port names read from file is larger than the port quantity!")
             return
-            
+
         if len(imps)>0:
             imps2=[[arr[i] for arr in imps] for i in range(ps)]
         if len(gammas)>0:
@@ -1027,9 +1058,9 @@ class spfile:
         for i,pn in portnames.items():
             self.port_names[i-1]=pn
         x=lines[0]
-        
+
         self.file_data_format,self.file_freq_unit,refimpedance=parse_format(x)
-        
+
         if refimpedance is None:
             if len(imps)==0:
                 self.refimpedance=[50.0]*ps
@@ -3159,12 +3190,16 @@ class spfile:
         obj.set_sparam_gen_func(spr)
         return obj
 
+    self.z_load = self.load_impedance
+    self.input_impedance = self.z_in
+
 if __name__ == '__main__':
 
     sptline=spfile(freqs=[10e9],n_ports=2)
     theta=90
+    print(theta)
     # for i in range(len(frequencies)):
     sptline.set_smatrix_at_frequency_point(0,network.abcd2s(network.tline(50.0,60*np.pi/180.0),50.0))
     print(sptline.sdata)
-    sptline.UniformDeembed(-90*np.pi/180.0)
+    sptline.uniform_deembed(-90*np.pi/180.0)
     print(sptline.sdata)

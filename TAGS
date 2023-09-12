@@ -1,0 +1,1602 @@
+
+src/em/fdfd_2d/fdfd_2d.py,3364
+from PySide6 import __file__ as filepathfilepath9,377
+dirname = os.path.dirname(filepath)dirname10,419
+plugin_path = os.path.join(dirname, 'plugins', 'platforms')plugin_path11,456
+import numpy as npnp14,576
+import matplotlib.patches as mpatchesmpatches19,690
+import scipy.constants as sabitlersabitler27,919
+import matplotlib.colorbar as mcolorbarmcolorbar28,955
+import matplotlib.cm as cmcm29,996
+import matplotlib.colors as mcolorsmcolors30,1024
+import matplotlib.patches as patchespatches31,1061
+nz = mcolors.Normalize()nz34,1117
+co = sabitler.speed_of_lightco35,1143
+epso = sabitler.epsilon_0epso36,1173
+mu_0 = sabitler.mu_0mu_037,1200
+def getindice(cc, dizi, pml=0):getindice40,1258
+def getindiceordered(cc, cumsumarray, pml=0):getindiceordered64,2041
+class fdfd_2d:fdfd_2d79,2698
+    def __init__(self, parent = None):__init__84,2797
+    def exn(self, i, j):exn92,3031
+    def eyn(self, i, j):eyn102,3401
+    def hxn(self, i, j):hxn112,3778
+    def hyn(self, i, j):hyn126,4264
+    def fdfd_mesh(self, xres, yres):fdfd_mesh140,4750
+    def addpml(self, pmllayers):addpml340,14343
+    def sigma(self, i,dx,nlayer):sigma445,19000
+    def sx(self,i):sx474,20313
+    def sy(self,i):sy485,20758
+    def fdfd_solve(self):fdfd_solve497,21206
+        def PF(x, y, z):PF569,24398
+        def QF(x, y, z):QF572,24494
+        from numpy import linalg as LALA689,31975
+    def microstrip(cls, boxwidth, boxheight, dielheight, metalwidth, metalthickness, epsilon, frmicrostrip773,35738
+    def stripline(cls, boxwidth, boxheight, metalwidth, metalthickness, epsilon, freq, xres, yrestripline777,35886
+    def suspended(cls, boxwidth, boxheight, dielthickness, metalheight, metalwidth, metalthicknesuspended781,36021
+    def multilayer(cls, boxwidth, boxheight, dielthickness, epsilon, metals, freq, pmllayers, xrmultilayer785,36184
+    def waveguide(cls, boxwidth, boxheight, dielthickness, epsilon, freq, pmllayers, xres, yres)waveguide822,38031
+    def plot_parts(self, ekran, solid=False, shift=(0,0)):plot_parts857,39980
+    def plot_pml(self, ekran, solid=False, shift=(0,0)):plot_pml877,40860
+    def plot_vline(self, ekran):plot_vline900,41847
+    def plot_cloops(self, ekran):plot_cloops914,42368
+    def plot_grids(self, ekran):plot_grids947,43646
+    def powerflow(self, v):powerflow965,44210
+    def plot_field(self, ekran, v, surface=True, comp="Ex"):plot_field1034,46714
+    dd = np.ones(200)dd1173,52211
+    ddcs = np.cumsum(dd)ddcs1174,52234
+    cc=195.5cc1175,52260
+    t1 = time.time()t11178,52308
+    t2 = time.time()t21181,52389
+    t3 = time.time()t31184,52479
+    boxwidth = 3.1e-3  # WG genişliğiboxwidth1198,52800
+    boxheight = 1.55e-3 # WG yüksekliğiboxheight1199,52841
+    dielheight = 1.55e-3dielheight1200,52884
+    metalwidth = 0.01metalwidth1201,52910
+    metalthickness = 0.002metalthickness1202,52933
+    freq = 77e9freq1203,52961
+    epsilon = 1.0epsilon1204,52978
+    pml_layers=[0,0,0,0]pml_layers1205,52997
+    ms = waveguide(boxwidth, boxheight, [dielheight], dielheight, metalwidth, metalthickness, [ems1208,53268
+    out = fdfd_solve(*(list(ms[:-1]) + [freq]+[pml_layers]))out1210,53435
+    ko=2*np.pi*freq/3e8ko1216,53803
+    kc=np.pi/boxwidthkc1217,53828
+    beta = np.sqrt(-kc**2+ko**2)beta1218,53851
+
+src/em/fdfd_2d/grid3.py,1733
+import numpy as npnp1,0
+def refinearray(inp):refinearray3,22
+class subregion:subregion16,288
+    def __init__(self):__init__17,306
+class CartesianGrid():CartesianGrid29,692
+    def __init__(self):__init__30,716
+    def findsubregions(self, kritikx,kritiky,kritikz):findsubregions52,1340
+    def optimizegrids(self):optimizegrids99,2505
+    def nu_grid(self, deltax, deltay, deltaz):nu_grid122,4027
+    def set_number_of_abc_layers(self, x1, x2, y1, y2, z1, z2):set_number_of_abc_layers170,5534
+    def writetofile(self, dosya):writetofile178,5919
+    def getsubregion(self, i):getsubregion180,5968
+    def getsubregion_p(self, j, i):getsubregion_p189,6221
+    def customgrid(self, dmin, dmax, index, rmax, shape, axis, policy):customgrid198,6520
+    def reshapegrid(self, delta, index, rmax, shape, axis, policy):reshapegrid289,9658
+    def sumz(self):sumz352,11507
+    def get_grids_sub_i(self, i, axis):get_grids_sub_i355,11557
+    def get_subregion_index_of_point(self, coor, axis):get_subregion_index_of_point363,11898
+    def loadfromfile(self, dosya):loadfromfile386,12626
+    def subregionparams(self, c, grid):subregionparams389,12678
+    def return_subregion_params(self, grid, index):return_subregion_params404,13170
+    def ugrid(self, delta, length, parite=0):ugrid416,13572
+    def nugrid(self, delta1, delta2, rmax, length, shape,  policy=0,cc=0.99):nugrid427,13873
+    def SetUnit(self,s):SetUnit501,17176
+    def get_nof_sub(self, eksen):get_nof_sub504,17225
+    cg = CartesianGrid()cg522,17712
+    t1 = time.time()t1524,17755
+    t2 = time.time()t2526,17822
+    t3 = time.time()t3528,17888
+    t4 = time.time()t4530,17953
+    t5 = time.time()t5532,18018
+
+src/em/fdfd_2d/old/fdfd_cs3.py,3578
+from PySide6 import __file__ as filepathfilepath8,394
+dirname = os.path.dirname(filepath)dirname9,436
+plugin_path = os.path.join(dirname, 'plugins', 'platforms')plugin_path10,473
+import numpy as npnp13,593
+import matplotlib.patches as mpatchesmpatches18,707
+import scipy.constants as sabitlersabitler26,924
+import matplotlib.colorbar as mcolorbarmcolorbar27,960
+import matplotlib.cm as cmcm28,1001
+import matplotlib.colors as mcolorsmcolors29,1029
+import matplotlib.patches as patchespatches30,1066
+nz = mcolors.Normalize()nz33,1122
+co = sabitler.speed_of_lightco34,1148
+epso = sabitler.epsilon_0epso35,1178
+mu_0 = sabitler.mu_0mu_036,1205
+def getindice(cc, dizi, pml=0):getindice39,1263
+def getindiceordered(cc, cumsumarray):getindiceordered63,2058
+def exn(i, j):exn79,2715
+def eyn(i, j):eyn90,3034
+def hxn(i, j):hxn101,3362
+def hyn(i, j):hyn116,3787
+def fdfd_mesh(boxwidth, boxheight, xres, yres, parts):fdfd_mesh131,4210
+def addpml(pmllayers,dx, dy, er, erxx, eryy, erzz, metalnodesx, metalnodesy, metalnodesz, currenaddpml308,12081
+def sigma(i,dx,nlayer):sigma390,15776
+def sx(i):sx409,16452
+def sy(i):sy415,16619
+def s_0(i):s_0421,16786
+def fdfd_solve(dx, dy, er, erxx, eryy, erzz, metalnodesx, metalnodesy, metalnodesz, cloops, vlinfdfd_solve423,16813
+    def PF(x, y, z):PF488,19477
+    def QF(x, y, z):QF491,19561
+    from numpy import linalg as LALA612,26833
+def microstrip(boxwidth, boxheight, dielheight, metalwidth, metalthickness, epsilon, freq, xres,microstrip745,31734
+def stripline(boxwidth, boxheight, metalwidth, metalthickness, epsilon, freq, xres, yres):stripline762,32763
+def suspended(boxwidth, boxheight, dielthickness, metalheight, metalwidth, metalthickness, epsilsuspended779,33818
+def multilayer(boxwidth, boxheight, dielthickness, epsilon, metals, freq, pmllayers, xres, yres)multilayer797,34940
+def waveguide(boxwidth, boxheight, dielthickness, epsilon, freq, pmllayers, xres, yres):waveguide829,36826
+def plot_parts(ekran, parts, solid=False, shift=(0,0)):plot_parts860,38728
+def plot_pml(ekran, pmllayers, dx, dy, solid=False, shift=(0,0)):plot_pml879,39500
+def plot_vline(ekran, dx, dy, vlines):plot_vline899,40335
+def plot_cloops(ekran, dx, dy, cloops):plot_cloops910,40752
+def plot_grids(ekran, dx, dy):plot_grids941,41844
+def plot_fields(dx, dy, eigs, parts):plot_fields958,42314
+        import matplotlib.colorbar as mcolorbarmcolorbar994,43710
+        import matplotlib.cm as cmcm995,43759
+        import matplotlib.colors as mcolorsmcolors996,43795
+        import matplotlib.patches as patchespatches997,43840
+def powerflow(dx, dy, v):powerflow1007,44303
+def plot_field(ekran, dx, dy, v, parts, pmllayers, surface=True, comp="Ex"):plot_field1087,46883
+    dd = np.ones(10)dd1240,52386
+    ddcs = np.cumsum(dd)ddcs1241,52408
+    cc=5.5cc1242,52434
+    boxwidth = 3.1e-3  # WG genişliğiboxwidth1257,52793
+    boxheight = 1.55e-3 # WG yüksekliğiboxheight1258,52834
+    dielheight = 1.55e-3dielheight1259,52877
+    metalwidth = 0.01metalwidth1260,52903
+    metalthickness = 0.002metalthickness1261,52926
+    freq = 77e9freq1262,52954
+    epsilon = 1.0epsilon1263,52971
+    pml_layers=[0,0,0,0]pml_layers1264,52990
+    ms = waveguide(boxwidth, boxheight, [dielheight], dielheight, metalwidth, metalthickness, [ems1267,53261
+    out = fdfd_solve(*(list(ms[:-1]) + [freq]+[pml_layers]))out1269,53428
+    ko=2*np.pi*freq/3e8ko1275,53796
+    kc=np.pi/boxwidthkc1276,53821
+    beta = np.sqrt(-kc**2+ko**2)beta1277,53844
+
+src/em/fdfd_2d/old/fdfd_cs3_old_working.py,3005
+import numpy as npnp7,383
+import matplotlib.pyplot as pltplt9,424
+import matplotlib.patches as mpatchesmpatches10,457
+import scipy.constants as sabitlersabitler16,652
+import matplotlib.colorbar as mcolorbarmcolorbar17,688
+import matplotlib.cm as cmcm18,729
+import matplotlib.colors as mcolorsmcolors19,757
+import matplotlib.patches as patchespatches20,794
+nz = mcolors.Normalize()nz23,850
+co = sabitler.speed_of_lightco24,876
+epso = sabitler.epsilon_0epso25,906
+mu_0 = sabitler.mu_0mu_026,933
+def getindice(cc, dizi, pml=0):getindice29,991
+def exn(i, j):exn42,1291
+def eyn(i, j):eyn53,1610
+def hxn(i, j):hxn64,1938
+def hyn(i, j):hyn79,2363
+def fdfd_mesh(boxwidth, boxheight, xres, yres, parts):fdfd_mesh94,2786
+def addpml(pmllayers,dx, dy, er, erxx, eryy, erzz, metalnodesx, metalnodesy, metalnodesz, currenaddpml300,12028
+def sigma(i,dx,nlayer):sigma389,15937
+def sx(i):sx408,16613
+def sy(i):sy414,16780
+def s_0(i):s_0420,16947
+def fdfd_solve(dx, dy, er, erxx, eryy, erzz, metalnodesx, metalnodesy, metalnodesz, cloops, vlinfdfd_solve422,16974
+    def PF(x, y, z):PF486,19473
+    def QF(x, y, z):QF489,19557
+    from numpy import linalg as LALA610,26833
+def microstrip(boxwidth, boxheight, dielheight, metalwidth, metalthickness, epsilon, freq, xres,microstrip711,30416
+def stripline(boxwidth, boxheight, metalwidth, metalthickness, epsilon, freq, xres, yres):stripline728,31445
+def suspended(boxwidth, boxheight, dielthickness, metalheight, metalwidth, metalthickness, epsilsuspended745,32500
+def multilayer(boxwidth, boxheight, dielthickness, epsilon, metals, freq, pmllayers, xres, yres)multilayer763,33622
+def waveguide(boxwidth, boxheight, dielthickness, metalheight, metalwidth, metalthickness, epsilwaveguide795,35508
+def plot_parts(ekran, parts, solid=False, shift=(0,0)):plot_parts820,37196
+def plot_pml(ekran, pmllayers, dx, dy, solid=False, shift=(0,0)):plot_pml839,37968
+def plot_grids(ekran, dx, dy):plot_grids859,38803
+def plot_fields(dx, dy, eigs, parts):plot_fields876,39273
+        import matplotlib.colorbar as mcolorbarmcolorbar912,40669
+        import matplotlib.cm as cmcm913,40718
+        import matplotlib.colors as mcolorsmcolors914,40754
+        import matplotlib.patches as patchespatches915,40799
+def plot_field(ekran, dx, dy, v, parts, pmllayers, surface=True, comp="Ex"):plot_field926,41264
+    boxwidth = 0.03  # WG genişliğiboxwidth1047,45620
+    boxheight = 0.03 # WG yüksekliğiboxheight1048,45659
+    dielheight = 0.014dielheight1049,45699
+    metalwidth = 0.01metalwidth1050,45723
+    metalthickness = 0.002metalthickness1051,45746
+    freq = 0.1e9freq1052,45774
+    epsilon = 5.0epsilon1053,45792
+    pml_layers=[0,0,0,0]pml_layers1054,45811
+    ms = multilayer(boxwidth, boxheight, [dielheight], [epsilon], [[dielheight, metalwidth, metams1056,45936
+    fig = plt.figure()fig1058,46218
+    out = fdfd_solve(*(list(ms[:-1]) + [freq]+[pml_layers]))out1059,46242
+
+src/em/fdfd_2d/old/grid.py,9446
+from sys import version_info as _swig_python_version_info_swig_python_version_info7,210
+    def swig_import_helper():swig_import_helper9,313
+    _grid = swig_import_helper()_grid17,614
+    def swig_import_helper():swig_import_helper20,722
+    _grid = swig_import_helper()_grid35,1196
+    _swig_property = property_swig_property42,1322
+    import builtins as __builtin____builtin__47,1431
+def _swig_setattr_nondynamic(self, class_type, name, value, static=1):_swig_setattr_nondynamic51,1514
+def _swig_setattr(self, class_type, name, value):_swig_setattr70,2143
+def _swig_getattr(self, class_type, name):_swig_getattr74,2269
+def _swig_repr(self):_swig_repr83,2577
+    _object = object_object91,2821
+    _newclass = 1_newclass92,2843
+    class _object:_object94,2893
+    _newclass = 0_newclass96,2927
+class SwigPyIterator(_object):SwigPyIterator98,2948
+    __swig_setmethods__ = {}__swig_setmethods__99,2980
+    __setattr__ = lambda self, name, value: _swig_setattr(self, SwigPyIterator, name, value)__setattr__100,3010
+    __swig_getmethods__ = {}__swig_getmethods__101,3104
+    __getattr__ = lambda self, name: _swig_getattr(self, SwigPyIterator, name)__getattr__102,3134
+    def __init__(self, *args, **kwargs):__init__104,3216
+    __repr__ = _swig_repr__repr__106,3334
+    __swig_destroy__ = _grid.delete_SwigPyIterator__swig_destroy__107,3361
+    __del__ = lambda self: None__del__108,3413
+    def value(self):value110,3448
+    def incr(self, n=1):incr113,3521
+    def decr(self, n=1):decr116,3600
+    def distance(self, x):distance119,3679
+    def equal(self, x):equal122,3764
+    def copy(self):copy125,3843
+    def next(self):next128,3914
+    def __next__(self):__next__131,3985
+    def previous(self):previous134,4064
+    def advance(self, n):advance137,4143
+    def __eq__(self, x):__eq__140,4226
+    def __ne__(self, x):__ne__143,4307
+    def __iadd__(self, n):__iadd__146,4388
+    def __isub__(self, n):__isub__149,4473
+    def __add__(self, n):__add__152,4558
+    def __sub__(self, *args):__sub__155,4641
+    def __iter__(self):__iter__157,4730
+SwigPyIterator_swigregister = _grid.SwigPyIterator_swigregisterSwigPyIterator_swigregister159,4776
+class DoubleVector(_object):DoubleVector162,4888
+    __swig_setmethods__ = {}__swig_setmethods__163,4918
+    __setattr__ = lambda self, name, value: _swig_setattr(self, DoubleVector, name, value)__setattr__164,4948
+    __swig_getmethods__ = {}__swig_getmethods__165,5040
+    __getattr__ = lambda self, name: _swig_getattr(self, DoubleVector, name)__getattr__166,5070
+    __repr__ = _swig_repr__repr__167,5148
+    def iterator(self):iterator169,5177
+    def __iter__(self):__iter__171,5252
+    def __nonzero__(self):__nonzero__174,5311
+    def __bool__(self):__bool__177,5394
+    def __len__(self):__len__180,5471
+    def __getslice__(self, i, j):__getslice__183,5546
+    def __setslice__(self, *args):__setslice__186,5643
+    def __delslice__(self, i, j):__delslice__189,5742
+    def __delitem__(self, *args):__delitem__192,5839
+    def __getitem__(self, *args):__getitem__195,5936
+    def __setitem__(self, *args):__setitem__198,6033
+    def pop(self):pop201,6130
+    def append(self, x):append204,6197
+    def empty(self):empty207,6276
+    def size(self):size210,6347
+    def swap(self, v):swap213,6416
+    def begin(self):begin216,6491
+    def end(self):end219,6562
+    def rbegin(self):rbegin222,6629
+    def rend(self):rend225,6702
+    def clear(self):clear228,6771
+    def get_allocator(self):get_allocator231,6842
+    def pop_back(self):pop_back234,6929
+    def erase(self, *args):erase237,7006
+    def __init__(self, *args):__init__240,7091
+    def push_back(self, x):push_back247,7290
+    def front(self):front250,7375
+    def back(self):back253,7446
+    def assign(self, n, x):assign256,7515
+    def resize(self, *args):resize259,7600
+    def insert(self, *args):insert262,7687
+    def reserve(self, n):reserve265,7774
+    def capacity(self):capacity268,7855
+    __swig_destroy__ = _grid.delete_DoubleVector__swig_destroy__270,7930
+    __del__ = lambda self: None__del__271,7980
+DoubleVector_swigregister = _grid.DoubleVector_swigregisterDoubleVector_swigregister272,8013
+class PairdoubleDouble(_object):PairdoubleDouble275,8117
+    __swig_setmethods__ = {}__swig_setmethods__276,8151
+    __setattr__ = lambda self, name, value: _swig_setattr(self, PairdoubleDouble, name, value)__setattr__277,8181
+    __swig_getmethods__ = {}__swig_getmethods__278,8277
+    __getattr__ = lambda self, name: _swig_getattr(self, PairdoubleDouble, name)__getattr__279,8307
+    __repr__ = _swig_repr__repr__280,8389
+    def __init__(self, *args):__init__282,8418
+        first = _swig_property(_grid.PairdoubleDouble_first_get, _grid.PairdoubleDouble_first_sefirst291,8776
+        second = _swig_property(_grid.PairdoubleDouble_second_get, _grid.PairdoubleDouble_secondsecond295,9037
+    def __len__(self):__len__296,9140
+    def __repr__(self):__repr__298,9182
+    def __getitem__(self, index): __getitem__300,9254
+    def __setitem__(self, index, val):__setitem__305,9397
+    __swig_destroy__ = _grid.delete_PairdoubleDouble__swig_destroy__310,9542
+    __del__ = lambda self: None__del__311,9596
+PairdoubleDouble_swigregister = _grid.PairdoubleDouble_swigregisterPairdoubleDouble_swigregister312,9629
+class subregion(_object):subregion315,9749
+    __swig_setmethods__ = {}__swig_setmethods__316,9776
+    __setattr__ = lambda self, name, value: _swig_setattr(self, subregion, name, value)__setattr__317,9806
+    __swig_getmethods__ = {}__swig_getmethods__318,9895
+    __getattr__ = lambda self, name: _swig_getattr(self, subregion, name)__getattr__319,9925
+    __repr__ = _swig_repr__repr__320,10000
+        start = _swig_property(_grid.subregion_start_get, _grid.subregion_start_set)start324,10170
+        end = _swig_property(_grid.subregion_end_get, _grid.subregion_end_set)end328,10391
+        r = _swig_property(_grid.subregion_r_get, _grid.subregion_r_set)r332,10598
+        mincell = _swig_property(_grid.subregion_mincell_get, _grid.subregion_mincell_set)mincell336,10823
+        maxcell = _swig_property(_grid.subregion_maxcell_get, _grid.subregion_maxcell_set)maxcell340,11066
+        startindex = _swig_property(_grid.subregion_startindex_get, _grid.subregion_startindex_sstartindex344,11321
+        endindex = _swig_property(_grid.subregion_endindex_get, _grid.subregion_endindex_set)endindex348,11577
+        Ncell = _swig_property(_grid.subregion_Ncell_get, _grid.subregion_Ncell_set)Ncell352,11815
+        type = _swig_property(_grid.subregion_type_get, _grid.subregion_type_set)type356,12040
+    def __init__(self):__init__358,12125
+    __swig_destroy__ = _grid.delete_subregion__swig_destroy__364,12307
+    __del__ = lambda self: None__del__365,12354
+subregion_swigregister = _grid.subregion_swigregistersubregion_swigregister366,12387
+class CartesianGrid(_object):CartesianGrid369,12479
+    __swig_setmethods__ = {}__swig_setmethods__370,12510
+    __setattr__ = lambda self, name, value: _swig_setattr(self, CartesianGrid, name, value)__setattr__371,12540
+    __swig_getmethods__ = {}__swig_getmethods__372,12633
+    __getattr__ = lambda self, name: _swig_getattr(self, CartesianGrid, name)__getattr__373,12663
+    __repr__ = _swig_repr__repr__374,12742
+    def __init__(self):__init__376,12771
+    def getsubregion(self, arg2, arg3, arg4, arg5, arg6, arg7, arg8):getsubregion383,12959
+    def getsubregion_p(self, arg2, arg3):getsubregion_p386,13129
+    def writetofile(self, arg2):writetofile389,13243
+    def nu_grid(self, deltax, deltay, deltaz):nu_grid392,13339
+    def loadfromfile(self, arg2):loadfromfile395,13463
+    def returndx(self):returndx398,13561
+    def returndy(self):returndy401,13639
+    def returndz(self):returndz404,13717
+    def return_kritikx(self):return_kritikx407,13795
+    def return_kritiky(self):return_kritiky410,13885
+    def return_kritikz(self):return_kritikz413,13975
+    def get_grids_sub_i(self, i, axis):get_grids_sub_i416,14065
+    def get_subregion_index_of_point(self, coor, axis):get_subregion_index_of_point419,14175
+    def findsubregions(self, meshx, meshy, meshz):findsubregions422,14317
+    def set_number_of_abc_layers(self, x1, x2, y1, y2, z1, z2):set_number_of_abc_layers425,14449
+    def customgrid(self, dmin, dmax, index, rmax, type, axis, policy=0):customgrid428,14607
+    def reshapegrid(self, delta, index, rmax, type, axis, policy=0):reshapegrid431,14781
+    def sumx(self):sumx434,14947
+    def sumy(self):sumy437,15017
+    def sumz(self):sumz440,15087
+    def get_nof_sub(self, arg2):get_nof_sub443,15157
+    def return_subregion_params(self, grid, index):return_subregion_params446,15253
+    def subregionparams(self, arg2, arg3, arg4, arg5, arg6):subregionparams449,15387
+    def ugrid(self, delta, length, parite=0):ugrid452,15539
+    def nugrid(self, delta1, delta2, rmax, length, type, policy=0):nugrid455,15659
+    def yaz(self):yaz458,15823
+    def SetUnit(self, s):SetUnit461,15891
+    __swig_destroy__ = _grid.delete_CartesianGrid__swig_destroy__463,15971
+    __del__ = lambda self: None__del__464,16022
+CartesianGrid_swigregister = _grid.CartesianGrid_swigregisterCartesianGrid_swigregister465,16055
+
+src/em/fdfd_2d/old/grid2.py,1972
+import numpy as npnp1,0
+def refinearray(inp):refinearray3,22
+class subregion():subregion17,307
+    def __init__(self):__init__18,327
+class CartesianGrid():CartesianGrid32,735
+    def __init__(self):__init__33,759
+    def findsubregions(self, meshx,meshy,meshz):findsubregions53,1329
+    def nu_grid(self, deltax, deltay, deltaz):nu_grid100,2531
+    def set_number_of_abc_layers(self, x1, x2, y1, y2, z1, z2):set_number_of_abc_layers148,4115
+    def writetofile(self, dosya):writetofile156,4508
+    def getsubregion(self, i):getsubregion158,4557
+    def getsubregion_p(self, j, i):getsubregion_p167,4818
+    def customgrid(self, dmin, dmax, index, rmax, shape, axis, policy):customgrid176,5121
+    def reshapegrid(self, delta, index, rmax, shape, axis, policy):reshapegrid278,8741
+    def sumz(self):sumz341,10734
+    def returndx(self):returndx344,10788
+    def returndy(self):returndy347,10843
+    def returndz(self):returndz350,10898
+    def return_kritikx(self):return_kritikx353,10953
+    def return_kritiky(self):return_kritiky356,11028
+    def return_kritikz(self):return_kritikz359,11103
+    def get_grids_sub_i(self, i, axis):get_grids_sub_i362,11178
+    def get_subregion_index_of_point(self, coor, axis):get_subregion_index_of_point370,11527
+    def loadfromfile(self, dosya):loadfromfile393,12303
+    def subregionparams(self, c, grid):subregionparams396,12363
+    def return_subregion_params(self, grid, index):return_subregion_params411,12867
+    def ugrid(self, delta, length, parite=0):ugrid423,13279
+    def nugrid(self, delta1, delta2, rmax, length, shape,  policy=0,cc=0.99):nugrid434,13593
+    def SetUnit(self,s):SetUnit505,16897
+    def get_nof_sub(self, eksen):get_nof_sub508,16950
+    cg = CartesianGrid()cg518,17212
+    t1 = time.time()t1520,17255
+    t2 = time.time()t2522,17322
+    t3 = time.time()t3524,17388
+    t4 = time.time()t4526,17453
+    t5 = time.time()t5528,17518
+
+src/em/fdfd_2d/__init__.py,0
+
+src/em/mode_matching/mode_matching_module.py,1540
+import numpy as npnp4,157
+from numpy.lib.scimath import sqrt as csqrtcsqrt5,177
+current=time.time()current9,290
+mu0=4*np.pi*1e-7mu011,313
+eps0=8.854187817e-12eps012,331
+c0=299792458c013,353
+pi = np.pipi14,367
+def isqrt(k2):isqrt16,381
+def Ex(x,y,xc,yc,m,n,a,b,eps,freq,mode=1):Ex23,495
+def Ey(x,y,xc,yc,m,n,a,b,eps,freq,mode=1):Ey34,882
+def Hx(x,y,xc,yc,m,n,a,b,eps,freq,mode=1):Hx45,1271
+def Hy(x,y,xc,yc,m,n,a,b,eps,freq,mode=1):Hy56,1663
+def eh(x,y,params):eh67,2056
+def createmesh(xcs,ycs,xcf,ycf,Nx,Ny):createmesh70,2155
+def exh(x,y,par1,par2):exh79,2407
+def sp_wg(a,b,eps,L,modes):sp_wg82,2502
+class MM_RWG:MM_RWG86,2663
+    def __init__(self,wg1, wg2, aperture=None):__init__87,2678
+    def simulate(self, freqs):simulate100,3011
+    xc1=0xc1219,8039
+    yc1=0yc1220,8050
+    xc2=0xc2221,8061
+    yc2=0yc2222,8072
+    a1=3.1e-3a1223,8083
+    b1=1.55e-3b1224,8098
+    a2=3.1e-3a2225,8114
+    b2=1.55e-3b2227,8147
+    eps1=1eps1228,8163
+    eps2=1eps2229,8175
+    aperture1=(xc1,yc1,a1,b1,eps1)aperture1230,8187
+    aperture2=(xc2,yc2,a2,b2,eps2)aperture2231,8223
+    aperture3=(1.05e-3,2.05e-3,0,1.55e-3)aperture3232,8259
+    freqs=[77e9]freqs234,8343
+    solver=MM_RWG(aperture1,aperture2,aperture3)solver235,8361
+    Sparams, modes1, modes2 = solver.simulate(freqs)Sparams236,8411
+    Sparams, modes1, modes2 = solver.simulate(freqs)modes1236,8411
+    Sparams, modes1, modes2 = solver.simulate(freqs)modes2236,8411
+    cc1=modes1.index((1,0,1))cc1237,8465
+
+src/em/mode_matching/old/modematching - Copy.py,3908
+import numpy as npnp2,24
+from numpy.lib.scimath import sqrt as csqrtcsqrt3,44
+current=time.time()current7,157
+mu0=4*np.pi*1e-7mu09,180
+eps0=8.854187817e-12eps010,198
+c0=299792458c011,220
+pi = np.pipi12,234
+def Ex(x,y,xc,yc,m,n,a,b,eps,freq,mode=1):Ex14,248
+def Ey(x,y,xc,yc,m,n,a,b,eps,freq,mode=1):Ey28,705
+def Hx(x,y,xc,yc,m,n,a,b,eps,freq,mode=1):Hx42,1155
+def Hy(x,y,xc,yc,m,n,a,b,eps,freq,mode=1):Hy56,1612
+xc1=0xc171,2068
+yc1=0yc172,2075
+xc2=0xc273,2082
+yc2=1.0e-3yc274,2089
+a1=3.1e-3a176,2110
+b1=1.55e-3b177,2121
+a2=3.1e-3a278,2133
+b2=0.55e-3b279,2144
+eps=1eps80,2156
+freq=77e9freq81,2163
+freq_cutoff=300e9freq_cutoff83,2176
+n1=int(2*pi*freq_cutoff/c0*b1/pi)n185,2247
+m1=int(2*pi*freq_cutoff/c0*a1/pi)m186,2282
+n2=int(2*pi*freq_cutoff/c0*b2/pi)n287,2317
+m2=int(2*pi*freq_cutoff/c0*a2/pi)m288,2352
+TEmodes1= list(itertools.product(list(range(m1+1)),list(range(n1+1)),[1]))TEmodes193,2476
+TEmodes2= list(itertools.product(list(range(m2+1)),list(range(n2+1)),[1]))TEmodes294,2552
+TMmodes1= list(itertools.product(list(range(1,m1+1)),list(range(1,n1+1)),[0]))TMmodes195,2628
+TMmodes2= list(itertools.product(list(range(1,m2+1)),list(range(1,n2+1)),[0]))TMmodes296,2708
+modes1 = TEmodes1 + TMmodes1modes199,2866
+modes2 = TEmodes2 + TMmodes2modes2100,2896
+Nw = len(modes1)Nw105,2968
+Ns = len(modes2)Ns106,2986
+def eh(x,y,params):eh108,3006
+Qw = np.matrix(np.zeros((Nw,Nw),dtype=complex))Qw110,3103
+Nx=40Nx111,3152
+Ny=20Ny112,3159
+dx=a1/Nxdx113,3166
+dy=b1/Nydy114,3176
+xp = np.linspace(xc1+dx/2,xc1+a1-dx/2,Nx)xp115,3186
+yp = np.linspace(yc1+dy/2,yc1+b1-dy/2,Ny)yp116,3229
+xp_1, yp_1 = np.meshgrid(xp,yp)xp_1117,3272
+xp_1, yp_1 = np.meshgrid(xp,yp)yp_1117,3272
+dS = a1/Nx*b1/NydS118,3305
+    m,n,mode = modes1[i]m120,3344
+    m,n,mode = modes1[i]n120,3344
+    m,n,mode = modes1[i]mode120,3344
+    params=(xc1,yc1,m,n,a1,b1,eps,freq,mode)params121,3370
+current=time.time()current134,3841
+Qs = np.matrix(np.zeros((Ns,Ns),dtype=complex))Qs136,3864
+Nx=40Nx137,3913
+Ny=20Ny138,3920
+dx=a2/Nxdx139,3927
+dy=b2/Nydy140,3937
+xp = np.linspace(xc2+dx/2,xc2+a2-dx/2,Nx)xp141,3947
+yp = np.linspace(yc2+dy/2,yc2+b2-dy/2,Ny)yp142,3990
+xp_1, yp_1 = np.meshgrid(xp,yp)xp_1143,4033
+xp_1, yp_1 = np.meshgrid(xp,yp)yp_1143,4033
+dS = a2/Nx*b2/NydS144,4066
+    m,n,mode = modes2[i]m146,4105
+    m,n,mode = modes2[i]n146,4105
+    m,n,mode = modes2[i]mode146,4105
+    params=(xc2,yc2,m,n,a2,b2,eps,freq,mode)params147,4131
+current=time.time()current159,4600
+XX = np.matrix(np.zeros((Ns,Nw),dtype=complex))XX161,4627
+modes12= list(itertools.product(modes1, modes2))modes12162,4676
+def exh(x,y,par1,par2):exh163,4726
+Nx=40Nx166,4821
+Ny=20Ny167,4828
+dx=a2/Nxdx168,4835
+dy=b2/Nydy169,4845
+xp = np.linspace(xc2+dx/2,xc2+a2-dx/2,Nx)xp170,4855
+yp = np.linspace(yc2+dy/2,yc2+b2-dy/2,Ny)yp171,4898
+xp_1, yp_1 = np.meshgrid(xp,yp)xp_1172,4941
+xp_1, yp_1 = np.meshgrid(xp,yp)yp_1172,4941
+dS = a2/Nx*b2/NydS173,4974
+    m2,n2,mode2 = modes2[i]m2175,5022
+    m2,n2,mode2 = modes2[i]n2175,5022
+    m2,n2,mode2 = modes2[i]mode2175,5022
+    params2=(xc2,yc2,m2,n2,a2,b2,eps,freq,mode2) params2176,5051
+        m1,n1,mode1 = modes1[j]m1178,5136
+        m1,n1,mode1 = modes1[j]n1178,5136
+        m1,n1,mode1 = modes1[j]mode1178,5136
+        params1=(xc1,yc1,m1,n1,a1,b1,eps,freq,mode1)params1179,5169
+current=time.time()current190,5756
+Iw = np.matrix(np.eye(Nw))Iw192,5779
+Is = np.matrix(np.eye(Ns))Is193,5807
+SP = np.matrix(np.zeros((Ns+Nw,Ns+Nw),dtype=complex))SP194,5835
+F = 2*(Qs+XX*Qw.I*XX.T).IF196,5892
+S11 = Qw.I*XX.T*F*XX-IwS11198,5921
+S12 = Qw.I*XX.T*F*QsS12199,5946
+S21 = F*XXS21200,5968
+S22 = F*Qs-IsS22201,5980
+current=time.time()current212,6189
+SSP = SP*SPSSP214,6212
+cc1=modes1.index((1,0,1))cc1215,6225
+cc2=modes2.index((1,0,1))cc2216,6252
+
+src/em/mode_matching/old/modematching.py,4185
+import numpy as npnp2,24
+from numpy.lib.scimath import sqrt as csqrtcsqrt3,44
+mu0=4*np.pi*1e-7mu07,146
+eps0=8.85e-12eps08,164
+c0=3e8c09,179
+pi = np.pipi10,187
+def Ex(x,y,xc,yc,m,n,a,b,eps,freq,mode=1):Ex12,201
+def Ey(x,y,xc,yc,m,n,a,b,eps,freq,mode=1):Ey22,584
+def Hx(x,y,xc,yc,m,n,a,b,eps,freq,mode=1):Hx32,960
+def Hy(x,y,xc,yc,m,n,a,b,eps,freq,mode=1):Hy42,1343
+xc=0xc81,2471
+yc=0yc82,2477
+m1=4m183,2483
+n1=2n184,2489
+m2=4m285,2495
+n2=2n286,2501
+a=3.1e-3a87,2507
+b=1.55e-3b88,2517
+a1=3.1e-3a189,2528
+b1=1.55e-3b190,2539
+a2=3.1e-3a291,2551
+b2=1.55e-3b292,2562
+eps=1eps93,2574
+freq=77e9freq94,2581
+params1=(xc,yc,m1,n1,a,b,eps,freq,1)params196,2606
+params2=(xc,yc,m2,n2,a,b,eps,freq,1)params297,2644
+ans, err = dblquad(lambda x,y:np.imag(Ex(x,y,*params1)*Hy(x,y,*params2)-Ey(x,y,*params1)*Hx(x,y,ans98,2682
+ans, err = dblquad(lambda x,y:np.imag(Ex(x,y,*params1)*Hy(x,y,*params2)-Ey(x,y,*params1)*Hx(x,y,err98,2682
+freq_cutoff=500e9freq_cutoff104,2906
+n1=int(2*pi*freq_cutoff/c0*b1/pi)n1106,2977
+m1=int(2*pi*freq_cutoff/c0*a1/pi)m1107,3012
+n2=int(2*pi*freq_cutoff/c0*b2/pi)n2108,3047
+m2=int(2*pi*freq_cutoff/c0*a2/pi)m2109,3082
+TEmodes1= list(itertools.product(list(range(m1+1)),list(range(n1+1)),[1]))TEmodes1113,3204
+TEmodes2= list(itertools.product(list(range(m2+1)),list(range(n2+1)),[1]))TEmodes2114,3280
+TMmodes1= list(itertools.product(list(range(1,m1+1)),list(range(1,n1+1)),[0]))TMmodes1115,3356
+TMmodes2= list(itertools.product(list(range(1,m2+1)),list(range(1,n2+1)),[0]))TMmodes2116,3436
+modes1 = TEmodes1 + TMmodes1modes1119,3594
+modes2 = TEmodes2 + TMmodes2modes2120,3624
+Nw = len(modes1)Nw133,3843
+Ns = len(modes2)Ns134,3861
+Qw = np.zeros((Nw,Nw),dtype=complex)Qw136,3881
+    m,n,mode = modes1[i]m138,3940
+    m,n,mode = modes1[i]n138,3940
+    m,n,mode = modes1[i]mode138,3940
+    params=(xc1,yc1,m,n,a1,b1,eps,freq,mode)params139,3966
+    y, err = dblquad(lambda x,y:np.imag(Ex(x,y,*params)*Hy(x,y,*params)-Ey(x,y,*params)*Hx(x,y,*y140,4012
+    y, err = dblquad(lambda x,y:np.imag(Ex(x,y,*params)*Hy(x,y,*params)-Ey(x,y,*params)*Hx(x,y,*err140,4012
+    x, err = dblquad(lambda x,y:np.real(Ex(x,y,*params)*Hy(x,y,*params)-Ey(x,y,*params)*Hx(x,y,*x143,4213
+    x, err = dblquad(lambda x,y:np.real(Ex(x,y,*params)*Hy(x,y,*params)-Ey(x,y,*params)*Hx(x,y,*err143,4213
+Qs = np.zeros((Ns,Ns),dtype=complex)Qs149,4444
+    m,n,mode = modes2[i]m151,4503
+    m,n,mode = modes2[i]n151,4503
+    m,n,mode = modes2[i]mode151,4503
+    params=(xc2,yc2,m,n,a2,b2,eps,freq,mode)params152,4529
+    y, err = dblquad(lambda x,y:np.imag(Ex(x,y,*params)*Hy(x,y,*params)-Ey(x,y,*params)*Hx(x,y,*y153,4575
+    y, err = dblquad(lambda x,y:np.imag(Ex(x,y,*params)*Hy(x,y,*params)-Ey(x,y,*params)*Hx(x,y,*err153,4575
+    x, err = dblquad(lambda x,y:np.real(Ex(x,y,*params)*Hy(x,y,*params)-Ey(x,y,*params)*Hx(x,y,*x156,4776
+    x, err = dblquad(lambda x,y:np.real(Ex(x,y,*params)*Hy(x,y,*params)-Ey(x,y,*params)*Hx(x,y,*err156,4776
+XX = np.zeros((Ns,Nw),dtype=complex)XX161,5005
+modes12= list(itertools.product(modes1, modes2))modes12162,5043
+        m1,n1,mode1 = modes1[j]m1165,5171
+        m1,n1,mode1 = modes1[j]n1165,5171
+        m1,n1,mode1 = modes1[j]mode1165,5171
+        m2,n2,mode2 = modes2[i]m2166,5204
+        m2,n2,mode2 = modes2[i]n2166,5204
+        m2,n2,mode2 = modes2[i]mode2166,5204
+        params1=(xc1,yc1,m1,n1,a1,b1,eps,freq,mode1)params1167,5237
+        params2=(xc2,yc2,m2,n2,a2,b2,eps,freq,mode2)params2168,5291
+        def exh(x,y):exh169,5345
+        y, err = dblquad(lambda x,y:np.imag(exh(x,y)), yc2, yc2+b2,y171,5456
+        y, err = dblquad(lambda x,y:np.imag(exh(x,y)), yc2, yc2+b2,err171,5456
+        x, err = dblquad(lambda x,y:np.real(exh(x,y)), yc2, yc2+b2,x174,5614
+        x, err = dblquad(lambda x,y:np.real(exh(x,y)), yc2, yc2+b2,err174,5614
+Iw = np.eye(Nw)Iw179,5800
+Is = np.eye(Ns)Is180,5817
+SP = np.zeros((Ns*Nw,Ns*Nw),dtype=complex)SP181,5834
+F = 2*(Qs+XX*Qw.I*XX.T).IF182,5878
+S11 = Qw.I*XX.T*F*XX-IwS11183,5905
+S12 = Qw.I*XX.T*F*QsS12184,5930
+S21 = F*XXS21185,5952
+S22 = F*Qs-IsS22186,5964
+
+src/em/mode_matching/old/modematching_gen.py,5178
+import numpy as npnp2,24
+from numpy.lib.scimath import sqrt as csqrtcsqrt3,44
+current=time.time()current7,157
+mu0=4*np.pi*1e-7mu09,180
+eps0=8.854187817e-12eps010,198
+c0=299792458c011,220
+pi = np.pipi12,234
+def Ex(x,y,xc,yc,m,n,a,b,eps,freq,mode=1):Ex14,248
+def Ey(x,y,xc,yc,m,n,a,b,eps,freq,mode=1):Ey28,694
+def Hx(x,y,xc,yc,m,n,a,b,eps,freq,mode=1):Hx42,1141
+def Hy(x,y,xc,yc,m,n,a,b,eps,freq,mode=1):Hy56,1591
+xc1=0xc171,2044
+yc1=0yc172,2051
+xc2=0xc274,2073
+yc2=0yc276,2094
+a1=3.1e-3a177,2101
+b1=1.55e-3b178,2112
+a2=3.1e-3a279,2124
+b2=0.55e-3b281,2149
+eps1=1eps182,2161
+eps2=1eps283,2169
+Nx=40Nx84,2177
+Ny=20Ny85,2184
+freq=77e9freq88,2195
+freq_cutoff=385e9freq_cutoff90,2208
+xt2 = np.min([xc1+a1,xc2+a2])xt292,2279
+xt1 = np.max([xc1,xc2])xt193,2310
+yt2 = np.min([yc1+b1,yc2+b2])yt294,2335
+yt1 = np.max([yc1,yc2])yt195,2366
+n1=int(2*pi*freq_cutoff/c0*b1/pi)n196,2391
+m1=int(2*pi*freq_cutoff/c0*a1/pi)m197,2426
+n2=int(2*pi*freq_cutoff/c0*b2/pi)n298,2461
+m2=int(2*pi*freq_cutoff/c0*a2/pi)m299,2496
+n3=int(2*pi*freq_cutoff/c0*(yt2-yt1)/pi)n3100,2531
+m3=int(2*pi*freq_cutoff/c0*(xt2-xt1)/pi)m3101,2573
+TEmodes1= list(itertools.product(list(range(m1+1)),list(range(n1+1)),[1]))TEmodes1105,2702
+TEmodes2= list(itertools.product(list(range(m2+1)),list(range(n2+1)),[1]))TEmodes2106,2778
+TEmodes3= list(itertools.product(list(range(m3+1)),list(range(n3+1)),[1]))TEmodes3107,2854
+TMmodes1= list(itertools.product(list(range(1,m1+1)),list(range(1,n1+1)),[0]))TMmodes1108,2930
+TMmodes2= list(itertools.product(list(range(1,m2+1)),list(range(1,n2+1)),[0]))TMmodes2109,3010
+TMmodes3= list(itertools.product(list(range(1,m3+1)),list(range(1,n3+1)),[0]))TMmodes3110,3090
+modes1 = TEmodes1 + TMmodes1modes1114,3287
+modes2 = TEmodes2 + TMmodes2modes2115,3317
+modes3 = TEmodes3 + TMmodes3modes3116,3347
+modes13= list(itertools.product(modes1, modes3))modes13117,3377
+modes23= list(itertools.product(modes2, modes3))modes23118,3427
+Nw1 = len(modes1)Nw1121,3507
+Nw2 = len(modes2)Nw2122,3526
+Ns = len(modes3)Ns123,3545
+def eh(x,y,params):eh125,3565
+def createmesh(xcs,ycs,xcf,ycf,Nx,Ny):createmesh128,3664
+def exh(x,y,par1,par2):exh137,3916
+xp_1, yp_1, dS1 = createmesh(xc1,yc1,xc1+a1,yc1+b1,Nx,Ny)xp_1140,4011
+xp_1, yp_1, dS1 = createmesh(xc1,yc1,xc1+a1,yc1+b1,Nx,Ny)yp_1140,4011
+xp_1, yp_1, dS1 = createmesh(xc1,yc1,xc1+a1,yc1+b1,Nx,Ny)dS1140,4011
+xp_2, yp_2, dS2 = createmesh(xc2,yc2,xc2+a2,yc2+b2,Nx,Ny)xp_2141,4070
+xp_2, yp_2, dS2 = createmesh(xc2,yc2,xc2+a2,yc2+b2,Nx,Ny)yp_2141,4070
+xp_2, yp_2, dS2 = createmesh(xc2,yc2,xc2+a2,yc2+b2,Nx,Ny)dS2141,4070
+xp_3, yp_3, dS3 = createmesh(xt1,yt1,xt2,yt2,Nx,Ny)xp_3142,4129
+xp_3, yp_3, dS3 = createmesh(xt1,yt1,xt2,yt2,Nx,Ny)yp_3142,4129
+xp_3, yp_3, dS3 = createmesh(xt1,yt1,xt2,yt2,Nx,Ny)dS3142,4129
+Iw1 = np.matrix(np.eye(Nw1))Iw1144,4184
+Iw2 = np.matrix(np.eye(Nw2))Iw2145,4214
+Is = np.matrix(np.eye(Ns))Is146,4244
+SP = np.matrix(np.zeros((Nw1+Nw2,Nw1+Nw2),dtype=complex))SP147,4272
+Qw1 = np.matrix(np.zeros((Nw1,Nw1),dtype=complex))Qw1148,4331
+Qw2 = np.matrix(np.zeros((Nw2,Nw2),dtype=complex))Qw2149,4383
+Qs  = np.matrix(np.zeros((Ns,Ns),dtype=complex))Qs150,4435
+freqs=np.linspace(65e9,90e9,26)freqs152,4487
+freqs=[77e9]freqs153,4520
+RL=[]RL154,4534
+        m,n,mode = modes1[i]m158,4604
+        m,n,mode = modes1[i]n158,4604
+        m,n,mode = modes1[i]mode158,4604
+        params=(xc1,yc1,m,n,a1,b1,eps1,freq,mode)params159,4634
+        m,n,mode = modes2[i]m163,4774
+        m,n,mode = modes2[i]n163,4774
+        m,n,mode = modes2[i]mode163,4774
+        params=(xc2,yc2,m,n,a2,b2,eps2,freq,mode)params164,4804
+        Xw1=0Xw1168,4938
+        Xw2=0Xw2169,4953
+        Xw1 = np.matrix(np.zeros((Ns,Nw1),dtype=complex))Xw1171,4979
+            m3,n3,mode3 = modes3[i]m3173,5076
+            m3,n3,mode3 = modes3[i]n3173,5076
+            m3,n3,mode3 = modes3[i]mode3173,5076
+            params2=(xt1,yt1,m3,n3,xt2-xt1,yt2-yt1,0.5*(eps1+eps2),freq,mode3)params2174,5113
+                m1,n1,mode1 = modes1[j]m1176,5235
+                m1,n1,mode1 = modes1[j]n1176,5235
+                m1,n1,mode1 = modes1[j]mode1176,5235
+                params1=(xc1,yc1,m1,n1,a1,b1,eps1,freq,mode1)params1177,5276
+        Xw2 = np.matrix(np.zeros((Ns,Nw2),dtype=complex))Xw2180,5420
+            m3,n3,mode3 = modes3[i]m3182,5517
+            m3,n3,mode3 = modes3[i]n3182,5517
+            m3,n3,mode3 = modes3[i]mode3182,5517
+            params2=(xt1,yt1,m3,n3,xt2-xt1,yt2-yt1,0.5*(eps1+eps2),freq,mode3)params2183,5554
+                m2,n2,mode2 = modes2[j]m2185,5676
+                m2,n2,mode2 = modes2[j]n2185,5676
+                m2,n2,mode2 = modes2[j]mode2185,5676
+                params1=(xc2,yc2,m2,n2,a2,b2,eps2,freq,mode2)params1186,5717
+    F = 2*(Xw1*Qw1.I*Xw1.T+Xw2*Qw2.I*Xw2.T).IF189,5853
+    S11 = Qw1.I*Xw1.T*F*Xw1-Iw1S11191,5902
+    S12 = Qw1.I*Xw1.T*F*Xw2S12192,5935
+    S21 = Qw2.I*Xw2.T*F*Xw1S21193,5964
+    S22 = Qw2.I*Xw2.T*F*Xw2-Iw2S22194,5993
+    cc1=modes1.index((1,0,1))cc1203,6230
+    cc2=modes2.index((1,0,1))cc2204,6261
+
+src/em/mode_matching/old/modematching_mp.py,3574
+import numpy as npnp2,24
+from numpy.lib.scimath import sqrt as csqrtcsqrt3,44
+current=time.time()current8,181
+mu0=4*np.pi*1e-7mu010,204
+eps0=8.854187817e-12eps011,222
+c0=299792458c012,244
+pi = np.pipi13,258
+def Ex(x,y,xc,yc,m,n,a,b,eps,freq,mode=1):Ex15,272
+def Ey(x,y,xc,yc,m,n,a,b,eps,freq,mode=1):Ey29,729
+def Hx(x,y,xc,yc,m,n,a,b,eps,freq,mode=1):Hx43,1179
+def Hy(x,y,xc,yc,m,n,a,b,eps,freq,mode=1):Hy57,1636
+xc1=0xc172,2092
+yc1=0yc173,2099
+xc2=0xc274,2106
+yc2=1.0e-3yc275,2113
+a1=3.1e-3a177,2134
+b1=1.55e-3b178,2145
+a2=3.1e-3a279,2157
+b2=0.55e-3b280,2168
+eps=1eps81,2180
+freq=77e9freq82,2187
+freq_cutoff=300e9freq_cutoff84,2200
+n1=int(2*pi*freq_cutoff/c0*b1/pi)n186,2271
+m1=int(2*pi*freq_cutoff/c0*a1/pi)m187,2306
+n2=int(2*pi*freq_cutoff/c0*b2/pi)n288,2341
+m2=int(2*pi*freq_cutoff/c0*a2/pi)m289,2376
+TEmodes1= list(itertools.product(list(range(m1+1)),list(range(n1+1)),[1]))TEmodes194,2500
+TEmodes2= list(itertools.product(list(range(m2+1)),list(range(n2+1)),[1]))TEmodes295,2576
+TMmodes1= list(itertools.product(list(range(1,m1+1)),list(range(1,n1+1)),[0]))TMmodes196,2652
+TMmodes2= list(itertools.product(list(range(1,m2+1)),list(range(1,n2+1)),[0]))TMmodes297,2732
+modes1 = TEmodes1 + TMmodes1modes1100,2890
+modes2 = TEmodes2 + TMmodes2modes2101,2920
+Nw = len(modes1)Nw106,2992
+Ns = len(modes2)Ns107,3010
+def eh(x,y,params):eh109,3030
+Qw = np.matrix(np.zeros((Nw,Nw),dtype=complex))Qw111,3127
+    m,n,mode = modes1[i]m113,3197
+    m,n,mode = modes1[i]n113,3197
+    m,n,mode = modes1[i]mode113,3197
+    params=(xc1,yc1,m,n,a1,b1,eps,freq,mode)params114,3223
+    py, err = dblquad(lambda x,y:np.imag(eh(x,y,params)), yc1, yc1+b1,py115,3269
+    py, err = dblquad(lambda x,y:np.imag(eh(x,y,params)), yc1, yc1+b1,err115,3269
+    px, err = dblquad(lambda x,y:np.real(eh(x,y,params)), yc1, yc1+b1,px118,3422
+    px, err = dblquad(lambda x,y:np.real(eh(x,y,params)), yc1, yc1+b1,err118,3422
+current=time.time()current126,3633
+Qs = np.matrix(np.zeros((Ns,Ns),dtype=complex))Qs128,3656
+    m,n,mode = modes2[i]m130,3726
+    m,n,mode = modes2[i]n130,3726
+    m,n,mode = modes2[i]mode130,3726
+    params=(xc2,yc2,m,n,a2,b2,eps,freq,mode)params131,3752
+    py, err = dblquad(lambda x,y:np.imag(eh(x,y,params)), yc2, yc2+b2,py132,3798
+    py, err = dblquad(lambda x,y:np.imag(eh(x,y,params)), yc2, yc2+b2,err132,3798
+    px, err = dblquad(lambda x,y:np.real(eh(x,y,params)), yc2, yc2+b2,px135,3951
+    px, err = dblquad(lambda x,y:np.real(eh(x,y,params)), yc2, yc2+b2,err135,3951
+current=time.time()current142,4160
+modes12= list(itertools.product(modes1, modes2))modes12145,4185
+def exh(x,y,par1,par2):exh146,4235
+XXR = np.matrix(np.zeros((Ns,Nw),dtype=complex))XXR149,4330
+XXI = np.matrix(np.zeros((Ns,Nw),dtype=complex))XXI150,4380
+def calc_real():calc_real151,4430
+def calc_imag():calc_imag166,5004
+proses1 = multiprocessing.Process(None,calc_real,args=())proses1181,5577
+proses2 = multiprocessing.Process(None,calc_imag,args=())proses2184,5668
+XX= XXR + XXIXX189,5778
+current=time.time()current191,5821
+Iw = np.matrix(np.eye(Nw))Iw193,5844
+Is = np.matrix(np.eye(Ns))Is194,5872
+SP = np.matrix(np.zeros((Ns+Nw,Ns+Nw),dtype=complex))SP195,5900
+F = 2*(Qs+XX*Qw.I*XX.T).IF197,5957
+S11 = Qw.I*XX.T*F*XX-IwS11199,5986
+S12 = Qw.I*XX.T*F*QsS12200,6011
+S21 = F*XXS21201,6033
+S22 = F*Qs-IsS22202,6045
+current=time.time()current213,6254
+SSP = SP*SPSSP215,6277
+cc1=modes1.index((1,0,1))cc1216,6290
+cc2=modes2.index((1,0,1))cc2217,6317
+
+src/em/mode_matching/old/mode_matching_module.py,1466
+import numpy as npnp2,24
+from numpy.lib.scimath import sqrt as csqrtcsqrt3,44
+current=time.time()current7,157
+mu0=4*np.pi*1e-7mu09,180
+eps0=8.854187817e-12eps010,198
+c0=299792458c011,220
+pi = np.pipi12,234
+def Ex(x,y,xc,yc,m,n,a,b,eps,freq,mode=1):Ex14,248
+def Ey(x,y,xc,yc,m,n,a,b,eps,freq,mode=1):Ey28,696
+def Hx(x,y,xc,yc,m,n,a,b,eps,freq,mode=1):Hx42,1146
+def Hy(x,y,xc,yc,m,n,a,b,eps,freq,mode=1):Hy56,1599
+def eh(x,y,params):eh70,2053
+def createmesh(xcs,ycs,xcf,ycf,Nx,Ny):createmesh73,2152
+def exh(x,y,par1,par2):exh82,2404
+class MM_RWG:MM_RWG85,2499
+    def __init__(self,wg1, wg2, aperture=None):__init__86,2514
+    def simulate(self, freqs):simulate99,2847
+    xc1=0xc1216,7712
+    yc1=0yc1217,7723
+    xc2=0xc2218,7734
+    yc2=0yc2219,7745
+    a1=3.1e-3a1220,7756
+    b1=1.55e-3b1221,7771
+    a2=3.1e-3a2222,7787
+    b2=1.55e-3b2224,7820
+    eps1=1eps1225,7836
+    eps2=1eps2226,7848
+    aperture1=(xc1,yc1,a1,b1,eps1)aperture1227,7860
+    aperture2=(xc2,yc2,a2,b2,eps2)aperture2228,7896
+    aperture3=(1.05e-3,2.05e-3,0,1.55e-3)aperture3229,7932
+    freqs=[77e9]freqs231,8016
+    solver=MM_RWG(aperture1,aperture2,aperture3)solver232,8034
+    Sparams, modes1, modes2 = solver.simulate(freqs)Sparams233,8084
+    Sparams, modes1, modes2 = solver.simulate(freqs)modes1233,8084
+    Sparams, modes1, modes2 = solver.simulate(freqs)modes2233,8084
+    cc1=modes1.index((1,0,1))cc1234,8138
+
+src/em/mode_matching/__init__.py,0
+
+src/em/__init__.py,84
+__version__ = "0.0.4"__version__7,71
+__author__ = 'Tuncay Erdöl'__author__8,94
+
+src/mwtoolbox/components.py,5304
+from numpy.lib.scimath import sqrt as csqrt #this works with negative real numbers unlike numpy.csqrt23,811
+co = speed_of_light_in_freespace.simplified.magnitudeco27,967
+eta0 = free_space_wave_impedance.simplified.magnitudeeta028,1022
+mu0 = free_space_permeability.simplified.magnitudemu029,1077
+eps0 = free_space_permittivity.simplified.magnitudeeps030,1129
+def zo_eeff_wire_on_grounded_substrate(arg, defaultunits=None):zo_eeff_wire_on_grounded_substrate32,1184
+def ind_straight_round_wire(arg, defaultunits=None):ind_straight_round_wire64,2452
+def zo_eeff_straight_wire_over_substrate(arg, defaultunits=None):zo_eeff_straight_wire_over_substrate103,3814
+def ind_straight_flat_wire(arg, defaultunits=None):ind_straight_flat_wire136,5127
+def ind_microstrip_via_hole(arg, defaultunits=None):ind_microstrip_via_hole176,6539
+def ind_air_core_coil(arg, defaultunits=None):ind_air_core_coil204,7457
+def ind_bond_wire(arg, defaultunits=None):ind_bond_wire242,8832
+def chebyshev_quarter_wave_impedance_transformer(arg, defaultunits=None):chebyshev_quarter_wave_impedance_transformer276,10043
+def binomial_quarter_wave_impedance_transformer(arg, defaultunits=None):binomial_quarter_wave_impedance_transformer352,12807
+def tee_attenuator_synthesis(arg, defaultunits=None):tee_attenuator_synthesis396,14429
+def tee_attenuator_analysis(arg, defaultunits=None):tee_attenuator_analysis429,15504
+def pi_attenuator_synthesis(arg, defaultunits=None):pi_attenuator_synthesis469,16891
+def pi_attenuator_analysis(arg, defaultunits=None):pi_attenuator_analysis503,17974
+def bridged_tee_attenuator_synthesis(arg, defaultunits=None):bridged_tee_attenuator_synthesis546,19477
+def bridged_tee_attenuator_analysis(arg, defaultunits=None):bridged_tee_attenuator_analysis576,20483
+def dual_frequency_transformer(arg, defaultunits=None):dual_frequency_transformer613,21758
+def symmetric_lange_coupler(arg, defaultunits=None):symmetric_lange_coupler648,23027
+def awg2dia(arg, defaultunits=None):awg2dia685,24325
+def dia2awg(arg, defaultunits=None):dia2awg716,25475
+def pcb_track_current_capacity_ipc(arg, defaultunits=None):pcb_track_current_capacity_ipc746,26519
+def pcb_track_current_capacity(arg, defaultunits=None):pcb_track_current_capacity776,27551
+def optimum_mitered_90_deg_microstrip_bend(arg, defaultunits=None):optimum_mitered_90_deg_microstrip_bend808,28685
+def optimum_mitered_arbitrary_angle_microstrip_bend(arg, defaultunits=None):optimum_mitered_arbitrary_angle_microstrip_bend837,29653
+def interference_phase_amp_error(arg, defaultunits=None):interference_phase_amp_error885,31583
+def parallel_plate_cap(arg, defaultunits=None):parallel_plate_cap911,32475
+def circular_plate_cap(arg, defaultunits=None):circular_plate_cap948,33789
+def shorten_90_degree_line(arg, defaultunits=None):shorten_90_degree_line977,34738
+def z_wg_te10(er, a, b, freq, formulation=1):z_wg_te101005,35725
+def homogeneous_rect_waveguide_parameters_te(arg, defaultunits=None):homogeneous_rect_waveguide_parameters_te1020,36311
+def inductive_post_in_waveguide(arg, defaultunits=None):inductive_post_in_waveguide1122,41214
+def inductive_window_in_waveguide(arg, defaultunits=None):inductive_window_in_waveguide1205,45276
+    def integrand(alpha):integrand1238,46586
+    def integrand(alpha):integrand1252,47304
+def evanescent_wg_equivalent(arg, defaultunits=None):evanescent_wg_equivalent1275,48380
+def ewg_abcd(a, b, er, length, frek):ewg_abcd1321,50440
+def ewg_inv(a, b, er, length, frek):ewg_inv1340,51231
+def siw_equivalent_width(w, d, s):siw_equivalent_width1358,52021
+def rect_wg_to_evanescent_rect_wg_step(a1, a2):rect_wg_to_evanescent_rect_wg_step1371,52420
+def star_to_triangle_transformation(arg, defaultunits=None):star_to_triangle_transformation1401,53603
+def triangle_to_star_transformation(arg, defaultunits=None):triangle_to_star_transformation1434,54793
+def gysel_power_divider(arg, defaultunits=None):gysel_power_divider1469,55991
+def dual_transformation1(arg, defaultunits=None):dual_transformation11518,57825
+def dual_transformation2(arg, defaultunits=None):dual_transformation21557,59129
+def thermal_conductance_of_via_farm(arg, defaultunits):thermal_conductance_of_via_farm1595,60431
+def thermal_conductance_of_via_farm_view(arg, defaultunits):thermal_conductance_of_via_farm_view1631,61800
+def exponential_taper_impedance_transformer(arg, defaultunits=None):exponential_taper_impedance_transformer1658,63012
+def triangular_taper_impedance_transformer(arg, defaultunits=None):triangular_taper_impedance_transformer1699,64629
+def patch_antenna_analysis(arg, defaultunits=None):patch_antenna_analysis1744,66501
+def chebyshev_taper_impedance_transformer(arg, defaultunits=None):chebyshev_taper_impedance_transformer1795,68342
+def fcutoff_cwg(rad,eps_r=1, v=0, n=1, mode="TE"):fcutoff_cwg1837,70040
+def z_cwg(rad,freq, eps_r=1, v=0, n=1, mode="TE"):z_cwg1857,70617
+def klopfenstein_taper_impedance_transformer(arg, defaultunits=None):klopfenstein_taper_impedance_transformer1882,71359
+    def fi(ys, A):fi1912,72520
+def absorptive_filter_equalizer(arg, defaultunits=None):absorptive_filter_equalizer1928,73317
+def lc_balun(arg, defaultunits=None):lc_balun1964,74757
+    c = ["0.1", "4.0", "50"]c2011,76181
+
+src/mwtoolbox/filters.py,2434
+import numpy as npnp10,322
+from numpy.lib.scimath import sqrt as csqrtcsqrt11,342
+co=speed_of_light_in_freespace.simplified.magnitudeco13,411
+eta0=free_space_wave_impedance.simplified.magnitudeeta014,464
+mu0=free_space_permeability.simplified.magnitudemu015,517
+eps0=free_space_permittivity.simplified.magnitudeeps016,567
+def zwg_te10(er,a,b,freq):zwg_te1018,620
+def ewg_abcd(a,b,er,length,frek):ewg_abcd21,687
+def minimum_butterworth_filter_degree(L,fstop):minimum_butterworth_filter_degree41,1513
+def butterworth_filter_prototype(n):butterworth_filter_prototype45,1752
+def minimum_chebyshev_filter_degree(Lar,Las,fstop):minimum_chebyshev_filter_degree52,2076
+def chebyshev_filter_prototype(n,Lar):chebyshev_filter_prototype57,2394
+def lp_filter_from_prototype(g,Zo,fc,type=1):lp_filter_from_prototype70,2827
+def hp_filter_from_prototype(g,Zo,fc,type=1):hp_filter_from_prototype95,3676
+def bp_filter_from_prototype(g,Zo,fc,FBW,type=1):bp_filter_from_prototype120,4529
+def bs_filter_from_prototype(g,Zo,fc,FBW,type=1):bs_filter_from_prototype140,5448
+def chebyshev_stepped_impedance_lp_filter(Zo,maxreturnloss,N,theta):chebyshev_stepped_impedance_lp_filter160,6367
+def inductive_post_wg_filter(er, a, b, maxreturnloss,N, d,  x,  f1, f2):inductive_post_wg_filter183,7224
+    def integrand(c):integrand210,8425
+    def integrand(c):integrand223,8874
+def filter_with_j_inverter(g,Zo,fcenter,fbw,caps):filter_with_j_inverter233,9248
+def filter_with_j_inverter2(g,Zo,fcenter,fbw,caps): #first and last inverters are eliminatedfilter_with_j_inverter2246,9782
+def evanescent_wg_filter3(g,n,Lj,a,a1,b,er, fcenter,fbw,alpha):evanescent_wg_filter3260,10458
+def evanescent_wg_filter4(g,n,Lj,a,a1,b,er, fcenter,fbw,alpha):evanescent_wg_filter4286,11397
+    a=0.016a316,12493
+    a1=0.008a1317,12506
+    b=0.0005b318,12520
+    er=3.38er320,12551
+    c2_c1=2c2_c1321,12564
+    n=1.6       #symmetricn322,12577
+    X=0.4e-9    #symmetricX323,12605
+    n=1.6       #symmetricn325,12635
+    X=1.2e-9    #symmetricX326,12663
+    loss=1 #plot loss if 1, plot isolation if 0loss330,12753
+        l1=10000l1338,13049
+        l2=10000l2340,13081
+    sonuc=[]sonuc341,13099
+    l2i=0.042e-9l2i345,13171
+    r2i=0.26r2i346,13189
+    l1i=0.16e-9l1i347,13203
+    r1i=0.98r1i348,13220
+        networks=[]networks351,13277
+        abcd=cascade_networks(networks)abcd385,14668
+
+src/mwtoolbox/genel.py,1244
+import quantities as pqpq6,60
+import numpy as npnp7,85
+Np2dB = 8.68589 # coefficient to convert from alpha to dB/m (20.0*log10(e))Np2dB15,226
+globsep = ";"globsep17,351
+globsep2 = ":"  # empedans degerlerini ayirmak icinglobsep218,366
+def ekpolyfit(x):ekpolyfit34,1243
+def tukey_window(alpha,N):tukey_window49,1685
+def blackman_window(N):blackman_window66,2204
+def gaussian_window(sigma,N):gaussian_window78,2519
+def cmp(x, y):cmp88,2797
+    basestring = strbasestring101,3165
+    unicode = bytesunicode106,3227
+def prettystring(miktarlar, birim=None):prettystring109,3252
+def coef(outputunit):coef176,5893
+def stripunit(sayi):stripunit182,6108
+def convert2pq(sayilar, defaultunits=None):convert2pq193,6520
+def flatten(x):flatten273,9700
+def heatmap(data, row_labels, col_labels, ax=None, cbar_kw={}, cbarlabel="", **kwargs):heatmap283,9979
+    import matplotlib.pyplot as pltplt303,11049
+def annotate_heatmap(im, data=None, valfmt="{x:.2f}", textcolors=("black", "white"), threshold=Nannotate_heatmap337,12207
+def smooth(x, window_len=11, window='hanning'):smooth388,14473
+    import numpy as npnp416,15581
+def str_distance(s, t):str_distance437,16451
+    dat = blackman_window(100)dat511,19827
+
+src/mwtoolbox/myconstants.py,517
+speed_of_light_in_freespace=299792458*pq.m/pq.sspeed_of_light_in_freespace3,43
+free_space_wave_impedance=376.730313461*pq.ohmfree_space_wave_impedance4,92
+free_space_permeability=12.566370614e-7*pq.N/pq.A/pq.Afree_space_permeability5,140
+free_space_permittivity=8.854187817e-12*pq.F/pq.mfree_space_permittivity6,196
+mu0 = free_space_permeability.simplified.magnitudemu08,249
+eps0 = free_space_permittivity.simplified.magnitudeeps09,301
+co = c0 = speed_of_light_in_freespace.simplified.magnitudeco10,354
+
+src/mwtoolbox/network.py,2098
+import numpy as npnp5,51
+import operator as opop6,71
+from numpy.lib.scimath import sqrt as csqrtcsqrt7,94
+def ideal_nport(N):ideal_nport10,171
+def ideal_gyrator():ideal_gyrator22,440
+def ideal_coupled_line(Ze, Zo, Te, To, Z0):ideal_coupled_line28,555
+def ideal_amp(G):ideal_amp48,1179
+def ideal_att(G):ideal_att55,1365
+def circulator():circulator62,1528
+def shunt_z(Z):shunt_z68,1702
+def series_z(Z):series_z74,1826
+def jinv(J):jinv80,1947
+def jinv_lumped(X):jinv_lumped86,2070
+def kinv(K):kinv92,2246
+def tline(Zo, theta):tline98,2369
+def tline_lossy(Zo, gamma):tline_lossy104,2587
+def tline_list(Zo, theta):tline_list110,2829
+def transformer(N):transformer116,3044
+def t_network(Zs1, Zp, Zs2):t_network122,3197
+def pi_network(Zp1, Zs, Zp2):pi_network128,3369
+def abcd2y(M):abcd2y134,3541
+def y2abcd(M):y2abcd141,3743
+def t2s(M):t2s148,3977
+def t2s_list(M):t2s_list158,4372
+def s2t(M):s2t168,4745
+def s2t_list(M):s2t_list178,5141
+def abcd2z(M):abcd2z188,5515
+def z2abcd(M):z2abcd195,5720
+def abcd2s(M, Zo=50.0):abcd2s202,5950
+def abcd2s_list(M, Zo=50.0):abcd2s_list213,6395
+def s2abcd(M, Z=(50.0, 50.0)):s2abcd224,6816
+def abcd2t(M, Zo=50.0):abcd2t239,7509
+def abcd_change_ports(M):abcd_change_ports249,7773
+def t2abcd(M, Z=(50.0,50.0)):t2abcd256,7936
+def snp2smp(SM,ports):snp2smp263,8076
+def cascade_networks(networks):cascade_networks273,8505
+def parallel_networks(networks):parallel_networks279,8674
+def series_networks(networks):series_networks286,8903
+def s_normalize_pseudo(S, Zold, Znew):s_normalize_pseudo293,9204
+def s_normalize_power(S, Zold, Znew):s_normalize_power310,9822
+def s_phase_deembed(S, phase):s_phase_deembed327,10526
+def connect_2_ports(Smatrix,k,m):connect_2_ports336,10831
+def connect_network_1_conn_retain(Smatrix,EX,k,m):connect_network_1_conn_retain354,11518
+def connect_network_1_conn(Smatrix,EX,k,m):connect_network_1_conn361,11754
+def connect_2_ports_list(Smatrix,conns):connect_2_ports_list399,13144
+def connect_2_ports_retain(Smatrix,k,m):connect_2_ports_retain414,13804
+
+src/mwtoolbox/networksym.py,2266
+import numpy as npnp5,51
+import sympy as spsp6,71
+import operator as opop7,91
+def ideal_nport(N):ideal_nport10,146
+def ideal_gyrator():ideal_gyrator22,414
+def ideal_coupled_line(Ze, Zo, Te, To, Z0):ideal_coupled_line28,529
+def ideal_amp(G):ideal_amp48,1121
+def ideal_att(G):ideal_att55,1307
+def circulator():circulator62,1489
+def shunt_z(Z):shunt_z68,1660
+def series_z(Z):series_z74,1779
+def jinv(J):jinv80,1898
+def jinv_lumped(X):jinv_lumped86,2021
+def kinv(K):kinv92,2196
+def tline(Zo, theta):tline98,2318
+def tline_list(Zo, theta):tline_list104,2536
+def transformer(N):transformer110,2751
+def t_network(Zs1, Zp, Zs2):t_network116,2882
+def pi_network(Zp1, Zs, Zp2):pi_network122,3052
+def abcd2y(M):abcd2y128,3222
+def y2abcd(M):y2abcd135,3425
+def t2s(M):t2s142,3658
+def s2t(M):s2t152,4050
+def abcd2z(M):abcd2z162,4443
+def z2abcd(M):z2abcd169,4647
+def abcd2s(M, Zo=50):abcd2s176,4876
+def abcd2s_list(M, Zo=50):abcd2s_list189,5344
+def s2abcd(M, Z=( 50, 50 )):s2abcd201,5766
+def abcd2t(M, Zo=50):abcd2t215,6425
+def abcd_change_ports(M):abcd_change_ports225,6638
+def t2abcd(M, Z=( 50,50 )):t2abcd232,6801
+def snp2smp(SM,ports):snp2smp239,6939
+def cascade_networks(networks):cascade_networks249,7369
+def parallel_networks(networks):parallel_networks255,7538
+def series_networks(networks):series_networks262,7767
+def s_normalize_pseudo(S, Zold, Znew):s_normalize_pseudo269,8068
+def s_normalize_power(S, Zold, Znew):s_normalize_power286,8615
+def s_phase_deembed(S, phase):s_phase_deembed303,9228
+def connect_2_ports(Smatrix,k,m):connect_2_ports312,9520
+def connect_network_1_conn(Smatrix,EX,k,m):connect_network_1_conn330,10217
+def connect_network_1_conn_retain(Smatrix,EX,k,m):connect_network_1_conn_retain367,11563
+def connect_2_ports_list(Smatrix,conns):connect_2_ports_list374,11799
+def connect_2_ports_retain(Smatrix,k,m):connect_2_ports_retain389,12459
+    R1, R2 = sp.symbols("R1 R2")R1402,12910
+    R1, R2 = sp.symbols("R1 R2")R2402,12910
+    s1=abcd2s(shunt_z(R1))s1407,13098
+    s2=abcd2s(series_z(R2))s2408,13126
+    tri = idealNport(3)tri417,13506
+    s4 = connect_network_1_conn_retain(s2,s2,2,2)s4426,13809
+    s5 = connect_2_ports_retain(s4,2,1)s5428,13892
+
+src/mwtoolbox/rfnetwork.py,8931
+import numpy as npnp4,82
+from numpy.lib.scimath import sqrt as csqrtcsqrt16,326
+import sympy as spsp17,371
+import mwtoolbox.network as networknetwork19,418
+import mwtoolbox.transmission_lines as tlinestlines26,638
+fcoef={"HZ":1.0, "KHZ":1e3, "MHZ":1e6, "GHZ":1e9}fcoef27,685
+def write_imp_dataset_files_for_hfss_numpy(freqs,write_imp_dataset_files_for_hfss_numpy30,740
+def write_imp_dataset_files_for_hfss(freqs,write_imp_dataset_files_for_hfss43,1303
+def extract_rlgc(spr,length):extract_rlgc60,1930
+def write_impedance_as_s1p(filename, frequencies, Z):write_impedance_as_s1p82,2632
+def write_impedance_as_table(filename, frequencies, Z):write_impedance_as_table102,3405
+def parse_format(line):parse_format109,3729
+def generate_multiport_spfile(conf_filename, output_filename):generate_multiport_spfile127,4374
+def extract_gamma_ereff(filename_long_line,filename_short_line,dL,sm=1):extract_gamma_ereff178,6428
+def extract_gamma_ereff_all(files,Ls,sm=1):extract_gamma_ereff_all230,8377
+def cascade_2_ports(filenames):cascade_2_ports254,9481
+def average_networks(networks):average_networks267,9881
+def untermination_method_old(g1,g2,g3,gL1,gL2,gL3,returnS2P=False, freqs=None):untermination_method_old281,10353
+def untermination_method(g1,g2,g3,gL1,gL2,gL3,returnS2P=False, freqs=None):untermination_method329,13034
+def thru_line_deembedding(thru_filename, line_filename, make_symmetric=True):thru_line_deembedding384,16076
+    def findroots(a,b,c):findroots409,17635
+def trl_launcher_extraction(thru_file, line_file, reflect_file, refstd=False):trl_launcher_extraction460,18997
+    def kokbul(a,b,c):kokbul512,21178
+class spfile:spfile575,23533
+    def __init__(self,filename="",freqs=None,n_ports=1,skiplines=0, only_port_number= False):__init__609,24983
+    aliases = {aliases651,26704
+    def __setattr__(self, name, value):__setattr__655,26768
+    def __getattr__(self, name):__getattr__659,26903
+    def copy(self):copy665,27175
+    def set_smatrix_type(self, smatrix_type):set_smatrix_type668,27229
+    def change_smatrix_type(self, smatrix_type):change_smatrix_type672,27341
+    def copy_data_from_spfile(self,local_i,local_j,source_i,source_j,sourcespfile):copy_data_from_spfile686,27836
+    def set_frequencies_wo_recalc(self,freqs):set_frequencies_wo_recalc693,28260
+    def port_numbers_from_names(self, *names):port_numbers_from_names701,28534
+    def port_numbers_from_names2(self, *names):port_numbers_from_names2713,28969
+    def port_numbers_from_names3(self, *names, cutoff = 0.3):port_numbers_from_names3734,29842
+    def set_data_points(self, m, indices, x):set_data_points758,31179
+    def column_of_data(self,i,j):column_of_data779,32004
+    def set_sym_smatrix(self,SM):set_sym_smatrix793,32376
+    def set_sym_params(self,paramdict):set_sym_params808,32996
+    def set_sparam_gen_func(self,func = None):set_sparam_gen_func827,34099
+    def set_sparam_mod_func(self,func = None):set_sparam_mod_func839,34531
+    def set_smatrix_at_frequency_point(self,indices,smatrix):set_smatrix_at_frequency_point848,34834
+    def make_symmetric(self, kind=1, inplace=-1):make_symmetric864,35430
+    def snp2smp(self,ports,inplace=-1):snp2smp889,36335
+    def scaledata(self,scale=1.0, dataindices=None):scaledata923,37739
+    def read_file_again(self):read_file_again932,38102
+    def read_file(self,file_name,skiplines=0, only_port_number= False):read_file938,38264
+    def Ffunc(self,imp):Ffunc1114,46589
+    def calc_syz(self,input="S",indices=None):calc_syz1137,47354
+    def calc_t_eigs(self,port1=1,port2=2):calc_t_eigs1245,52613
+    def s2t(self):s2t1256,53013
+    def sqrt_network(self):sqrt_network1279,53707
+    def inverse_2port(self,inplace=-1):inverse_2port1307,54763
+    def s2abcd(self,port1=1,port2=2):s2abcd1332,55755
+    def z_in(self,k, data_format="complex"):z_in1361,56920
+    def y_in(self,k, data_format="complex"):y_in1392,58093
+    def load_impedance(self,Gamma_in,port1=1,port2=2):load_impedance1416,59026
+    def gmax(self,port1=1,port2=2, dB=True):gmax1440,59932
+    def set_port_name(self, name, i):set_port_name1469,61093
+    def get_port_number_from_name(self,isim):get_port_number_from_name1478,61318
+    def gav(self,port1=1,port2=2, ZS=[], dB=True):gav1492,61677
+    def gop(self,port1=1,port2=2, ZL=None, dB=True):gop1523,62925
+    def gop2(self,port1=1,port2=2, ZL=50.0, dB=True):gop21555,64199
+    def conj_match_uncoupled(self,ports=None,inplace=-1, noofiters=50):conj_match_uncoupled1589,65453
+    def Z_conjmatch(self,port1=1,port2=2):Z_conjmatch1613,66523
+    def gt(self,port1=1,port2=2, ZS=[], ZL=[], dB=True):gt1642,67666
+    def interpolate_data(self, datain, freqs):interpolate_data1676,69247
+    def return_s2p(self,port1=1,port2=2):return_s2p1714,71536
+    def stability_factor_mu1(self,port1=1,port2=2):stability_factor_mu11728,72004
+    def stability_factor_mu2(self,port1=1,port2=2):stability_factor_mu21743,72633
+    def stability_factor_k(self,port1=1,port2=2):stability_factor_k1758,73257
+    def change_ref_impedance(self,Znewinput,inplace=-1):change_ref_impedance1773,73867
+    def prepare_ref_impedance_array(self,imparray=None):prepare_ref_impedance_array1824,76331
+    def impulse_response(self,i=2,j=1,dc_interp=1,dc_value=0.0,max_time_step=1.0,freq_res_coef=1impulse_response1854,78074
+    def impulse_response_banded(self,i=2,j=1,dc_interp=1,dc_value=0.0,max_time_step=1.0,freq_resimpulse_response_banded1925,81835
+    def __sub__(self,SP2):__sub__2005,86246
+    def __neg__(self):__neg__2040,87553
+    def __add__(self,SP2):__add__2056,88165
+    def check_passivity(self):check_passivity2100,89961
+    def restore_passivity(self, inplace=-1):restore_passivity2120,90908
+    def restore_passivity2(self):restore_passivity22146,92106
+                def constraint1(x, grad=0):constraint12194,94369
+                def constraint1_der(x):constraint1_der2197,94582
+                def func_for_minimize(x,grad=0):func_for_minimize2200,94715
+                def func_for_minimize_der(x):func_for_minimize_der2205,94975
+    def write2file(self,filename="",parameter="S",freq_unit="",data_format="", normalized=True):write2file2235,96456
+    def connect_2_ports_list(self,conns,inplace=-1):connect_2_ports_list2322,100642
+    def connect_2_ports(self,k,m,inplace=-1):connect_2_ports2347,101740
+    def connect_2_ports_retain(self,k,m,inplace=-1):connect_2_ports_retain2386,103464
+    def connect_network_1_conn_retain(self,EX,k,m,inplace=-1):connect_network_1_conn_retain2409,104476
+    def connect_network_1_conn(self,EX,k,m, preserveportnumbers= False,inplace=-1):connect_network_1_conn2435,106032
+    def add_abs_noise(self,dbnoise=0.1,phasenoise=0.1,inplace=-1):add_abs_noise2501,109153
+    def smoothing(self,smoothing_length=5,inplace=-1):smoothing2531,110621
+    def interpolate(self, number_of_points=5, inplace=-1):interpolate2559,111961
+    def data_array(self,data_format="DB",M="S",i=1,j=1, frequencies=None,ref=None, DCInt=0,DCValdata_array2590,113407
+    def extraction(self, measspfile):extraction2758,121968
+    def uniform_deembed(self, quantity, ports="all", kind="degrees",inplace=-1):uniform_deembed2789,123311
+    def S(self,i=1,j=1,data_format="COMPLEX",freqs=None):S2852,126678
+    def ABCD(self,i=1,j=1,data_format="COMPLEX",freqs=None):ABCD2867,127497
+    def T(self,i=1,j=1,data_format="COMPLEX",freqs=None):T2883,128327
+    def Z(self,i=1,j=1,data_format="COMPLEX",freqs=None):Z2897,128942
+    def Y(self,i=1,j=1,data_format="COMPLEX",freqs=None):Y2911,129557
+    def set_frequency_limits(self,flow,fhigh,inplace=-1):set_frequency_limits2925,130172
+    def crop_with_frequency(self,fstart=None,fstop=None,inplace=-1):crop_with_frequency2939,130726
+    def set_frequency_points(self,frequencies,inplace=-1):set_frequency_points2973,132424
+    def set_frequency_points_array(self,fstart,fstop,NumberOfPoints,inplace=-1):set_frequency_points_array3027,135057
+    def convert_s1p_to_s2p(self):convert_s1p_to_s2p3041,135699
+    def microstrip_step(cls, w1, w2, eps_r, h, t, freqs=None):microstrip_step3057,136216
+    def stripline_step(cls, w1, w2, eps_r, h1, h2, t, freqs=None):stripline_step3074,136965
+    def shunt_impedance(cls, Z, freqs=None):shunt_impedance3093,137820
+    def series_impedance(cls, Z, freqs=None):series_impedance3108,138358
+    def microstrip_line(cls, length, w, h, t, er, freqs=None):microstrip_line3123,138898
+        def spr(freq):spr3138,139566
+    def stripline(cls, length, w, er, h1, h2, t, freqs=None):stripline3146,139862
+        def spr(freq):spr3162,140633
+    def cpwg_line(cls, length, w, th, er, s, h, freqs=None):cpwg_line3170,140916
+        def spr(freq):spr3186,141609
+    sptline=spfile(freqs=[10e9],n_ports=2)sptline3195,141912
+    theta=90theta3196,141956
+
+src/mwtoolbox/transmission_lines.py,12475
+import mwtoolbox.myconstants as myconsmycons6,139
+from numpy.lib.scimath import sqrt as csqrtcsqrt15,361
+co = mycons.speed_of_light_in_freespace.simplified.magnitudeco19,627
+eta0 = mycons.free_space_wave_impedance.simplified.magnitudeeta020,689
+mu0 = mycons.free_space_permeability.simplified.magnitudemu021,751
+eps0 = mycons.free_space_permittivity.simplified.magnitudeeps022,810
+ellipk = ekpolyfitellipk24,872
+def physical_length(eeff, f, elec_length):physical_length26,894
+def electrical_length(eeff, f, len):electrical_length40,1286
+def skin_depth(f, sigma, mu=1.0, er=0.0):skin_depth54,1657
+def synthesis_bisection_1d(fonk, _args, k, target_value, init_value, limits = None, tol = 1e-10)synthesis_bisection_1d69,2153
+def synthesis(fonk, _args, k, target_value, init_value, limits):synthesis129,4210
+    def callable_func(x, grad=0):callable_func158,5462
+def skindepth_analysis(arg, defaultunits):skindepth_analysis190,6652
+def z_qs_thin_microstrip(w, h, er):z_qs_thin_microstrip211,7295
+def er_eff_qs_thin_microstrip(w, h, er):er_eff_qs_thin_microstrip230,8020
+def z_qs_thick_microstrip(w, h, er, t=0):z_qs_thick_microstrip249,8796
+def z_qs_thick_embedded_microstrip(w, h1, h2, er, t=0):z_qs_thick_embedded_microstrip275,9732
+def z_qs_thick_embedded_microstrip_1(w, h, h1, er, t):z_qs_thick_embedded_microstrip_1295,10570
+def er_eff_qs_thick_embedded_microstrip(w, h, h1, er, t):er_eff_qs_thick_embedded_microstrip313,11284
+def z_qs_thick_microstrip_wheeler(w, h, er, t):z_qs_thick_microstrip_wheeler330,11935
+def er_eff_qs_thick_microstrip(w, h, er, t=0.0):er_eff_qs_thick_microstrip350,12777
+def er_eff_disp_thick_microstrip(w, h, t, er, f):er_eff_disp_thick_microstrip368,13345
+def z_disp_thick_microstrip(w, h, t, er, f):z_disp_thick_microstrip387,14060
+def z_eeff_disp_thick_microstrip(w, h, t, er, f):z_eeff_disp_thick_microstrip392,14234
+def average_power_rating_thick_microstrip(w, h, t, er, f, tand, sigma, mu_r, rms_roughness, Kd, average_power_rating_thick_microstrip397,14517
+def dc_current_rating_thick_microstrip(w, h, t, er, f, tand, sigma, mu_r, rms_roughness, Kd, dT_dc_current_rating_thick_microstrip428,15936
+def dielectric_loss(eeff, er, f, tand):dielectric_loss459,17357
+def conductor_loss_microstrip(w, h, t, er, sigma, mu_r, rms_roughness, f):conductor_loss_microstrip467,17630
+def cutoff_frequency_for_TE1_mode_microstrip(er, h):cutoff_frequency_for_TE1_mode_microstrip480,18154
+def transverse_resonance_frequency_microstrip(er, h, w):transverse_resonance_frequency_microstrip491,18453
+def freq_limit_for_coupling_to_surface_modes_microstrip(er, h):freq_limit_for_coupling_to_surface_modes_microstrip507,18921
+def z_disp_thick_covered_microstrip(w, h, h2, t, er, f):z_disp_thick_covered_microstrip520,19334
+def er_eff_disp_thick_covered_microstrip(w, h, h2, t, er, f):er_eff_disp_thick_covered_microstrip540,20059
+def microstrip_synthesis(arg, defaultunits):microstrip_synthesis565,20976
+def microstrip_analysis(arg, defaultunits):microstrip_analysis630,24066
+def embedded_microstrip_synthesis(arg, defaultunits):embedded_microstrip_synthesis686,26874
+def embedded_microstrip_analysis(arg, defaultunits):embedded_microstrip_analysis739,29228
+def microstrip_analysis_view(arg, defaultunits):microstrip_analysis_view784,31209
+def C_R_interdigital_capacitor(w,s,h,t,length,N,er,sigma, freq):C_R_interdigital_capacitor799,31805
+def z_thick_stripline(w, b, t, er):z_thick_stripline828,32723
+def z_thick_offset_stripline(w, eps_r, h1, h2, t, imp=1):z_thick_offset_stripline865,33838
+        def F(x):F883,34591
+def conductor_loss_stripline(w, b, t, er, f, sigma, mu):conductor_loss_stripline913,35874
+def conductor_loss_embedded_microstrip(w, h, h1, t, er, f, sigma, mu):conductor_loss_embedded_microstrip934,36701
+def stripline_analysis(arg, defaultunits):stripline_analysis956,37595
+def stripline_analysis_view(arg, defaultunits):stripline_analysis_view992,39054
+def stripline_synthesis(arg, defaultunits):stripline_synthesis1009,39757
+def z_coaxial(er, r, d):z_coaxial1052,41511
+def z_coaxial_strip_center(er, w, D):z_coaxial_strip_center1055,41593
+def z_square_coaxial(er, r, d):z_square_coaxial1062,41834
+def z_square_coaxial_square_center(er, r, d):z_square_coaxial_square_center1068,41999
+def z_eccentric_coaxial(er, r, d, sh):z_eccentric_coaxial1072,42139
+def z_parallel_wires(er, d1, d2, D):z_parallel_wires1075,42283
+def conductor_loss_coaxial(er, r, d, f, sigma, mu):conductor_loss_coaxial1078,42428
+def conductor_loss_eccentric_coaxial(er, r, d, sh, f, sigma, mu):conductor_loss_eccentric_coaxial1110,43772
+def coaxial_line_analysis(arg, defaultunits):coaxial_line_analysis1141,45180
+def coaxial_line_synthesis(arg, defaultunits):coaxial_line_synthesis1180,46805
+def coaxial_analysis_view(arg, defaultunits):coaxial_analysis_view1227,48825
+def coaxial_strip_center_analysis(arg, defaultunits):coaxial_strip_center_analysis1242,49423
+def coaxial_strip_center_analysis_view(arg, defaultunits):coaxial_strip_center_analysis_view1280,51109
+def square_coaxial_circular_center_analysis(arg, defaultunits):square_coaxial_circular_center_analysis1296,51874
+def rectangular_coaxial_line_analysis(arg, defaultunits):rectangular_coaxial_line_analysis1335,53580
+def rectangular_coaxial_line_synthesis(arg, defaultunits):rectangular_coaxial_line_synthesis1376,55326
+def square_coaxial_line_square_center_analysis(arg, defaultunits):square_coaxial_line_square_center_analysis1425,57480
+def square_coaxial_line_square_center_synthesis(arg, defaultunits):square_coaxial_line_square_center_synthesis1464,59221
+def eccentric_coaxial_analysis(arg, defaultunits):eccentric_coaxial_analysis1511,61368
+def parallel_wires_analysis(arg, defaultunits):parallel_wires_analysis1551,63105
+def z_rectangular_coaxial(w, b, t, a, er):z_rectangular_coaxial1591,64858
+def z_partial_coaxial(er, r, d):z_partial_coaxial1598,65087
+def er_eff_partial_coaxial(er, r, d):er_eff_partial_coaxial1607,65510
+def conductor_loss_partial_coaxial(er, r, d, f):conductor_loss_partial_coaxial1612,65856
+def z_eeff_suspended_stripline_0(w, t, h, b, er, freq):z_eeff_suspended_stripline_01616,65999
+def z_eeff_inverted_suspended_stripline_0(w, t, h, b, er, freq):z_eeff_inverted_suspended_stripline_01631,66575
+def z_eeff_suspended_microstripline(w, t, h, hl, er, freq):z_eeff_suspended_microstripline1646,67148
+def z_eeff_inverted_suspended_stripline(w, t, h, hu, hl, er, freq):z_eeff_inverted_suspended_stripline1686,69320
+def z_eeff_suspended_stripline_eski(w, t, a, b, er, freq):z_eeff_suspended_stripline_eski1727,71433
+def covered_suspended_microstripline_analysis(arg, defaultunits):covered_suspended_microstripline_analysis1790,74502
+def covered_suspended_microstripline_synthesis(arg, defaultunits):covered_suspended_microstripline_synthesis1839,76913
+def suspended_microstrip_analysis(arg, defaultunits):suspended_microstrip_analysis1888,79334
+def suspended_microstrip_synthesis(arg, defaultunits):suspended_microstrip_synthesis1935,81662
+def z_eeff_shielded_suspended_stripline(w, h, b, a, er):z_eeff_shielded_suspended_stripline1984,83998
+def shielded_suspended_stripline_analysis(arg, defaultunits):shielded_suspended_stripline_analysis2010,85202
+def shielded_suspended_stripline_synthesis(arg, defaultunits):shielded_suspended_stripline_synthesis2055,87372
+def z_eeff_grounded_cpw(w, er, s, h):z_eeff_grounded_cpw2104,89763
+def z_eeff_grounded_cpw_thick(w, th, er, s, h):z_eeff_grounded_cpw_thick2119,90296
+def z_eeff_cpw(w, er, s, h, t):z_eeff_cpw2138,91046
+def grounded_coplanar_waveguide_analysis(arg, defaultunits):grounded_coplanar_waveguide_analysis2155,91635
+def grounded_coplanar_waveguide_synthesis(arg, defaultunits):grounded_coplanar_waveguide_synthesis2194,93411
+def z_eeff_covered_grounded_cpw(w, s, h, er, h1):z_eeff_covered_grounded_cpw2240,95502
+def covered_grounded_coplanar_waveguide_analysis(arg, defaultunits):covered_grounded_coplanar_waveguide_analysis2256,96092
+def covered_grounded_coplanar_waveguide_synthesis(arg, defaultunits):covered_grounded_coplanar_waveguide_synthesis2295,97901
+def z_eeff_laterally_covered_grounded_cpw(w, s, h, er, h1):z_eeff_laterally_covered_grounded_cpw2339,100010
+def edge_coupled_microstrip_analysis(arg, defaultunits):edge_coupled_microstrip_analysis2343,100150
+def edge_coupled_microstrip_analysis_view(arg, defaultunits):edge_coupled_microstrip_analysis_view2407,103156
+def edge_coupled_microstrip_synthesis(arg, defaultunits):edge_coupled_microstrip_synthesis2425,103994
+def z_eeff_edge_coupled_microstrip(w, er, t, h, s, f):z_eeff_edge_coupled_microstrip2493,107320
+def z_edge_coupled_thin_symmetric_stripline(w, b, s, er):z_edge_coupled_thin_symmetric_stripline2603,113268
+def z_edge_coupled_thick_symmetric_stripline(w, b, s, er, t):z_edge_coupled_thick_symmetric_stripline2620,113875
+def edge_coupled_stripline_analysis(arg, defaultunits):edge_coupled_stripline_analysis2649,115044
+def edge_coupled_stripline_analysis_view(arg, defaultunits):edge_coupled_stripline_analysis_view2701,117330
+def edge_coupled_stripline_synthesis(arg, defaultunits):edge_coupled_stripline_synthesis2720,118188
+def z_shielded_stripline(w, b, t, g, er):z_shielded_stripline2771,120626
+def conductor_loss_shielded_stripline(w, b, t, g, er, f, sigma, mu):conductor_loss_shielded_stripline2782,121112
+def symmetric_shielded_stripline_analysis(arg, defaultunits):symmetric_shielded_stripline_analysis2789,121464
+def symmetric_shielded_stripline_synthesis(arg, defaultunits):symmetric_shielded_stripline_synthesis2830,123178
+def broadside_offset_coupled_stripline_analysis(arg, defaultunits):broadside_offset_coupled_stripline_analysis2880,125262
+def broadside_offset_coupled_stripline_analysis_view(arg, defaultunits):broadside_offset_coupled_stripline_analysis_view2929,127542
+def broadside_offset_coupled_stripline_synthesis(arg, defaultunits):broadside_offset_coupled_stripline_synthesis2948,128424
+def width_broadside_coupled_offset_stripline(Zeven,Zodd,b,s,er):width_broadside_coupled_offset_stripline3000,130870
+def z_broadside_coupled_offset_stripline(w,wo,b,s,er):z_broadside_coupled_offset_stripline3027,131960
+def broadside_coupled_suspended_stripline_analysis(arg, defaultunits):broadside_coupled_suspended_stripline_analysis3031,132230
+def broadside_coupled_suspended_stripline_analysis_view(arg, defaultunits):broadside_coupled_suspended_stripline_analysis_view3085,135004
+def microstrip_step_in_width(w1, w2, eps_r, h, t, freq):microstrip_step_in_width3104,135881
+def stripline_step_in_width2(w1, w2, eps_r, h1, h2, t, freq):stripline_step_in_width23124,136873
+def stripline_step_in_width(w1, w2, eps_r, h1, h2, t, freq):stripline_step_in_width3148,137863
+def z_eeff_broadside_coupled_suspended_stripline(w,s,b,er):z_eeff_broadside_coupled_suspended_stripline3171,138805
+edge_coupled_stripline_analysis = edge_coupled_stripline_analysisedge_coupled_stripline_analysis3202,139834
+broadside_coupled_stripline_analysis = broadside_offset_coupled_stripline_analysisbroadside_coupled_stripline_analysis3203,139901
+suspended_icrostripline_analysis = suspended_microstrip_analysissuspended_icrostripline_analysis3205,140057
+shielded_suspended_stripline_analysis = shielded_suspended_stripline_analysisshielded_suspended_stripline_analysis3206,140123
+eccentric_coaxial_line_analysis = eccentric_coaxial_analysiseccentric_coaxial_line_analysis3209,140345
+coaxial_line_strip_center_analysis = coaxial_strip_center_analysiscoaxial_line_strip_center_analysis3211,140474
+square_coaxial_line_circular_center_analysis = square_coaxial_circular_center_analysissquare_coaxial_line_circular_center_analysis3212,140542
+parallel_wires_analysis = parallel_wires_analysisparallel_wires_analysis3214,140715
+edge_coupled_microstrip_analysis = edge_coupled_microstrip_analysisedge_coupled_microstrip_analysis3215,140766
+suspended_microstripline_synthesis = suspended_microstrip_synthesissuspended_microstripline_synthesis3221,141086
+edge_coupled_microstrip_synthesis = edge_coupled_microstrip_synthesisedge_coupled_microstrip_synthesis3223,141221
+edge_coupled_stripline_synthesis = edge_coupled_stripline_synthesisedge_coupled_stripline_synthesis3224,141292
+broadside_coupled_stripline_synthesis = broadside_offset_coupled_stripline_synthesisbroadside_coupled_stripline_synthesis3225,141361
+
+src/mwtoolbox/__init__.py,85
+__version__ = "0.0.4"__version__7,85
+__author__ = 'Tuncay Erdöl'__author__8,108
+
+tests/conj_load/test1.py,252
+import numpy as npnp6,171
+sp = spfile("HalfModel_CPW5_DEMSB_RX1.s2p")sp8,193
+frequencies = sp.get_frequency_list()frequencies9,238
+zs, zl = sp.Z_conjmatch()zs10,277
+zs, zl = sp.Z_conjmatch()zl10,277
+import matplotlib.pyplot as pltplt11,304
+
+tests/conj_load/test2.py,728
+import numpy as npnp6,171
+sp = spfile("HalfModel_CPW5_DEMSB_RX1.s2p")sp8,193
+frequencies = sp.get_frequency_list()frequencies9,238
+sp1 = sp.conj_match_uncoupled2(inplace=0, noofiters=1)sp110,277
+sp2 = sp.conj_match_uncoupled2(inplace=0, noofiters=50)sp211,333
+zs, zl = sp.Z_conjmatch()zs13,392
+zs, zl = sp.Z_conjmatch()zl13,392
+zs1=sp1.prepare_ref_impedance_array(sp1.refimpedance)[0]zs114,419
+zs2=sp2.prepare_ref_impedance_array(sp2.refimpedance)[0]zs215,477
+zl1=sp1.prepare_ref_impedance_array(sp1.refimpedance)[1]zl116,535
+zl2=sp2.prepare_ref_impedance_array(sp2.refimpedance)[1]zl217,593
+import matplotlib.pyplot as pltplt18,651
+fig,ax=plt.subplots(2,2)fig19,684
+fig,ax=plt.subplots(2,2)ax19,684
+
+tests/extract_gamma/trl.py,680
+import numpy as npnp7,196
+import matplotlib.pyplot as pltplt8,216
+freq_high=82freq_high9,249
+freq_low=72freq_low10,263
+freqs=np.linspace(freq_low*1e9,freq_high*1e9,51)freqs11,276
+dL=0.61e-3dL12,326
+Tlauncherout,Tlauncherin,faz=trl_launcher_extraction("Mean\\Thru_Rx_mean.s2p", "Mean\\Line_Rx_meTlauncherout15,494
+Tlauncherout,Tlauncherin,faz=trl_launcher_extraction("Mean\\Thru_Rx_mean.s2p", "Mean\\Line_Rx_meTlauncherin15,494
+Tlauncherout,Tlauncherin,faz=trl_launcher_extraction("Mean\\Thru_Rx_mean.s2p", "Mean\\Line_Rx_mefaz15,494
+Tthru = spfile("Mean\\Thru_Rx_mean.s2p")Tthru20,919
+Tthru_test = Tlauncherout+Tlauncherout.snp2smp([2,1],0)Tthru_test24,1061
+
+tests/nlopt_test.py,146
+import numpy as npnp2,14
+def ff(x,grad=0):ff3,34
+opt = nlopt.opt(nlopt.GN_ESCH, 1)opt6,138
+xopt = opt.optimize(np.array([0.8]))xopt13,325
+
+tests/test1.py,351
+import numpy as npnp6,171
+frequencies=np.linspace(57e9,63.5e9,8,endpoint=True)frequencies7,191
+sptline=spfile(noktasayisi=len(frequencies),portsayisi=2)sptline9,265
+theta=90theta10,324
+import matplotlib.pyplot as pltplt14,486
+frequencies=np.linspace(1e9,63.5e9,80,endpoint=True)frequencies18,611
+import matplotlib.pyplot as pltplt20,708
+
+tests/test2.py,153
+import numpy as npnp6,171
+frequencies=np.linspace(57e9,60e9,4,endpoint=True)frequencies7,191
+sptline=spfile(freqs=[10e9],portsayisi=2)sptline9,245
+
+tests/tests.py,180
+import numpy as npnp6,171
+frequencies=np.linspace(57e9,60e9,4,endpoint=True)frequencies7,191
+sptline=spfile(freqs=frequencies,portsayisi=2)sptline9,245
+theta=90theta11,336
+
+tests/tests4.py,202
+import numpy as npnp6,171
+frequencies=np.linspace(74e9,83e9,8,endpoint=True)frequencies7,191
+sp = spfile("WR12_SIW_MS_Transition_Design1_29.s2p")sp9,245
+import matplotlib.pyplot as pltplt16,521
+
+tests/test_embedded_microstrip.py,307
+import mwtoolbox.transmission_lines as tlinetline2,35
+w = 25*25.4e-6w4,83
+h1 = 10*25.4e-6h15,99
+h2 = 15*25.4e-6h26,116
+er = 3er7,133
+t = 1*25.4e-6t8,141
+z1 = tline.z_qs_thick_embedded_microstrip_1(w, h1, h2, er, t)z110,158
+z2 = tline.z_qs_thick_embedded_microstrip(w, h1, h2, er, t)z212,223
+
+tests/test_microstrip_synthesis.py,218
+import mwtoolbox.transmission_lines as tlinetline2,35
+arg = ["300um","127um","35um","3.66","0.0018","0.1","5e7","1.0","5um","77e9","1mm","130.0","100"arg4,83
+sonuc = tline.microstrip_synthesis(arg, [])sonuc6,190
+
+tests/trl_test/b2b_extract.py,802
+import numpy as npnp7,196
+import matplotlib.pyplot as pltplt8,216
+freq_high=82freq_high9,249
+freq_low=72freq_low10,263
+freqs=np.linspace(freq_low*1e9,freq_high*1e9,51)freqs11,276
+dL=0.61e-3dL12,326
+out,gamma=thru_line_deembedding("WR12_SIW_MS_Transition_1_Design1_Al_SR_Simple1_er307_back2back_out13,338
+out,gamma=thru_line_deembedding("WR12_SIW_MS_Transition_1_Design1_Al_SR_Simple1_er307_back2back_gamma13,338
+freqs=out.get_frequency_list()freqs14,541
+thru = spfile("WR12_SIW_MS_Transition_1_Design1_Al_SR_Simple1_er307_back2back_unnormalized_1.s2pthru16,575
+Reference = spfile("WR12_SIW_MS_Transition_1_Design1_Al_SR_Simple1_er307_withadapter_unnormalizeReference18,677
+Reference=Reference+Reference.snp2smp([2,1],0)Reference22,919
+out = out+out.snp2smp([2,1],0)out24,1006
+
+tests/trl_test/trl.py,680
+import numpy as npnp7,196
+import matplotlib.pyplot as pltplt8,216
+freq_high=82freq_high9,249
+freq_low=72freq_low10,263
+freqs=np.linspace(freq_low*1e9,freq_high*1e9,51)freqs11,276
+dL=0.61e-3dL12,326
+Tlauncherout,Tlauncherin,faz=trl_launcher_extraction("Mean\\Thru_Rx_mean.s2p", "Mean\\Line_Rx_meTlauncherout15,494
+Tlauncherout,Tlauncherin,faz=trl_launcher_extraction("Mean\\Thru_Rx_mean.s2p", "Mean\\Line_Rx_meTlauncherin15,494
+Tlauncherout,Tlauncherin,faz=trl_launcher_extraction("Mean\\Thru_Rx_mean.s2p", "Mean\\Line_Rx_mefaz15,494
+Tthru = spfile("Mean\\Thru_Rx_mean.s2p")Tthru20,919
+Tthru_test = Tlauncherout+Tlauncherout.snp2smp([2,1],0)Tthru_test24,1061
+
+tests/trl_test/trl2.py,558
+import numpy as npnp7,196
+import matplotlib.pyplot as pltplt8,216
+freq_high=82freq_high9,249
+freq_low=72freq_low10,263
+freqs=np.linspace(freq_low*1e9,freq_high*1e9,51)freqs11,276
+dL=0.61e-3dL12,326
+out,gamma =thru_line_deembedding("Mean\\Thru_Rx_mean.s2p", "Mean\\Line_Rx_mean.s2p")out13,338
+out,gamma =thru_line_deembedding("Mean\\Thru_Rx_mean.s2p", "Mean\\Line_Rx_mean.s2p")gamma13,338
+freqs=out.get_frequency_list()freqs14,424
+Tthru = spfile("Mean\\Thru_Rx_mean.s2p")Tthru16,458
+Tthru_test = out+out.snp2smp([2,1],0)Tthru_test17,500
+
+tests/untermination_test/extract_transition_untermination.py,2088
+import numpy as npnp6,171
+freq_high=83freq_high7,191
+freq_low=74freq_low8,205
+frequencies=np.linspace(freq_low*1e9,freq_high*1e9,41,endpoint=True)frequencies9,218
+import matplotlib.pyplot as pltplt12,332
+Lsp = []Lsp15,445
+mainfilename = "WR12_SIW_MS_Transition_2_Testpcb_singlepart_noplating.s8p"mainfilename18,584
+version="_singlepart_noplating_"version20,729
+fullsimsp=spfile(mainfilename)fullsimsp21,763
+freks = fullsimsp.get_frequency_list()freks22,795
+L1sp = fullsimsp.snp2smp([2,1],inplace=0)L1sp23,835
+zref = np.array(L1sp.refimpedance[0])zref24,878
+L1sp_short = fullsimsp.snp2smp([2,1],inplace=0).change_ref_impedance([None,0.01],inplace=0)L1sp_short25,917
+L1sp_open = fullsimsp.snp2smp([2,1],inplace=0).change_ref_impedance([None,10000],inplace=0)L1sp_open26,1010
+L1sp_load = fullsimsp.snp2smp([2,1],inplace=0)L1sp_load27,1103
+gL1=0.01gL129,1153
+gL2=(0.01-zref)/(0.01+zref)gL230,1163
+gL3=(10000-zref)/(10000+zref)gL331,1192
+g1=L1sp_load.S(1,1)g132,1223
+g2=L1sp_short.S(1,1)g233,1244
+g3=L1sp_open.S(1,1)g334,1266
+output1 = untermination_method(g1,g2,g3,gL1,gL2,gL3,returnS2P=True, freqs=freks)output136,1289
+index2 = 4index238,1392
+index1 = 3index139,1404
+L1sp = fullsimsp.snp2smp([index2,index1],inplace=0)L1sp40,1416
+zref = np.array(L1sp.refimpedance[0])zref41,1469
+ref = fullsimsp.snp2smp([index2,index1],inplace=0)ref42,1508
+L1sp_short = ref.change_ref_impedance([None,0.01],inplace=0)L1sp_short43,1560
+L1sp_open = ref.change_ref_impedance([None,10000],inplace=0)L1sp_open44,1622
+L1sp_load = refL1sp_load45,1684
+fig, ax= plt.subplots(1,3,figsize=(15,4))fig47,1703
+fig, ax= plt.subplots(1,3,figsize=(15,4))ax47,1703
+gL1=0.0001gL166,2402
+gL2=(0.01-zref)/(0.01+zref)gL267,2414
+gL3=(10000-zref)/(10000+zref)gL368,2443
+g1=L1sp_load.S(1,1)g169,2474
+g2=L1sp_short.S(1,1)g270,2495
+g3=L1sp_open.S(1,1)g371,2517
+output2 = untermination_method_old(g1,g2,g3,gL1,gL2,gL3,returnS2P=True, freqs=freks)output273,2540
+output3 = untermination_method(g1,g2,g3,gL1,gL2,gL3,returnS2P=True, freqs=freks)output374,2626
+
+tests/untermination_test/no_load/extract_transition_untermination.py,2307
+import numpy as npnp6,173
+freq_high=83freq_high7,193
+freq_low=74freq_low8,207
+frequencies=np.linspace(freq_low*1e9,freq_high*1e9,41,endpoint=True)frequencies9,220
+import matplotlib.pyplot as pltplt12,338
+Lsp = []Lsp15,451
+mainfilename = "WR12_SIW_MS_Transition_2_Testpcb_singlepart_noplating.s8p"mainfilename18,590
+version="_singlepart_noplating_"version20,735
+fullsimsp=spfile(mainfilename)fullsimsp21,769
+freks = fullsimsp.freqsfreks22,801
+L1sp = fullsimsp.snp2smp([2,1],inplace=0)L1sp23,826
+zref = np.array(L1sp.refimpedance[0])zref24,869
+gL1=0.999jgL126,910
+gL2=-0.999gL227,922
+gL3=0.999gL328,934
+zL1=zref*(1+gL1)/(1-gL1)zL129,945
+zL2=zref*(1+gL2)/(1-gL2)zL230,971
+zL3=zref*(1+gL3)/(1-gL3)zL331,997
+L1sp_load = fullsimsp.snp2smp([2,1],inplace=0).change_ref_impedance([None,zL1],inplace=0)L1sp_load33,1025
+L1sp_short = fullsimsp.snp2smp([2,1],inplace=0).change_ref_impedance([None,zL2],inplace=0)L1sp_short34,1116
+L1sp_open = fullsimsp.snp2smp([2,1],inplace=0).change_ref_impedance([None,zL3],inplace=0)L1sp_open35,1208
+g1=L1sp_load.S(1,1)g138,1303
+g2=L1sp_short.S(1,1)g239,1324
+g3=L1sp_open.S(1,1)g340,1346
+output1 = untermination_method(g1,g2,g3,gL1,gL2,gL3,returnS2P=True, freqs=freks)output142,1369
+index2 = 4index244,1472
+index1 = 3index145,1484
+L1sp = fullsimsp.snp2smp([index2,index1],inplace=0)L1sp46,1496
+zref = np.array(L1sp.refimpedance[0])zref47,1549
+ref = fullsimsp.snp2smp([index2,index1],inplace=0)ref48,1588
+zL1=zref*(1+gL1)/(1-gL1)zL149,1640
+zL2=zref*(1+gL2)/(1-gL2)zL250,1666
+zL3=zref*(1+gL3)/(1-gL3)zL351,1692
+L1sp_load  = ref.snp2smp([2,1],inplace=0).change_ref_impedance([None,zL1],inplace=0)L1sp_load52,1718
+L1sp_short = ref.snp2smp([2,1],inplace=0).change_ref_impedance([None,zL2],inplace=0)L1sp_short53,1804
+L1sp_open  = ref.snp2smp([2,1],inplace=0).change_ref_impedance([None,zL3],inplace=0)L1sp_open54,1890
+fig, ax= plt.subplots(1,3,figsize=(15,4))fig56,1978
+fig, ax= plt.subplots(1,3,figsize=(15,4))ax56,1978
+g1=L1sp_load.S(1,1)g175,2632
+g2=L1sp_short.S(1,1)g276,2653
+g3=L1sp_open.S(1,1)g377,2675
+output2 = untermination_method_old(g1,g2,g3,gL1,gL2,gL3,returnS2P=True, freqs=freks)output279,2708
+output3 = untermination_method(g1,g2,g3,gL1,gL2,gL3,returnS2P=True, freqs=freks)output380,2794
+
+tests/wg_uniform_deembed/test_wg_uniform_deembed.py,721
+import numpy as npnp5,156
+freq_high=83freq_high7,220
+freq_low=74freq_low8,234
+frequencies=np.linspace(freq_low*1e9,freq_high*1e9,10,endpoint=True)frequencies9,247
+import matplotlib.pyplot as pltplt10,317
+rx1in= 1rx1in14,432
+rx1out= 2rx1out15,442
+rx2in= 3rx2in16,453
+rx2out= 4rx2out17,463
+tx1in= 5tx1in18,474
+tx1out= 6tx1out19,484
+tx2in= 7tx2in20,495
+tx2out= 8tx2out21,505
+ref = spfile("platedesign_afip_wr10_HFSSDesign6.s8p").uniform_deembed(-1e-3, ports=[1,3,5,7], kiref23,518
+ref1 = spfile("platedesign_afip_wr10_HFSSDesign6_Zpv_rxin_n1mm_deembed.s8p")ref124,625
+ff="phase"ff26,705
+fig, ax= plt.subplots(2,4,figsize=(15,4))fig27,717
+fig, ax= plt.subplots(2,4,figsize=(15,4))ax27,717
