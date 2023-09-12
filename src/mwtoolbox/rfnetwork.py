@@ -641,7 +641,9 @@ class spfile:
             self.refimpedance=[50.0]*n_ports
             self.frequency_points=np.asarray(freqs)
             self.n_ports=n_ports
-            ns = len(self.frequency_points)
+            ns = 0
+            if freqs:
+                ns = len(self.frequency_points)
             self.normalized=1 # normalized to 50 ohm if 1
             if ns>0:
                 self.sdata=np.zeros((ns,n_ports**2),complex)
@@ -650,6 +652,8 @@ class spfile:
 
     aliases = {
         'freqs': 'frequency_points',
+        'load_impedance' : 'z_load',
+        'input_impedance': 'z_in',
     }
 
     def __setattr__(self, name, value):
@@ -1413,7 +1417,7 @@ class spfile:
         elif data_format=="uphase":
             return np.unwrap(np.angle(Y))*180.0/np.pi
 
-    def load_impedance(self,Gamma_in,port1=1,port2=2):
+    def z_load(self,Gamma_in,port1=1,port2=2):
         """Calculates termination impedance at port2 that gives Gamma_in reflection coefficient at port1.
 
         Args:
@@ -3136,7 +3140,7 @@ class spfile:
         """
         obj = cls(n_ports=2, freqs = freqs)
         def spr(freq):
-            Z, eeff = tlines.Z_eeff_disp_thick_microstrip(w, h, t, er, freq)
+            Z, eeff = tlines.z_eeff_disp_thick_microstrip(w, h, t, er, freq)
             theta=2*np.pi*freq*np.sqrt(eeff)/c0*length
             return network.abcd2s(network.tline(Z, theta))
         obj.set_sparam_gen_func(spr)
@@ -3160,7 +3164,7 @@ class spfile:
         """
         obj = cls(n_ports=2, freqs = freqs)
         def spr(freq):
-            Z = tlines.Z_thick_offset_stripline(w, er, h1, h2, t)
+            Z = tlines.z_thick_offset_stripline(w, er, h1, h2, t)
             theta=2*np.pi*freq*np.sqrt(er)/c0*length
             return network.abcd2s(network.tline(Z, theta))
         obj.set_sparam_gen_func(spr)
@@ -3184,14 +3188,11 @@ class spfile:
         """
         obj = cls(n_ports=2, freqs = freqs)
         def spr(freq):
-            Z, eeff = tlines.Z_eeff_grounded_cpw_thick(w, th, er, s, h)
+            Z, eeff = tlines.z_eeff_grounded_cpw_thick(w, th, er, s, h)
             theta=2*np.pi*freq*np.sqrt(eeff)/c0*length
             return network.abcd2s(network.tline(Z, theta))
         obj.set_sparam_gen_func(spr)
         return obj
-
-    self.z_load = self.load_impedance
-    self.input_impedance = self.z_in
 
 if __name__ == '__main__':
 
