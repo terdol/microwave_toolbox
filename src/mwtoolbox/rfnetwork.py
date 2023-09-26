@@ -1106,7 +1106,11 @@ class spfile:
                             for i in range(round(len(tempportgamma) / 2))
                         ]
 
-                        #  The reason of the following correction: N-port Gamma and Impedances comments are exported in the Driven Terminal mode as NxN while in Modal mode there are exported as 1xN. (https://github.com/scikit-rf/scikit-rf/issues/354)
+                        # The reason of the following correction: N-port Gamma
+                        # and Impedances comments are exported in the Driven
+                        # Terminal mode as NxN while in Modal mode there are
+                        # exported as 1xN.
+                        # (https://github.com/scikit-rf/scikit-rf/issues/354)
                         if len(tempportgamma) == ps * ps:
                             tempportgamma = [
                                 tempportgamma[i * i - 1]
