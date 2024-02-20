@@ -187,21 +187,78 @@ def s2t_list(M):
 
 def abcd2z(M):
     """
-    ABCD parameters to Z - Parameters conversion
+    ABCD parameters to Z-Parameters conversion
     """
     a, b, c, d = M[0, 0], M[0, 1], M[1, 0], M[1, 1]
     return np.matrix([[a/c, ( - b * c + a * d)/c], [1./c, d/c]])
 
 def z2abcd(M):
     """
-    Z - Parameters to ABCD parameters conversion
+    Z-Parameters to ABCD parameters conversion
     """
     z11, z12, z21, z22 = M[0, 0], M[0, 1], M[1, 0], M[1, 1]
-    return np.matrix([[z11/z21, (z11 * z22 - z21 * z12)/z21], [1./z21, z22/z21]])
+    return np.matrix([[z11/z21, (z11 * z22 - z21 * z12)/z21],
+                      [1./z21, z22/z21]])
+
+def abcd2h(M):
+    """
+    ABCD parameters to H-Parameters conversion
+    """
+    a, b, c, d = M[0, 0], M[0, 1], M[1, 0], M[1, 1]
+    return np.matrix([[b/d, ( - b * c + a * d)/d],
+                      [-1./d, c/d]])
+
+def h2abcd(M):
+    """
+    H-Parameters to ABCD parameters conversion
+    """
+    h11, h12, h21, h22 = M[0, 0], M[0, 1], M[1, 0], M[1, 1]
+    return np.matrix([[h12 - h22 * h11 / h21, -h11 / h21],
+                      [-h22 / h21, -1. / h21]])
+
+def h2s(M, Zo=50.0):
+    """
+    H-Parameters to S parameters conversion. Valid for real Zo value.
+    """
+    h11, h12, h21, h22 = M[0, 0], M[0, 1], M[1, 0], M[1, 1]
+    delta = (h11 + Zo) * (h22 * Zo + 1.0) - h12 * h21 * Zo
+    return np.matrix([[((h11 - Zo) * (h22 * Zo + 1.0) - h12 * h21 * Zo) / delta, 2 * h12 * Zo / delta],
+                      [-2 * h12 * Zo / delta, ((h11 + Zo) * (1.0 - h22 * Zo) + h12 * h21 * Zo) / delta]])
+
+def h2y(M):
+    """
+    H-Parameters to Y-parameters conversion for 2-port networks.
+    """
+    h11, h12, h21, h22 = M[0, 0], M[0, 1], M[1, 0], M[1, 1]
+    return np.matrix([[1/h11, -h12 / h11],
+                      [h21 / h11, (h22 - h21 * h12 / h11)]])
+
+def s2h(M, Zo=50.0):
+    """
+    S-Parameters to H parameters conversion. Valid for real Zo value.
+    """
+    s11, s12, s21, s22 = M[0, 0], M[0, 1], M[1, 0], M[1, 1]
+    delta = (1. - s11) * (1. + s22) + s12 * s21
+    return np.matrix([[Zo * ((1. + s11) * (1. + s22) - s12 * s21) / delta, 2 * s12 / delta],
+                      [-2 * s21 / delta, 1.0 / Zo * ((1. - s11) * (1. - s22) - s12 * s21) / delta]])
+
+def s2g(M, Zo=50.0):
+    """
+    S-Parameters to G parameters conversion. Valid for real Zo value.
+    """
+    H = s2h(M, Zo)
+    return H.I
+
+def abcd2g(M):
+    """
+    S-Parameters to G parameters conversion.
+    """
+    H = abcd2h(M)
+    return H.I
 
 def abcd2s(M, Zo=50.0):
     """
-    ABCD parameters to S - Parameters conversion. Valid for real Zo value.
+    ABCD parameters to S-Parameters conversion. Valid for real Zo value.
     """
     a, b, c, d = M[0, 0], M[0, 1], M[1, 0], M[1, 1]
     s11 = ((a + b/Zo - c * Zo - d)/(a + b/Zo + c * Zo + d))
@@ -212,7 +269,7 @@ def abcd2s(M, Zo=50.0):
 
 def abcd2s_list(M, Zo=50.0):
     """
-    ABCD parameters to S - Parameters conversion. Valid for real Zo value.
+    ABCD parameters to S-Parameters conversion. Valid for real Zo value.
     """
     a, b, c, d = M[0], M[1], M[2], M[3]
     s11 = ((a + b/Zo - c * Zo - d)/(a + b/Zo + c * Zo + d))
@@ -223,12 +280,15 @@ def abcd2s_list(M, Zo=50.0):
 
 def s2abcd(M, Z=(50.0, 50.0)):
     """
-    S-Parameters to ABCD parameters conversion. Valid for real Zo value.
+    S-Parameters to ABCD parameters conversion. Valid for real Z values.
 
     Args:
         Z(2-tuple, optional): reference impedance tuple ( Z1, Z2 )
     """
-    Zo1, Zo2 = tuple(Z)
+    if isinstance(Z, (int, float)):
+        Zo1 = Zo2 = Z
+    else:
+        Zo1, Zo2 = tuple(Z)
     s11, s12, s21, s22 = M[0, 0], M[0, 1], M[1, 0], M[1, 1]
     a = ((Zo1 + s11 * Zo1) * (1. - s22) + s12 * s21 * Zo1)/(2. * s21 * csqrt(Zo1 * Zo2))
     b = ((Zo1 + s11 * Zo1) * (Zo2 + s22 * Zo2) - s12 * s21 * Zo1 * Zo2)/(2. * s21 * csqrt(Zo1 * Zo2))

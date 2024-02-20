@@ -6,7 +6,7 @@ requires = ['setuptools', 'wheel']
 name = "mwtoolbox"
 version = "0.0.4"
 dependencies = ["quantities",
-                "numpy",
+                "numpy<2",
                 "scipy",
                 "sympy",
                 ]

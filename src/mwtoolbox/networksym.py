@@ -9,7 +9,7 @@ from functools import reduce
 
 def ideal_nport(N):
     """
-    S-parameters of ideal N-port junction with equal reference impedances at all ports
+    S-parameters of ideal N-port junction with equal reference impedances at all ports.
     """
     S = sp.ones(N,N)
     a=sp.Rational(2-N,N)
@@ -21,13 +21,13 @@ def ideal_nport(N):
 
 def ideal_gyrator():
     """
-    S-parameters of ideal gyrator
+    S-parameters of ideal gyrator.
     """
     return sp.Matrix([[0,-1],[1,0]])
 
 def ideal_coupled_line(Ze, Zo, Te, To, Z0):
     """
-    S-parameters of ideal coupled line
+    S-parameters of ideal coupled line.
     Te and To in radian
     3----------4
     1----------2
@@ -47,102 +47,102 @@ def ideal_coupled_line(Ze, Zo, Te, To, Z0):
 
 def ideal_amp(G):
     """
-    S-parameters of an ideal amplifier/isolator
-    G is voltage gain, no reflection, infinite isolation
+    S-parameters of an ideal amplifier/isolator.
+    G is voltage gain, no reflection, infinite isolation.
     """
     return sp.Matrix([[0, 0], [G, 0]])
 
 def ideal_att(G):
     """
-    S-parameters of an ideal amplifier/attenuator/isolator
-    G is voltage gain (<1), no reflection
+    S-parameters of an ideal amplifier/attenuator/isolator.
+    G is voltage gain (<1), no reflection.
     """
     return sp.Matrix([[0, G], [G, 0]])
 
 def circulator():
     """
-    S-parameters of an ideal circulator (circulation direction 1⇒2⇒3)
+    S-parameters of an ideal circulator (circulation direction 1⇒2⇒3).
     """
     return sp.Matrix([[0, 0, 1], [1, 0, 0], [0, 1, 0]])
 
 def shunt_z(Z):
     """
-    ABCD parameters of shunt impedance
+    ABCD parameters of shunt impedance.
     """
     return sp.Matrix([[1, 0], [1/Z, 1]])
 
 def series_z(Z):
     """
-    ABCD parameters of series impedance
+    ABCD parameters of series impedance.
     """
     return sp.Matrix([[1, Z], [0, 1]])
 
 def jinv(J):
     """
-    ABCD parameters of J - inverter
+    ABCD parameters of J-inverter.
     """
     return sp.Matrix([[0, sp.I/J], [sp.I * J, 0]])
 
 def jinv_lumped(X):
     """
-    ABCD parameters of J - inverter produced by 3 inductors in Tee form.
+    ABCD parameters of J-inverter produced by 3 inductors in Tee form.
     """
     return CascadeNetworks([shZ( - X), seZ(X), shZ( - X)])
 
 def kinv(K):
     """
-    ABCD parameters of k - inverter
+    ABCD parameters of k-inverter.
     """
     return sp.Matrix([[0,sp.I * K], [sp.I/K, 0]])
 
 def tline(Zo, theta):
     """
-    ABCD parameters of ideal transmission line,  theta = radian
+    ABCD parameters of ideal transmission line,  theta in radian.
     """
     return sp.Matrix([[sp.cos(theta), sp.I * Zo * sp.sin(theta)], [sp.I/Zo * sp.sin(theta), sp.cos(theta)]])
 
 def tline_list(Zo, theta):
     """
-    ABCD parameters of ideal transmission line,  theta = radian
+    ABCD parameters of ideal transmission line,  theta in radian.
     """
     return tuple([sp.cos(theta), sp.I * Zo * sp.sin(theta), sp.I/Zo * sp.sin(theta), sp.cos(theta)])
 
 def transformer(N):
     """
-    ABCD parameters of ideal transformer (1:N)
+    ABCD parameters of ideal transformer (1:N).
     """
     return sp.Matrix([[1/N, 0], [0, N]])
 
 def t_network(Zs1, Zp, Zs2):
     """
-    ABCD parameters of Tee network
+    ABCD parameters of Tee network.
     """
     return sp.Matrix([[1 + Zs1/Zp, Zs1 + Zs2 + Zs1 * Zs2/Zp], [1/Zp, 1 + Zs2/Zp]])
 
 def pi_network(Zp1, Zs, Zp2):
     """
-    ABCD parameters of Pi network
+    ABCD parameters of Pi network.
     """
     return sp.Matrix([[1 + Zs/Zp2, Zs], [1/Zp1 + 1/Zp2 + Zs/Zp1/Zp2, 1 + Zs/Zp1]])
 
 def abcd2y(M):
     """
-    ABCD parameters to Y - Parameters conversion
+    ABCD parameters to Y-Parameters conversion.
     """
     a, b, c, d = M[0, 0], M[0, 1], M[1, 0], M[1, 1]
     return sp.Matrix([[d/b, (b * c - a * d)/b], [ -1/b, a/b]])
 
 def y2abcd(M):
     """
-    Y-Parameters to ABCD parameters conversion
+    Y-Parameters to ABCD parameters conversion.
     """
     y11, y12, y21, y22 = M[0, 0], M[0, 1], M[1, 0], M[1, 1]
     return sp.Matrix([[ -y22/y21,  -1/y21], [(y12 * y21 - y11 * y22)/y21,  -y11/y21]])
 
 def t2s(M):
     """
-    Transfer scattering parameters to S-Parameters conversion
-    According to definition [b1,a1]=T.[a2,b2]
+    Transfer scattering parameters to S-Parameters conversion.
+    According to definition [b1,a1]=T.[a2,b2].
     Ref: https://en.wikipedia.org/wiki/Scattering_parameters#Scattering_transfer_parameters
     """
     t11, t12, t21, t22 = M[0, 0], M[0, 1], M[1, 0], M[1, 1]
@@ -151,8 +151,8 @@ def t2s(M):
 
 def s2t(M):
     """
-    S-Parameters to Transfer scattering parameters conversion
-    According to definition [b1,a1]=T.[a2,b2]
+    S-Parameters to Transfer scattering parameters conversion.
+    According to definition [b1,a1]=T.[a2,b2].
     Ref: https://en.wikipedia.org/wiki/Scattering_parameters#Scattering_transfer_parameters
     """
     s11, s12, s21, s22 = M[0, 0], M[0, 1], M[1, 0], M[1, 1]
@@ -161,22 +161,57 @@ def s2t(M):
 
 def abcd2z(M):
     """
-    ABCD parameters to Z - Parameters conversion
+    ABCD parameters to Z-Parameters conversion
     """
     a, b, c, d = M[0, 0], M[0, 1], M[1, 0], M[1, 1]
     return sp.Matrix([[a/c, ( - b * c + a * d)/c], [1/c, d/c]])
 
 def z2abcd(M):
     """
-    Z - Parameters to ABCD parameters conversion
+    Z-Parameters to ABCD parameters conversion.
     """
     z11, z12, z21, z22 = M[0, 0], M[0, 1], M[1, 0], M[1, 1]
     return sp.Matrix([[z11/z21, (z11 * z22 - z21 * z12)/z21], [1/z21, z22/z21]])
 
+def abcd2h(M):
+    """
+    ABCD parameters to H-Parameters conversion.
+    """
+    a, b, c, d = M[0, 0], M[0, 1], M[1, 0], M[1, 1]
+    return sp.Matrix([[b/d, ( - b * c + a * d)/d],
+                      [-1/d, c/d]])
+
+def h2abcd(M):
+    """
+    H-Parameters to ABCD parameters conversion.
+    """
+    h11, h12, h21, h22 = M[0, 0], M[0, 1], M[1, 0], M[1, 1]
+    return sp.Matrix([[h12 - h22 * h11 / h21, -h11 / h21],
+                      [-h22 / h21, -1 / h21]])
+
+def h2s(M, Zo=50):
+    """
+    H-Parameters to S parameters conversion. Valid for real Zo value.
+    """
+    h11, h12, h21, h22 = M[0, 0], M[0, 1], M[1, 0], M[1, 1]
+    delta = (h11 + Zo) * (h22 * Zo + 1) - h12 * h21 * Zo
+    return sp.Matrix([[((h11 - Zo) * (h22 * Zo + 1) - h12 * h21 * Zo) / delta, 2 * h12 * Zo / delta],
+                      [-2 * h12 * Zo / delta, ((h11 + Zo) * (1 - h22 * Zo) + h12 * h21 * Zo) / delta]])
+
+def s2h(M, Zo=50):
+    """
+    S-Parameters to H parameters conversion. Valid for real Zo value.
+    """
+    s11, s12, s21, s22 = M[0, 0], M[0, 1], M[1, 0], M[1, 1]
+    delta = (1 - s11) * (1 + s22) + s12 * s21
+    return sp.Matrix([[Zo * ((1 + s11) * (1 + s22) - s12 * s21) / delta, 2 * s12 / delta],
+                      [-2 * s21 / delta, 1 / Zo * ((1 - s11) * (1 - s22) - s12 * s21) / delta]])
+
+
 def abcd2s(M, Zo=50):
     """
-    ABCD parameters to S - Parameters conversion
-    Valid for real Zo value
+    ABCD parameters to S-Parameters conversion.
+    Valid for real Zo value.
     """
     # Zo=sp.Symbol("Zo")
     a, b, c, d = M[0, 0], M[0, 1], M[1, 0], M[1, 1]
@@ -188,7 +223,7 @@ def abcd2s(M, Zo=50):
 
 def abcd2s_list(M, Zo=50):
     """
-    ABCD parameters to S - Parameters conversion
+    ABCD parameters to S-Parameters conversion
     Valid for real Zo value
     """
     a, b, c, d = M[0], M[1], M[2], M[3]
@@ -200,8 +235,8 @@ def abcd2s_list(M, Zo=50):
 
 def s2abcd(M, Z=( 50, 50 )):
     """
-    S-Parameters to ABCD parameters conversion
-    Valid for real Z values
+    S-Parameters to ABCD parameters conversion.
+    Valid for real Z values.
     Z: reference impedance list [Z1, Z2]
     """
     Zo1, Zo2 = tuple(Z)
@@ -214,7 +249,7 @@ def s2abcd(M, Z=( 50, 50 )):
 
 def abcd2t(M, Zo=50):
     """
-    ABCD parameters to T - Parameters conversion
+    ABCD parameters to T-Parameters conversion
 
     ABCD: [V1 I1]=ABCD*[V2 -I2]
     Pseudo-Wave or Power-Wave? Don't use.
@@ -285,7 +320,7 @@ def s_normalize_pseudo(S, Zold, Znew):
 
 def s_normalize_power(S, Zold, Znew):
     """
-    Zold,  Znew port_sayisi uzunlugunda dizilerdir
+    Zold,  Znew are arrays with the same size as number of ports.
     Power-Wave icin
     Reference: Article, “Multiport conversions between S, Z, Y, h, ABCD, and T parameters”
     """
@@ -310,8 +345,8 @@ def s_phase_deembed(S, phase):
     return PhaseMatrix*S*PhaseMatrix
 
 def connect_2_ports(Smatrix,k,m):
-    """ Port-m is connected to port-k and both ports are removed
-    Reference: QUCS technical.pdf, S-parameters in CAE programs, p.29
+    """ Port-m is connected to port-k and both ports are removed.
+    Reference: QUCS technical.pdf, S-parameters in CAE programs, p.29.
     """
     k,m=min(k,m),max(k,m)
     k, m = k-1, m-1
@@ -328,7 +363,7 @@ def connect_2_ports(Smatrix,k,m):
     return Sm
 
 def connect_network_1_conn(Smatrix,EX,k,m):
-    """ Port-m of EX circuit is connected to port-k of this circuit
+    """ Port-m of EX circuit is connected to port-k of this circuit.
     Remaining ports of EX are added to the port list of this circuit in order.
     Reference: QUCS technical.pdf, S-parameters in CAE programs, p.29
     """
@@ -393,7 +428,7 @@ def connect_2_ports_retain(Smatrix,k,m):
     """
     ideal3port = idealNport(3)
     ps = Smatrix.shape[0]
-    k,m=min(k,m),max(k,m)
+    k,m = min(k,m),max(k,m)
     Sm = connect_network_1_conn(Smatrix,ideal3port,m,1)
     Sm = connect_2_ports(Sm,k,ps)
     return Sm
