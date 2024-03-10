@@ -16,11 +16,17 @@ All notable changes to this project will be documented in this file.
 
 ### Removed
 
-## [0.0.5] - 2023-08-10
+## [0.0.5] - 2024-02-20
 
 ### Added
 
 - Added connect_network_multi_conn method to rfnetwork
+
+### Fixed
+
+- BugFixes.
+
+## [0.0.6] - 
 
 ### Fixed
 

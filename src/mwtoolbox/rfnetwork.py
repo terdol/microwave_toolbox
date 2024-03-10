@@ -1881,7 +1881,7 @@ class spfile:
         else:
             return gain
 
-    def interpolate_data(self, datain, freqs):
+    def interpolate_data(self, datain, freqs, freqsin = None):
         """Calculate new data corresponding to new frequency points *freqs* by interpolation from original data corresponding to current frequency points of the network.
 
         Args:
@@ -1892,53 +1892,43 @@ class spfile:
             numpy.ndarray: New data corresponding to *freqs*
         """
         data = np.array(datain)
-        # db = 20.0*np.log10(np.abs(data))
-        # ph = np.unwrap(np.angle(data))
-        # if "scipy.interpolate" in sys.modules:
-        # tck_db = scipy.interpolate.splrep(self.freqs,db,s=0,k=3)  # s=0, smoothing off, k=1, order of spline
-        # newdb = scipy.interpolate.splev(freqs,tck_db,der=0)  # the order of derivative of spline
-        # tck_ph = scipy.interpolate.splrep(self.freqs,ph,s=0,k=3)  # s=0, smoothing off, k=1, order of spline
-        # newph = scipy.interpolate.splev(freqs,tck_ph,der=0)  # the order of derivative of spline
-        # return 10**(newdb/20.0)*np.exp(newph*1j)
-        # else:
-        # newdb = np.interp(freqs, self.freqs, db)
-        # newph = np.interp(freqs, self.freqs, ph)
-        # return 10**(newdb/20.0)*np.exp(newph*1j)
+
+        if freqsin is None:
+            freqsin = self.freqs
 
         if "scipy.interpolate" in sys.modules:
-            # tck_db = scipy.interpolate.splrep(self.freqs,np.real(data),s=0,k=3)  # s=0, smoothing off, k=1, order of spline
-            # newdatar = scipy.interpolate.splev(freqs,tck_db,der=0)  # the order of derivative of spline
-            # tck_db = scipy.interpolate.splrep(self.freqs,np.imag(data),s=0,k=3)  # s=0, smoothing off, k=1, order of spline
-            # newdatai = scipy.interpolate.splev(freqs,tck_db,der=0)  # the order of derivative of spline
-            # return newdatar+1j*newdatai
+            
+            if np.iscomplexobj(data):
 
-            fnewdatar = scipy.interpolate.interp1d(self.freqs,
-                                                   np.real(data),
-                                                   kind='cubic')
-            fnewdatai = scipy.interpolate.interp1d(self.freqs,
-                                                   np.imag(data),
-                                                   kind='cubic')
-            return fnewdatar(freqs) + 1j * fnewdatai(freqs)
+                fnewdatar = scipy.interpolate.CubicSpline(freqsin,
+                                                          np.real(data),
+                                                          extrapolate=True)
+                fnewdatai = scipy.interpolate.CubicSpline(freqsin,
+                                                          np.imag(data),
+                                                          extrapolate=True)
+                return fnewdatar(freqs) + 1j * fnewdatai(freqs)
+            else:
+                return scipy.interpolate.CubicSpline(freqsin,
+                                                     data,
+                                                     extrapolate=True)
 
         else:
-            return (np.interp(freqs, self.freqs, np.real(data))
-                              + 1j * np.interp(freqs, self.freqs, np.imag(data)))
+            if np.iscomplexobj(data):
+                return (np.interp(freqs, freqsin, np.real(data))
+                        + 1j * np.interp(freqs, freqsin, np.imag(data)))
+            else:
+                return (np.interp(freqs, freqsin, data))
 
-    def return_s2p(self, port1=1, port2=2):
+    def return_s2p(self, port1=1, port2=2, **kwargs):
         """Return 2-port s-parameters tuple between port1- and port-2."""
 
-        i21 = (port1 - 1) * self.n_ports + (port2 - 1)
-        i12 = (port2 - 1) * self.n_ports + (port1 - 1)
-        i11 = (port1 - 1) * self.n_ports + (port1 - 1)
-        i22 = (port2 - 1) * self.n_ports + (port2 - 1)
-        sdata = self.sdata
-        s11 = sdata[:, i11]
-        s21 = sdata[:, i21]
-        s12 = sdata[:, i12]
-        s22 = sdata[:, i22]
+        s11 = self.S(port1, port1, "COMPLEX", **kwargs)
+        s12 = self.S(port1, port2, "COMPLEX", **kwargs)
+        s21 = self.S(port2, port1, "COMPLEX", **kwargs)
+        s22 = self.S(port2, port2, "COMPLEX", **kwargs)
         return s11, s12, s21, s22
 
-    def stability_factor_mu1(self, port1=1, port2=2):
+    def stability_factor_mu1(self, port1=1, port2=2, **kwargs):
         """Calculates :math:`\mu_1` stability factor, from port1 to port2. Other ports are terminated with reference impedances.
 
         Args:
@@ -1948,13 +1938,14 @@ class spfile:
         Returns:
             numpy.ndarray: Array of stability factor for all frequencies
         """
-        s11, s12, s21, s22 = self.return_s2p(port1, port2)
+        s11, s12, s21, s22 = self.return_s2p(port1, port2, **kwargs)
+
         d = s11 * s22 - s12 * s21
         mu1 = (1.0 - abs(s11)**2) / (abs(s22 - d * s11.conjugate()) +
                                      abs(s21 * s12))
         return mu1
 
-    def stability_factor_mu2(self, port1=1, port2=2):
+    def stability_factor_mu2(self, port1=1, port2=2, **kwargs):
         """Calculates :math:`\mu_2` stability factor, from port1 to port2. Other ports are terminated with reference impedances.
 
         Args:
@@ -1964,23 +1955,27 @@ class spfile:
         Returns:
             numpy.ndarray: Array of stability factor for all frequencies
         """
-        s11, s12, s21, s22 = self.return_s2p(port1, port2)
+        s11, s12, s21, s22 = self.return_s2p(port1, port2, **kwargs)
+
         d = s11 * s22 - s12 * s21
         mu2 = (1.0 - abs(s22)**2) / (abs(s11 - d * s22.conj()) +
                                      abs(s21 * s12))
         return mu2
 
-    def stability_factor_k(self, port1=1, port2=2):
+    def stability_factor_k(self, port1=1, port2=2, **kwargs):
         """Calculates *k* stability factor, from port1 to port2. Other ports are terminated with reference impedances.
 
         Args:
             port1 (int, optional): Index of source port. Defaults to 1.
             port2 (int, optional): Index of load port. Defaults to 2.
+            freqs (numpy.ndarray or list, optional): New frequency list if the requested frequency points are different than the network's.
+            smoothing (int, optional): Width of smoothing window if smoothing is requested.
 
         Returns:
             numpy.ndarray: Array of stability factor for all frequencies
         """
-        s11, s12, s21, s22 = self.return_s2p(port1, port2)
+        s11, s12, s21, s22 = self.return_s2p(port1, port2, **kwargs)
+            
         d = s11 * s22 - s12 * s21
         K = ((1 - abs(s11)**2 - abs(s22)**2 + abs(d)**2) /
              (2 * abs(s21 * s12)))
@@ -2067,7 +2062,7 @@ class spfile:
                                                M="S",
                                                i=1,
                                                j=1,
-                                               frequencies=self.freqs)
+                                               freqs=self.freqs)
                 Zin = 50.0 * (1.0 + gamma) / (1.0 - gamma)
                 newarray.append(
                     np.array([x + (x.real == 0) * 1e-8 for x in Zin]))
@@ -2131,7 +2126,7 @@ class spfile:
                                   M="S",
                                   i=i,
                                   j=j,
-                                  frequencies=nfdata,
+                                  freqs=nfdata,
                                   DCInt=dc_interp,
                                   DCValue=dc_value)
 
@@ -2221,7 +2216,7 @@ class spfile:
                                   M="S",
                                   i=i,
                                   j=j,
-                                  frequencies=nfdata,
+                                  freqs=nfdata,
                                   DCInt=dc_interp,
                                   DCValue=dc_value)
 
@@ -3013,8 +3008,6 @@ class spfile:
 
         sdata = np.zeros((len(frequencies), n), dtype=complex)
         for j in range(n):
-            #ydb=np.array([20*np.log10(abs(obj.sdata[k,j])) for k in range(len(obj.freqs))])
-            #yphase=np.unwrap([np.angle(obj.sdata[k,j],deg=0)  for k in range(len(obj.freqs))])*180.0/np.pi # degree
             data_orig = obj.sdata[:, j]
             data_new = obj.interpolate_data(data_orig, frequencies)
             sdata[:, j] = data_new
@@ -3028,12 +3021,12 @@ class spfile:
                    M="S",
                    i=1,
                    j=1,
-                   frequencies=None,
+                   freqs=None,
                    ref=None,
                    DCInt=0,
                    DCValue=0.0,
                    smoothing=0,
-                   InterpolationConstant=0):
+                   interp_coeff=0):
         """Return a network parameter between ports *i* and *j* (:math:`M_{i j}`) at specified frequencies in specified format.
 
         Args:
@@ -3056,12 +3049,12 @@ class spfile:
                 -   "ABCD": Return ABCD-parameter data
             i (int, optional): First port number. Defaults to 1.
             j (int, optional): Second port number. Defaults to 1. Ignored for *data_format* ="VSWR"
-            frequencies (list, optional): Defaults to []. List of frequencies in Hz. If an empty list is given, networks whole frequency range is used.
+            freqs (list, optional): Defaults to []. List of frequencies in Hz. If an empty list is given, networks whole frequency range is used.
             ref (spfile, optional): Defaults to None. If given the data of this network is subtracted from the same data of *ref* object.
             DCInt (int, optional): Defaults to 0. If 1, DC point given by *DCValue* is used at frequency interpolation if *frequencies* is not [].
             DCValue (complex, optional): Defaults to 0.0. DCValue that can be used for interpolation over frequency.
             smoothing (int, optional): Defaults to 0. if this is higher than 0, it is used as the number of points for smoothing.
-            InterpolationConstant (int, optional): Defaults to 0. If this is higher than 0, it is taken as the number of frequencies that will be added between 2 consecutive frequency points. By this way, number of frequencies is increased by interpolation.
+            interp_coeff (int, optional): Defaults to 0. If this is higher than 0, it is taken as the number of frequencies that will be added between 2 consecutive frequency points. By this way, number of frequencies is increased by interpolation.
 
         Returns:
             numpy.array: Network data array
@@ -3072,145 +3065,97 @@ class spfile:
             return []
         data_format = data_format.upper()
         M = M.upper()
-        if data_format == "K":
-            return self.stability_factor_k(frequencies, i, j)
-        if data_format == "MU1":
-            return self.stability_factor_mu1(frequencies, i, j)
-        if data_format == "MU2":
-            return self.stability_factor_mu2(frequencies, i, j)
-        if data_format == "VSWR" and i != j:
-            j = i
-            return
-
-        if frequencies is None:
+        if freqs is None:
             frequencies = self.freqs
             nointerp = True
         else:
+            frequencies = freqs
             nointerp = False
 
-        if InterpolationConstant > 0:
+        if data_format == "K":
+            return self.stability_factor_k(i, j, freqs=frequencies, smoothing=smoothing)
+        if data_format == "MU1":
+            return self.stability_factor_mu1(i, j, freqs=frequencies, smoothing=smoothing)
+        if data_format == "MU2":
+            return self.stability_factor_mu2(i, j, freqs=frequencies, smoothing=smoothing)
+        if data_format == "VSWR" and i != j:
+            j = i
+
+        if interp_coeff > 0:
             frekstep = frequencies[1] - frequencies[0]
             frequencies = np.array(
                 list(range(
-                    (len(frequencies) - 1) * InterpolationConstant +
-                    1))) * frekstep / InterpolationConstant + frequencies[0]
-        x = self.freqs
-        lenx = len(x)
-        dcdb = []
-        dcph = []
-        if DCInt == 1:
-            dcdb = [20 * np.log10((np.abs(DCValue) + 1e-8))]
-            dcph = [np.angle(DCValue, deg=False)]
-            x = np.append([0.0], x)
-        n = (i - 1) * self.n_ports + (j - 1)
-        ynew = []
+                    (len(frequencies) - 1) * interp_coeff +
+                    1))) * frekstep / interp_coeff + frequencies[0]
+
+        freqsin = self.freqs
+        lenx = len(freqsin)
         mag_threshold = 1.0e-10
+
+        if DCInt == 1:
+            dcdb = [20 * np.log10((np.abs(DCValue) + mag_threshold))]
+            dcph = [np.angle(DCValue, deg=False)]
+            np.insert(freqsin, 0, 0.0)
+        else:
+            dcdb = []
+            dcph = []
+
+        n = (i - 1) * self.n_ports + (j - 1)
         if M == "S" or data_format == "GDELAY":
-            if not self.s_ok:
-                if self.y_ok:
-                    self.calc_syz("Y")
-                elif self.z_ok:
-                    self.calc_syz("Z")
-                else:
-                    print("Invalid Matrices - S")
-            ydb = dcdb + [
-                20 * np.log10(abs(self.sdata[k, n]) + mag_threshold)
-                for k in range(lenx)
-            ]
-            yph = np.unwrap(
-                dcph +
-                [np.angle(self.sdata[k, n], deg=0)
-                 for k in range(lenx)]) * 180.0 / np.pi
+            if self.sdata is None:
+                if self.ydata:    self.calc_syz("Y")
+                elif self.zdata:  self.calc_syz("Z")
+                else:             print("Invalid Matrices - Y")
+            ydb = np.concatenate([dcdb,20 * np.log10(abs(self.sdata[:, n]) + mag_threshold)])
+            yph = np.unwrap(np.concatenate([dcph,np.angle(self.sdata[:, n], deg=0)]))
+
         elif M == "Y":
-            if not self.y_ok:
-                if self.s_ok:
-                    self.calc_syz("S")
-                elif self.z_ok:
-                    self.calc_syz("Z")
-                else:
-                    print("Invalid Matrices - Y")
-            ydb = dcdb + [
-                20 * np.log10(abs(self.ydata[k, n]) + mag_threshold)
-                for k in range(lenx)
-            ]
-            yph = np.unwrap(
-                dcph +
-                [np.angle(self.ydata[k, n], deg=0)
-                 for k in range(lenx)]) * 180.0 / np.pi
+            if self.ydata is None:
+                if self.sdata:    self.calc_syz("S")
+                elif self.zdata:  self.calc_syz("Z")
+                else:             print("Invalid Matrices - Y")
+            ydb = np.concatenate([dcdb,20 * np.log10(abs(self.ydata[:, n]) + mag_threshold)])
+            yph = np.unwrap(np.concatenate([dcph,np.angle(self.ydata[:, n], deg=0)]))
+
         elif M == "T":
             if not self.t_ok:
                 self.s2t()
-            ydb = dcdb + [
-                20 * np.log10(abs(self.tdata[k, n]) + mag_threshold)
-                for k in range(lenx)
-            ]
-            yph = np.unwrap(
-                dcph +
-                [np.angle(self.tdata[k, n], deg=0)
-                 for k in range(lenx)]) * 180.0 / np.pi
+            ydb = np.concatenate([dcdb,20 * np.log10(abs(self.tdata[:, n]) + mag_threshold)])
+            yph = np.unwrap(np.concatenate([dcph,np.angle(self.tdata[:, n], deg=0)]))
+
         elif M == "Z":
-            if not self.z_ok:
-                if self.y_ok:
-                    self.calc_syz("Y")
-                elif self.s_ok:
-                    self.calc_syz("S")
-                else:
-                    print("Invalid Matrices")
-            ydb = dcdb + [
-                20 * np.log10(abs(self.zdata[k, n]) + mag_threshold)
-                for k in range(lenx)
-            ]
-            yph = np.unwrap(
-                dcph +
-                [np.angle(self.zdata[k, n], deg=0)
-                 for k in range(lenx)]) * 180.0 / np.pi
+            if self.zdata is None:
+                if self.sdata:    self.calc_syz("S")
+                elif self.ydata:  self.calc_syz("Y")
+                else:             print("Invalid Matrices - Y")
+            ydb = np.concatenate([dcdb,20 * np.log10(abs(self.zdata[:, n]) + mag_threshold)])
+            yph = np.unwrap(np.concatenate([dcph,np.angle(self.zdata[:, n], deg=0)]))
+
         elif M == "ABCD":
             if not self.abcd_ok:
                 self.s2abcd()
-            ydb = dcdb + [
-                20 * np.log10(abs(self.abcddata[k, n]) + mag_threshold)
-                for k in range(lenx)
-            ]
-            yph = np.unwrap(
-                dcph +
-                [np.angle(self.abcddata[k, n], deg=0)
-                 for k in range(lenx)]) * 180.0 / np.pi
+            ydb = np.concatenate([dcdb,20 * np.log10(abs(self.abcddata[:, n]) + mag_threshold)])
+            yph = np.unwrap(np.concatenate([dcph,np.angle(self.abcddata[:, n], deg=0)]))
+
+        yph = yph * 180.0 / np.pi
 
         if nointerp:
-            ynew_db = np.array(ydb)
-            ynew_ph = np.array(yph)
+            ynew_db = ydb
+            ynew_ph = yph
 
         elif len(self.freqs) > 1:
-            # order = 2
-            # tck_db = scipy.interpolate.InterpolatedUnivariateSpline(x,ydb,k=order)
-            # ynew_db = tck_db(frequencies)
-            # tck_phase = scipy.interpolate.InterpolatedUnivariateSpline(x,yph,k=order)
-            # ynew_ph = tck_phase(frequencies)
-
-            if "scipy" in sys.modules:
-                tck_db = scipy.interpolate.CubicSpline(x,
-                                                       ydb,
-                                                       extrapolate=True)
-                ynew_db = tck_db(frequencies)
-                tck_phase = scipy.interpolate.CubicSpline(x,
-                                                          yph,
-                                                          extrapolate=True)
-                ynew_ph = tck_phase(frequencies)
-            else:
-                ynew_db = np.interp(frequencies, x, ydb)
-                ynew_ph = np.interp(frequencies, x, yph)  #  degrees
-
+            ynew_db = self.interpolate_data(ydb, frequencies, freqsin = freqsin)
+            ynew_ph = self.interpolate_data(yph, frequencies, freqsin = freqsin)
         else:
-            ynew_db = np.array(ydb * len(frequencies))
-            ynew_ph = np.array(yph * len(frequencies))
+            ynew_db = np.full(len(frequencies), ydb)
+            ynew_ph = np.full(len(frequencies), yph)
 
         if ref:
             ynew_db = ynew_db - ref.data_array("DB", M, i, j, frequencies)
             ynew_ph = ynew_ph - ref.data_array("UPHASE", M, i, j, frequencies)
 
         if smoothing > 0:
-            if smoothing > lenx - 1:
-                smoothing = lenx - 1
+            smoothing = np.min([len(self.freqs) - 1, smoothing])
             ynew_db = smooth(ynew_db, window_len=smoothing, window='hanning')
             ynew_ph = smooth(ynew_ph, window_len=smoothing, window='hanning')
 
@@ -3238,11 +3183,9 @@ class spfile:
             mag = 10**((ynew_db / 20.0))
             ynew = ((1.0 + mag) / (1.0 - mag))
         elif data_format == "REAL":
-            ynew1 = 10**((ynew_db / 20.0))
-            ynew = ynew1 * np.cos(ynew_ph * np.pi / 180.0)
+            ynew = 10**((ynew_db / 20.0)) * np.cos(ynew_ph * np.pi / 180.0)
         elif data_format == "IMAG":
-            ynew1 = 10**((ynew_db / 20.0))
-            ynew = ynew1 * np.sin(ynew_ph * np.pi / 180.0)
+            ynew = 10**((ynew_db / 20.0)) * np.sin(ynew_ph * np.pi / 180.0)
         elif data_format == "PHASE":
             ynew = np.mod(ynew_ph, 360.)
         elif data_format == "UPHASE":
@@ -3258,6 +3201,9 @@ class spfile:
             ynew[t - 1] = -(ynew_ph[t - 1] - ynew_ph[t - 2]) / (
                 frequencies[t - 1] - frequencies[t - 2]) / 360.0
             ynew = np.array(ynew)
+        else:
+            print("Error with data_format input argument!")
+            return
         return ynew
 
     def extraction(self, measspfile):
@@ -3380,7 +3326,7 @@ class spfile:
         obj.z_ok, obj.y_ok, obj.t_ok, obj.abcd_ok = False, False, False, False
         return obj
 
-    def S(self, i=1, j=1, data_format="COMPLEX", freqs=None):
+    def S(self, i=1, j=1, data_format="COMPLEX", **kwargs):
         """Gives :math:`S_{i j}` in *data_format* format.
         Uses *data_array* method internally. This is a convenience function for practical use.
 
@@ -3393,9 +3339,9 @@ class spfile:
         Returns:
             numpy.array: :math:`S_{i j}` in *data_format* format
         """
-        return self.data_array(data_format, "S", i, j, frequencies=freqs)
+        return self.data_array(data_format, "S", i, j, **kwargs)
 
-    def ABCD(self, i=1, j=1, data_format="COMPLEX", freqs=None):
+    def ABCD(self, i=1, j=1, data_format="COMPLEX", **kwargs):
         """Gives :math:`ABCD_{i j}` in *data_format* format.
         Uses *data_array* method internally. This is a convenience function for practical use.
 
@@ -3408,9 +3354,9 @@ class spfile:
         Returns:
             numpy.array: :math:`S_{i j}` in *data_format* format
         """
-        return self.data_array(data_format, "ABCD", i, j, frequencies=freqs)
+        return self.data_array(data_format, "ABCD", i, j, **kwargs)
 
-    def T(self, i=1, j=1, data_format="COMPLEX", freqs=None):
+    def T(self, i=1, j=1, data_format="COMPLEX", **kwargs):
         """Return :math:`T_{i j}` in format *data_format*
         Uses *data_array* method internally. A convenience function for practical use.
 
@@ -3422,9 +3368,9 @@ class spfile:
         Returns:
             numpy.array: :math:`T_{i j}` as *data_format*
         """
-        return self.data_array(data_format, "T", i, j, frequencies=freqs)
+        return self.data_array(data_format, "T", i, j, **kwargs)
 
-    def Z(self, i=1, j=1, data_format="COMPLEX", freqs=None):
+    def Z(self, i=1, j=1, data_format="COMPLEX", **kwargs):
         """Return :math:`Z_{i j}` in format *data_format*
         Uses *data_array* method internally. A convenience function for practical use.
 
@@ -3436,11 +3382,9 @@ class spfile:
         Returns:
             numpy.array: :math:`Z_{i j}` as *data_format*
         """
-        # if not freqs and data_format=="COMPLEX":
-        #     return self.zdata[:,(i - 1) * self.n_ports + (j - 1)]
-        return self.data_array(data_format, "Z", i, j, frequencies=freqs)
+        return self.data_array(data_format, "Z", i, j, **kwargs)
 
-    def Y(self, i=1, j=1, data_format="COMPLEX", freqs=None):
+    def Y(self, i=1, j=1, data_format="COMPLEX", **kwargs):
         """Return :math:`Y_{i j}` in format *data_format*
         Uses *data_array* method internally. A convenience function for practical use.
 
@@ -3452,21 +3396,7 @@ class spfile:
         Returns:
             numpy.array: :math:`Y_{i j}` as *data_format*
         """
-        return self.data_array(data_format, "Y", i, j, frequencies=freqs)
-
-    def set_frequency_limits(self, flow, fhigh, inplace=-1):
-        """Remove frequency points higher than *fhigh* and lower than *flow*.
-
-        Args:
-            flow (float): Lowest Frequency (Hz)
-            fhigh (float): Highest Frequency (Hz)
-            inplace (int, optional): Object editing mode. Defaults to -1.
-
-        Returns:
-            spfile: spfile object with new frequency points.
-        """
-        newfreqs = list(filter(lambda x: flow <= x <= fhigh, self.freqs))
-        return self.set_frequency_points(newfreqs, inplace)
+        return self.data_array(data_format, "Y", i, j, **kwargs)
 
     def crop_with_frequency(self, fstart=None, fstop=None, inplace=-1):
         """Crop the points below fstart and above fstop. No recalculation or interpolation occurs.
@@ -3498,9 +3428,6 @@ class spfile:
                 if isinstance(obj.refimpedance[i], (list, np.ndarray)):
                     obj.refimpedance[i] = obj.refimpedance[i][
                         index_begin:index_end]
-        # if len(obj.gammas)>0:
-        # for i in range(obj.n_ports):
-        # obj.gammas[i] = obj.gammas[i][temp]
         if len(obj.gammas) > 0:
             obj.gammas = obj.gammas[:, index_begin:index_end]
         obj.sdata = obj.sdata[index_begin:index_end, :]
@@ -3530,12 +3457,7 @@ class spfile:
                 if isinstance(obj.refimpedance[i], (list, np.ndarray)):
                     obj.refimpedance[i] = obj.interpolate_data(
                         obj.refimpedance[i], frequencies)
-        # list of lists case
-        # if len(obj.gammas)>0:
-        # for i in range(obj.n_ports):
-        # obj.gammas[i] = obj.interpolate_data(obj.gammas[i], frequencies)
-        #2-dimensional array case
-        # print(np.shape(obj.gammas))
+
         if len(obj.gammas) > 0:
             gammas = []
             for i in range(obj.n_ports):
@@ -3570,7 +3492,7 @@ class spfile:
     def set_frequency_points_array(self,
                                    fstart,
                                    fstop,
-                                   NumberOfPoints,
+                                   number_of_points,
                                    inplace=-1):
         """Set the frequencies of the object using start-end frequencies and number of points.
 
@@ -3584,7 +3506,7 @@ class spfile:
             spfile: spfile object with new frequency points.
         """
         return self.set_frequency_points(frequencies=np.linspace(
-            fstart, fstop, NumberOfPoints, endpoint=True),
+            fstart, fstop, number_of_points, endpoint=True),
                                          inplace=inplace)
 
     def convert_s1p_to_s2p(self):
