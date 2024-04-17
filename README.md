@@ -1,6 +1,6 @@
 # Project Description
 
-Current version = "0.0.5"
+Current version = "0.0.6"
 
 MWTOOLBOX is a library for general processing of multiport RF/Microwave networks. Detailed documentation is at [https://terdol.github.io/mwtoolboxdoc](https://terdol.github.io/mwtoolboxdoc).
 
