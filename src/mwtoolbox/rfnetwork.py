@@ -1053,7 +1053,7 @@ class spfile:
                 linesread = f.readlines()[skiplines:]
         except:
             print("Error opening the file: " + file_name + "\n")
-            return 0
+            sys.exit(0)
         self.header = [
             l for l in linesread if (l.startswith("! ") and not (
                 l.startswith("! Port Impedance") or l.startswith("! Gamma")))
@@ -1573,7 +1573,7 @@ class spfile:
         ns = len(self.freqs)
         abcddata = np.ones((ns, 4), dtype=complex)
         tempsp = self.snp2smp([port1, port2], inplace=0)
-        tempsp.change_ref_impedance([50.0, 50.0], 1)
+        tempsp.change_ref_impedance([50.0, 50.0], inplace=1)
         for i in range(ns):
             smatrix = np.matrix(tempsp.sdata[i, :]).reshape(2, 2)
             ABCD = network.s2abcd(smatrix)
@@ -1637,17 +1637,20 @@ class spfile:
         elif data_format == "uphase":
             return np.unwrap(np.angle(Y)) * 180.0 / np.pi
 
-    def z_load(self, Gamma_in, port1=1, port2=2):
+    def z_load(self, Gamma_in, port1=1, port2=2, freqs_in=None):
         """Calculates termination impedance at port2 that gives Gamma_in reflection coefficient at port1.
 
         Args:
             Gamma_in (float,ndarray): Required reflection coefficient.
             port1 (int): Source port.
             port2 (int): Load port.
+            freqs_in(np.ndarray, optional): If Gamma_in values correspond to frequency points different than the frequencies of this network, these frequencypoints are given by this variable.
 
         Returns:
             numpy.ndarray: Array of reflection coeeficient of termination at port2
         """
+        if freqs_in is not None:
+            Gamma_in = self.interpolate_data(Gamma_in, self.freqs, freqsin = freqs_in)
         s11 = self.S(port1, port1)
         s22 = self.S(port2, port2)
         s12 = self.S(port1, port2)
@@ -1709,7 +1712,7 @@ class spfile:
         if ZS == []:
             ZS = imp[port1 - 1]
         ZS = np.array(ZS)
-        tsp = self.change_ref_impedance(50.0, 0).snp2smp([port1, port2], 0)
+        tsp = self.change_ref_impedance(50.0, 0).snp2smp([port1, port2], inplace=0)
         GS = (ZS - 50.0) / (ZS + 50.0)
         s11 = tsp.S(1, 1)
         s12 = tsp.S(1, 2)
@@ -1741,7 +1744,7 @@ class spfile:
         imp = tsp.prepare_ref_impedance_array(tsp.refimpedance)
         if ZL is None:
             ZL = imp[1]
-        tsp.change_ref_impedance(50.0, 1)
+        tsp.change_ref_impedance(50.0, inplace=1)
         s11 = tsp.S(1, 1)
         s12 = tsp.S(1, 2)
         s21 = tsp.S(2, 1)
@@ -1771,7 +1774,7 @@ class spfile:
             numpy.ndarray: Array of Gop values for all frequencies
         """
         tsp = self.snp2smp([port1, port2], 0)
-        tsp.change_ref_impedance(50.0, 1)
+        tsp.change_ref_impedance(50.0, inplace=1)
         s11 = tsp.S(1, 1)
         s12 = tsp.S(1, 2)
         s21 = tsp.S(2, 1)
@@ -1829,7 +1832,7 @@ class spfile:
                 - GS: Reflection coefficient of Port-1 Impedance
                 - GL: Reflection coefficient of Port-2 Impedance
         """
-        obj = self.change_ref_impedance(50.0, 0)
+        obj = self.change_ref_impedance(50.0, inplace=0)
         s11, s12, s21, s22 = obj.return_s2p(port1, port2)
         D = s11 * s22 - s12 * s21
         c1 = s11 - D * s22.conj()
@@ -1866,7 +1869,7 @@ class spfile:
             ZS = imp[port1 - 1]
         if ZL == []:
             ZL = imp[port2 - 1]
-        tsp = self.change_ref_impedance(50.0, 0).snp2smp([port1, port2], 0)
+        tsp = self.change_ref_impedance(50.0, 0).snp2smp([port1, port2], inplace=0)
         GS = (ZS - 50.0) / (ZS + 50.0)
         GL = (ZL - 50.0) / (ZL + 50.0)
         s11 = tsp.S(1, 1)
@@ -1891,13 +1894,13 @@ class spfile:
         Returns:
             numpy.ndarray: New data corresponding to *freqs*
         """
-        data = np.array(datain)
+        data = np.asarray(datain)
 
         if freqsin is None:
             freqsin = self.freqs
 
         if "scipy.interpolate" in sys.modules:
-            
+
             if np.iscomplexobj(data):
 
                 fnewdatar = scipy.interpolate.CubicSpline(freqsin,
@@ -1908,9 +1911,10 @@ class spfile:
                                                           extrapolate=True)
                 return fnewdatar(freqs) + 1j * fnewdatai(freqs)
             else:
-                return scipy.interpolate.CubicSpline(freqsin,
+                fnew = scipy.interpolate.CubicSpline(freqsin,
                                                      data,
                                                      extrapolate=True)
+                return fnew(freqs)
 
         else:
             if np.iscomplexobj(data):
@@ -1975,37 +1979,60 @@ class spfile:
             numpy.ndarray: Array of stability factor for all frequencies
         """
         s11, s12, s21, s22 = self.return_s2p(port1, port2, **kwargs)
-            
+
         d = s11 * s22 - s12 * s21
         K = ((1 - abs(s11)**2 - abs(s22)**2 + abs(d)**2) /
              (2 * abs(s21 * s12)))
         return K
 
-    def change_ref_impedance(self, Znewinput, inplace=-1):
+    def change_ref_impedance(self, Znewinput, port_numbers = None, inplace=-1):
         """Changes reference impedance and re-calculates S-Parameters.
 
         Args:
             Znew (float or list): New Reference Impedance. Its type can be:
                 - float: In this case Znew value is used for all ports
                 - list: In this case each element of this list is assgined to different ports in order as reference impedance. Length of *Znew* should be equal to number of ports. If an element of the list is None, then the reference impedance for corresponding port is not changed.
+            port_numbers (list): List of port numbers to apply each element in Znew. None (default) means application to all ports. In this case Znew should be array with n_ports size or a single element.
 
         Returns:
             spfile: The spfile object with new reference impedance
         """
         Znew = deepcopy(Znewinput)
+
+        # this is just for old code using the old interface. Argument given for inplace
+        # without the keyword can be interpreted wrongly as port_numbers
+        if isinstance(port_numbers, int):
+            inplace = port_numbers
+            port_numbers = None
+
         if inplace == -1: inplace = self.inplace
         if inplace == 0:
             obj = deepcopy(self)
             obj.inplace = 1
         else:
             obj = self
+
+        if port_numbers is None:
+            port_numbers = list(range(1,obj.n_ports+1))
+        Zimps = deepcopy(obj.refimpedance)
         if isinstance(Znew, (list, np.ndarray)):
             for i in range(len(Znew)):
-                if Znew[i] is None:
-                    Znew[i] = obj.refimpedance[i]
+                if Znew[i] is not None:
+                    try:
+                        Zimps[port_numbers[i]-1] = Znew[i]
+                    except TypeError:
+                        Zimps = [Zimps]*self.n_ports
+                        Zimps[port_numbers[i]-1] = Znew[i]
+        else:
+            for p in port_numbers:
+                try:
+                    Zimps[p-1] = Znew
+                except TypeError:
+                    Zimps = [Zimps]*self.n_ports
+                    Zimps[p-1] = Znew
         imp = obj.prepare_ref_impedance_array(obj.refimpedance)
         impT = imp.T
-        impnew = obj.prepare_ref_impedance_array(Znew)
+        impnew = obj.prepare_ref_impedance_array(Zimps)
         impnewT = impnew.T
         ps = obj.n_ports
         identity = np.matrix(np.eye(ps))
@@ -2033,10 +2060,13 @@ class spfile:
                 C2 = (identity - G * S).I
                 Snew = A.I * C1 * C2 * A
             obj.sdata[i, :] = Snew.reshape(ps**2)
-        if isinstance(Znew, (complex, float, int)):
-            obj.refimpedance = np.ones(ps, dtype=complex) * Znew
-        else:
-            obj.refimpedance = deepcopy(Znew)
+
+        # if isinstance(Znew, (complex, float, int)):
+        #     obj.refimpedance = np.ones(ps, dtype=complex) * Znew
+        # else:
+        #     obj.refimpedance = deepcopy(Znew)
+        obj.refimpedance = Zimps
+
         return obj
 
     def prepare_ref_impedance_array(self, imparray=None):
@@ -2057,7 +2087,7 @@ class spfile:
             if isinstance(imparray[i], spfile):
                 # imparray[i].calc_syz("S")
                 # newarray.append(np.array([x+(x.real==0)*1e-8 for x in imparray[i].data_array(data_format="COMPLEX",syz="Z",i=1,j=1, frequencies=self.freqs) ]))
-                temp_spfile = imparray[i].change_ref_impedance(50.0, 0)
+                temp_spfile = imparray[i].change_ref_impedance(50.0, inplace=0)
                 gamma = temp_spfile.data_array(data_format="COMPLEX",
                                                M="S",
                                                i=1,
@@ -2800,7 +2830,7 @@ class spfile:
         Args:
             EX (spfile): External network to be connected to this network.
             port_pairs (list of tuples): A list of 2-tuples of integers showing the ports connected.
-                                         First element of each item is the port numebr of this 
+                                         First element of each item is the port numebr of this
                                          network and the second element is of EX.
             inplace (int, optional): Object editing mode. Defaults to -1.
 
@@ -3090,7 +3120,7 @@ class spfile:
 
         freqsin = self.freqs
         lenx = len(freqsin)
-        mag_threshold = 1.0e-10
+        mag_threshold = sys.float_info.min
 
         if DCInt == 1:
             dcdb = [20 * np.log10((np.abs(DCValue) + mag_threshold))]
@@ -3103,16 +3133,16 @@ class spfile:
         n = (i - 1) * self.n_ports + (j - 1)
         if M == "S" or data_format == "GDELAY":
             if self.sdata is None:
-                if self.ydata:    self.calc_syz("Y")
-                elif self.zdata:  self.calc_syz("Z")
+                if self.ydata is not None:    self.calc_syz("Y")
+                elif self.zdata is not None:  self.calc_syz("Z")
                 else:             print("Invalid Matrices - Y")
             ydb = np.concatenate([dcdb,20 * np.log10(abs(self.sdata[:, n]) + mag_threshold)])
             yph = np.unwrap(np.concatenate([dcph,np.angle(self.sdata[:, n], deg=0)]))
 
         elif M == "Y":
             if self.ydata is None:
-                if self.sdata:    self.calc_syz("S")
-                elif self.zdata:  self.calc_syz("Z")
+                if self.sdata is not None:    self.calc_syz("S")
+                elif self.zdata is not None:  self.calc_syz("Z")
                 else:             print("Invalid Matrices - Y")
             ydb = np.concatenate([dcdb,20 * np.log10(abs(self.ydata[:, n]) + mag_threshold)])
             yph = np.unwrap(np.concatenate([dcph,np.angle(self.ydata[:, n], deg=0)]))
@@ -3125,8 +3155,8 @@ class spfile:
 
         elif M == "Z":
             if self.zdata is None:
-                if self.sdata:    self.calc_syz("S")
-                elif self.ydata:  self.calc_syz("Y")
+                if self.sdata is not None:    self.calc_syz("S")
+                elif self.ydata is not None:  self.calc_syz("Y")
                 else:             print("Invalid Matrices - Y")
             ydb = np.concatenate([dcdb,20 * np.log10(abs(self.zdata[:, n]) + mag_threshold)])
             yph = np.unwrap(np.concatenate([dcph,np.angle(self.zdata[:, n], deg=0)]))
@@ -3172,20 +3202,20 @@ class spfile:
                 elif M == "ABCD":
                     ynew = self.abcddata[:, n]
             else:
-                ynew_mag = 10**((ynew_db / 20.0))
+                ynew_mag = 10**(ynew_db / 20.0)
                 ynew = ynew_mag * (np.cos(ynew_ph * np.pi / 180.0) +
                                    1.0j * np.sin(ynew_ph * np.pi / 180.0))
         elif data_format == "DB":
             ynew = ynew_db
         elif data_format == "MAG":
-            ynew = 10**((ynew_db / 20.0))
+            ynew = 10**(ynew_db / 20.0)
         elif data_format == "VSWR":
-            mag = 10**((ynew_db / 20.0))
-            ynew = ((1.0 + mag) / (1.0 - mag))
+            mag = 10**(ynew_db / 20.0)
+            ynew = (1.0 + mag) / (1.0 - mag)
         elif data_format == "REAL":
-            ynew = 10**((ynew_db / 20.0)) * np.cos(ynew_ph * np.pi / 180.0)
+            ynew = 10**(ynew_db / 20.0) * np.cos(ynew_ph * np.pi / 180.0)
         elif data_format == "IMAG":
-            ynew = 10**((ynew_db / 20.0)) * np.sin(ynew_ph * np.pi / 180.0)
+            ynew = 10**(ynew_db / 20.0) * np.sin(ynew_ph * np.pi / 180.0)
         elif data_format == "PHASE":
             ynew = np.mod(ynew_ph, 360.)
         elif data_format == "UPHASE":
@@ -3421,7 +3451,10 @@ class spfile:
             fstop = obj.freqs[-1] * 1.000001
         temp = [x > fstart and x < fstop for x in obj.freqs]
         index_begin = temp.index(True)
-        index_end = temp.index(False, index_begin)
+        try:
+            index_end = temp.index(False, index_begin)
+        except ValueError:
+            index_end = -1
         obj.freqs = obj.freqs[index_begin:index_end]
         if isinstance(obj.refimpedance, (list, np.ndarray)):
             for i in range(obj.n_ports):

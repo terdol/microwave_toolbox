@@ -31,3 +31,7 @@ All notable changes to this project will be documented in this file.
 ### Fixed
 
 - BugFixes.
+
+### Changed
+
+- change_ref_impedance function signature changed.
