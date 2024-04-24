@@ -621,6 +621,108 @@ def trl_launcher_extraction(thru_file, line_file, reflect_file, refstd=False):
     Tlauncherout.snp2smp([2, 1], 1)
     return Tlauncherin, Tlauncherout, np.array(faz)
 
+def merge_spfiles(spfilelist):
+    """This method merges multiple SPFILEs to a single one. The aim if to merge multiple SPFILEs defined for the same network at different frequency values. All SPFILEs are assumed to represent the same network except the frequencies. Port names are taken from the first SPFILE.
+
+    Args:
+        spfilelist(list): List of SPFILE objects.
+
+    Returns:
+        SPFILE object.
+    """
+    spout = deepcopy(spfilelist[0])
+    n_ports = spfilelist[0].n_ports
+    freqs = np.concatenate(tuple(a.freqs for a in spfilelist))
+    
+    refimpedance = [None]*n_ports
+    for cc, sps in enumerate(spfilelist):
+        n_freqs = len(sps.freqs)
+        if not hasattr(sps.refimpedance,"__iter__"):
+            for j in range(n_ports):
+                if cc==0:
+                    refimpedance[j] = [sps.refimpedance]*n_freqs
+                else:
+                    refimpedance[j].extend([sps.refimpedance]*n_freqs)
+        else:
+            for i in range(n_ports):
+                if not hasattr(sps.refimpedance[i],"__iter__"):                    
+                    if cc==0:
+                        refimpedance[i] = [sps.refimpedance[i]]*n_freqs
+                    else:
+                        refimpedance[i].extend([sps.refimpedance[i]]*n_freqs)
+                else:
+                    if cc==0:
+                        refimpedance[i] = sps.refimpedance[i][:]
+                    else:
+                        refimpedance[i].extend(sps.refimpedance[i])
+
+    gammas = [None]*n_ports
+    for cc, sps in enumerate(spfilelist):
+        n_freqs = len(sps.freqs)
+        if not hasattr(sps.gammas,"__iter__"):
+            for j in range(n_ports):
+                if cc==0:
+                    gammas[j] = [sps.gammas]*n_freqs
+                else:
+                    gammas[j].extend([sps.gammas]*n_freqs)
+        else:
+            for i in range(n_ports):
+                if not hasattr(sps.gammas[i],"__iter__"):                    
+                    if cc==0:
+                        gammas[i] = [sps.gammas[i]]*n_freqs
+                    else:
+                        gammas[i].extend([sps.gammas[i]]*n_freqs)
+                else:
+                    if cc==0:
+                        gammas[i] = sps.gammas[i][:]
+                    else:
+                        gammas[i].extend(sps.gammas[i])
+
+    roworder = freqs.argsort()
+    spout.freqs = freqs[roworder]
+    try:
+        spout.refimpedance = [[refimpedance[p][k] for k in roworder] for p in range(n_ports)]
+        spout.gammas = [[gammas[p][k] for k in roworder] for p in range(n_ports)]
+    except Exception as e:
+        print(repr(e))
+
+    try:
+        sdata = np.concatenate(tuple(a.sdata for a in spfilelist))
+        spout.sdata = sdata[roworder,:]
+    except:
+        spout.sdata = None
+    try:
+        ydata = np.concatenate(tuple(a.ydata for a in spfilelist))
+        spout.ydata = ydata[roworder,:]
+    except:
+        spout.ydata = None
+    try:
+        zdata = np.concatenate(tuple(a.zdata for a in spfilelist))
+        spout.zdata = zdata[roworder,:]
+    except:
+        spout.zdata = None
+    try:
+        abcddata = np.concatenate(tuple(a.abcddata for a in spfilelist))
+        spout.abcddata = abcddata[roworder,:]
+    except:
+        spout.abcddata = None
+    try:
+        tdata = np.concatenate(tuple(a.tdata for a in spfilelist))
+        spout.tdata = tdata[roworder,:]
+    except:
+        spout.tdata = None
+    try:
+        hdata = np.concatenate(tuple(a.hdata for a in spfilelist))
+        spout.hdata = hdata[roworder,:]
+    except:
+        spout.hdata = None
+    try:
+        gdata = np.concatenate(tuple(a.gdata for a in spfilelist))
+        spout.gdata = gdata[roworder,:]
+    except:
+        spout.gdata = None
+
+    return spout
 
 class spfile:
     """Class that represents an RF network. It can be used to read/write Touchstone files and process RF networks.
@@ -668,6 +770,8 @@ class spfile:
         self.sdata = None
         self.ydata = None
         self.zdata = None
+        self.hdata = None
+        self.gdata = None
         self.abcddata = None
         self.tdata = None
         self.port_names = []
@@ -1002,10 +1106,59 @@ class spfile:
                 new_sdata[:, n] = sdata[:, m]
         obj.sdata = new_sdata
         obj.n_ports = newps
-        obj.refimpedance = [obj.refimpedance[x - 1] for x in ports]
+        try:
+            obj.refimpedance = [obj.refimpedance[x - 1] for x in ports]
+        except TypeError:
+            pass
+        try:
+            obj.gammas = [obj.gammas[x - 1] for x in ports]
+        except Exception as e:
+            print(repr(e))
         names = obj.port_names
         obj.port_names = [names[ports[i] - 1] for i in range(obj.n_ports)]
         obj.z_ok, obj.y_ok, obj.abcd_ok, obj.t_ok = False, False, False, False
+        return obj
+
+    def remove_duplicate_freqs(self, abstol=None, reltol=None, inplace=-1):
+        """This function removes duplicate frequency points. Latter frequency point is retained.
+        Args:
+            abstol(float, optional): If given, used as absolute minimum difference between the frequencies to be compared. Default is None.        
+            reltol(float, optional): If given, used as relative minimum difference between the frequencies to be compared. Default is None.        
+        Returns:
+            SPFILE object
+        """
+        if inplace == -1: inplace = self.inplace
+        if inplace == 0:
+            obj = deepcopy(self)
+            obj.inplace = 1
+        else:
+            obj = self
+        points_to_be_deleted = []
+        for i in range(len(obj.freqs)-1):
+            abscriteria = False
+            if abstol:
+                abscriteria = obj.freqs[i] > (obj.freqs[i+1] - abstol)
+            relcriteria = False
+            if reltol:
+                relcriteria = obj.freqs[i] > (obj.freqs[i+1] * (1-reltol))
+            if (abscriteria and relcriteria):
+                points_to_be_deleted.append(i+1)
+        # print(f"{points_to_be_deleted=}")
+        obj.freqs = np.delete(obj.freqs, points_to_be_deleted)
+        # print(obj.refimpedance)
+        try:
+            obj.refimpedance = [[obj.refimpedance[p][k] for k in range(len(obj.refimpedance[p])) if k not in points_to_be_deleted] for p in range(obj.n_ports)]
+            obj.gammas = [[obj.gammas[p][k] for k in range(len(obj.gammas[p])) if k not in points_to_be_deleted] for p in range(obj.n_ports)]
+        except Exception as e:
+            print(repr(e))
+        if obj.sdata is not None: obj.sdata = np.delete(obj.sdata, points_to_be_deleted, axis=0)
+        if obj.ydata is not None: obj.ydata = np.delete(obj.ydata, points_to_be_deleted, axis=0)
+        if obj.zdata is not None: obj.zdata = np.delete(obj.zdata, points_to_be_deleted, axis=0)
+        if obj.abcddata is not None: obj.abcddata = np.delete(obj.abcddata, points_to_be_deleted, axis=0)
+        if obj.tdata is not None: obj.tdata = np.delete(obj.tdata, points_to_be_deleted, axis=0)
+        if obj.gdata is not None: obj.gdata = np.delete(obj.gdata, points_to_be_deleted, axis=0)
+        if obj.hdata is not None: obj.hdata = np.delete(obj.hdata, points_to_be_deleted, axis=0)
+
         return obj
 
     def scaledata(self, scale=1.0, dataindices=None):
