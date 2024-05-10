@@ -4,7 +4,7 @@ requires = ['setuptools', 'wheel']
 
 [project]
 name = "mwtoolbox"
-version = "0.0.8"
+version = "0.0.9"
 dependencies = ["quantities",
                 "numpy<2",
                 "scipy",
@@ -89,7 +89,7 @@ stubPath = "C:/Users/Erdoel/Documents/Teknik/Python/typings_for_pyright"
 typeCheckingMode = "basic"
 
 [tool.bumpver]
-current_version = "0.0.8"
+current_version = "0.0.9"
 version_pattern = "MAJOR.MINOR.PATCH"
 commit_message = "bump version {old_version} -> {new_version}"
 commit = true
