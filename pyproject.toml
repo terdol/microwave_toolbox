@@ -20,13 +20,13 @@ classifiers=[
 	"Development Status :: 3 - Alpha",
 	"License :: OSI Approved :: MIT License",
 	"Operating System :: OS Independent",
-    "Programming Language :: Python :: 3.8",
+        "Programming Language :: Python :: 3.8",
 	"Topic :: Scientific/Engineering"
 ]
 
 [tool.setuptools.packages.find]
-where = ["src"]
-include = ["mwtoolbox"]
+where = ["src","src/mwtoolbox"]
+include = ["mwtoolbox","mwtoolbox.em","mwtoolbox.em.fdfd_2d","mwtoolbox.em.mode_matching"]
 
 [tool.yapfignore]
 ignore_patterns = [

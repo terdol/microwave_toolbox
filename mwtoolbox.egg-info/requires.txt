@@ -1,0 +1,4 @@
+quantities
+numpy<2
+scipy
+sympy

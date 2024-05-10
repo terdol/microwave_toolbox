@@ -1,0 +1,29 @@
+Metadata-Version: 2.1
+Name: mwtoolbox
+Version: 0.0.8
+Summary: Microwave Toolbox
+Author-email: Tuncay Erdöl <terdol@hotmail.com>
+License: MIT
+Keywords: microwave,rf,s-parameters
+Classifier: Development Status :: 3 - Alpha
+Classifier: License :: OSI Approved :: MIT License
+Classifier: Operating System :: OS Independent
+Classifier: Programming Language :: Python :: 3.8
+Classifier: Topic :: Scientific/Engineering
+Requires-Python: >=3.8
+Description-Content-Type: text/markdown
+License-File: LICENSE
+Requires-Dist: quantities
+Requires-Dist: numpy<2
+Requires-Dist: scipy
+Requires-Dist: sympy
+
+# Project Description
+
+Current version = "0.0.7"
+
+MWTOOLBOX is a library for general processing of multiport RF/Microwave networks. Detailed documentation is at [https://terdol.github.io/mwtoolboxdoc](https://terdol.github.io/mwtoolboxdoc).
+
+API documentation is at [https://terdol.github.io/apidoc](https://terdol.github.io/apidoc).
+
+Source code is available at: [https://github.com/terdol/microwave_toolbox](https://github.com/terdol/microwave_toolbox).
