@@ -674,7 +674,7 @@ def merge_spfiles(spfilelist):
                         gammas[i].extend([sps.gammas[i]]*n_freqs)
                 else:
                     if cc==0:
-                        gammas[i] = sps.gammas[i][:]
+                        gammas[i] = list(sps.gammas[i][:])
                     else:
                         gammas[i].extend(sps.gammas[i])
 
@@ -689,37 +689,37 @@ def merge_spfiles(spfilelist):
     try:
         sdata = np.concatenate(tuple(a.sdata for a in spfilelist))
         spout.sdata = sdata[roworder,:]
-    except:
+    except Exception as e:
         spout.sdata = None
     try:
         ydata = np.concatenate(tuple(a.ydata for a in spfilelist))
         spout.ydata = ydata[roworder,:]
-    except:
+    except Exception as e:
         spout.ydata = None
     try:
         zdata = np.concatenate(tuple(a.zdata for a in spfilelist))
         spout.zdata = zdata[roworder,:]
-    except:
+    except Exception as e:
         spout.zdata = None
     try:
         abcddata = np.concatenate(tuple(a.abcddata for a in spfilelist))
         spout.abcddata = abcddata[roworder,:]
-    except:
+    except Exception as e:
         spout.abcddata = None
     try:
         tdata = np.concatenate(tuple(a.tdata for a in spfilelist))
         spout.tdata = tdata[roworder,:]
-    except:
+    except Exception as e:
         spout.tdata = None
     try:
         hdata = np.concatenate(tuple(a.hdata for a in spfilelist))
         spout.hdata = hdata[roworder,:]
-    except:
+    except Exception as e:
         spout.hdata = None
     try:
         gdata = np.concatenate(tuple(a.gdata for a in spfilelist))
         spout.gdata = gdata[roworder,:]
-    except:
+    except Exception as e:
         spout.gdata = None
 
     return spout
@@ -1204,7 +1204,7 @@ class spfile:
         try:
             with open(file_name, 'r') as f:
                 linesread = f.readlines()[skiplines:]
-        except:
+        except Exception as e:
             print("Error opening the file: " + file_name + "\n")
             sys.exit(0)
         self.header = [
@@ -1346,12 +1346,12 @@ class spfile:
 
         try:
             nop = c.index(1)
-        except:
+        except Exception as e:
             pass
 
         try:
             nop = min(nop, c.index(2))
-        except:
+        except Exception as e:
             pass
 
         self.freqs = datalar[:, 0] * fcoef[self.file_freq_unit]
@@ -1561,7 +1561,7 @@ class spfile:
                     else:
                         Ym = F.I * (Sm * G + G).I * (I0 - Sm) * F
                     self.ydata[i, :] = Ym.reshape(ps**2)
-                except:
+                except Exception as e:
                     print(f"Y-Matrix is undefined at frequency: {self.freqs[i]: f}\n")
                     self.undefinedYindices.add(i)
                     break
@@ -1573,7 +1573,7 @@ class spfile:
                     else:
                         Zm = F.I * (I0 - Sm).I * (Sm * G + G) * F
                     self.zdata[i, :] = Zm.reshape(ps**2)
-                except:
+                except Exception as e:
                     print(f"Z-Matrix is undefined at frequency: {self.freqs[i]: f}\n")
                     self.undefinedZindices.add(i)
                     break
@@ -1591,7 +1591,7 @@ class spfile:
                 try:
                     Ym = Zm.I
                     self.ydata[i, :] = Ym.reshape(ps**2)
-                except:
+                except Exception as e:
                     print(f"Y-Matrix is undefined at frequency: {self.freqs[i]: f}\n")
                     self.undefinedYindices.add(i)
                 if self.smatrix_type == 1:
@@ -1613,7 +1613,7 @@ class spfile:
                 try:
                     Zm = Ym.I
                     self.zdata[i, :] = Zm.reshape(ps**2)
-                except:
+                except Exception as e:
                     print(f"Z-Matrix is undefined at frequency: {self.freqs[i]: f}\n")
                     self.undefinedZindices.add(i)
                 if self.smatrix_type == 1:
@@ -2688,7 +2688,7 @@ class spfile:
                         # opt.set_maxeval(1000)
                         # opt.set_maxtime(5)
                         x = opt.optimize(xvar)
-                    except:
+                    except Exception as e:
                         print("Error at root finding with NLOPT")
 
                 for y in range(t):
@@ -3602,7 +3602,7 @@ class spfile:
             fstart = obj.freqs[0] * 0.999999
         if not fstop:
             fstop = obj.freqs[-1] * 1.000001
-        temp = [x > fstart and x < fstop for x in obj.freqs]
+        temp = [x > fstart * 0.99999 and x < fstop * 1.00001 for x in obj.freqs]
         index_begin = temp.index(True)
         try:
             index_end = temp.index(False, index_begin)
