@@ -31,7 +31,8 @@ include = ["mwtoolbox","mwtoolbox.em","mwtoolbox.em.fdfd_2d","mwtoolbox.em.mode_
 [tool.yapfignore]
 ignore_patterns = [
   "temp/**/*.py",
-  "temp2/*.py"
+  "temp2/*.py",
+  "*old*"
 ]
 
 [tool.yapf]
