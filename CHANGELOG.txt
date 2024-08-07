@@ -35,3 +35,19 @@ All notable changes to this project will be documented in this file.
 ### Changed
 
 - change_ref_impedance function signature changed.
+
+## [0.0.9] - 2024-05-10
+
+### Added
+
+- em subpackage of mwtoolbox as an experimental package for electromagnetic calculations
+
+### Fixed
+
+- Bug fixes.
+
+## [0.0.10] - 2024-08-07
+
+### Fixed
+
+- Bug fixes.

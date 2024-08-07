@@ -25,7 +25,7 @@ classifiers=[
 ]
 
 [tool.setuptools.packages.find]
-where = ["src","src/mwtoolbox"]
+where = ["src"]
 include = ["mwtoolbox","mwtoolbox.em","mwtoolbox.em.fdfd_2d","mwtoolbox.em.mode_matching"]
 
 [tool.yapfignore]
@@ -75,6 +75,28 @@ SPLIT_BEFORE_NAMED_ASSIGNS = true
 SPLIT_COMPLEX_COMPREHENSION = true
 USE_TABS = false
 
+[tool.ruff.lint]
+# 1. Enable flake8-bugbear (`B`) rules, in addition to the defaults.
+select = ["E4", "E7", "E9", "F", "B"]
+
+# 2. Avoid enforcing line-length violations (`E501`)
+ignore = ["E501"]
+
+# 3. Avoid trying to fix flake8-bugbear (`B`) violations.
+unfixable = ["B"]
+
+# 4. Ignore `E402` (import violations) in all `__init__.py` files, and in select subdirectories.
+[tool.ruff.lint.per-file-ignores]
+"__init__.py" = ["E402"]
+"**/{tests,docs,tools}/*" = ["E402"]
+
+[tool.ruff.format]
+# 5. Use double quotes for non-triple-quoted strings.
+quote-style = "double"
+exclude = ["*.pyi"]
+
+[tool.ruff.lint.flake8-quotes]
+docstring-quotes = "double"
 
 [tool.pyright]
 exclude = ["**/node_modules", "**/__pycache__"]
