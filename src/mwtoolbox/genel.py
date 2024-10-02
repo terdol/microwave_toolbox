@@ -178,8 +178,19 @@ def coef(outputunit):
     temp = pq.Quantity(1.0, outputunit)
     return (temp.magnitude) / (temp.simplified.magnitude)
 
-# remove from this module
-def stripunit(sayi):
+# removed from this module, use sep_unit(sayi)[0] instead
+# def stripunit(sayi):
+#     match = re.search(r"([+\-]?)(\d+(\.\d*)?|\d*\.\d+)([eE][+\-]?\d+)?\s*(\D+\S*)?",sayi)
+#     number = ""
+#     unit = ""
+#     if match is not None:
+#         for k in [1, 2, 4]:
+#             if match.group(k) is not None:
+#                 number = number + str(match.group(k))
+#     return float(number)
+
+def sep_unit(sayi):
+    """This function parses input string representing a number with unit and returns number and unit separately"""
     match = re.search(r"([+\-]?)(\d+(\.\d*)?|\d*\.\d+)([eE][+\-]?\d+)?\s*(\D+\S*)?",sayi)
     number = ""
     unit = ""
@@ -187,7 +198,7 @@ def stripunit(sayi):
         for k in [1, 2, 4]:
             if match.group(k) is not None:
                 number = number + str(match.group(k))
-    return float(number)
+    return (float(number), match.group(5))
 
 # @lru_cache did not work with arguments of type list since lists are not hashable
 def convert2pq(sayilar, defaultunits=None):

@@ -18,7 +18,7 @@ except ImportError:
 import inspect
 import itertools
 import re
-from collections import defaultdict
+# from collections import defaultdict
 from copy import deepcopy
 
 import sympy as sp
@@ -675,14 +675,15 @@ def merge_spfiles(spfilelist):
                         gammas[i] = list(sps.gammas[i][:])
                     else:
                         gammas[i].extend(sps.gammas[i])
-
+    gammas = np.array(gammas) ###
     roworder = freqs.argsort()
     spout.freqs = freqs[roworder]
     try:
         spout.refimpedance = [
             [refimpedance[p][k] for k in roworder] for p in range(n_ports)
         ]
-        spout.gammas = [[gammas[p][k] for k in roworder] for p in range(n_ports)]
+        # spout.gammas = [[gammas[p][k] for k in roworder] for p in range(n_ports)]
+        spout.gammas = gammas[np.ix_(list(range(n_ports)), roworder)]
     except Exception as e:
         print(repr(e))
         spout.gammas = None
@@ -782,7 +783,7 @@ class spfile:
         self.abcddata = None
         self.tdata = None
         self.port_names = []
-        self.gammas = []  # np.array with shape (n_ports, frequencypoints)
+        self.gammas = np.array([])  # np.array with shape (n_ports, frequencypoints)
         self.inplace = 1
         self.z_ok = False
         self.y_ok = False
@@ -817,8 +818,7 @@ class spfile:
             self.normalized = 1  # normalized to 50 ohm if 1
             if ns > 0:
                 self.sdata = np.zeros((ns, n_ports**2), complex)
-            for i in range(n_ports):
-                self.port_names = [""] * n_ports
+            self.port_names = [""] * n_ports
 
     aliases = {
         "freqs": "frequency_points",
@@ -1142,6 +1142,7 @@ class spfile:
             obj.inplace = 1
         else:
             obj = self
+        portsi = [x-1 for x in ports]
         ns = len(obj.freqs)
         ps = obj.n_ports
         newps = len(ports)
@@ -1150,20 +1151,21 @@ class spfile:
         for i in range(newps):
             for j in range(newps):
                 n = (i) * newps + (j)
-                m = (ports[i] - 1) * ps + (ports[j] - 1)
+                m = (portsi[i]) * ps + (portsi[j])
                 new_sdata[:, n] = sdata[:, m]
         obj.sdata = new_sdata
         obj.n_ports = newps
         try:
-            obj.refimpedance = [obj.refimpedance[x - 1] for x in ports]
+            obj.refimpedance = [obj.refimpedance[x] for x in portsi]
         except TypeError:
             pass
         try:
-            obj.gammas = [obj.gammas[x - 1] for x in ports]
+            # obj.gammas = [obj.gammas[x] for x in portsi]
+            obj.gammas = obj.gammas[portsi]
         except Exception as e:
             print(repr(e))
         names = obj.port_names
-        obj.port_names = [names[ports[i] - 1] for i in range(obj.n_ports)]
+        obj.port_names = [names[portsi[i]] for i in range(obj.n_ports)]
         obj.z_ok, obj.y_ok, obj.abcd_ok, obj.t_ok = False, False, False, False
         return obj
 
@@ -1204,14 +1206,18 @@ class spfile:
                 ]
                 for p in range(obj.n_ports)
             ]
-            obj.gammas = [
-                [
-                    obj.gammas[p][k]
-                    for k in range(len(obj.gammas[p]))
-                    if k not in points_to_be_deleted
-                ]
-                for p in range(obj.n_ports)
-            ]
+            # obj.gammas = [
+            #     [
+            #         obj.gammas[p][k]
+                    
+                    
+            #     ]
+            #     for p in range(obj.n_ports)
+            # ]
+            # klist = [k for k in range(len(obj.gammas[p])) if k not in points_to_be_deleted]
+            # obj.gammas = obj.gammas[:, k]
+            np.delete(obj.gammas, points_to_be_deleted, 1)
+
         except Exception as e:
             print(repr(e))
         if obj.sdata is not None:
@@ -1268,7 +1274,7 @@ class spfile:
                 if only_port_number:
                     return 1
             else:
-                print("Wrong file extension!")
+                print(f"Wrong file extension! file name: {file_name}, ext:{ext}")
                 return 0
 
         try:
@@ -1279,11 +1285,11 @@ class spfile:
             raise e
 
         self.header = [
-            l
-            for l in linesread
+            line
+            for line in linesread
             if (
-                l.startswith("! ")
-                and not (l.startswith("! Port Impedance") or l.startswith("! Gamma"))
+                line.startswith("! ")
+                and not (line.startswith("! Port Impedance") or line.startswith("! Gamma"))
             )
         ]
         lines = []
@@ -1412,9 +1418,10 @@ class spfile:
             index += 1
 
         if len(gammas) > 0:
-            self.gammas = np.array([[arr[i] for arr in gammas] for i in range(ps)])
+            # self.gammas = np.array([[arr[i] for arr in gammas] for i in range(ps)])
+            self.gammas = np.array(gammas).T
         else:
-            self.gammas = []
+            self.gammas = np.array([])
 
         datalar = np.array((" ".join(lines)).split(), dtype=np.float64)
         k = 2 * ps**2 + 1
@@ -1429,12 +1436,12 @@ class spfile:
         try:
             nop = c.index(1)
         except Exception as e:
-            pass
+            print(repr(e))
 
         try:
             nop = min(nop, c.index(2))
         except Exception as e:
-            pass
+            print(repr(e))
 
         self.freqs = datalar[:, 0] * fcoef[self.file_freq_unit]
         data = np.zeros((nop, ps**2), dtype=np.complex128)
@@ -1566,7 +1573,7 @@ class spfile:
             None
         """
         if self.n_ports != 2:
-            print(f"Number of ports should be 2!")
+            print("Number of ports should be 2!")
             return 0
         ns = len(self.freqs)
         if self.ydata.shape != (ns, 4):
@@ -1606,7 +1613,7 @@ class spfile:
             None
         """
         if self.n_ports != 2:
-            print(f"Number of ports should be 2!")
+            print("Number of ports should be 2!")
             return 0
         ns = len(self.freqs)
         if self.sdata.shape != (ns, 4):
@@ -1681,6 +1688,7 @@ class spfile:
                         Ym = F.I * (Sm * G + G).I * (I0 - Sm) * F
                     self.ydata[i, :] = Ym.reshape(ps**2)
                 except Exception as e:
+                    print(repr(e))
                     print(f"Y-Matrix is undefined at frequency: {self.freqs[i]: f}\n")
                     self.undefinedYindices.add(i)
                     break
@@ -1693,6 +1701,7 @@ class spfile:
                         Zm = F.I * (I0 - Sm).I * (Sm * G + G) * F
                     self.zdata[i, :] = Zm.reshape(ps**2)
                 except Exception as e:
+                    print(repr(e))
                     print(f"Z-Matrix is undefined at frequency: {self.freqs[i]: f}\n")
                     self.undefinedZindices.add(i)
                     break
@@ -1711,6 +1720,7 @@ class spfile:
                     Ym = Zm.I
                     self.ydata[i, :] = Ym.reshape(ps**2)
                 except Exception as e:
+                    print(repr(e))
                     print(f"Y-Matrix is undefined at frequency: {self.freqs[i]: f}\n")
                     self.undefinedYindices.add(i)
                 if self.smatrix_type == 1:
@@ -1733,6 +1743,7 @@ class spfile:
                     Zm = Ym.I
                     self.zdata[i, :] = Zm.reshape(ps**2)
                 except Exception as e:
+                    print(repr(e))
                     print(f"Z-Matrix is undefined at frequency: {self.freqs[i]: f}\n")
                     self.undefinedZindices.add(i)
                 if self.smatrix_type == 1:
@@ -1969,7 +1980,7 @@ class spfile:
         else:
             return gain
 
-    def gav(self, port1=1, port2=2, ZS=[], dB=True):
+    def gav(self, port1=1, port2=2, ZS=None, dB=True):
         """Available gain from port1 to port2. If dB=True, output is in dB, otherwise it is a power ratio.
 
             .. math:: G_{av}=\\frac{P_{av,toLoad}}{P_{av,fromSource}}
@@ -1984,7 +1995,7 @@ class spfile:
             numpy.ndarray: Array of Gmax values for all frequencies
         """
         imp = self.prepare_ref_impedance_array(self.refimpedance)
-        if ZS == []:
+        if not ZS:
             ZS = imp[port1 - 1]
         ZS = np.array(ZS)
         tsp = self.change_ref_impedance(50.0, 0).snp2smp([port1, port2], inplace=0)
@@ -2134,7 +2145,7 @@ class spfile:
         ZL = 50.0 * (1 + GL) / (1 - GL)
         return (ZS, ZL)
 
-    def gt(self, port1=1, port2=2, ZS=[], ZL=[], dB=True):
+    def gt(self, port1=1, port2=2, ZS=None, ZL=None, dB=True):
         """This method calculates transducer gain (GT) from port1 to port2. Source and load impedances can be specified independently. If any one of them is not specified, current reference impedance is used for that port. Other ports are terminated by reference impedances. This calculation can also be done using impedance renormalization.
 
             .. math:: G_{av}=\\frac{P_{load}}{P_{av,fromSource}}
@@ -2150,9 +2161,9 @@ class spfile:
             numpy.ndarray: Array of GT values for all frequencies
         """
         imp = self.prepare_ref_impedance_array(self.refimpedance)
-        if ZS == []:
+        if not ZS:
             ZS = imp[port1 - 1]
-        if ZL == []:
+        if not ZL:
             ZL = imp[port2 - 1]
         tsp = self.change_ref_impedance(50.0, 0).snp2smp([port1, port2], inplace=0)
         GS = (ZS - 50.0) / (ZS + 50.0)
@@ -2680,8 +2691,8 @@ class spfile:
         Returns:
             spfile: The result of cascade of 2 networks
         """
-        if self.n_ports != 2 or SP2.n_ports != 2:
-            print("Both networks should be two-port")
+        if self.n_ports != 2 or SP2.n_ports > 2:
+            print("Left network should have two ports and the right network should have maximum two ports!")
             return 0
         sonuc = deepcopy(self)
         sonuc.inplace = 1
@@ -2691,8 +2702,17 @@ class spfile:
                 "Number of frequency points of first network is larger than second network's!"
             )
         SP2_local = SP2.set_frequency_points(sonuc.freqs, inplace=0)
+        if SP2.n_ports == 1:
+            SP2_local.sdata = np.concatenate([SP2_local.sdata, np.ones((len(SP2_local.freqs), 3)) * 0.00001], axis=1)
+            SP2_local.n_ports = 2
+            SP2_local.port_names.append("port-2")
+            if not hasattr(SP2_local.refimpedance, "__iter__"):
+                SP2_local.refimpedance = [SP2_local.refimpedance, 50.0]
+            else:
+                SP2_local.refimpedance = [SP2_local.refimpedance[0], 50.0]
         refimp_port2 = SP2_local.refimpedance[1]
         sonuc.change_ref_impedance(50.0)
+        print(SP2_local.refimpedance)
         SP2_local.change_ref_impedance(50.0)
         sonuc.s2abcd()
         SP2_local.s2abcd()
@@ -2705,6 +2725,8 @@ class spfile:
             sonuc.sdata[i] = s.reshape(4)
         sonuc.change_ref_impedance([refimp_port1, refimp_port2])
         sonuc.z_ok, sonuc.y_ok, sonuc.t_ok = False, False, False
+        if SP2.n_ports == 1:
+            sonuc.snp2smp([1])
         return sonuc
 
     def check_passivity(self):
@@ -2725,7 +2747,7 @@ class spfile:
             if np.max(np.abs(eigs)) > 1:
                 indices.append(i)
                 eigenvalues.append(sorted(eigs))
-        return indices, self.freqs(indices), eigenvalues
+        return indices, self.freqs[indices], eigenvalues
 
     def restore_passivity(self, inplace=-1):
         """Make the network passive by minimum modification.
@@ -2763,10 +2785,8 @@ class spfile:
 
     def restore_passivity2(self):
         """**Obsolete**
-        Bu metod S-parametre datasinin pasif olmadigi frequenciesda
-        S-parametre datasina mumkun olan en kucuk degisikligi yaparak
-        S-parametre datasini pasif hale getirir.
-        Referans:
+        This method is used to make the minimum possible modification to the S-parameters to make them passive.
+        Reference:
         Restoration of Passivity In S-parameter Data of Microwave Measurements.pdf
         """
         _, indices = self.check_passivity()
@@ -2799,11 +2819,10 @@ class spfile:
                 dizi = [i for i in range(len(eigs)) if eigs[i].real < 0]
                 if len(dizi) == 0:
                     break
-                else:
-                    v = np.asmatrix(eigvl[:, dizi[0]]).T
-                    u = np.asmatrix(eigv[:, dizi[0]]).T
-                    # the required variation at eigenvalue
-                    coef = min([-eigs[dizi[0]].real + 1e-7, 0.01])
+                v = np.asmatrix(eigvl[:, dizi[0]]).T
+                u = np.asmatrix(eigv[:, dizi[0]]).T
+                # the required variation at eigenvalue
+                coef = min([-eigs[dizi[0]].real + 1e-7, 0.01])
                 for y in range(2 * t):
                     """ This variable gives the coefficients next to the each
                         element of dS matrix at the right side of 5th equation
@@ -2814,7 +2833,7 @@ class spfile:
                         / (v.T * u)
                     )[0, 0].real
 
-                def constraint1(x, grad=0):
+                def constraint1(x, grad=0, coef=coef):
                     """This value should be positive for new value of
                     eigenvalue to be positive"""
                     return -coef + sum([x[i] * c[i] for i in range(2 * t)])
@@ -2856,6 +2875,7 @@ class spfile:
                         # opt.set_maxtime(5)
                         x = opt.optimize(xvar)
                     except Exception as e:
+                        print(repr(e))
                         print("Error at root finding with NLOPT")
 
                 for y in range(t):
@@ -3160,7 +3180,7 @@ class spfile:
         ideal3port.set_smatrix_at_frequency_point(
             list(range(len(ideal3port.freqs))), network.idealNport(3)
         )
-        ideal3port.gammas = [EX.gammas[m - 1], EX.gammas[m - 1], EX.gammas[m - 1]]
+        ideal3port.gammas = np.array([EX.gammas[m - 1], EX.gammas[m - 1], EX.gammas[m - 1]])
         ideal3port.refimpedance = [
             EX.refimpedance[m - 1],
             EX.refimpedance[m - 1],
@@ -3287,7 +3307,7 @@ class spfile:
         obj.sdata = sdata
         obj.refimpedance = [50.0] * obj.n_ports
         obj.change_ref_impedance(newrefimpedance)
-        obj.gammas = newgammas
+        obj.gammas = np.array(newgammas)
         obj.port_names = port_names
         if preserveportnumbers:
             portorder = list(range(1, ps + 1))
@@ -3502,7 +3522,6 @@ class spfile:
             )
 
         freqsin = self.freqs
-        lenx = len(freqsin)
         mag_threshold = sys.float_info.min
 
         if DCInt == 1:
