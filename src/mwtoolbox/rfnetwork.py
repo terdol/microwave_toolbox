@@ -30,7 +30,7 @@ import mwtoolbox.transmission_lines as tlines
 from .genel import blackman_window, cmp, flatten, smooth, str_distance
 from .myconstants import c0
 
-fcoef = {"HZ": 1.0, "KHZ": 1e3, "MHZ": 1e6, "GHZ": 1e9}
+fcoef = {"HZ": 1.0, "KHZ": 1e3, "MHZ": 1e6, "GHZ": 1e9, "THZ": 1e12}
 
 
 def write_imp_dataset_files_for_hfss_numpy(
