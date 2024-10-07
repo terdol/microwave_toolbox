@@ -1,18 +1,6 @@
-import cmath
-import math
 import numpy as np
 import matplotlib
 import matplotlib.pyplot as plt
-import mpl_toolkits.axisartist.angle_helper as angle_helper
-from matplotlib.projections import PolarAxes
-from matplotlib.transforms import Affine2D
-from mpl_toolkits.axisartist import SubplotHost
-from mpl_toolkits.axisartist import GridHelperCurveLinear
-import mpl_toolkits.axisartist.floating_axes as floating_axes
-from mpl_toolkits.axisartist.grid_finder import (FixedLocator, MaxNLocator,
-                                                 DictFormatter)
-
-
 
 def get_smith(fig, rect = 111, plot_impedance = True, plot_ticks = False, plot_admittance = True, plot_labels = True):
 
