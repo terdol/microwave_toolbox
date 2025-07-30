@@ -4,13 +4,16 @@ import sys
 
 import numpy as np
 from numpy.linalg import eig
+from numpy.typing import NDArray, ArrayLike, DTypeLike
+from typing import Any, Optional, Self
+from collections.abc import Callable
 
 try:
     import scipy.interpolate
     import scipy.optimize
     import scipy.signal
 except ImportError:
-    pass
+    print("Cannot import SciPy library")
 
 ##
 # from scipy.linalg import eig
@@ -18,24 +21,35 @@ except ImportError:
 import inspect
 import itertools
 import re
+
 # from collections import defaultdict
 from copy import deepcopy
 
-import sympy as sp
+try:
+    import sympy as sp
+except ImportError:
+    print("Cannot import sympy library")
+
 from numpy.lib.scimath import sqrt as csqrt
 
 import mwtoolbox.network as network
 import mwtoolbox.transmission_lines as tlines
 
-from .genel import blackman_window, cmp, flatten, smooth, str_distance
+from .genel import blackman_window, cmp, flatten, smooth, str_distance, change_format
 from .myconstants import c0
 
 fcoef = {"HZ": 1.0, "KHZ": 1e3, "MHZ": 1e6, "GHZ": 1e9, "THZ": 1e12}
 
 
+type numtype = int | float | complex
+
+
 def write_imp_dataset_files_for_hfss_numpy(
-    freqs, imparray, realimpfilename="realimp", imagimpfilename="imagimp"
-):
+    freqs: NDArray[np.float64],
+    imparray: NDArray[np.complex64],
+    realimpfilename: str = "realimp",
+    imagimpfilename: str = "imagimp",
+) -> None:
     rimp = np.real(imparray)
     iimp = np.imag(imparray)
     resr = np.vstack((freqs, rimp))
@@ -43,10 +57,12 @@ def write_imp_dataset_files_for_hfss_numpy(
     np.savetxt(realimpfilename + ".tab", resr.T, delimiter="\t")
     np.savetxt(imagimpfilename + ".tab", resi.T, delimiter="\t")
 
-
 def write_imp_dataset_files_for_hfss(
-    freqs, imparray, realimpfilename="realimp", imagimpfilename="imagimp"
-):
+    freqs: NDArray[np.float64],
+    imparray: NDArray[np.complex64],
+    realimpfilename: str = "realimp",
+    imagimpfilename: str = "imagimp",
+) -> None:
     rimp = [a.real for a in imparray]
     iimp = [a.imag for a in imparray]
 
@@ -59,7 +75,7 @@ def write_imp_dataset_files_for_hfss(
             print(str(f) + "\t" + str(z), file=ff)
 
 
-def extract_rlgc(spr, length):
+def extract_rlgc(spr: "spfile", length: float) -> tuple[NDArray, NDArray]:
     """Extraction of RLGC parameters from S-parameters of a uniform transmission line.
 
     Args:
@@ -82,8 +98,9 @@ def extract_rlgc(spr, length):
     return IndpL, Zo
 
 
-def write_impedance_as_s1p(filename, frequencies, Z):
-    """Write impedance data in the form of s1p file with 50Ohm
+def write_impedance_as_s1p(filename: str, frequencies: ArrayLike, Z: ArrayLike) -> None:
+    """
+    Write impedance data in the form of s1p file with 50Ohm
     reference impedance.
 
     Args:
@@ -106,7 +123,20 @@ def write_impedance_as_s1p(filename, frequencies, Z):
             )
 
 
-def write_impedance_as_table(filename, frequencies, Z):
+def write_impedance_as_table(
+    filename: str, frequencies: NDArray, Z: NDArray
+) -> None:    
+    """
+    Saves impedance array to a file in a specific format.
+
+    Args:
+        filename (str): The name of the file to be written.
+        frequencies (NDArray): An array of frequency values.
+        Z (NDArray): Complex impedance array.
+
+    Returns:
+        None
+    """
     with open(filename, "w") as out:
         print("GHz\tReal(Z)\tImag(Z)", end="\n", file=out)
         for f, realpart, imagpart in zip(frequencies / 1e9, np.real(Z), np.imag(Z)):
@@ -117,16 +147,17 @@ def write_impedance_as_table(filename, frequencies, Z):
             )
 
 
-def parse_format(line):
+def parse_format(line: str) -> tuple[str,str,str,Optional[numtype]]:
     """
     Parse the option line of a Touchstone file.
 
     Args:
-        line: Option line read from the file.
+        line (string): Option line read from the file.
 
     Returns:
         4-tuple: data format, matrix type, frequency unit, ref. impedance
     """
+    refimpedance: Optional[numtype] = None
     line = line.strip().upper()
     a = line[1:].strip().split()
     for i in range(3):
@@ -154,7 +185,7 @@ def parse_format(line):
     return data_format, matrix_type, frequency_unit, refimpedance
 
 
-def generate_multiport_spfile(conf_filename, output_filename):
+def generate_multiport_spfile(conf_filename: str, output_filename: str) -> None:
     """
     Configuration file format:
     - comments start by "#"
@@ -208,10 +239,11 @@ def generate_multiport_spfile(conf_filename, output_filename):
             spfiles[spfilelist[i]],
         )
     newspfile.write2file(output_filename)
-    return None
 
 
-def extract_gamma_ereff(filename_long_line, filename_short_line, dL, sm=1):
+def extract_gamma_ereff(
+    filename_long_line: str, filename_short_line: str, dL: float, sm: int = 1
+) -> tuple[NDArray, NDArray]:
     """Extraction of complex propagation constant (gamma) and complex effective permittivity from the S-parameters of 2 uniform transmission lines with different lengths.
 
     Args:
@@ -264,7 +296,9 @@ def extract_gamma_ereff(filename_long_line, filename_short_line, dL, sm=1):
     return (gamma, er_eff)
 
 
-def extract_gamma_ereff_all(files, Ls, sm=1):
+def extract_gamma_ereff_all(
+    files: list[str], Ls: list[float], sm: int = 1
+) -> tuple[NDArray, NDArray]:
     """Extraction of average complex propagation constant (gamma) and complex effective permittivity from the S-parameters of multiple uniform transmission lines with different lengths.
 
     Args:
@@ -278,20 +312,20 @@ def extract_gamma_ereff_all(files, Ls, sm=1):
     files_Ls = list(zip(files, Ls))
     files_Ls.sort(key=lambda x: -x[1])
     pairs = list(itertools.combinations(files_Ls, 2))
-    eeff_all = ()
-    gamma_all = ()
+    eeff_all: tuple[NDArray,...] = ()
+    gamma_all: tuple[NDArray,...]  = ()
     for pair in pairs:
         (gamma, eeff) = extract_gamma_ereff(
             pair[0][0], pair[1][0], pair[0][1] - pair[1][1], sm
         )
         eeff_all = eeff_all + (eeff,)
         gamma_all = gamma_all + (gamma,)
-    gamma_av = sum(gamma_all) / len(pairs)
-    eeff_av = sum(eeff_all) / len(pairs)
+    gamma_av = np.sum(gamma_all) / len(pairs)
+    eeff_av = np.sum(eeff_all) / len(pairs)
     return (gamma_av, eeff_av)
 
 
-def cascade_2_ports(filenames):
+def cascade_2_ports(filenames: list[str]) -> "spfile":
     if isinstance(filenames[0], str):
         first = spfile(filenames[0])
     else:
@@ -304,71 +338,37 @@ def cascade_2_ports(filenames):
         first.connect_network_1_conn(sp, 2, 1, False, inplace=1)
     return first
 
+def average_networks(networks: "list[spfile|str]") -> "spfile":
+    """
+    Averages a list of network files.
 
-def average_networks(networks):
-    for i in range(len(networks)):
-        if isinstance(networks[i], str):
-            networks[i] = spfile(networks[i])
-    nop = networks[0].get_no_of_ports()
-    freks = networks[0].freqs
+    Args:
+        networks (list[spfile|str]): A list of spfile objects or paths to network files to be averaged.
+
+    Returns:
+        spfile: An spfile object representing the average of the input networks.
+    """
+    spnetworks: "list[spfile]" = [spfile(x) if isinstance(x,str) else x for x in networks]
+    nop = spnetworks[0].get_no_of_ports()
+    freks = spnetworks[0].freqs
     outputnetwork = spfile(freqs=freks, n_ports=nop)
-    N = len(networks)
-    sdatas = [net.sdata for net in networks]
-    sdata = sum(sdatas) / N
+    N = len(spnetworks)
+    sdatas = [net.sdata for net in spnetworks]
+    sdata = np.sum(sdatas) / N
     outputnetwork.sdata = sdata
     return outputnetwork
 
 
-def untermination_method_old(g1, g2, g3, gL1, gL2, gL3, returnS2P=False, freqs=None):
-    """Determination of :math:`S_{11}`, :math:`S_{22}` and :math:`S_{21}=S_{12}` for a 2-port network network using 3 reflection coefficient values at port-1 for 3 terminations at port-2. :math:`S_{21}` can only be calculated with a sign ambiguity because it exists only as square in the formulae.
-
-    Port-1: Input port.
-    Port-2: Output port where load impedances are switched.
-
-    Args:
-        g1 (float, complex or ndarray): Reflection coefficient at port-1 when port-2 is terminated by a load with reflection coefficient gL1
-        g2 (float, complex or ndarray): Reflection coefficient at port-1 when port-2 is terminated by a load with reflection coefficient gL2
-        g3 (float, complex or ndarray): Reflection coefficient at port-1 when port-2 is terminated by a load with reflection coefficient gL3
-        gL1 (float, complex or ndarray): Reflection coefficient of load at port-2 that gives g1 reflection coefficient at port-1
-        gL2 (float, complex or ndarray): Reflection coefficient of load at port-2 that gives g2 reflection coefficient at port-1
-        gL3 (float, complex or ndarray): Reflection coefficient of load at port-2 that gives g3 reflection coefficient at port-1
-        returnS2P (boolean): If True, function returns an *spfile* object of the 2-port network, if False, it returns 3-tuple of S-parameter arrays. Default is False.
-        freqs (numpy.ndarray, list): If returnS2P is True, this input is used as the frequency points of the returned *spfile* object. Default is None.
-
-    Returns:
-        tuple: Either 3-Element tuple of (S11, S22, S21) or *spfile* object, depending on returnS2P input.
-    """
-    a = (g1 * gL2 - g2 * gL1) / (gL1 * gL2) / (g1 - g2)
-    b = (gL1 - gL2) / (gL1 * gL2) / (g1 - g2)
-    gLall = gL1 * gL2 * gL3
-    Y3 = b * g3 * gLall + gL2 * gL1
-    Z3 = g3 * gL2 * gL1 - a * g3 * gLall
-    Y1 = b * g1 * gLall + gL2 * gL3
-    Z1 = g1 * gL2 * gL3 - a * g1 * gLall
-    S11 = -(Z3 - Z1) / (Y1 - Y3)
-    S22 = a + b * S11
-    S21 = np.sqrt((g1 - S11) * (1 - S22 * gL1) / gL1)
-    if returnS2P:
-        if freqs is None:
-            freqs = np.linspace(1e9, 10e9, len(g1))
-        ph = np.unwrap(np.angle(S21, deg=0))
-        for i in range(1, len(ph)):
-            phi1 = np.angle(S21[i - 1], deg=0)
-            phi2 = np.angle(S21[i], deg=0)
-            delta = np.abs(phi2 - phi1)
-            if delta > 0.5 * np.pi and delta < 1.5 * np.pi:
-                S21[i:] = -S21[i:]
-        block = spfile(freqs=freqs, n_ports=2)
-        block.sdata[:, 0] = S11
-        block.sdata[:, 3] = S22
-        block.sdata[:, 1] = S21
-        block.sdata[:, 2] = S21
-        return block
-    else:
-        return (S11, S22, S21)
-
-
-def untermination_method(g1, g2, g3, gL1, gL2, gL3, returnS2P=False, freqs=None):
+def untermination_method(
+    g1: numtype | NDArray,
+    g2: numtype | NDArray,
+    g3: numtype | NDArray,
+    gL1: numtype | NDArray,
+    gL2: numtype | NDArray,
+    gL3: numtype | NDArray,
+    returnS2P: bool = False,
+    freqs: None | ArrayLike = None,
+) -> "spfile | tuple[NDArray, NDArray, NDArray]":
     """Determination of :math:`S_{11}`, :math:`S_{22}` and :math:`S_{21}=S_{12}` for a 2-port network network using 3 reflection coefficient values at port-1 for 3 terminations at port-2. :math:`S_{21}` can only be calculated with a sign ambiguity because it exists only as square in the formulae.
 
     Port-1: Input port.
@@ -428,13 +428,60 @@ def untermination_method(g1, g2, g3, gL1, gL2, gL3, returnS2P=False, freqs=None)
         return (S11, S22, S21)
 
 
-def thru_line_deembedding(thru_filename, line_filename, make_symmetric=True):
+def thru_line_gamma_extraction(
+    thru: "str | spfile",
+    line: "str | spfile",
+    deltaL: float
+) -> NDArray:
+    """Extraction of transmission line propagation constant using S-parameters of THRU and LINE structures.
+    Ref: Complex Permittivity Determination From Propagation Constant Measurements.
+
+    Args:
+        thru ([str, spfile]): 2-Port S-parameter filename or SPFILE object of THRU measurement
+        line ([str, spfile]): 2-Port S-parameter filename or SPFILE object of LINE measurement
+
+    Returns:
+        numpy.ndarray: complex phase vector (:math:`-\gamma l`) of connecting line of LINE standard (in radian))
+    """
+    if isinstance(thru, spfile):
+        Tthru = deepcopy(thru)
+    else:
+        Tthru = spfile(thru)
+    if isinstance(line, spfile):
+        Tline = deepcopy(line)
+    else:
+        Tline = spfile(line)
+    freqs = Tthru.freqs
+    n = len(freqs)
+    Tthru.set_frequency_points(freqs)
+    Tline.set_frequency_points(freqs)
+    # Tline.s2t()
+    # Tthru.s2t()
+    T = Tline - Tthru
+    T.s2t()
+    eigvalues = np.zeros((n, 2), dtype=complex)
+    for i in range(n):
+        # M1 = Tline.tdata[i,:].reshape(2,2)
+        # M2 = Tthru.tdata[i,:].reshape(2,2)
+        # Sm = M1 @ np.linalg.inv(M2)
+        Sm = T.tdata[i, :].reshape(2, 2)
+        eigvalues[i, :] = np.linalg.eigvals(Sm)
+    eig_av = 0.5 * (eigvalues[:, 1] + 1.0 / eigvalues[:, 0])
+    gamma = np.log(eig_av) / deltaL
+    return gamma
+
+
+def thru_line_deembedding(
+    thru_filename: "str|spfile",
+    line_filename: "str|spfile",
+    make_symmetric: bool = True
+) -> "tuple[spfile, NDArray]":
     """Extraction of transition S-parameters from THRU and LINE measurements. Transitions on both sides are assumed to be identical. For output *spfile* objects, port-1 is launcher side and port-2 is transmission line side. The length difference between LINE and THRU should be ideally :math:`\lambda/4`.
     The reference impedance for the 2. port of the transition should be the same as the characteristic impedance of the interconnecting line. So the reference impedances of the output *spfile* should be adjusted (without renormalizing S-parameters) after calling this function. The minimum frequency in the S-parameter files should be such that the phase difference between the measurements should be smaller than 2:math:`\pi`.
 
     Args:
-        thru_filename (str): 2-Port S-parameter filename of THRU measurement
-        line_filename (str): 2-Port S-parameter filename of LINE measurement
+        thru_filename ([str, spfile]): 2-Port S-parameter filename or SPFILE object of THRU measurement
+        line_filename ([str, spfile]): 2-Port S-parameter filename or SPFILE object of LINE measurement
 
     Returns:
         tuple(spfile, numpy.ndarray): 2-Element tuple of (transition spfile, complex phase vector (:math:`-\gamma l`) of connecting line of LINE standard (in radian))
@@ -442,11 +489,11 @@ def thru_line_deembedding(thru_filename, line_filename, make_symmetric=True):
 
     if isinstance(thru_filename, spfile):
         Tthru = thru_filename
-    else:
+    elif isinstance(thru_filename, str):
         Tthru = spfile(thru_filename)
-    if isinstance(thru_filename, spfile):
+    if isinstance(line_filename, spfile):
         Tline = line_filename
-    else:
+    elif isinstance(line_filename, str):
         Tline = spfile(line_filename)
     output = deepcopy(Tthru)
     freqs = Tthru.freqs
@@ -461,18 +508,13 @@ def thru_line_deembedding(thru_filename, line_filename, make_symmetric=True):
         for i in range(len(r1)):
             if np.abs(r1[i]) < np.abs(r2[i]):
                 roots.append(r2[i])
-                # print(str(np.abs(r1[i]))+"\t"+str(np.abs(r2[i])))
             else:
                 roots.append(r1[i])
-                # print(str(np.abs(r2[i]))+"\t"+str(np.abs(r1[i])))
         return np.array(roots)
 
     if make_symmetric:
         Tthru.make_symmetric()
         Tline.make_symmetric()
-
-    # TT = Tthru.s2t()
-    # TL = Tline.s2t()
 
     A = Tthru.T(1, 1)
     B = Tthru.T(1, 2)
@@ -505,7 +547,12 @@ def thru_line_deembedding(thru_filename, line_filename, make_symmetric=True):
     return output, gammaL
 
 
-def trl_launcher_extraction(thru_file, line_file, reflect_file, refstd=False):
+def trl_launcher_extraction(
+    thru_file: "str | spfile",
+    line_file: "str | spfile",
+    reflect_file: "str | spfile",
+    refstd: bool | str = False,
+) -> "tuple[spfile, spfile, NDArray]":
     """Extraction of launcher S-parameters by THRU, LINE, REFLECT calibration. For both output *spfile* objects, port-1 is launcher side and port-2 is transmission line side.
     Reference: TRL algorithm to de-embed a RF test fixture.pdf (Note that the T-Matrix definiton in the reference document is different than this library.)
 
@@ -530,11 +577,11 @@ def trl_launcher_extraction(thru_file, line_file, reflect_file, refstd=False):
         Tthru = thru_file
     else:
         Tthru = spfile(thru_file)
-    if isinstance(thru_file, spfile):
+    if isinstance(line_file, spfile):
         Tline = line_file
     else:
         Tline = spfile(line_file)
-    if isinstance(thru_file, spfile):
+    if isinstance(reflect_file, spfile):
         Tref = reflect_file
     else:
         Tref = spfile(reflect_file)
@@ -619,7 +666,7 @@ def trl_launcher_extraction(thru_file, line_file, reflect_file, refstd=False):
     return Tlauncherin, Tlauncherout, np.array(faz)
 
 
-def merge_spfiles(spfilelist):
+def merge_spfiles(spfilelist: "list[spfile]") -> "spfile":
     """This method merges multiple SPFILEs to a single one. The aim if to merge multiple SPFILEs defined for the same network at different frequency values. All SPFILEs are assumed to represent the same network except the frequencies. Port names are taken from the first SPFILE.
 
     Args:
@@ -663,7 +710,7 @@ def merge_spfiles(spfilelist):
                     gammas[j] = [sps.gammas] * n_freqs
                 else:
                     gammas[j].extend([sps.gammas] * n_freqs)
-        else:
+        elif len(sps.gammas)>0:
             for i in range(n_ports):
                 if not hasattr(sps.gammas[i], "__iter__"):
                     if cc == 0:
@@ -675,61 +722,62 @@ def merge_spfiles(spfilelist):
                         gammas[i] = list(sps.gammas[i][:])
                     else:
                         gammas[i].extend(sps.gammas[i])
-    gammas = np.array(gammas) ###
+    gammas = np.array(gammas)  ###
     roworder = freqs.argsort()
     spout.freqs = freqs[roworder]
     try:
-        spout.refimpedance = [
-            [refimpedance[p][k] for k in roworder] for p in range(n_ports)
-        ]
-        # spout.gammas = [[gammas[p][k] for k in roworder] for p in range(n_ports)]
+        spout.refimpedance = [[refimpedance[p][k] for k in roworder] for p in range(n_ports)]
+    except Exception as e:
+        print(f"Error at setting refimpedance: {repr(e)}")
+        spout.refimpedance = None
+
+    try:
         spout.gammas = gammas[np.ix_(list(range(n_ports)), roworder)]
     except Exception as e:
-        print(repr(e))
+        print(f"Error at setting gammas: {repr(e)}")
         spout.gammas = None
-        spout.refimpedance = None
 
     try:
         sdata = np.concatenate(tuple(a.sdata for a in spfilelist))
         spout.sdata = sdata[roworder, :]
     except Exception as e:
-        print(repr(e))
+        print(f"Error at setting sdata: {repr(e)}")
         spout.sdata = None
     try:
         ydata = np.concatenate(tuple(a.ydata for a in spfilelist))
         spout.ydata = ydata[roworder, :]
     except Exception as e:
-        print(repr(e))
+        print(f"Error at setting ydata: {repr(e)}")
         spout.ydata = None
     try:
         zdata = np.concatenate(tuple(a.zdata for a in spfilelist))
         spout.zdata = zdata[roworder, :]
     except Exception as e:
-        print(repr(e))
+        print(f"Error at setting zdata: {repr(e)}")
         spout.zdata = None
     try:
         abcddata = np.concatenate(tuple(a.abcddata for a in spfilelist))
         spout.abcddata = abcddata[roworder, :]
     except Exception as e:
-        print(repr(e))
+        print(f"Error at setting abcddata: {repr(e)}")
         spout.abcddata = None
     try:
         tdata = np.concatenate(tuple(a.tdata for a in spfilelist))
         spout.tdata = tdata[roworder, :]
     except Exception as e:
-        print(repr(e))
+        print(f"Error at setting tdata: {repr(e)}")
         spout.tdata = None
     try:
         hdata = np.concatenate(tuple(a.hdata for a in spfilelist))
         spout.hdata = hdata[roworder, :]
     except Exception as e:
-        print(repr(e))
+        print(f"Error at setting hdata: {repr(e)}")
         spout.hdata = None
     try:
         gdata = np.concatenate(tuple(a.gdata for a in spfilelist))
         spout.gdata = gdata[roworder, :]
     except Exception as e:
-        print(repr(e))
+        print(f"Error at setting gdata: {repr(e)}")
         spout.gdata = None
 
     return spout
@@ -751,11 +799,6 @@ class spfile:
         port_names(list):
         gammas(numpy.ndarray): Gamma (propagation constant) values for each port. The shape of the array: (n_ports, frequencypoints). This data is typically read from a touchstone file exported from HFSS.
         inplace(int):
-        s_ok(bool):
-        y_ok(bool):
-        z_ok(bool):
-        t_ok(bool):
-        abcd_ok(bool):
         sym_smatrix = None
         sym_params = dict()
         undefinedYindices=set()
@@ -769,56 +812,45 @@ class spfile:
         params(dict):
     """
 
-    def __init__(
-        self, filename="", freqs=None, n_ports=1, skiplines=0, only_port_number=False
+    def __init__(self, filename:str="", freqs:Optional[list|NDArray]=None, n_ports:int=1, skiplines:int=0,
+                 only_port_number:bool=False, force_number_of_ports:Optional[int]=None
     ):
-        self.file_data_format = "DB"
-        self.file_freq_unit = "HZ"
-        self.refimpedance = []
-        self.sdata = None
-        self.ydata = None
-        self.zdata = None
-        self.hdata = None
-        self.gdata = None
-        self.abcddata = None
-        self.tdata = None
-        self.port_names = []
-        self.gammas = np.array([])  # np.array with shape (n_ports, frequencypoints)
-        self.inplace = 1
-        self.z_ok = False
-        self.y_ok = False
-        self.s_ok = True
-        self.t_ok = True
-        self.abcd_ok = False
+        self.file_data_format: str = "DB"
+        self.file_freq_unit: str = "HZ"
+        self.refimpedance: list = []
+        self.sdata: Optional[NDArray] = None
+        self.ydata: Optional[NDArray] = None
+        self.zdata: Optional[NDArray] = None
+        self.hdata: Optional[NDArray] = None
+        self.gdata: Optional[NDArray] = None
+        self.abcddata: Optional[NDArray] = None
+        self.tdata: Optional[NDArray] = None
+        self.port_names: list[str] = []
+        self.gammas: Optional[NDArray] = np.array([])  # np.array with shape (n_ports, frequencypoints)
+        self.inplace: int = 1
         self.sym_smatrix = None
-        self.sym_params = dict()
-        self.undefinedYindices = set()
-        self.undefinedZindices = set()
-        self.smatrix_type = (
-            1  # 1: "power-wave", 2: "pseudo-wave", 3: "HFSS pseudo-wave"
-        )
-        self.header = []  # comments in the file before the format line
-        self.sparam_gen_func = (
-            None  # this function generates smatrix of the network given the frequency
-        )
-        self.sparam_mod_func = (
-            None  # this function modifies smatrix of the network given the frequency
-        )
-        self.params = {}
-        self.file_name = filename
+        self.sym_params: dict = dict()
+        self.undefinedYindices: set = set()
+        self.undefinedZindices: set = set()
+        self.smatrix_type: int = 1
+        self.header: list[str] = []  # comments in the file before the format line
+        self.sparam_gen_func: Callable[[float], NDArray] = None
+        self.sparam_mod_func: Callable[[float], NDArray] = None
+        self.params: dict = {}
+        self.file_name: str = filename
         if not filename == "":
-            self.read_file(filename, skiplines, only_port_number)
+            self.read_file(filename, skiplines, force_number_of_ports)
         else:
-            self.refimpedance = [50.0] * n_ports
-            self.frequency_points = np.asarray(freqs)
-            self.n_ports = n_ports
+            self.refimpedance: list[float] = [50.0] * n_ports
+            self.frequency_points: NDArray[float] = np.asarray(freqs)
+            self.n_ports: int = n_ports
             ns = 0
             if freqs is not None:
                 ns = len(self.frequency_points)
-            self.normalized = 1  # normalized to 50 ohm if 1
+                self.normalized = 1  # normalized to 50 ohm if 1
             if ns > 0:
                 self.sdata = np.zeros((ns, n_ports**2), complex)
-            self.port_names = [""] * n_ports
+                self.port_names = [""] * n_ports
 
     aliases = {
         "freqs": "frequency_points",
@@ -826,11 +858,11 @@ class spfile:
         "input_impedance": "z_in",
     }
 
-    def __setattr__(self, name, value):
+    def __setattr__(self, name: str, value: Any) -> None:
         name = self.aliases.get(name, name)
         object.__setattr__(self, name, value)
 
-    def __getattr__(self, name):
+    def __getattr__(self, name: str) -> Any:
         if name == "aliases":
             raise AttributeError  # http://nedbatchelder.com/blog/201010/surprising_getattr_recursion.html
         name = self.aliases.get(name, name)
@@ -839,11 +871,11 @@ class spfile:
     def copy(self):
         return deepcopy(self)
 
-    def set_smatrix_type(self, smatrix_type):
+    def set_smatrix_type(self, smatrix_type: int) -> Self:
         self.smatrix_type = smatrix_type
         return self
 
-    def change_smatrix_type(self, smatrix_type):
+    def change_smatrix_type(self, smatrix_type: int) -> None:
         """
         Change S-Matrix formulation and re-calculate S-parameters.
 
@@ -857,15 +889,18 @@ class spfile:
         self.smatrix_type = smatrix_type
         self.change_ref_impedance(refimpedance)
 
-    def copy_data_from_spfile(self, local_i, local_j, source_i, source_j, sourcespfile):
+    def copy_data_from_spfile(self, local_i: int, local_j: int, source_i: int, source_j: int, sourcespfile: "spfile") -> None:
         """This method copies S-parameter data from another SPFILE object"""
         local_column = (local_i - 1) * self.n_ports + (local_j - 1)
         self.sdata[:, local_column] = sourcespfile.data_array(
             data_format="COMPLEX", i=source_i, j=source_j
         )
-        self.z_ok, self.y_ok, self.abcd_ok, self.t_ok = False, False, False, False
+        self.zdata = None
+        self.ydata = None
+        self.abcddata = None
+        self.tdata = None
 
-    def set_frequencies_wo_recalc(self, freqs):
+    def set_frequencies_wo_recalc(self, freqs: list[float] | NDArray) -> None:
         """Directly sets the frequencies of this network, but does not re-calculate S-parameters.
 
         Args:
@@ -873,7 +908,7 @@ class spfile:
         """
         self.freqs = np.array(freqs)
 
-    def set_port_name(self, name, i):
+    def set_port_name(self, name: str, i: int) -> None:
         """Set name of a specific port.
 
         Args:
@@ -882,7 +917,7 @@ class spfile:
         """
         self.port_names[i - 1] = name
 
-    def port_numbers_from_names(self, *names):
+    def port_numbers_from_names(self, *names: list) -> list:
         """
         This function returns the list of port numbers corresponding to the exact port names given as input parameters.
 
@@ -892,11 +927,10 @@ class spfile:
         Returns:
             list of port numbers in order.
         """
-        return [
-            self.port_names.index(n) + 1 if isinstance(n, str) else n for n in names
-        ]
+        return [self.port_names.index(n) + 1
+                if isinstance(n, str) else n for n in names]
 
-    def port_numbers_from_names2(self, *names):
+    def port_numbers_from_names2(self, *names:list) -> tuple:
         """
         This function returns the list of port numbers corresponding to the port names given as input parameters. For each port name, the port number with closest name is returned. Levenshtein distance is used.
 
@@ -923,7 +957,7 @@ class spfile:
                 pn.append(dists[0][1])
         return tuple(pn)
 
-    def port_numbers_from_names3(self, *names, cutoff=0.3):
+    def port_numbers_from_names3(self, *names: list, cutoff: float=0.3) -> tuple:
         """
         This function returns the list of port numbers corresponding to the port names given as input parameters. For each port name, the port number with closest name is returned. Difflib builtin library is used. By default, a cutoff value of 0.3 is used and -1 is returned when no match is found for an input port name.
 
@@ -960,7 +994,7 @@ class spfile:
             ]
         )
 
-    def port_numbers_from_names4(self, *names):
+    def port_numbers_from_names4(self, *names: list) -> tuple:
         """
         This function returns the list of port numbers corresponding to the names given as input parameters. For each name input, the name is splitted with "*" character to create a list of string pieces. Then if all these pieces are included in a port_name of the network, the index of this port_name is assigned to the input portname.
 
@@ -988,7 +1022,7 @@ class spfile:
             )
         return tuple(rnumbers)
 
-    def set_data_points(self, m, indices, x):
+    def set_data_points(self, m: int, indices: tuple[int,...], x: numtype|list) -> None:
         """
         Set the value for some part of S-parameter data.
 
@@ -1005,10 +1039,12 @@ class spfile:
         # for k in range(len(x)):
         #     self.sdata[k+m,(i-1)*self.n_ports+(j-1)] = x[k]
         self.sdata[m : (m + len(x)), (i - 1) * self.n_ports + (j - 1)] = x[:]
-        # obj.z_ok, obj.y_ok, obj.t_ok, obj.abcd_ok = False, False, False, False
-        self.z_ok, self.y_ok, self.t_ok, self.abcd_ok = False, False, False, False
+        self.zdata = None
+        self.ydata = None
+        self.tdata = None
+        self.abcddata = None
 
-    def column_of_data(self, i, j):
+    def column_of_data(self, i:int, j:int) -> int:
         """
         Gets the indice of column at *sdata* matrix corresponding to :math:`S_{i j}`
         For internal use of the library.
@@ -1022,7 +1058,7 @@ class spfile:
         """
         return (i - 1) * self.n_ports + (j - 1)
 
-    def set_sym_smatrix(self, SM):
+    def set_sym_smatrix(self, SM: "sympy.Matrix") -> None:
         """
         This function is used to set arithmetic expression for S-Matrix, if S-Matrix is defined using symbolic variables.
 
@@ -1037,7 +1073,7 @@ class spfile:
             self.sparam_gen_func = lambda x: self.sym_smatrix.evalf()
         self.set_frequency_points(self.freqs)
 
-    def set_sym_params(self, paramdict):
+    def set_sym_params(self, paramdict: dict) -> None:
         """
         This function is used to set the values of symbolic variables of the network. This is used if the S-Matrix of the network is defined by an arithmetic expression containing symbolic variables. This property is used in conjunction with *sympy* library for symbolic manipulation. Arithmetic expression for S-Matrix is defined by ``set_sym_smatrix`` function.
 
@@ -1056,7 +1092,7 @@ class spfile:
                 self.sparam_gen_func = lambda x: self.sym_smatrix.evalf()
             self.set_frequency_points(self.freqs)
 
-    def set_sparam_gen_func(self, func=None):
+    def set_sparam_gen_func(self, func: Callable=None) -> None:
         """
         This function is used to set the function that generates S-parameters from frequency.
 
@@ -1068,7 +1104,7 @@ class spfile:
             for i, f in enumerate(self.freqs):
                 self.set_smatrix_at_frequency_point(i, func(f))
 
-    def set_sparam_mod_func(self, func=None):
+    def set_sparam_mod_func(self, func=None) -> None:
         """
         This function is used to set the function that generates S-parameters from frequency.
 
@@ -1077,7 +1113,7 @@ class spfile:
         """
         self.sparam_mod_func = func
 
-    def set_smatrix_at_frequency_point(self, indices, smatrix):
+    def set_smatrix_at_frequency_point(self, indices:list[int], smatrix:NDArray) -> None:
         """
         Set S-Matrix at frequency indices
 
@@ -1091,14 +1127,17 @@ class spfile:
             indices = [indices]
         for i in indices:
             self.sdata[i, :] = np.asarray(smatrix)
-        self.z_ok, self.y_ok, self.abcd_ok, self.t_ok = False, False, False, False
+        self.zdata = None
+        self.ydata = None
+        self.tdata = None
+        self.abcddata = None
 
-    def make_symmetric(self, kind=1, inplace=-1):
+    def make_symmetric(self, kind: int=1, inplace: int=-1) -> "spfile":
         """
         Make SPFILE symmetric by taking the average of S11 and S22. S12=S21 assumed.
 
         Args:
-            inplace (int, optional): Object editing mode. Defaults to -1.
+            inplace (int, optional): Object editing mode. 0 to return a new object, 1 to modify the current object. Defaults to -1.
 
         Returns:
             spfile: Modified spfile object
@@ -1119,10 +1158,29 @@ class spfile:
             new_sdata[:, 0] = sdata[:, 0]
             new_sdata[:, -1] = sdata[:, 0]
         obj.sdata = new_sdata
-        obj.z_ok, obj.y_ok, obj.abcd_ok, obj.t_ok = False, False, False, False
+        obj.zdata = None
+        obj.ydata = None
+        obj.tdata = None
+        obj.abcddata = None
         return obj
 
-    def snp2smp(self, ports, inplace=-1):
+    def flip(self, inplace:int=0) -> "Optional[spfile]":
+        """
+        Special case of :snp2smp: function for 2-port networks.
+
+        Args:
+            inplace (int, optional): Object editing mode. 0 to return a new object, 1 to modify the current object. Defaults to 0.
+
+        Returns:
+            spfile: Modified spfile object
+        """
+        if self.n_ports==2:
+            return self.snp2smp([2,1], inplace=inplace)
+        else:
+            print("The number of ports should be 2 for flip operation!")
+            return None
+
+    def snp2smp(self, ports: list[int], inplace: int=-1) -> "spfile":
         """
         This method changes the port numbering of the network port j of new network corresponds to ports[j] in old network.
 
@@ -1130,7 +1188,7 @@ class spfile:
 
         Args:
             ports (list): New port order
-            inplace (int, optional): Object editing mode. Defaults to -1.
+            inplace (int, optional): Object editing mode. 0 to return a new object, 1 to modify the current object. Defaults to -1.
 
         Returns:
             spfile: Modified spfile object
@@ -1142,7 +1200,9 @@ class spfile:
             obj.inplace = 1
         else:
             obj = self
-        portsi = [x-1 for x in ports]
+        if list(range(1, self.n_ports + 1)) == ports:
+            return obj
+        portsi = [x - 1 for x in ports]
         ns = len(obj.freqs)
         ps = obj.n_ports
         newps = len(ports)
@@ -1163,17 +1223,22 @@ class spfile:
             # obj.gammas = [obj.gammas[x] for x in portsi]
             obj.gammas = obj.gammas[portsi]
         except Exception as e:
-            print(repr(e))
+            print(f"{inspect.getframeinfo(inspect.currentframe()).lineno}: {repr(e)}")
         names = obj.port_names
         obj.port_names = [names[portsi[i]] for i in range(obj.n_ports)]
-        obj.z_ok, obj.y_ok, obj.abcd_ok, obj.t_ok = False, False, False, False
+        obj.zdata = None
+        obj.ydata = None
+        obj.tdata = None
+        obj.abcddata = None
         return obj
 
-    def remove_duplicate_freqs(self, abstol=None, reltol=None, inplace=-1):
+    def remove_duplicate_freqs(self, abstol: Optional[float]=None, reltol: Optional[float]=None, inplace: int=-1) -> "spfile":
         """This function removes duplicate frequency points. Latter frequency point is retained.
+
         Args:
             abstol(float, optional): If given, used as absolute minimum difference between the frequencies to be compared. Default is None.
             reltol(float, optional): If given, used as relative minimum difference between the frequencies to be compared. Default is None.
+
         Returns:
             SPFILE object
         """
@@ -1206,20 +1271,10 @@ class spfile:
                 ]
                 for p in range(obj.n_ports)
             ]
-            # obj.gammas = [
-            #     [
-            #         obj.gammas[p][k]
-                    
-                    
-            #     ]
-            #     for p in range(obj.n_ports)
-            # ]
-            # klist = [k for k in range(len(obj.gammas[p])) if k not in points_to_be_deleted]
-            # obj.gammas = obj.gammas[:, k]
             np.delete(obj.gammas, points_to_be_deleted, 1)
 
         except Exception as e:
-            print(repr(e))
+            print(f"{inspect.getframeinfo(inspect.currentframe()).lineno}: {repr(e)}")
         if obj.sdata is not None:
             obj.sdata = np.delete(obj.sdata, points_to_be_deleted, axis=0)
         if obj.ydata is not None:
@@ -1237,22 +1292,41 @@ class spfile:
 
         return obj
 
-    def scaledata(self, scale=1.0, dataindices=None):
+    def scaledata(self, scale: float=1.0, dataindices: Optional[list[tuple[int,int]]]=None) -> None:
         """
         Multiply all elements in S-parameter matrices by *scale*.
         """
         if not dataindices:
             for i in range(self.n_ports**2):
                 self.sdata[:, i] = self.sdata[:, i] * scale
-        self.z_ok, self.y_ok, self.abcd_ok, self.t_ok = False, False, False, False
+        else:
+            for i,j in dataindices:
+                m = self.column_of_data(i,j)
+                self.sdata[:,m] = self.sdata[:, m] * scale
+        self.zdata = None
+        self.ydata = None
+        self.tdata = None
+        self.abcddata = None
 
-    def read_file_again(self):
+    def read_file_again(self) -> None:
         """
         Network data is read from the file named *filename*.
         """
         self.read_file(self.file_name)
 
-    def read_file(self, file_name, skiplines=0, only_port_number=False):
+    @staticmethod
+    def get_port_count_from_extension(ext: str)-> int:
+        """
+        Extract number of ports from the extension of Touchstone file.
+        """
+        m = re.search(r"[syzgh](\d+)p*", ext)
+        if m:
+            return int(m.group(1))
+        else:
+            print(f"Wrong file extension ({ext})!")
+            sys.exit(1)
+
+    def read_file(self, filename: str, skiplines: int=0, force_number_of_ports: Optional[int]=None) -> int:
         """
         Network data is read from file. *filename* attribute of object is set with given argument.
 
@@ -1261,35 +1335,34 @@ class spfile:
             skiplines(int, optional): This option is used if some beginning lines will be ignored. Default value is 0.
             only_port_number(bool, optional): If True, the aim of the file reading is only to get the number of ports and the process is terminated once the port number is determined. Default is False.
         """
-        self.file_name = file_name
-        ext = file_name.split(".")[-1]
-        ext = ext.lower()
-        if ext == "ts":
-            version = 2
-        else:
-            m = re.search(r"[syzgh](\d+)p*", ext)
-            if m:
-                version = 1
-                ps = self.n_ports = int(m.group(1))
-                if only_port_number:
-                    return 1
-            else:
-                print(f"Wrong file extension! file name: {file_name}, ext:{ext}")
-                return 0
+        self.gdata = None
+        self.hdata = None
+        self.abcddata = None
+        self.tdata = None
+        self.ydata = None
+        self.zdata = None
+        self.sdata = None
+
+        self.file_name = file_name = str(filename)
+        ext = file_name.split(".")[-1].lower()
+        version = 2 if ext == "ts" else 1
+        ps = self.n_ports = force_number_of_ports if force_number_of_ports else self.get_port_count_from_extension(ext)
 
         try:
             with open(file_name, "r") as f:
                 linesread = f.readlines()[skiplines:]
         except Exception as e:
             print("Error opening the file: " + file_name + "\n")
-            raise e
+            sys.exit(1)
 
         self.header = [
             line
             for line in linesread
             if (
                 line.startswith("! ")
-                and not (line.startswith("! Port Impedance") or line.startswith("! Gamma"))
+                and not (
+                    line.startswith("! Port Impedance") or line.startswith("! Gamma")
+                )
             )
         ]
         lines = []
@@ -1347,47 +1420,43 @@ class spfile:
                     lines.append(x.split("!")[0].strip())
                 else:
                     if x.lower().startswith("! gamma"):
-                        tempportgamma = (
-                            x.lower().replace("!", "").replace("gamma", "").split()
-                        )
+                        gammat = x.lower().replace("!", "").replace("gamma", "").split()
                         while index < len(linesread) - 1:
-                            index = index + 1
+                            index += 1
                             x = linesread[index].strip()
                             if len(x) == 0:
                                 continue
                             if x[0] != "!":
-                                index = index - 1
+                                index -= 1
                                 break
                             else:
                                 if "port" in x.lower():
                                     break
                                 else:
-                                    tempportgamma += x.replace("!", "").strip().split()
+                                    gammat += x.replace("!", "").strip().split()
+                        gammat = np.array(gammat, dtype=float)
+                        gammat = gammat[::2] + 1j * gammat[1::2]
 
-                        tempportgamma = [
-                            float(tempportgamma[2 * i])
-                            + 1j * float(tempportgamma[2 * i + 1])
-                            for i in range(round(len(tempportgamma) / 2))
-                        ]
+                        # will be deleted after testing
+                        # gammat = [
+                        #     float(gammat[2 * i])
+                        #     + 1j * float(gammat[2 * i + 1])
+                        #     for i in range(round(len(gammat) / 2))
+                        # ]
 
                         # The reason of the following correction: N-port Gamma
                         # and Impedances comments are exported in the Driven
                         # Terminal mode as NxN while in Modal mode there are
                         # exported as 1xN.
                         # (https://github.com/scikit-rf/scikit-rf/issues/354)
-                        if len(tempportgamma) == ps**2:
-                            tempportgamma = [
-                                tempportgamma[i * i - 1] for i in range(1, ps + 1)
-                            ]
-                        gammas.append(tempportgamma)
+                        if len(gammat) == ps**2:
+                            # gammat = [gammat[i * i - 1] for i in range(1, ps + 1)]
+                            gammat = gammat[[i * i - 1 for i in range(1, ps + 1)]]
+                        gammas.append(gammat)
 
                     if x.lower().startswith("! port impedance"):
                         tempportimp = (
-                            x.lower()
-                            .replace("!", "")
-                            .replace("port impedance", "")
-                            .strip()
-                            .split()
+                            x.lower().replace("!", "").replace("port impedance", "").strip().split()
                         )
                         while index < len(linesread) - 1:
                             index = index + 1
@@ -1417,11 +1486,13 @@ class spfile:
                         imps.append(tempportimp)
             index += 1
 
-        if len(gammas) > 0:
-            # self.gammas = np.array([[arr[i] for arr in gammas] for i in range(ps)])
-            self.gammas = np.array(gammas).T
-        else:
-            self.gammas = np.array([])
+        # will be deleted after testing
+        # if len(gammas) > 0:
+        #     # self.gammas = np.array([[arr[i] for arr in gammas] for i in range(ps)])
+        #     self.gammas = np.array(gammas).T
+        # else:
+        #     self.gammas = np.array([])
+        self.gammas = np.vstack(gammas).T if gammas else np.array([])
 
         datalar = np.array((" ".join(lines)).split(), dtype=np.float64)
         k = 2 * ps**2 + 1
@@ -1433,33 +1504,32 @@ class spfile:
         # this step is to omit noise and other data after S-parameters data.
         c = [1 + cmp(datalar[i, 0], datalar[i + 1, 0]) for i in range(nop - 1)]
 
-        try:
-            nop = c.index(1)
-        except Exception as e:
-            print(repr(e))
-
-        try:
-            nop = min(nop, c.index(2))
-        except Exception as e:
-            print(repr(e))
+        if 1 in c: nop = c.index(1)
+        if 2 in c: nop = min(nop, c.index(2))
 
         self.freqs = datalar[:, 0] * fcoef[self.file_freq_unit]
-        data = np.zeros((nop, ps**2), dtype=np.complex128)
+        data: np.ndarray[np.complex128] = np.zeros((nop, ps**2), dtype=np.complex128)
 
         if self.file_data_format == "RI":
-            for i in range(ps**2):
-                data[:, i] = datalar[:nop, 2 * i + 1] + datalar[:nop, 2 * i + 2] * 1j
+            data = datalar[:nop, 1::2] + datalar[:nop, 2::2] * 1j
+            # will be deleted after testing
+            # for i in range(ps**2):
+            #     data[:, i] = datalar[:nop, 2 * i + 1] + datalar[:nop, 2 * i + 2] * 1j
 
         elif self.file_data_format == "DB":
-            for i in range(ps**2):
-                data[:, i] = 10 ** (datalar[:nop, 2 * i + 1] / 20.0) * np.exp(
-                    1j * datalar[:nop, 2 * i + 2] * np.pi / 180
-                )
+            data = 10 ** (datalar[:nop, 1::2] / 20.0) * np.exp(1j * datalar[:nop, 2::2] * np.pi / 180)
+            # will be deleted after testing
+            # for i in range(ps**2):
+            #     data[:, i] = 10 ** (datalar[:nop, 2 * i + 1] / 20.0) * np.exp(
+            #         1j * datalar[:nop, 2 * i + 2] * np.pi / 180
+            #     )
         else:
-            for i in range(ps**2):
-                data[:, i] = datalar[:nop, 2 * i + 1] * np.exp(
-                    1j * datalar[:nop, 2 * i + 2] * np.pi / 180
-                )
+            data = datalar[:nop, 1::2] * np.exp(1j * datalar[:nop, 2::2] * np.pi / 180)
+            # will be deleted after testing
+            # for i in range(ps**2):
+            #     data[:, i] = datalar[:nop, 2 * i + 1] * np.exp(
+            #         1j * datalar[:nop, 2 * i + 2] * np.pi / 180
+            #     )
 
         if ps == 2:
             if (version == 1) or ((version == 2) and two_port_data_order == "21_12"):
@@ -1481,61 +1551,20 @@ class spfile:
 
         if self.matrix_type == "S":
             self.sdata = data
-            self.z_ok, self.y_ok, self.abcd_ok, self.t_ok, self.h_ok, self.g_ok = (
-                False,
-                False,
-                False,
-                False,
-                False,
-                False,
-            )
         elif self.matrix_type == "Z":
             self.zdata = data
             self.calc_syz("Z")
-            self.z_ok, self.y_ok, self.abcd_ok, self.t_ok, self.h_ok, self.g_ok = (
-                True,
-                True,
-                False,
-                False,
-                False,
-                False,
-            )
         elif self.matrix_type == "Y":
             self.ydata = data
             self.calc_syz("Y")
-            self.z_ok, self.y_ok, self.abcd_ok, self.t_ok, self.h_ok, self.g_ok = (
-                True,
-                True,
-                False,
-                False,
-                False,
-                False,
-            )
         elif self.matrix_type == "H":
             self.hdata = data
             self.calc_yz("H")
             self.calc_syz("Y")
-            self.z_ok, self.y_ok, self.abcd_ok, self.t_ok, self.h_ok, self.g_ok = (
-                True,
-                True,
-                False,
-                False,
-                True,
-                False,
-            )
         elif self.matrix_type == "G":
             self.gdata = data
             self.calc_yz("G")
             self.calc_syz("Y")
-            self.z_ok, self.y_ok, self.abcd_ok, self.t_ok, self.h_ok, self.g_ok = (
-                True,
-                True,
-                False,
-                False,
-                False,
-                True,
-            )
-
         return 1
 
     def Ffunc(self, imp):
@@ -1598,7 +1627,7 @@ class spfile:
         self.ydata = ydata
         self.zdata = zdata
 
-    def calc_s(self, input="H", impedance=50.0):
+    def calc_s(self, input: str="H", impedance: float=50.0) -> None:
         """This function calculates S-Matrix data from an in put
         matrix type. Works only for real reference impedance.
 
@@ -1633,7 +1662,7 @@ class spfile:
                 sdata[i, :] = Sm.reshape(4)
         self.sdata = sdata
 
-    def calc_syz(self, input="S", indices=None):
+    def calc_syz(self, input: str="S", indices: Optional[list]=None) -> None:
         """This function, using one of S, Y and Z parameters,
         calculates the other two parameters. Y and Z-matrices
         calculated separately instead of calculating one and taking
@@ -1688,7 +1717,7 @@ class spfile:
                         Ym = F.I * (Sm * G + G).I * (I0 - Sm) * F
                     self.ydata[i, :] = Ym.reshape(ps**2)
                 except Exception as e:
-                    print(repr(e))
+                    print(f"{inspect.getframeinfo(inspect.currentframe()).lineno}: {repr(e)}")
                     print(f"Y-Matrix is undefined at frequency: {self.freqs[i]: f}\n")
                     self.undefinedYindices.add(i)
                     break
@@ -1720,7 +1749,7 @@ class spfile:
                     Ym = Zm.I
                     self.ydata[i, :] = Ym.reshape(ps**2)
                 except Exception as e:
-                    print(repr(e))
+                    print(f"{inspect.getframeinfo(inspect.currentframe()).lineno}: {repr(e)}")
                     print(f"Y-Matrix is undefined at frequency: {self.freqs[i]: f}\n")
                     self.undefinedYindices.add(i)
                 if self.smatrix_type == 1:
@@ -1743,7 +1772,7 @@ class spfile:
                     Zm = Ym.I
                     self.zdata[i, :] = Zm.reshape(ps**2)
                 except Exception as e:
-                    print(repr(e))
+                    print(f"{inspect.getframeinfo(inspect.currentframe()).lineno}: {repr(e)}")
                     print(f"Z-Matrix is undefined at frequency: {self.freqs[i]: f}\n")
                     self.undefinedZindices.add(i)
                 if self.smatrix_type == 1:
@@ -1751,30 +1780,34 @@ class spfile:
                 else:
                     Sm = F * (I0 - G * Ym) * (I0 + G * Ym).I * F.I
                 self.sdata[i, :] = Sm.reshape(ps**2)
-        self.z_ok, self.y_ok, self.s_ok = True, True, True
 
-    def calc_t_eigs(self, port1=1, port2=2):
+    def calc_t_eigs(self, port1: int=1, port2: int=2) -> None:
         """
-        Eigenfunctions and Eigenvector of T-Matrix is calculated.
-        Only power-wave formulation is implemented.
+        Eigenfunctions and Eigenvector of T-Matrix is calculated. Only power-wave formulation is implemented.
+
+        Args:
+            port1 (int): Port-1 for T-Matrix.
+            port2 (int): Port-2 for T-Matrix.
         """
         self.s2abcd(port1, port2)
+        eigen_values_vectors = []
         for i in range(len(self.freqs)):
             abcd = self.abcddata[i].reshape(2, 2)
             T = network.abcd2t(abcd, [50.0 + 0j, 50.0 + 0j])
-            eigs, eigv = eig(T)
+            # eigs, eigv = eig(T)
+            eigen_values_vectors.append(eig(T))
 
-    def s2t(self):
+    def s2t(self) -> Self:
         """
         Calculate transmission matrix for 2-port networks.
 
         Returns:
             spfile: SPFILE object
         """
-        if not self.s_ok:
-            if self.y_ok:
+        if self.sdata is None:
+            if self.ydata is not None:
                 self.calc_syz("Y")
-            elif self.z_ok:
+            elif self.zdata is not None:
                 self.calc_syz("Z")
             else:
                 print("Invalid Matrices - s2t")
@@ -1784,10 +1817,9 @@ class spfile:
             smatrix = np.matrix(self.sdata[i, :]).reshape(2, 2)
             sm = network.s2t(smatrix)
             self.tdata[i, :] = sm.reshape(4)
-        self.t_ok = True
         return self
 
-    def sqrt_network(self):
+    def sqrt_network(self) -> "spfile":
         """
         Calculate the spfile, when two of which are cascaded, this spfile is obtained.
 
@@ -1806,14 +1838,17 @@ class spfile:
             sm1 = sqrtm(sm)
             sm2 = network.t2s(sm1)
             obj.sdata[i, :] = sm2.reshape(4)
-        obj.z_ok, obj.y_ok, obj.t_ok, obj.abcd_ok = False, False, False, False
+        obj.zdata = None
+        obj.ydata = None
+        obj.tdata = None
+        obj.abcddata = None
         return obj
 
-    def inverse_2port(self, inplace=-1):
+    def inverse_2port(self, inplace: int=-1) -> "spfile":
         """Take inverse of 2-port data for de-embedding purposes. The reference impedance of the network is not changed.
 
         Args:
-            inplace (int, optional): Object editing mode. Defaults to -1.
+            inplace (int, optional): Object editing mode. 0 to return a new object, 1 to modify the current object. Defaults to -1.
 
         Returns:
             spfile: Inverted 2-port spfile
@@ -1835,10 +1870,13 @@ class spfile:
             sm = network.abcd2s(abcd.I)
             obj.sdata[i, :] = sm.reshape(4)
         obj.change_ref_impedance(imp)
-        obj.z_ok, obj.y_ok, obj.t_ok, obj.abcd_ok = False, False, False, False
+        obj.zdata = None
+        obj.ydata = None
+        obj.tdata = None
+        obj.abcddata = None
         return obj
 
-    def s2abcd(self, port1=1, port2=2):
+    def s2abcd(self, port1: int=1, port2: int=2) -> NDArray:
         """S-Matrix to ABCD matrix conversion between 2 chosen ports. Other ports are terminated with reference impedances
 
         Args:
@@ -1848,10 +1886,10 @@ class spfile:
         Returns:
             numpy.matrix: ABCD data. Numpy.matrix of size (ns,4) (ns: number of frequencies). Each row contains (A,B,C,D) numbers in order.
         """
-        if not self.s_ok:
-            if self.y_ok:
+        if self.sdata is None:
+            if self.ydata is not None:
                 self.calc_syz("Y")
-            elif self.z_ok:
+            elif self.zdata is not None:
                 self.calc_syz("Z")
             else:
                 print("Invalid Matrices - s2t")
@@ -1864,41 +1902,29 @@ class spfile:
             ABCD = network.s2abcd(smatrix)
             abcddata[i, :] = ABCD.reshape(4)
         self.abcddata = abcddata
-        self.abcd_ok = True
         return abcddata
 
-    def z_in(self, k, data_format="complex"):
+    def z_in(self, port: int=1, data_format: str="complex") -> NDArray:
         """Input impedance at port k. All ports are terminated with reference impedances.
 
         Args:
-            port (int): Port number for input impedance.
+            port (int, optional): Port number for input impedance. Default is 1.
             data_format (str, optional): Data format of output. Alternatives are "complex", "real", "imag", "mag", "phase", "uphase". Default is "complex".
 
         Returns:
             numpy.ndarray: Array of impedance values for all frequencies
         """
         imp = self.prepare_ref_impedance_array(self.refimpedance)
-        Zr = imp[k - 1]
-        T = self.S(k, k)
+        Zr = imp[port - 1]
+        T = self.S(port, port)
         if self.smatrix_type == 1:
             Z = (Zr.conj() + Zr * T) / (1 - T)
         else:
             Z = Zr * (1 + T) / (1 - T)
         data_format = data_format.lower()
-        if data_format == "complex":
-            return Z
-        elif data_format == "real":
-            return np.real(Z)
-        elif data_format == "imag":
-            return np.imag(Z)
-        elif data_format == "mag":
-            return np.abs(Z)
-        elif data_format == "phase":
-            return np.angle(Z, deg=True)
-        elif data_format == "uphase":
-            return np.unwrap(np.angle(Z)) * 180.0 / np.pi
+        return change_format(Z, data_format)
 
-    def y_in(self, k, data_format="complex"):
+    def y_in(self, port: int=1, data_format: str="complex") -> NDArray:
         """Input admittance at port k. All ports are terminated with reference impedances.
 
         Args:
@@ -1908,48 +1934,73 @@ class spfile:
         Returns:
             numpy.ndarray: Array of impedance values for all frequencies
         """
-        Y = 1.0 / self.z_in(k)
-        if data_format == "complex":
-            return Y
-        elif data_format == "real":
-            return np.real(Y)
-        elif data_format == "imag":
-            return np.imag(Y)
-        elif data_format == "mag":
-            return np.abs(Y)
-        elif data_format == "phase":
-            return np.angle(Y, deg=True)
-        elif data_format == "uphase":
-            return np.unwrap(np.angle(Y)) * 180.0 / np.pi
+        return change_format(1.0 / self.z_in(port), data_format)
 
-    def z_load(self, Gamma_in, port1=1, port2=2, freqs_in=None):
-        """Calculates termination impedance at port2 that gives Gamma_in reflection coefficient at port1.
+    def z_ref(self, port: int=1, data_format: str="complex") -> NDArray:
+        """Reference impedance at port k.
 
         Args:
-            Gamma_in (float,ndarray): Required reflection coefficient.
-            port1 (int): Source port.
-            port2 (int): Load port.
-            freqs_in(np.ndarray, optional): If Gamma_in values correspond to frequency points different than the frequencies of this network, these frequencypoints are given by this variable.
+            port (int, optional): Port number for input impedance. Default is 1.
+            data_format (str, optional): Data format of output. Alternatives are "complex", "real", "imag", "mag", "phase", "uphase". Default is "complex".
 
         Returns:
-            numpy.ndarray: Array of reflection coeeficient of termination at port2
+            numpy.ndarray: Array of values for all frequencies
+        """
+        imp = self.prepare_ref_impedance_array(self.refimpedance)
+        return change_format(imp[port - 1], data_format)
+
+    def gamma(self, port: int=1, data_format: str="complex") -> NDArray:
+        """Propagation constant at port k. It uses the data written into the S-parameter files by HFSS.
+
+        Args:
+            port (int, optional): Port number for input impedance. Default is 1.
+            data_format (str, optional): Data format of output. Alternatives are "complex", "real", "imag", "mag", "phase", "uphase". Default is "complex".
+
+        Returns:
+            numpy.ndarray: Array of values for all frequencies
+        """
+        return change_format(self.gammas[port-1], data_format)
+
+    def lambdag(self, port: int=1, data_format: str="complex") -> NDArray:
+        """Guided wavelength at port k. It uses the data written into the S-parameter files by HFSS.
+
+        Args:
+            port (int, optional): Port number for input impedance. Default is 1.
+            data_format (str, optional): Data format of output. Alternatives are "complex", "real", "imag", "mag", "phase", "uphase". Default is "complex".
+
+        Returns:
+            numpy.ndarray: Array of values for all frequencies
+        """
+        return change_format( 2 * np.pi / np.imag(self.gammas[port-1]), data_format)
+
+    def z_load(self, gamma_in: float|NDArray, port1: int=1, port2: int=2, freqs_in: Optional[NDArray]=None) -> NDArray:
+        """Calculates termination impedance at port2 that gives gamma_in reflection coefficient at port1.
+
+        Args:
+            gamma_in (float,ndarray): Required reflection coefficient.
+            port1 (int): Source port.
+            port2 (int): Load port.
+            freqs_in(np.ndarray, optional): If gamma_in values correspond to frequency points different than the frequencies of this network, these frequencypoints are given by this variable.
+
+        Returns:
+            numpy.ndarray: Array of reflection coefficient of termination at port2
         """
         if freqs_in is not None:
-            Gamma_in = self.interpolate_data(Gamma_in, self.freqs, freqsin=freqs_in)
+            gamma_in = self.interpolate_data(gamma_in, self.freqs, freqsin=freqs_in)
         s11 = self.S(port1, port1)
         s22 = self.S(port2, port2)
         s12 = self.S(port1, port2)
         s21 = self.S(port2, port1)
-        Gamma_Load = (Gamma_in - s11) / (s12 * s21 + s22 * (Gamma_in - s11))
+        gamma_load = (gamma_in - s11) / (s12 * s21 + s22 * (gamma_in - s11))
         imp = self.prepare_ref_impedance_array(self.refimpedance)
         Zr = imp[port2 - 1]
         if self.smatrix_type == 1:
-            Z = (Zr.conj() + Zr * Gamma_Load) / (1 - Gamma_Load)
+            Z = (Zr.conj() + Zr * gamma_load) / (1 - gamma_load)
         else:
-            Z = Zr * (1 + Gamma_Load) / (1 - Gamma_Load)
+            Z = Zr * (1 + gamma_load) / (1 - gamma_load)
         return Z
 
-    def gmax(self, port1=1, port2=2, dB=True):
+    def gmax(self, port1: int=1, port2: int=2, dB: bool=True) -> NDArray:
         """Calculates Gmax from port1 to port2. Other ports are terminated with current reference impedances. If dB=True, output is in dB, otherwise it is a power ratio.
 
         Args:
@@ -1960,12 +2011,13 @@ class spfile:
         Returns:
             numpy.ndarray: Array of Gmax values for all frequencies
         """
-        self.s2abcd(port1, port2)
+        obj = deepcopy(self)
+        obj.s2abcd(port1, port2)
         ns = len(self.freqs)
 
         gain = []
         for i in range(ns):
-            ABCD = self.abcddata[i, :].reshape(2, 2)
+            ABCD = obj.abcddata[i, :].reshape(2, 2)
             St = network.abcd2s(ABCD, 50.0).reshape(4)
             s11, s12, s21, s22 = tuple(flatten(St.tolist()))
             D = s11 * s22 - s12 * s21
@@ -1980,7 +2032,7 @@ class spfile:
         else:
             return gain
 
-    def gav(self, port1=1, port2=2, ZS=None, dB=True):
+    def gav(self, port1: int=1, port2: int=2, ZS: Optional[float|list|NDArray]=None, dB: bool=True) -> NDArray:
         """Available gain from port1 to port2. If dB=True, output is in dB, otherwise it is a power ratio.
 
             .. math:: G_{av}=\\frac{P_{av,toLoad}}{P_{av,fromSource}}
@@ -2016,7 +2068,7 @@ class spfile:
         else:
             return gain
 
-    def gop(self, port1=1, port2=2, ZL=None, dB=True):
+    def gop(self, port1: int=1, port2: int=2, ZL: Optional[float|list|NDArray]=None, dB: bool=True) -> NDArray:
         """Operating power gain from port1 to port2 with load impedance of ZL. If dB=True, output is in dB, otherwise it is a power ratio.
 
             .. math:: G_{op}=\\frac{P_{toLoad}}{P_{toNetwork}}
@@ -2054,7 +2106,7 @@ class spfile:
         else:
             return gain
 
-    def gop2(self, port1=1, port2=2, ZL=50.0, dB=True):
+    def gop2(self, port1: int=1, port2: int=2, ZL: Optional[float|list|NDArray]=None, dB: bool=True) -> NDArray:
         """Operating power gain from port1 to port2 with load impedance of ZL. If dB=True, output is in dB, otherwise it is a power ratio.
 
             .. math:: G_{op}=\\frac{P_{toLoad}}{P_{toNetwork}}
@@ -2088,13 +2140,13 @@ class spfile:
         else:
             return gain
 
-    def conj_match_uncoupled(self, ports=None, inplace=-1, noofiters=50):
+    def conj_match_uncoupled(self, ports:Optional[list]=None, inplace:int=-1, noofiters: int=50) -> "spfile":
         """Sets the reference impedance for given ports as the complex conjugate of output impedance at each port.
         The ports are assumed to be uncoupled. Coupling is taken care of by doing the same operation multiple times.
 
         Args:
             ports (list,optional): [description]. Defaults to all ports.
-            inplace (int, optional): Object editing mode. Defaults to -1.
+            inplace (int, optional): Object editing mode. 0 to return a new object, 1 to modify the current object. 0 to return a new object, 1 to modify the current object. Defaults to -1.
             noofiters (int, optional): Numberof iterations. Defaults to 50.
 
         Returns:
@@ -2116,7 +2168,7 @@ class spfile:
             obj.change_ref_impedance(imp)
         return obj
 
-    def Z_conjmatch(self, port1=1, port2=2):
+    def Z_conjmatch(self, port1: int=1, port2: int=2) -> tuple[complex, complex]:
         """Calculates source and load impedances for simultaneous conjugate match.
 
         Args:
@@ -2145,7 +2197,7 @@ class spfile:
         ZL = 50.0 * (1 + GL) / (1 - GL)
         return (ZS, ZL)
 
-    def gt(self, port1=1, port2=2, ZS=None, ZL=None, dB=True):
+    def gt(self, port1:int=1, port2:int=2, ZS:  Optional[float|list|NDArray]=None, ZL:  Optional[float|list|NDArray]=None, dB: bool=True) -> NDArray:
         """This method calculates transducer gain (GT) from port1 to port2. Source and load impedances can be specified independently. If any one of them is not specified, current reference impedance is used for that port. Other ports are terminated by reference impedances. This calculation can also be done using impedance renormalization.
 
             .. math:: G_{av}=\\frac{P_{load}}{P_{av,fromSource}}
@@ -2185,22 +2237,29 @@ class spfile:
         else:
             return gain
 
-    def interpolate_data(self, datain, freqs, freqsin=None):
-        """Calculate new data corresponding to new frequency points *freqs* by interpolation from original data corresponding to current frequency points of the network.
+    def interpolate_data(self, datain: list|NDArray, freqs: list|NDArray, freqsin: Optional[list|NDArray]=None, interptype: str="spline") -> NDArray:
+        """Calculate new data corresponding to new frequency points
+        *freqs* by interpolation from original data corresponding to
+        current frequency points of the network.
 
-        Args:
-            data (numpy.ndarray or list): Original data specified at current frequency points of the network.
+        Args: data (numpy.ndarray or list): Original data specified at
+            current frequency points of the network. 
             freqs (numpy.ndarray or list): New frequency list.
+            freqsin (numpy.ndarray or list): Input frequency list which datain
+            corresponds to. If None, own freqs attribute of spfile
+            object is used.
+            interptype(str, optional): Type of interpolation, linear or spline. Default is spline.
 
         Returns:
             numpy.ndarray: New data corresponding to *freqs*
+
         """
         data = np.asarray(datain)
 
         if freqsin is None:
             freqsin = self.freqs
 
-        if "scipy.interpolate" in sys.modules:
+        if "scipy.interpolate" in sys.modules and not interptype.lower().startswith("lin"):
             if np.iscomplexobj(data):
                 fnewdatar = scipy.interpolate.CubicSpline(
                     freqsin, np.real(data), extrapolate=True
@@ -2221,7 +2280,7 @@ class spfile:
             else:
                 return np.interp(freqs, freqsin, data)
 
-    def return_s2p(self, port1=1, port2=2, **kwargs):
+    def return_s2p(self, port1: int=1, port2: int=2, **kwargs) -> tuple:
         """Return 2-port S-parameters tuple between port1- and port-2."""
 
         s11 = self.S(port1, port1, "COMPLEX", **kwargs)
@@ -2230,7 +2289,7 @@ class spfile:
         s22 = self.S(port2, port2, "COMPLEX", **kwargs)
         return s11, s12, s21, s22
 
-    def stability_factor_mu1(self, port1=1, port2=2, **kwargs):
+    def stability_factor_mu1(self, port1: int=1, port2: int=2, **kwargs):
         """Calculates :math:`\mu_1` stability factor, from port1 to port2. Other ports are terminated with reference impedances.
 
         Args:
@@ -2246,7 +2305,7 @@ class spfile:
         mu1 = (1.0 - abs(s11) ** 2) / (abs(s22 - d * s11.conjugate()) + abs(s21 * s12))
         return mu1
 
-    def stability_factor_mu2(self, port1=1, port2=2, **kwargs):
+    def stability_factor_mu2(self, port1: int=1, port2: int=2, **kwargs):
         """Calculates :math:`\mu_2` stability factor, from port1 to port2. Other ports are terminated with reference impedances.
 
         Args:
@@ -2262,7 +2321,7 @@ class spfile:
         mu2 = (1.0 - abs(s22) ** 2) / (abs(s11 - d * s22.conj()) + abs(s21 * s12))
         return mu2
 
-    def stability_factor_k(self, port1=1, port2=2, **kwargs):
+    def stability_factor_k(self, port1: int=1, port2: int=2, **kwargs):
         """Calculates *k* stability factor, from port1 to port2. Other ports are terminated with reference impedances.
 
         Args:
@@ -2280,7 +2339,7 @@ class spfile:
         K = (1 - abs(s11) ** 2 - abs(s22) ** 2 + abs(d) ** 2) / (2 * abs(s21 * s12))
         return K
 
-    def change_ref_impedance(self, Znewinput, port_numbers=None, inplace=-1):
+    def change_ref_impedance(self, Znewinput: float|list, port_numbers: Optional[list[int]]=None, inplace: int=-1) -> "spfile":
         """Changes reference impedance and re-calculates S-parameters.
 
         Args:
@@ -2350,7 +2409,10 @@ class spfile:
                 Snew = A.I * C1 * C2 * A.conj()
             else:  # TODO: Should be derived, tried and tested
                 G = np.matrix(
-                    np.diag((impnewT[:][i] - impT[:][i]) / (impnewT[:][i] + impT[:][i]) + smallest_number)
+                    np.diag(
+                        (impnewT[:][i] - impT[:][i]) / (impnewT[:][i] + impT[:][i])
+                        + smallest_number
+                    )
                 )
                 F = obj.Ffunc(impT[:][i])
                 Fnew = obj.Ffunc(impnewT[:][i])
@@ -2369,7 +2431,7 @@ class spfile:
 
         return obj
 
-    def prepare_ref_impedance_array(self, imparray=None):
+    def prepare_ref_impedance_array(self, imparray: Optional[list]=None) -> NDArray:
         """Turns reference impedance array which is composed of numbers,arrays, functions or 1-ports to numerical array which is composed of numbers and arrays. It is made sure that :math:`Re(Z)\neq 0`. Mainly for internal use.
 
         Args:
@@ -2410,14 +2472,14 @@ class spfile:
 
     def impulse_response(
         self,
-        i=2,
-        j=1,
-        dc_interp=1,
-        dc_value=0.0,
-        max_time_step=1.0,
-        freq_res_coef=1.0,
-        window_name="blackman",
-    ):
+        i: int=2,
+        j: int=1,
+        dc_interp: int=1,
+        dc_value: float=0.0,
+        max_time_step: float=1.0,
+        freq_res_coef: float=1.0,
+        window_name: str="blackman",
+    ) -> tuple:
         """Calculates impulse response of :math:`S_{i j}`
 
         Args:
@@ -2503,13 +2565,13 @@ class spfile:
 
     def impulse_response_banded(
         self,
-        i=2,
-        j=1,
-        dc_interp=1,
-        dc_value=0.0,
-        max_time_step=1.0,
-        freq_res_coef=1.0,
-        Window="blackman",
+        i: int=2,
+        j: int=1,
+        dc_interp: int=1,
+        dc_value: float=0.0,
+        max_time_step: float=1.0,
+        freq_res_coef: float=1.0,
+        window_name: str="blackman",
     ):
         """Calculates impulse response of :math:`S_{i j}`
 
@@ -2520,7 +2582,7 @@ class spfile:
             dc_value (float, optional): dc_value to be used at interpolation if *dc_interp=0*. Defaults to 0.0. This value is appended to :math:`S_{i j}` and the rest is left to interpolation in *data_array* function.
             max_time_step (float, optional): Not used for now. Defaults to 1.0.
             freq_res_coef (float, optional): Coeeficient to increase the frequency resolution by interpolation. Defaults to 1.0 (no interpolation).
-            Window (str, optional): Windows function to prevent ringing. Defaults to "blackman". Other windows will be added later.
+            window_name (str, optional): Windows function to prevent ringing. Defaults to "blackman". Other windows will be added later.
 
         Returns:
             9-tuple: The elements of the tuple are the following in order:
@@ -2621,7 +2683,7 @@ class spfile:
             norm,
         )
 
-    def __sub__(self, SP2):
+    def __sub__(self, SP2: "spfile") -> "spfile":
         """Implements SP1-SP2.
         Deembeds SP2 from port-2 of SP1.
         Port ordering is as follows:
@@ -2653,10 +2715,12 @@ class spfile:
             sonuc.abcddata[i] = abcd.reshape(4)
             sonuc.sdata[i] = s.reshape(4)
         sonuc.change_ref_impedance([refimp_port1, refimp_port2])
-        sonuc.z_ok, sonuc.y_ok, sonuc.t_ok = False, False, False
+        sonuc.tdata = None
+        sonuc.ydata = None
+        sonuc.zdata = None
         return sonuc
 
-    def __neg__(self):
+    def __neg__(self) -> "spfile":
         """Calculates an spfile object for two-port networks which is the inverse of this network. This is used to use + and - signs to cascade or deembed 2-port blocks.
 
         Returns:
@@ -2672,7 +2736,7 @@ class spfile:
         output.inverse_2port()
         return output
 
-    def __add__(self, SP2):
+    def __add__(self, SP2: "spfile") -> "spfile":
         """Implements SP1+SP2. Cascades port-1 of SP2 to port-2 of SP1. Port ordering is shown in the following diagram. Reference impedances of original ports (port-1 of SP1 and port-2 of SP2) are preserved.
 
             .. ditaa::
@@ -2692,7 +2756,9 @@ class spfile:
             spfile: The result of cascade of 2 networks
         """
         if self.n_ports != 2 or SP2.n_ports > 2:
-            print("Left network should have two ports and the right network should have maximum two ports!")
+            print(
+                "Left network should have two ports and the right network should have maximum two ports!"
+            )
             return 0
         sonuc = deepcopy(self)
         sonuc.inplace = 1
@@ -2703,7 +2769,9 @@ class spfile:
             )
         SP2_local = SP2.set_frequency_points(sonuc.freqs, inplace=0)
         if SP2.n_ports == 1:
-            SP2_local.sdata = np.concatenate([SP2_local.sdata, np.ones((len(SP2_local.freqs), 3)) * 0.00001], axis=1)
+            SP2_local.sdata = np.concatenate(
+                [SP2_local.sdata, np.ones((len(SP2_local.freqs), 3)) * 0.00001], axis=1
+            )
             SP2_local.n_ports = 2
             SP2_local.port_names.append("port-2")
             if not hasattr(SP2_local.refimpedance, "__iter__"):
@@ -2724,12 +2792,14 @@ class spfile:
             sonuc.abcddata[i] = abcd.reshape(4)
             sonuc.sdata[i] = s.reshape(4)
         sonuc.change_ref_impedance([refimp_port1, refimp_port2])
-        sonuc.z_ok, sonuc.y_ok, sonuc.t_ok = False, False, False
+        sonuc.zdata = None
+        sonuc.ydata = None
+        sonuc.tdata = None
         if SP2.n_ports == 1:
             sonuc.snp2smp([1])
         return sonuc
 
-    def check_passivity(self):
+    def check_passivity(self) -> tuple[list[int], NDArray, list]:
         """This method determines the frequencies and frequency indices at which the network is not passive.
         Reference: Fast Passivity Enforcement of S-parameter Macromodels by Pole Perturbation.pdf
         For a better discussion: "S-parameter Quality Metrics (Yuriy Shlepnev)"
@@ -2749,12 +2819,12 @@ class spfile:
                 eigenvalues.append(sorted(eigs))
         return indices, self.freqs[indices], eigenvalues
 
-    def restore_passivity(self, inplace=-1):
+    def restore_passivity(self, inplace:int=-1) -> "spfile":
         """Make the network passive by minimum modification.
         Reference: Fast and Optimal Algorithms for Enforcing Reciprocity, Passivity and Causality in S-parameters.pdf
 
         Args:
-            inplace (int, optional): Object editing mode. Defaults to -1.
+            inplace (int, optional): Object editing mode. 0 to return a new object, 1 to modify the current object. Defaults to -1.
 
         Returns:
             spfile: Passive network object
@@ -2780,10 +2850,13 @@ class spfile:
             )
             smatrix = smatrix - dS
             obj.sdata[i, :] = smatrix.reshape(ps**2)
-        obj.z_ok, obj.y_ok, obj.t_ok, obj.abcd_ok = False, False, False, False
+        obj.zdata = None
+        obj.ydata = None
+        obj.tdata = None
+        obj.abcddata = None
         return obj
 
-    def restore_passivity2(self):
+    def restore_passivity2(self) -> None:
         """**Obsolete**
         This method is used to make the minimum possible modification to the S-parameters to make them passive.
         Reference:
@@ -2836,7 +2909,7 @@ class spfile:
                 def constraint1(x, grad=0, coef=coef):
                     """This value should be positive for new value of
                     eigenvalue to be positive"""
-                    return -coef + sum([x[i] * c[i] for i in range(2 * t)])
+                    return -coef + np.sum([x[i] * c[i] for i in range(2 * t)])
 
                 def constraint1_der(x):
                     """constraint1 fonksiyonunun turevi"""
@@ -2846,7 +2919,7 @@ class spfile:
                     """bu deger minimize edilmeli
                     yani S-matrixteki degisim gerekli minimum duzeyde olmali
                     """
-                    return sum([y**2 for y in x])
+                    return np.sum([y**2 for y in x])
 
                 def func_for_minimize_der(x):
                     """func_for_minimize fonksiyonunun turevi"""
@@ -2888,7 +2961,7 @@ class spfile:
                 sdata[index, y] = smatrix[(y / ps), y % ps]
 
     def write2file(
-        self, filename="", parameter="S", freq_unit="", data_format="", normalized=50.0
+        self, filename: str="", parameter: str="S", freq_unit: str="", data_format: str="", normalized: Optional[float]=50.0, write_imps: bool=True
     ):
         """This function writes a parameter (S, Y or Z) file. If the filename given does not have the proper filename extension, it is corrected.
 
@@ -2898,6 +2971,7 @@ class spfile:
             freq_unit (str, optional): Frequency unit (GHz, MHz, kHz or Hz). Defaults to "Hz".
             data_format (str, optional): Format of file DB, RI or MA. Defaults to "".
             normalized ((float, None), optional): Normalization of output file. For S-parameters, this is the reference impedance. If None is given, unnormalized S-parameters are written. For other parameters, this is used as normalization constant. If None is given, 1 is used. Defaults to "50.0".
+            write_imps(bool): For unnormalized S-parameters, write impedance data to file.
         """
         if filename == "":
             filename = self.file_name
@@ -2974,7 +3048,7 @@ class spfile:
                         file=f,
                     )
 
-                if not normalized:
+                if not normalized and write_imps:
                     print(
                         "! Port  "
                         + " ".join(
@@ -2999,7 +3073,7 @@ class spfile:
                         print("\n", end="", file=f)
                     elif j != ps**2 - 1:
                         print("  ", end="", file=f)
-                if not normalized:
+                if not normalized and write_imps:
                     print(
                         "! Port  "
                         + " ".join(
@@ -3027,7 +3101,7 @@ class spfile:
                         print("\n     ", end="", file=f)
                     elif j < (ps**2 - 1):
                         print("  ", end="", file=f)
-                if not normalized:
+                if not normalized and write_imps:
                     print(
                         "! Port  "
                         + " ".join(
@@ -3041,7 +3115,7 @@ class spfile:
         print("", file=f)
         f.close()
 
-    def connect_2_ports_list(self, conns, inplace=-1):
+    def connect_2_ports_list(self, conns: list[tuple[int,int]], inplace:int=-1) -> "spfile":
         """Short circuit ports together one-to-one. Short circuited ports are removed.
         Ports that will be connected are given as tuples in list *conns*
         i.e. conns=[(p1,p2),(p3,p4),..]
@@ -3050,7 +3124,7 @@ class spfile:
 
         Args:
             conns (list of tuples): A list of 2-tuples of integers showing the ports connected
-            inplace (int, optional): Object editing mode. Defaults to -1.
+            inplace (int, optional): Object editing mode. 0 to return a new object, 1 to modify the current object. Defaults to -1.
 
         Returns:
             spfile: New spfile object
@@ -3062,6 +3136,7 @@ class spfile:
             obj.inplace = 1
         else:
             obj = self
+        conns = [[i,j] for i,j in conns]
         for i in range(len(conns)):
             k, m = conns[i]
             obj.connect_2_ports(k, m)
@@ -3070,14 +3145,14 @@ class spfile:
                 conns[j][1] = conns[j][1] - (conns[j][1] > k) - (conns[j][1] > m)
         return obj
 
-    def connect_2_ports(self, k, m, inplace=-1):
+    def connect_2_ports(self, k: int, m: int, inplace: int=-1) -> "spfile":
         """Port-m is connected to port-k and both ports are removed.
         Reference: QUCS technical.pdf, S-parameters in CAE programs, p.29
 
         Args:
             k (int): First port index to be connected.
             m (int): Second port index to be connected.
-            inplace (int, optional): Object editing mode. Defaults to -1.
+            inplace (int, optional): Object editing mode. 0 to return a new object, 1 to modify the current object. Defaults to -1.
 
         Returns:
             spfile: New spfile object
@@ -3090,10 +3165,16 @@ class spfile:
         else:
             obj = self
         k, m = min(k, m), max(k, m)
+        
+        if not hasattr(obj.refimpedance, "__iter__"):
+            objrefimp = [obj.refimpedance] * obj.n_ports
+        else:
+            objrefimp = obj.refimpedance
+
         newrefimpedance = (
-            list(obj.refimpedance[: k - 1])
-            + list(obj.refimpedance[k : m - 1])
-            + list(obj.refimpedance[m:])
+            list(objrefimp[: k - 1])
+            + list(objrefimp[k : m - 1])
+            + list(objrefimp[m:])
         )
         port_names = (
             obj.port_names[: k - 1] + obj.port_names[k : m - 1] + obj.port_names[m:]
@@ -3123,17 +3204,20 @@ class spfile:
         obj.refimpedance = [50.0] * obj.n_ports
         obj.change_ref_impedance(newrefimpedance)
         obj.port_names = port_names
-        obj.z_ok, obj.y_ok, obj.t_ok, obj.abcd_ok = False, False, False, False
+        obj.zdata = None
+        obj.ydata = None
+        obj.tdata = None
+        obj.abcddata = None
         return obj
 
-    def connect_2_ports_retain(self, k, m, inplace=-1):
+    def connect_2_ports_retain(self, k: int, m: int, inplace: int=-1) -> "spfile":
         """Port-m is connected to port-k and both ports are removed. New port becomes the last port of the circuit.
         Reference: QUCS technical.pdf, S-parameters in CAE programs, p.29
 
         Args:
             k (int): First port index to be connected.
             m (int): Second port index to be connected.
-            inplace (int, optional): Object editing mode. Defaults to -1.
+            inplace (int, optional): Object editing mode. 0 to return a new object, 1 to modify the current object. Defaults to -1.
 
         Returns:
             spfile: New *spfile* object
@@ -3155,7 +3239,7 @@ class spfile:
         obj.connect_2_ports(k, ps)
         return obj
 
-    def connect_network_1_conn_retain(self, EX, k, m, inplace=-1):
+    def connect_network_1_conn_retain(self, EX: "spfile", k: int, m: int, inplace: int=-1) -> "spfile":
         """Port-m of EX circuit is connected to port-k of this circuit. This connection point will also be a port. Remaining ports of EX are added to the port list of this circuit in order. The port of connection point will be the last port of the final network.
         Reference: QUCS technical.pdf, S-parameters in CAE programs, p.29
 
@@ -3163,7 +3247,7 @@ class spfile:
             EX (spfile): External network to be connected to this.
             k (int): Port number of self to be connected.
             m (int): Port number of EX to be connected.
-            inplace (int, optional): Object editing mode. Defaults to -1.
+            inplace (int, optional): Object editing mode. 0 to return a new object, 1 to modify the current object. Defaults to -1.
             preserveportnumbers1 (bool, optional): if True, the number of the first added port will be k. Defaults to False.
 
         Returns:
@@ -3180,7 +3264,9 @@ class spfile:
         ideal3port.set_smatrix_at_frequency_point(
             list(range(len(ideal3port.freqs))), network.idealNport(3)
         )
-        ideal3port.gammas = np.array([EX.gammas[m - 1], EX.gammas[m - 1], EX.gammas[m - 1]])
+        ideal3port.gammas = np.array(
+            [EX.gammas[m - 1], EX.gammas[m - 1], EX.gammas[m - 1]]
+        )
         ideal3port.refimpedance = [
             EX.refimpedance[m - 1],
             EX.refimpedance[m - 1],
@@ -3191,7 +3277,7 @@ class spfile:
         obj.connect_network_1_conn(ex, k, psex, False, inplace=1)
         return obj
 
-    def connect_network_multi_conn(self, EX, port_pairs, inplace=-1):
+    def connect_network_multi_conn(self, EX: "spfile", port_pairs: list[tuple[int,int]], inplace: int=-1) -> "spfile":
         """Make multiple connections between this *spfile* object and *EX*. Connected ports are removed.
         Ports that will be connected are given as tuples in *port_pairs* list
         i.e. port_pairs=[(p1,p2),(p3,p4),..].
@@ -3203,7 +3289,7 @@ class spfile:
             port_pairs (list of tuples): A list of 2-tuples of integers showing the ports connected.
                                          First element of each item is the port numebr of this
                                          network and the second element is of EX.
-            inplace (int, optional): Object editing mode. Defaults to -1.
+            inplace (int, optional): Object editing mode. 0 to return a new object, 1 to modify the current object. Defaults to -1.
 
         Returns:
             spfile: New spfile object
@@ -3221,13 +3307,13 @@ class spfile:
             EX, port_pairs[0][0], port_pairs[0][1], preserveportnumbers=True, inplace=1
         )
         newportlist = [
-            (i, j + pn1 - 2) if j > 2 else (i, port_pairs[0][0])
+            [i, j + pn1 - 2] if j > 2 else (i, port_pairs[0][0])
             for i, j in port_pairs[1:]
         ]
         obj.connect_2_ports_list(newportlist)
         return obj
 
-    def connect_network_1_conn(self, EX, k, m, preserveportnumbers=False, inplace=-1):
+    def connect_network_1_conn(self, EX: "spfile", k: int, m: int, preserveportnumbers: bool=False, inplace: int=-1) -> "spfile":
         """Port-m of EX circuit is connected to port-k of this circuit. Both of these ports will be removed.
         Remaining ports of EX are added to the port list of this circuit in order.
         Reference: QUCS technical.pdf, S-parameters in CAE programs, p.29
@@ -3236,7 +3322,7 @@ class spfile:
             EX (spfile): External network to be connected to this.
             k (int): Port number of self to be connected.
             m (int): Port number of EX to be connected.
-            inplace (int, optional): Object editing mode. Defaults to -1.
+            inplace (int, optional): Object editing mode. 0 to return a new object, 1 to modify the current object. Defaults to -1.
             preserveportnumbers (bool, optional): if True, the number of the first added port will be k. Defaults to False.
 
         Returns:
@@ -3249,11 +3335,22 @@ class spfile:
             obj.inplace = 1
         else:
             obj = self
+
+        if not hasattr(obj.refimpedance, "__iter__"):
+            objrefimp = [obj.refimpedance] * obj.n_ports
+        else:
+            objrefimp = obj.refimpedance
+
+        if not hasattr(EX.refimpedance, "__iter__"):
+            exrefimp = [EX.refimpedance] * EX.n_ports
+        else:
+            exrefimp = EX.refimpedance
+            
         newrefimpedance = (
-            list(obj.refimpedance[: k - 1])
-            + list(obj.refimpedance[k:])
-            + list(EX.refimpedance[: m - 1])
-            + list(EX.refimpedance[m:])
+            list(objrefimp[: k - 1])
+            + list(objrefimp[k:])
+            + list(exrefimp[: m - 1])
+            + list(exrefimp[m:])
         )
         newgammas = (
             list(obj.gammas[: k - 1])
@@ -3313,10 +3410,13 @@ class spfile:
             portorder = list(range(1, ps + 1))
             portorder.insert(k - 1, portorder.pop(ps1 - 1))
             obj.snp2smp(portorder)
-        obj.z_ok, obj.y_ok, obj.t_ok, obj.abcd_ok = False, False, False, False
+        obj.zdata = None
+        obj.ydata = None
+        obj.tdata = None
+        obj.abcddata = None
         return obj
 
-    def add_abs_noise(self, dbnoise=0.1, phasenoise=0.1, inplace=-1):
+    def add_abs_noise(self, dbnoise: float=0.1, phasenoise: float=0.1, inplace: int=-1) -> "spfile":
         """This method adds random amplitude and phase noise to the S-parameter data.
         Mean value for both noises are 0.
 
@@ -3353,10 +3453,13 @@ class spfile:
             )
             sdata[:, j] = ynew
         obj.sdata = sdata
-        obj.z_ok, obj.y_ok, obj.t_ok, obj.abcd_ok = False, False, False, False
+        obj.zdata = None
+        obj.ydata = None
+        obj.tdata = None
+        obj.abcddata = None
         return obj
 
-    def smoothing(self, smoothing_length=5, inplace=-1):
+    def smoothing(self, smoothing_length: int=5, inplace: int=-1) -> "spfile":
         """This method applies moving average smoothing to the S-parameter data
 
         Args:
@@ -3395,14 +3498,18 @@ class spfile:
             )
             sdata[:, j] = ynew
         obj.sdata = sdata
-        obj.z_ok, obj.y_ok, obj.t_ok, obj.abcd_ok = False, False, False, False
+        obj.zdata = None
+        obj.ydata = None
+        obj.tdata = None
+        obj.abcddata = None
         return obj
 
-    def interpolate(self, number_of_points=5, inplace=-1):
+    def interpolate(self, number_of_points: int=5, interptype: str="spline", inplace: int=-1) -> "spfile":
         """This method increases the number of frequencies through interpolation.
 
         Args:
             number_of_points (int, optional): Number of points used for interpolation. Defaults to 5.
+            interptype(str, optional): Type of interpolation, linear or spline. Default is spline.
             inplace (int, optional): object editing mode. Defaults to -1.
 
         Returns:
@@ -3429,26 +3536,30 @@ class spfile:
         sdata = np.zeros((len(frequencies), n), dtype=complex)
         for j in range(n):
             data_orig = obj.sdata[:, j]
-            data_new = obj.interpolate_data(data_orig, frequencies)
+            data_new = obj.interpolate_data(data_orig, frequencies, interptype=interptype)
             sdata[:, j] = data_new
         obj.sdata = sdata
         obj.freqs = frequencies
-        obj.z_ok, obj.y_ok, obj.t_ok, obj.abcd_ok = False, False, False, False
+        obj.zdata = None
+        obj.ydata = None
+        obj.tdata = None
+        obj.abcddata = None
         return obj
 
     def data_array(
         self,
-        data_format="DB",
-        M="S",
-        i=1,
-        j=1,
-        freqs=None,
-        ref=None,
-        DCInt=0,
-        DCValue=0.0,
-        smoothing=0,
-        interp_coeff=0,
-    ):
+        data_format: str="DB",
+        M: str="S",
+        i: int=1,
+        j: int=1,
+        freqs: Optional[list|NDArray]=None,
+        ref: "Optional[spfile]"=None,
+        DCInt: float=0,
+        DCValue: float=0.0,
+        smoothing: int=0,
+        interp_coeff: int=0,
+        interptype: str="spline"
+    ) -> NDArray:
         """Return a network parameter between ports *i* and *j* (:math:`M_{i j}`) at specified frequencies in specified format.
 
         Args:
@@ -3471,12 +3582,13 @@ class spfile:
                 -   "ABCD": Return ABCD-parameter data
             i (int, optional): First port number. Defaults to 1.
             j (int, optional): Second port number. Defaults to 1. Ignored for *data_format* ="VSWR"
-            freqs (list, optional): Defaults to []. List of frequencies in Hz. If an empty list is given, networks whole frequency range is used.
+            freqs ((float, list, numpy.ndarray), optional): Defaults to []. List of frequencies in Hz. If an empty list is given, networks whole frequency range is used.
             ref (spfile, optional): Defaults to None. If given the data of this network is subtracted from the same data of *ref* object.
             DCInt (int, optional): Defaults to 0. If 1, DC point given by *DCValue* is used at frequency interpolation if *frequencies* is not [].
             DCValue (complex, optional): Defaults to 0.0. DCValue that can be used for interpolation over frequency.
             smoothing (int, optional): Defaults to 0. if this is higher than 0, it is used as the number of points for smoothing.
             interp_coeff (int, optional): Defaults to 0. If this is higher than 0, it is taken as the number of frequencies that will be added between 2 consecutive frequency points. By this way, number of frequencies is increased by interpolation.
+            interptype(str, optional): Type of interpolation, linear or spline. Default is spline.
 
         Returns:
             numpy.array: Network data array
@@ -3492,12 +3604,20 @@ class spfile:
             return []
         data_format = data_format.upper()
         M = M.upper()
+
+        freq_input_float = False
+
         if freqs is None:
             frequencies = self.freqs
             nointerp = True
         else:
-            frequencies = freqs
-            nointerp = False
+            try:
+                frequencies = freqs[:]
+                nointerp = False
+            except (IndexError, TypeError):
+                frequencies = np.array([freqs])
+                freq_input_float = True
+                nointerp = False
 
         if data_format == "K":
             return self.stability_factor_k(i, j, freqs=frequencies, smoothing=smoothing)
@@ -3512,7 +3632,7 @@ class spfile:
         if data_format == "VSWR" and i != j:
             j = i
 
-        if interp_coeff > 0:
+        if interp_coeff > 0 and not nointerp:
             frekstep = frequencies[1] - frequencies[0]
             frequencies = (
                 np.array(list(range((len(frequencies) - 1) * interp_coeff + 1)))
@@ -3560,7 +3680,7 @@ class spfile:
             yph = np.unwrap(np.concatenate([dcph, np.angle(self.ydata[:, n], deg=0)]))
 
         elif M == "T":
-            if not self.t_ok:
+            if self.tdata is None:
                 self.s2t()
             ydb = np.concatenate(
                 [dcdb, 20 * np.log10(abs(self.tdata[:, n]) + mag_threshold)]
@@ -3581,7 +3701,7 @@ class spfile:
             yph = np.unwrap(np.concatenate([dcph, np.angle(self.zdata[:, n], deg=0)]))
 
         elif M == "ABCD":
-            if not self.abcd_ok:
+            if self.abcddata is None:
                 self.s2abcd()
             ydb = np.concatenate(
                 [dcdb, 20 * np.log10(abs(self.abcddata[:, n]) + mag_threshold)]
@@ -3597,15 +3717,15 @@ class spfile:
             ynew_ph = yph
 
         elif len(self.freqs) > 1:
-            ynew_db = self.interpolate_data(ydb, frequencies, freqsin=freqsin)
-            ynew_ph = self.interpolate_data(yph, frequencies, freqsin=freqsin)
+            ynew_db = self.interpolate_data(ydb, frequencies, freqsin=freqsin, interptype=interptype)
+            ynew_ph = self.interpolate_data(yph, frequencies, freqsin=freqsin, interptype=interptype)
         else:
             ynew_db = np.full(len(frequencies), ydb)
             ynew_ph = np.full(len(frequencies), yph)
 
         if ref:
-            ynew_db = ynew_db - ref.data_array("DB", M, i, j, frequencies)
-            ynew_ph = ynew_ph - ref.data_array("UPHASE", M, i, j, frequencies)
+            ynew_db = ynew_db - ref.data_array("DB", M, i, j, frequencies, interptype=interptype)
+            ynew_ph = ynew_ph - ref.data_array("UPHASE", M, i, j, frequencies, interptype=interptype)
 
         if smoothing > 0:
             smoothing = np.min([len(self.freqs) - 1, smoothing])
@@ -3666,9 +3786,13 @@ class spfile:
         else:
             print("Error with data_format input argument!")
             return
+
+        if freq_input_float:
+            ynew = ynew[0]
+
         return ynew
 
-    def extraction(self, measspfile):
+    def extraction(self, measspfile: str) -> "spfile":
         """Extract die S-parameters using measurement data and simulated S-parameters
         Port ordering in *measspfile* is assumed to be the same as this *spfile*.
         Remaining ports are ports of block to be extracted.
@@ -3699,7 +3823,7 @@ class spfile:
         self.change_ref_impedance(refimpedance)
         return block
 
-    def uniform_deembed(self, quantity, ports="all", kind="degrees", inplace=-1):
+    def uniform_deembed(self, quantity: float|list, ports: str="all", kind: str="degrees", inplace: int=-1) -> "spfile":
         """This function deembeds some of the ports of S-parameters. Deembedding quantity can be:
             - Phase in degrees
             - Phase in radians
@@ -3716,7 +3840,7 @@ class spfile:
                 If size>1, then size should be equal to the number of frequencies. If an element of list is number, it is used for all ports. If an element of the list is also a list, the elements size should be same as the number of ports.
             ports (list, optional): List of port numbers to be deembedded. If not given all ports are deembedded.
             kind (string, optional): One of the following values, "degrees", "radians", "length" and "delay". Defaults to "degrees".
-            inplace (int, optional): Object editing mode. Defaults to -1.
+            inplace (int, optional): Object editing mode. 0 to return a new object, 1 to modify the current object. Defaults to -1.
 
         Returns:
             spfile: De-embedded spfile
@@ -3736,7 +3860,7 @@ class spfile:
             portsmask = [1 if i + 1 in ports else 0 for i in range(ps)]
         w = 2 * np.pi * obj.freqs
         N = len(obj.freqs)
-
+        
         if isinstance(
             quantity, (complex, float, int)
         ):  # deembedding is the same for all freqs and ports
@@ -3792,10 +3916,13 @@ class spfile:
                 )
             Sm = PhaseMatrix * smatrix * PhaseMatrix
             obj.sdata[i, :] = Sm.reshape(ps**2)
-        obj.z_ok, obj.y_ok, obj.t_ok, obj.abcd_ok = False, False, False, False
+        obj.zdata = None
+        obj.ydata = None
+        obj.tdata = None
+        obj.abcddata = None
         return obj
 
-    def S(self, i=1, j=1, data_format="COMPLEX", **kwargs):
+    def S(self, i: int=1, j: int=1, data_format: str="COMPLEX", **kwargs) -> NDArray:
         """Gives :math:`S_{i j}` in *data_format* format.
         Uses *data_array* method internally. This is a convenience function for practical use.
 
@@ -3810,7 +3937,7 @@ class spfile:
         """
         return self.data_array(data_format, "S", i, j, **kwargs)
 
-    def ABCD(self, i=1, j=1, data_format="COMPLEX", **kwargs):
+    def ABCD(self, i: int=1, j: int=1, data_format: str="COMPLEX", **kwargs) -> NDArray:
         """Gives :math:`ABCD_{i j}` in *data_format* format.
         Uses *data_array* method internally. This is a convenience function for practical use.
 
@@ -3825,7 +3952,7 @@ class spfile:
         """
         return self.data_array(data_format, "ABCD", i, j, **kwargs)
 
-    def T(self, i=1, j=1, data_format="COMPLEX", **kwargs):
+    def T(self, i: int=1, j: int=1, data_format: str="COMPLEX", **kwargs) -> NDArray:
         """Return :math:`T_{i j}` in format *data_format*
         Uses *data_array* method internally. A convenience function for practical use.
 
@@ -3839,7 +3966,7 @@ class spfile:
         """
         return self.data_array(data_format, "T", i, j, **kwargs)
 
-    def Z(self, i=1, j=1, data_format="COMPLEX", **kwargs):
+    def Z(self, i: int=1, j: int=1, data_format: str="COMPLEX", **kwargs) -> NDArray:
         """Return :math:`Z_{i j}` in format *data_format*
         Uses *data_array* method internally. A convenience function for practical use.
 
@@ -3853,7 +3980,7 @@ class spfile:
         """
         return self.data_array(data_format, "Z", i, j, **kwargs)
 
-    def Y(self, i=1, j=1, data_format="COMPLEX", **kwargs):
+    def Y(self, i: int=1, j: int=1, data_format: str="COMPLEX", **kwargs) -> NDArray:
         """Return :math:`Y_{i j}` in format *data_format*
         Uses *data_array* method internally. A convenience function for practical use.
 
@@ -3867,13 +3994,13 @@ class spfile:
         """
         return self.data_array(data_format, "Y", i, j, **kwargs)
 
-    def crop_with_frequency(self, fstart=None, fstop=None, inplace=-1):
+    def crop_with_frequency(self, fstart: Optional[float]=None, fstop: Optional[float]=None, inplace: int=-1) -> "spfile":
         """Crop the points below fstart and above fstop. No recalculation or interpolation occurs.
 
         Args:
             fstart (float, optional): Lower frequency for cropping. Default value is None which means no cropping will occur at lower frequency side.
             fstop (float, optional): Higher frequency for cropping. Default value is None which means no cropping will occur at higher frequency side.
-            inplace (int, optional): Object editing mode. Defaults to -1.
+            inplace (int, optional): Object editing mode. 0 to return a new object, 1 to modify the current object. Defaults to -1.
 
         Returns:
             spfile: spfile object with new frequency points.
@@ -3920,12 +4047,13 @@ class spfile:
         obj.sdata = obj.sdata[index_begin:index_end, :]
         return obj
 
-    def set_frequency_points(self, frequencies, inplace=-1):
+    def set_frequency_points(self, frequencies: list|NDArray, interptype: str="spline", inplace: int=-1) -> "spfile":
         """Set new frequency points. if S-parameter data generator function is available, use that to calculate new S-parameter data. If not, use interpolation/extrapolation. For new frequency points, S-parameters and reference impedances which are in the form of array are re-calculated.
 
         Args:
             frequencies ((list, numpy.ndarray)): New frequency array in Hz.
-            inplace (int, optional): Object editing mode. Defaults to -1.
+            interptype(str, optional): Type of interpolation, linear or spline. Default is spline.
+            inplace (int, optional): Object editing mode. 0 to return a new object, 1 to modify the current object. Defaults to -1.
 
         Returns:
             spfile: spfile object with new frequency points.
@@ -3944,14 +4072,17 @@ class spfile:
             for i in range(obj.n_ports):
                 if isinstance(obj.refimpedance[i], (list, np.ndarray)):
                     obj.refimpedance[i] = obj.interpolate_data(
-                        obj.refimpedance[i], frequencies
+                        obj.refimpedance[i], frequencies, interptype=interptype
                     )
 
-        if len(obj.gammas) > 0:
-            gammas = []
-            for i in range(obj.n_ports):
-                gammas.append(obj.interpolate_data(obj.gammas[i], frequencies))
-            obj.gammas = np.array(gammas)
+        try:
+            if len(obj.gammas) > 0:
+                gammas = []
+                for i in range(obj.n_ports):
+                    gammas.append(obj.interpolate_data(obj.gammas[i], frequencies, interptype=interptype))
+                obj.gammas = np.array(gammas)
+        except Exception as e:
+            print(f"Error at setting gammas in set_frequency_points function: {repr(e)}")
 
         if obj.sparam_gen_func is not None:
             obj.freqs = frequencies
@@ -3969,20 +4100,23 @@ class spfile:
                 for i in range(1, obj.n_ports + 1):
                     for j in range(1, obj.n_ports + 1):
                         n = (i - 1) * obj.n_ports + (j - 1)
-                        sdata[:, n] = obj.data_array("COMPLEX", "S", i, j, frequencies)
+                        sdata[:, n] = obj.data_array("COMPLEX", "S", i, j, frequencies, interptype=interptype)
                 obj.freqs = frequencies
                 obj.sdata = sdata
-        obj.z_ok, obj.y_ok, obj.abcd_ok, obj.t_ok = False, False, False, False
+        obj.zdata = None
+        obj.ydata = None
+        obj.tdata = None
+        obj.abcddata = None
         return obj
 
-    def set_frequency_points_array(self, fstart, fstop, number_of_points, inplace=-1):
+    def set_frequency_points_array(self, fstart: float, fstop: float, number_of_points: int, inplace: int=-1) -> "spfile":
         """Set the frequencies of the object using start-end frequencies and number of points.
 
         Args:
-            fstart ([type]): Start frequency.
-            fstop ([type]): End frequency.
+            fstart (float): Start frequency.
+            fstop (float): End frequency.
             NumberOfPoints (int): Number of frequencies.
-            inplace (int, optional): Object editing mode. Defaults to -1.
+            inplace (int, optional): Object editing mode. 0 to return a new object, 1 to modify the current object. Defaults to -1.
 
         Returns:
             spfile: spfile object with new frequency points.
@@ -3992,12 +4126,12 @@ class spfile:
             inplace=inplace,
         )
 
-    def s1p_to_s2p(self, inplace=-1):
+    def loss_to_s2p(self, inplace: int=-1) -> "spfile":
         """
         Convert 1-port ``SPFILE`` object to 2-port ``SPFILE`` object by assuming the 1-port S-parameter data is obtained by thru calibration and assuming perfect matching at both ports.
 
         Args:
-            inplace (int, optional): Object editing mode. Defaults to -1.
+            inplace (int, optional): Object editing mode. 0 to return a new object, 1 to modify the current object. Defaults to -1.
 
         Returns:
             spfile: New 2-port ``SPFILE`` object.
@@ -4019,6 +4153,47 @@ class spfile:
         newdata[:, 2] = obj.sdata[:, 0]
         newdata[:, 3] = 1e-6 + 0j
         obj.sdata = newdata
+
+        return obj
+
+    def ref_to_s2p(self, inplace:int=-1):
+        """
+        Convert 1-port ``SPFILE`` object to 2-port ``SPFILE`` object by assuming the 1-port S-parameter data is
+        input impedance from both ports and insertion loss is 120dB.
+
+        Args:
+            inplace (int, optional): Object editing mode. 0 to return a new object, 1 to modify the current object. Defaults to -1.
+
+        Returns:
+            spfile: New 2-port ``SPFILE`` object.
+        """
+        if inplace == -1:
+            inplace = self.inplace
+        if inplace == 0:
+            obj = deepcopy(self)
+            obj.inplace = 1
+        else:
+            obj = self
+
+        obj.n_ports = 2
+        temp = (obj.n_ports) ** 2
+        ns = len(obj.freqs)
+        newdata = np.zeros([ns, temp]).astype(complex)
+        newdata[:, 1] = 1e-9 + 0j
+        newdata[:, 0] = obj.sdata[:, 0]
+        newdata[:, 3] = obj.sdata[:, 0]
+        newdata[:, 2] = 1e-9 + 0j
+        obj.sdata = newdata
+
+        if not hasattr(obj.refimpedance, "__iter__"):
+            obj.refimpedance = [obj.refimpedance, obj.refimpedance]
+        else:
+            obj.refimpedance = [obj.refimpedance[0], obj.refimpedance[0]]
+
+        if not hasattr(obj.gammas, "__iter__"):
+            obj.gammas = [obj.gammas, obj.gammas]
+        elif len(obj.gammas)>0:
+            obj.gammas = [obj.gammas[0], obj.gammas[0]]
 
         return obj
 
@@ -4091,7 +4266,7 @@ class spfile:
 
     @classmethod
     def series_impedance(cls, Z, freqs=None):
-        """Create an ``spfile`` object corresponding to a 2-port with only one shunt impedance
+        """Create an ``spfile`` object corresponding to a 2-port with only one series impedance
 
         Args:
             Z (float): Series impedance. If scalar, the same value is used for all frequencies, if an array or list is given, its length should be equal to the :freqs: length.
@@ -4109,6 +4284,37 @@ class spfile:
                 i, network.abcd2s(network.series_z(zimp), Zo=50.0)
             )
         return obj
+
+    @classmethod
+    def ideal_freq_independent_network(cls, Smatrix, freqs=None):
+        """Create an ``spfile`` object which has the same S-parameters for all frequencies.
+
+        Args:
+            Smatrix (numpy.matrix): S-Matrix.
+            freqs (list or numpy.ndarray): Frequency points of new :SPFILE: object.
+
+        Returns:
+            spfile: An spfile object.
+        """
+        obj = cls(n_ports=2, freqs=freqs)
+
+        for i in range(len(obj.freqs)):
+            obj.set_smatrix_at_frequency_point(i, Smatrix)
+        return obj
+
+    @classmethod
+    def ideal_attenuator(cls, attenuation, freqs=None):
+        """Create an ``spfile`` object of an ideal attenuator.
+
+        Args:
+            attenuation (float): S21 of the attenuator in dB.
+            freqs (list or numpy.ndarray): Frequency points of new :SPFILE: object.
+
+        Returns:
+            spfile: An spfile object.
+        """
+        
+        return cls.ideal_freq_independent_network(network.ideal_att(attenuation, db=True), freqs=freqs)
 
     @classmethod
     def microstrip_line(cls, length, w, h, t, er, freqs=None):
@@ -4131,7 +4337,7 @@ class spfile:
             Z, eeff = tlines.z_eeff_disp_thick_microstrip(w, h, t, er, freq)
             theta = 2 * np.pi * freq * np.sqrt(eeff) / c0 * length
             return network.abcd2s(network.tline(Z, theta))
-
+        
         obj.set_sparam_gen_func(spr)
         return obj
 

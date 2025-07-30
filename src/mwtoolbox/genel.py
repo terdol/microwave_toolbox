@@ -32,19 +32,11 @@ pq.microinch = pq.UnitQuantity('microinch', pq.inch / 1e6, symbol='microinch')
 pq.dB = pq.UnitQuantity('dB', pq.dimensionless, symbol='dB')
 
 def ekpolyfit(x):
-    """Polynomial fit for ellipk function. works from 0 to 0.98 with good accuracy."""
-    p1 =       36.94
-    p2 =        -114
-    p3 =       148.9
-    p4 =        -106
-    p5 =       44.75
-    p6 =      -11.16
-    p7 =       1.807
-    p8 =     0.09132
-    p9 =      0.3972
-    p10 =       1.571
-    ek = p1*x**9+p2*x**8+ p3*x**7 + p4*x**6 +p5*x**5 + p6*x**4 + p7*x**3 + p8*x**2 + p9*x + p10
-    return ek
+    """Polynomial fit for ellipk function.
+    Works for argument from 0 to 0.98 with good accuracy.
+    """
+    coefs = [1.571, 0.3972, 0.09132, 1.807, -11.16, 44.75, -106, 148.9, -114, 36.94]
+    return np.sum([coefs[i] * x ** i for i in range(len(coefs))])
 
 def tukey_window(alpha,N):
     """
@@ -291,6 +283,22 @@ def flatten(x):
             result.append(el)
     return result
 
+def change_format(data, data_format="complex"):
+    """Changes format of complex data to other formats."""
+    data_format = data_format.lower()
+    if data_format == "complex":
+        return data
+    elif data_format == "real":
+        return np.real(data)
+    elif data_format == "imag":
+        return np.imag(data)
+    elif data_format == "mag":
+        return np.abs(data)
+    elif data_format == "phase":
+        return np.angle(data, deg=True)
+    elif data_format == "uphase":
+        return np.unwrap(np.angle(data)) * 180.0 / np.pi
+
 def heatmap(data, row_labels, col_labels, ax=None, cbar_kw={}, cbarlabel="", **kwargs):
     """
     Create a heatmap from a numpy array and two lists of labels.
@@ -485,6 +493,33 @@ def str_distance(s, t):
     # This is the minimum number of edits needed to convert string a to string b
     # return "The strings are {} edits away".format(distance[rows-1][cols-1])
     return distance[rows-1][cols-1], Ratio
+
+
+def crossing(xvals, yvals, level):
+    """
+    This function calculates the x-values at which yvals array crosses level value. Linear interpolation is used.
+    
+    Args:
+        xvals(np.ndarray): x-values at which values of input array is given.
+        yvals(np.ndarray): y-values corresponding to x-values.
+        level(float): Crossing value
+
+    Return:
+        np.ndarray: x-values at crossing points.
+    """
+    arr1 = yvals - level
+    sarr1 = np.sign(arr1)
+    indices = np.array([i for i in range(len(sarr1)-1) if (sarr1[i+1]+sarr1[i])==0 or sarr1[i+1]==0])
+    print(f"{indices=}")
+    if len(indices)==0:
+        return None
+    else:
+        f1 = xvals[indices  ]
+        f2 = xvals[indices+1]
+        y1 = np.abs(arr1[indices  ])
+        y2 = np.abs(arr1[indices+1])
+        return (y1 * f2 + y2 * f1) / (y1 + y2)
+
 
 if __name__ == "__main__":
       #rr = polarsample(0.2)

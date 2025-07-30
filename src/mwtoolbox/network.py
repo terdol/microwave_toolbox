@@ -52,12 +52,14 @@ def ideal_amp(G):
     """
     return np.matrix([[0, 0], [G, 0]])
 
-def ideal_att(G):
+def ideal_att(G, db=False):
     """
     S-parameters of an ideal attenuator
     G is voltage gain (<1), no reflection
     """
-    return np.matrix([[0, G], [G, 0]])
+    if db:
+        G = 10 ** ( -np.abs(G) / 20 )
+    return np.matrix([[0.00001, G], [G, 0.00001]])
 
 def circulator():
     """
@@ -101,11 +103,12 @@ def tline(Zo, theta):
     """
     return np.matrix([[np.cos(theta), 1.0j * Zo * np.sin(theta)], [1.0j/Zo * np.sin(theta), np.cos(theta)]])
 
-def tline_lossy(Zo, gamma):
+def tline_lossy(Zo, gamma, length):
     """
     ABCD parameters of lossy transmission line,  gamma = complex propagation constant
     """
-    return np.matrix([[np.cosh(gamma), Zo * np.sinh(gamma)], [1.0/Zo * np.sinh(gamma), np.cosh(gamma)]])
+    return np.matrix([[np.cosh(gamma * length), Zo * np.sinh(gamma * length)],
+                      [1.0/Zo * np.sinh(gamma * length), np.cosh(gamma * length)]])
 
 def tline_list(Zo, theta):
     """
@@ -304,7 +307,7 @@ def abcd2t(M, Zo=50.0):
     Pseudo-Wave or Power-Wave? Don't use for complex impedances.
     """
     X = abcd2s(M, Zo)
-    return s2t(M)
+    return s2t(X)
 
 def abcd_change_ports(M):
     """
@@ -463,6 +466,7 @@ def connect_2_ports_list(Smatrix,conns):
     The order of remaining ports is kept.
     Reference: QUCS technical.pdf, S-parameters in CAE programs, p.29
     """
+    conns = [[i,j] for i,j in conns]
     for i in range(len(conns)):
         k,m = conns[i]
         Smatrix = connect_2_ports(Smatrix, k,m)
